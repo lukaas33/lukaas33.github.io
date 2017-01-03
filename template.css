@@ -1,0 +1,326 @@
+/* Colors with names https://material.io/guidelines/style/color.html */
+
+/* -- General -- */
+* {  /* Standard properties for document */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Fixes box sizing problem */
+  font-family: 'Noto Sans', sans-serif; 
+  font-size: 1rem;
+  color: #212121;
+  vertical-align: middle; /* Aligns things like icons */
+  /*border: 1px dashed grey;*/ /* View the layout */
+}
+
+::selection { 
+	background: #ff8a80; /* S A100 */
+	color: #ffffff;
+}
+
+:focus, :active { outline: none; }
+
+body { background-color: #EEEEEE; }
+
+a { text-decoration: none; }
+
+
+/* Header */
+header {
+	z-index: 100;
+	overflow: hidden;
+	position: relative;
+	box-shadow: 0px 6px 8px rgba(0,0,0,0.2);
+	background-color: #2196f3; /* P */
+	height: 5rem;
+}
+
+header h1 {
+	color: #ffffff;
+	font-size: 1.5rem;
+	font-weight: 700;
+}
+
+.headtext {
+	display: inline-block;
+	padding: 1.35rem; 
+	float: left
+}
+
+
+/* Navbar */
+nav li {
+	display: inline-block;
+	margin: 0rem 2.5rem;
+	padding: 0.5rem;
+	list-style-type: none;
+	border-bottom: 4px solid transparent;
+}
+
+nav {
+	display: inline-block;
+	text-align: center;
+	float: right;
+	height: 5rem;
+	padding: 1rem;
+}
+
+.navItem.active { border-bottom: 4px solid #64b5f6; /* P -200 */ }
+
+.navItem a { color: #bbdefb; /* P -400 */ }
+
+
+/* Menu */
+.menu {
+	text-align: left;
+	overflow: hidden;
+	width: 10rem;
+	z-index: 10;
+	height: 100%;
+	left: -10rem;
+	position: absolute;
+}
+
+.menuItem {
+	text-align: left;
+	width: 100%;
+	margin: 0.5rem;
+	padding: 0.75rem;
+}
+
+.menuItem i {
+	padding-right: 1rem;
+}
+
+.menuItems { padding-top: 1rem; }
+
+.close { display: none; }
+
+
+/* Options */
+.options {
+	position: absolute;
+}
+
+.cardMenu {
+	width: 9rem;
+	text-align: left;
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 0.5rem;
+	z-index: 1;
+	background-color: #fafafa;
+	border-radius: 2px;
+	box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
+}
+
+.cardMenuItem {
+	text-align: left;
+	width: 100%;
+	display: block;
+	padding: 0.5rem;
+}
+
+.cardMenuItem i {
+	display: inline;
+	padding-right: 0.5rem;
+}
+
+.more {
+	display: none; /* Normal state */
+	margin: 0.5rem;
+}
+
+
+/* Buttons */
+.FAB  {
+	text-align: center; 
+	box-shadow: 0px 4px 4px rgba(0,0,0,0.15);
+	background-color: #FF5252; /* S */
+	border-radius: 100%;
+	width: 4.5rem; 
+	height: 4.5rem;
+	padding: 1rem;
+}
+
+.FAB.top { /* Hidden, there is only one FAB */
+	position: absolute;
+	display: none;
+	right: 7rem; 
+	top: 2.75rem;
+}
+
+.FAB.bottom {
+	position: fixed;
+	right: 2.5rem; 
+	bottom: 2.5rem;
+}
+
+.undo {
+	display: none;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+}
+
+.undoButton {
+	margin: 2rem;
+	box-shadow: 0px 4px 4px rgba(0,0,0,0.15);
+	border-radius: 5px;
+	background-color: #424242;
+	padding: 1rem;
+	color: #ffffff;
+}
+
+.menu-icon {
+	margin: 1.3rem;
+	float: left;
+}
+
+button { 
+	border: none;
+	background-color: transparent;
+}
+
+.FABicon {
+	display: inline-block;
+	vertical-align: middle; 
+}
+
+.undoIcon { padding-left: 0.5rem; }
+
+
+/* Cards and content */
+.cards {
+	margin: 2rem 0rem;
+	display: flex; 
+	flex-wrap: wrap; 
+	justify-content: center;
+}
+
+.card {
+	background-color: #ffffff;
+	box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
+	background-color: #FFFFFF;
+	margin: 0.75rem;
+	border-radius: 5px;
+}
+
+.card ul {
+	padding-top: 1rem;
+	padding-left: 2rem;
+}
+
+.tstandard th {
+	background-color: #e0e0e0;
+	color: #424242;
+	padding: 1rem;
+}
+
+.tstandard td { 
+	color: #616161; 
+	text-align: center; 
+	padding: 1rem;
+}
+
+.progressBar {
+	background-color: #f5f5f5;
+	width: 100%;
+	border-radius: 20px;
+}
+
+.progress {
+	height: 2.75rem;
+	overflow: hidden;
+	text-align: center;
+	background-color: #ff8a80;	/* S */ 
+	padding: 0.75rem;
+	border-radius: 20px;
+}
+
+.progress p { color: #ffffff; }
+
+.card a:link { color: #ff5252; /* S */ }
+
+.card a:visited { color: #d32f2f; /* S +200 */ }
+
+.card h1 { text-align: center; }
+
+.text { padding: 2rem; }
+
+.card.small { width: 27.5rem; }
+
+.card.medium { width: 56.45rem; }
+
+.card.big { width: 85.5rem; }
+
+.tstandard, .full { width: 100%; }
+
+.full { border-radius: 5px 5px 0px 0px; }
+
+
+/* -- Animations -- */
+.card, .FAB {
+	transition-timing-function: ease;
+	animation-name: up;
+	animation-duration: 1s;
+}
+
+@keyframes up {
+	0% {
+		opacity: 0;		
+		transform: translate3d(0, 100%, 0);	
+	}
+	100% {
+		opacity: 1; 	
+		transform: none;
+	}
+}
+
+.progress {
+	animation-timing-function: ease;
+	animation-name: width; 
+	animation-duration: 2.5s;
+}
+
+@keyframes width {
+	0% {
+		width: 0%; 
+	}
+	100% {
+		width: /* Returns to normal */; 
+	}
+}
+
+.main, .menu, .cards { transition: 1s; }
+
+.card, .FAB, nav li, .menuItem, .undoButton { transition: 0.4s; }
+
+.card:hover { box-shadow: 0px 4px 10px rgba(0,0,0,0.2); }
+
+.navItem:hover { border-bottom: 4px solid #42a5f5; /* P -100 */ }
+
+.FAB:hover, .undoButton:hover { box-shadow: 0px 6px 8px rgba(0,0,0,0.30); }
+
+.cardMenuItem:hover { background-color: #eeeeee; }
+
+.menuItem:hover { background-color: #e0e0e0; }
+
+
+/* -- Icons source http://google.github.io/material-design-icons/ -- */
+.material-icons.md-18 { font-size: 18px; }
+
+.material-icons.md-24 { font-size: 24px; }
+
+.material-icons.md-36 { font-size: 36px; }
+
+.material-icons.md-48 { font-size: 48px; }
+
+.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
+
+.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+
+.material-icons.md-light { color: rgba(255, 255, 255, 1); }
+
+.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
