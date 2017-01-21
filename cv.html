@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Site info -->
+		<title>Template</title>
+		<meta name="Name of the site" content="Description of the site">
+		
+		<!-- Js, jQuery and Css -->
+		<link type="text/css" rel="stylesheet" href="cv.css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="cv.js"></script>
+		
+		<!-- Icons and fonts https://www.fonts.google.com -->
+		<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		
+		<!-- Make favicon at http://realfavicongenerator.net/ -->
+		<link rel="apple-touch-icon" href="favicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" href="favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" href="favicon/favicon-16x16.png">
+		<link rel="manifest" href="favicon/manifest.json">
+		<link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#757575">
+	</head>
+	<body>
+	
+		<section class="overlay">
+		</section>
+		
+			<header> 
+				<button type="button" class="menu-icon hamburger"><i class="material-icons md-36 md-light"> menu </i></button>
+				<button type="button" class="menu-icon close"><i class="material-icons md-36 md-light"> close </i></button>
+				<section class="headtext">
+					<h1> Lucas van Osenbruggen </h1> <!-- Title -->
+				</section>
+				<nav>
+					<ul>
+						<li class="navItem current"><a href="Cv.html"> About me </a></li>
+						<li class="navItem"><a href="#"> Experience </a></li>
+						<li class="navItem"><a href="#"> Skills </a></li>						
+						<li class="navItem"><a href="#"> Portpolio </a></li>
+					</ul>
+				</nav>
+				<button type="button" class="FAB top"> <!-- FAB at the header -->
+					<i class="FABicon material-icons md-36 md-light"> phone </i>
+				</button>
+			</header>
+				
+			<section class="menu">
+				<section class="menuItems">
+					<button type="button" class="menuItem theme"> <i class="material-icons md-36 md-dark"> palette </i> Theme </button> <!-- To change the theme -->
+				</section>
+			</section>
+			
+			<section class="changeTheme">
+				<form action="">
+					<ul>
+						<li><button type="button" class="themeOption purple"></button></li>
+						<li><button type="button" class="themeOption teal"></button></li>
+						<li><button type="button" class="themeOption blue"></button></li>
+						<li><button type="button" class="themeOption red"></button></li>
+					</ul>
+				</form>
+			</section>
+			
+			<section class="main">
+				
+				<section class="cards">
+				
+					<section class="container">		
+						<section class="card small">
+							<section class="options">
+								<button class="more">
+									<i class="material-icons md-18 md-light"> more_vert </i>
+								</button>
+								<section class="cardMenu">
+									<button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+								</section>
+							</section>
+							
+							<img class="full" src="Image/LucasPhoto.jpg" alt="A picture of my face."> <!-- Images outside text section -->
+							
+							<section class="text">
+								<p> My picture. </p>
+							</section>
+						</section>
+					</section>
+					
+					<section class="container">			
+						<section class="card medium">
+							<section class="options">
+								<button class="more">
+									<i class="material-icons md-18 md-dark"> more_vert </i>
+								</button>
+								<section class="cardMenu">
+									<button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+								</section>
+							</section>
+							
+							<section class="text">
+								<h2> About me </h2>
+								<br/>
+								<p> 
+									My name is Lucas van Osenbruggen. <br/>
+									I'm <span class="age"> </span> years old and live in the Netherlands. <br/>
+									My interest include design, coding and
+								</p>
+							</section>
+						</section>
+					</section>
+					
+				</section>
+			
+				<button type="button" class="FAB bottom"> <!-- FAB at the right bottom corner -->
+					<i class="FABicon material-icons md-36 md-light"> mail </i>
+				</button>
+				
+				<section class="undo">
+					<button class="undoButton">
+						Undo <i class="undoIcon material-icons md-24 md-light"> undo </i>
+					</button>
+				</section>
+				
+				<footer>
+				</footer>
+				
+			</section>
+		
+	</body>
+</html>
