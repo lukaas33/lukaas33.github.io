@@ -20,6 +20,11 @@
 	height: 100%;
 }
 
+.disable-selection {
+  -webkit-user-select: none; /* Chrome, Safari, and Opera */
+  -webkit-touch-callout: none; /* Disable Android and iOS callouts*/
+}
+
 :focus, :active { outline: none; }
 
 body { background-color: #EEEEEE; }
@@ -272,17 +277,17 @@ button {
 	border-radius: 20px;
 }
 
+.card.small { width: 27.5rem }
+
+.card.medium { width: 56.45rem }
+
+.card.big { width: 85.5rem; }
+
 .progress p { color: #ffffff; }
 
 .card h1 { text-align: center; }
 
 .text { padding: 2rem; }
-
-.card.small { width: 27.5rem; }
-
-.card.medium { width: 56.45rem; }
-
-.card.big { width: 85.5rem; }
 
 .tstandard, .full { width: 100%; }
 
