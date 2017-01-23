@@ -279,9 +279,41 @@ button {
 
 .card.small { width: 27.5rem }
 
-.card.medium { width: 56.45rem }
+.card.medium { width: 56.75rem }
 
-.card.big { width: 85.5rem; }
+.card.big { width: 84rem; }
+
+@media screen and (max-width: 1400px) {
+	.card.small { width: 24.5rem }
+
+	.card.medium { width: 49.75rem }
+
+	.card.big { width: 75rem; }
+}
+
+@media screen and (max-width: 1250px) {
+	.card.small { width: 18.5rem }
+
+	.card.medium { width: 37,75rem }
+
+	.card.big { width: 57rem; }
+}
+
+@media screen and (max-width: 1150px) {
+	.card.small { width: 14.5rem }
+
+	.card.medium { width: 29,75rem }
+
+	.card.big { width: 45rem; }
+}
+
+@media screen and (max-width: 1100px) {
+	.card.small { width: 29,75rem }
+
+	.card.medium { width: 29,75rem }
+
+	.card.big { width: 29,75rem; }
+}
 
 .progress p { color: #ffffff; }
 
