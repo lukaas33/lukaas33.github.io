@@ -1,4 +1,188 @@
 $(document).ready(function() {
+	// Toggles menu and button state 
+	var $menu = $(".menu");
+	var $main = $(".main");
+	var $hamburger = $(".hamburger");
+	var $close = $(".close");
+	
+	var $openMenu = function() {
+		$hamburger.hide();
+		$close.show();
+		$menu.css("left", "0");
+		$main.css("margin-left", "10rem");
+	};
+	
+	var $closeMenu = function() {
+		$close.hide();
+		$hamburger.show();
+		$menu.css("left", "-10rem");
+		$main.css("margin-left", "0rem");
+	};
+	
+	$hamburger.click(function() {
+		$openMenu();
+	});
+	
+	$close.click(function() {
+		$closeMenu();
+	});
+	
+	// Theme changer
+	var $theme = $('.theme');
+	var $themeChange = $('.changeTheme');
+	var $overlay = $('.overlay');
+	var $themeOption = $('.themeOption');
+	var $navItem = $('.navItem');	
+	
+	$theme.click(function() {
+		$closeMenu();
+		$themeChange.fadeIn();
+		$overlay.fadeIn();
+	});
+	
+	$overlay.click(function() {
+		$themeChange.fadeOut();
+		$overlay.fadeOut();
+	});
+	
+	var active = function() {
+		$themeOption.empty();
+		if ($themeOption.hasClass('active')) {
+			$('.active').html('<i class="material-icons md-24 md-light">check</i>');
+		}
+	};
+	
+	var pageSelect = function(color) {
+		$navItem.css('border-bottom', '4px solid transparent');
+		$('.current').css('border-bottom', 'solid 4px ' + color);
+	};
+	
+	function Theme(p500, p400, p300, p100, s100, s200, s400) {
+		this.p500 = p500;
+		this.p400 = p400;
+		this.p300 = p300;
+		this.p100 = p100;
+		this.s100 = s100;
+		this.s200 = s100;
+		this.s400 = s100;
+	}
+	
+	Theme.prototype.change = function() {
+		$('header').css('background-color', this.p500);
+		pageSelect(this.p300);
+		$('.navItem a').css('color', this.p100);
+		$('.FAB').css('background-color', this.s200);
+		$('.progress').css('background-color', this.s200);
+		$('.card a:link').css('color', this.s200);
+		$('.card a:visited').css('color', this.s400);
+	};
+	
+	var purple = new Theme('#6D3D88', '#895DA1', '#895DA1', '#AD88C1', '#8ECEA1', '#63B27B', '#3F9659');
+	var teal = new Theme('#277554', '#499273', '#499273', '#7DB49C', '#FFB2B2', '#D76F6F', '#AA3939');
+	var blue = new Theme('#2C4770', '#4F6A8E', '#4F6A8E', '#7D91AD', '#EBA2B8', '#D87895', '#B64D6D');
+	var red =  new Theme('#AA3939', '#D76F6F', '#D76F6F', '#FFB2B2', '#8A9DC0', '#6077A0', '#415987');
+	
+	var $purple = $('#purple');
+	var $teal = $('#teal');
+	var $blue = $('#blue');
+	var $red = $('#red');
+	
+	var r = Math.floor(Math.random()*4);
+	var activeTheme;
+	
+	switch(r) {
+    case 0: // purple
+		activeTheme = purple;
+		$purple.addClass('active');
+        break;
+    case 1: // teal
+		activeTheme = teal;
+		$teal.addClass('active');
+        break;
+	case 2: // blue
+		activeTheme = blue;
+		$blue.addClass('active');
+		break;
+    case 3: // red
+		activeTheme = red;
+		$red.addClass('active');
+		break;
+	default: 
+	}
+	activeTheme.change();
+	active();
+	
+	$themeOption.click(function(){
+		$('.active').removeClass('active');
+		if ($(this).attr('id') === 'purple') {
+			activeTheme = purple;
+			$purple.addClass('active');
+		}
+		else if ($(this).attr('id') === 'teal') {
+			activeTheme = teal;
+			$teal.addClass('active');
+		}
+		else if ($(this).attr('id') === 'blue') {
+			activeTheme = blue;
+			$blue.addClass('active');
+		}
+		else if ($(this).attr('id') === 'red') {
+			activeTheme = red;
+			$red.addClass('active');
+			
+		}
+		activeTheme.change();
+		active();
+	});
+	
+	$navItem.mouseenter(function(){
+		
+	});
+	
+	$navItem.mouseleave(function(){
+	});	
+	
+	// Switches pages
+	var $aboutMe = $('.cards.aboutMe');
+	var $experience = $('.cards.experience');
+	var $skills = $('.cards.skills');
+	var $portfolio = $('.cards.portfolio');
+	
+	$experience.hide();
+	$skills.hide();
+	$portfolio.hide();
+	
+	$navItem.children().click(function(){
+		if (!$(this).parent().hasClass('current')) {
+			$navItem.removeClass('current');
+			$(this).parent().addClass('current');
+			pageSelect(activeTheme.p300);
+			if ($(this).attr('id') === 'aboutMe') {
+				$experience.hide();
+				$skills.hide();
+				$portfolio.hide();
+				$aboutMe.show();
+			}
+			else if ($(this).attr('id') === 'experience') {
+				$skills.hide();
+				$portfolio.hide();
+				$aboutMe.hide();
+				$experience.show();
+			}
+			else if ($(this).attr('id') === 'skills') {
+				$portfolio.hide();
+				$aboutMe.hide();
+				$experience.hide();
+				$skills.show();
+			}
+			else if ($(this).attr('id') === 'portfolio') {
+				$aboutMe.hide();
+				$skills.hide();
+				$experience.hide();
+				$portfolio.show();
+			}
+		}
+	});
 	
 	// Calculates age
 	var $age = $('.age');
@@ -24,109 +208,19 @@ $(document).ready(function() {
 	
 	// Rule for progress bars 
 	var $progress = $(".progress");
-	$progress.children("p").hide()
+	$progress.children("p").hide();
 	
 	$progress.mouseenter(function() {
 		if ($(this).width() > 35) {
 			$(this).children("p").fadeIn("fast");
 		}
 		else {
-		};
+		}
 	});
 	$progress.mouseleave(function() {
 		$(this).children("p").fadeOut("fast");
 	});
 	
-	// Theme changer
-	$theme = $('.theme');
-	$themeChange = $('.changeTheme');
-	$overlay = $('.overlay');
-	$themeOption = $('.themeOption');			
-	
-	$theme.click(function() {
-		$themeChange.fadeIn();
-		$overlay.fadeIn();
-		;
-	});
-	
-	$overlay.click(function() {
-		$themeChange.fadeOut();
-		$overlay.fadeOut();
-	});
-	
-	var active = function() {
-		$themeOption.empty();
-		if ($themeOption.hasClass('active')) {
-			$('.active').html('<i class="material-icons md-24 md-light">check</i>');
-		}
-	};
-	
-	var changeTheme = function(p500, p400, p300, p100, s100, s200, s400) {
-		$('header').css('background-color', p500);
-		$('.current').css('border-color', p300);
-		$('.navItem a').css('color', p100);
-		$('.FAB').css('background-color', s200);
-		$('.progress').css('background-color', s200);
-		$('.card a:link').css('color', s200);
-		$('.card a:visited').css('color', s400);
-	};
-	
-	var purple = function() { changeTheme('#6D3D88', '#895DA1', '#895DA1', '#AD88C1', '#8ECEA1', '#63B27B', '#3F9659');};
-	var teal = function() { changeTheme('#277554', '#499273', '#499273', '#7DB49C', '#FFB2B2', '#D76F6F', '#AA3939');};
-	var blue = function() { changeTheme('#2C4770', '#4F6A8E', '#4F6A8E', '#7D91AD', '#EBA2B8', '#D87895', '#B64D6D');};
-	var red = function() { changeTheme('#AA3939', '#D76F6F', '#D76F6F', '#FFB2B2', '#8A9DC0', '#6077A0', '#415987');};
-	
-	var $purple = $('.purple');
-	var $teal = $('.teal');
-	var $blue = $('.blue');
-	var $red = $('.red');
-	
-	var r = Math.floor(Math.random()*4);
-	
-	switch(r) {
-    case 0: // purple
-		purple();
-		$purple.addClass('active');
-        break;
-    case 1: // teal
-		teal();
-		$teal.addClass('active');
-        break;
-	case 2: // blue
-		blue();
-		$blue.addClass('active');
-		break;
-    case 3: // red
-         red();
-		 $red.addClass('active');
-		 break;
-	default: 
-		changeTheme();
-	};
-	
-	active();
-	
-	$themeOption.click(function(){
-		$('.active').removeClass('active');
-		if ($(this).hasClass('purple')) {
-			purple();
-			$purple.addClass('active');
-		}
-		else if ($(this).hasClass('teal')) {
-			teal();
-			$teal.addClass('active');
-		}
-		else if ($(this).hasClass('blue')) {
-			blue();
-			$blue.addClass('active');
-		}
-		else if ($(this).hasClass('red')) {
-			red();
-			$red.addClass('active');
-			
-		}
-		active();
-	});
 	
 	// Shows option button on hover 
 	var $card = $(".card");
@@ -165,7 +259,7 @@ $(document).ready(function() {
 		else {
 			$resizeCard.removeClass("big");
 			$resizeCard.addClass("small");
-		};
+		}
 	});
 	
 	// Clears the card 
@@ -186,29 +280,5 @@ $(document).ready(function() {
 		$clearCard.hide();
 		undo($clearCard);
 		$undo.delay(5000).fadeOut("slow");	
-	});
-	
-	
-	
-	// Toggles menu and button state 
-	var $menu = $(".menu");
-	var $main = $(".main");
-	var $hamburger = $(".hamburger");
-	var $close = $(".close");
-	
-	$hamburger.click(function() {
-		$hamburger.hide();
-		$close.show();
-		$menu.css("left", "0")
-		$main.css("margin-left", "10rem");
-	});
-	$close.click(function() {
-		$close.hide();
-		$hamburger.show();
-		$menu.css("left", "-10rem")
-		$main.css("margin-left", "0rem");
-	});
-	
+	});	
 });
-
-

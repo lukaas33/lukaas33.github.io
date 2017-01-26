@@ -36,10 +36,10 @@
 				</section>
 				<nav>
 					<ul>
-						<li class="navItem current"><a href="cv.html"> About me </a></li>
-						<li class="navItem"><a href="#"> Experience </a></li>
-						<li class="navItem"><a href="#"> Skills </a></li>						
-						<li class="navItem"><a href="#"> Portpolio </a></li>
+						<li class="navItem current"><a href="#" id="aboutMe"> About me </a></li>
+						<li class="navItem"><a href="#" id="experience"> Experience </a></li>
+						<li class="navItem"><a href="#" id="skills"> Skills </a></li>						
+						<li class="navItem"><a href="#" id="portfolio"> Portpolio </a></li>
 					</ul>
 				</nav>
 				<button type="button" class="FAB top"> <!-- FAB at the header -->
@@ -54,19 +54,17 @@
 			</section>
 			
 			<section class="changeTheme">
-				<form action="">
-					<ul>
-						<li><button type="button" class="themeOption purple"></button></li>
-						<li><button type="button" class="themeOption teal"></button></li>
-						<li><button type="button" class="themeOption blue"></button></li>
-						<li><button type="button" class="themeOption red"></button></li>
-					</ul>
-				</form>
+				<ul>
+					<li><button type="button" class="themeOption" id="purple"></button></li>
+					<li><button type="button" class="themeOption" id="teal"></button></li>
+					<li><button type="button" class="themeOption" id="blue"></button></li>
+					<li><button type="button" class="themeOption" id="red"></button></li>
+				</ul>
 			</section>
 			
 			<section class="main">
 				
-				<section class="cards">
+				<section class="cards aboutMe">
 				
 					<section class="container">		
 						<section class="card small">
@@ -118,6 +116,88 @@
 					</section>
 					
 				</section>
+
+				<section class="cards experience">
+				
+					<section class="container">		
+						<section class="card big">
+							<section class="options">
+								<button class="more">
+									<i class="material-icons md-18 md-dark"> more_vert </i>
+								</button>
+								<section class="cardMenu">
+									<button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+								</section>
+							</section>
+							
+							<section class="text">
+							
+							</section>
+						</section>
+					</section>
+					
+				</section>
+				
+				<section class="cards skills">
+				
+					<section class="container">		
+						<section class="card big">
+							<section class="options">
+								<button class="more">
+									<i class="material-icons md-18 md-dark"> more_vert </i>
+								</button>
+								<section class="cardMenu">
+									<button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+								</section>
+							</section>
+							
+								<section class="text">
+									<h1> Progress </h1>
+									<br/>
+										<section class="progressBar">
+											<section class="progress" style="width: 73%">
+												<p> 73% <p>
+											</section>
+										</section>
+									<br/>
+										<section class="progressBar">
+											<section class="progress" style="width: 13%">
+												<p> 13% </p>
+											</section>
+										</section>
+									<br/>
+										<section class="progressBar">
+											<section class="progress" style="width: 61%">	
+												<p> 61% </p>
+											</section>
+										</section>
+									</section>
+							</section>
+						</section>
+				</section>
+					
+				<section class="cards portfolio">
+				
+					<section class="container">		
+						<section class="card big">
+							<section class="options">
+								<button class="more">
+									<i class="material-icons md-18 md-dark"> more_vert </i>
+								</button>
+								<section class="cardMenu">
+									<button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+								</section>
+							</section>
+							
+							<section class="text">
+							
+							</section>
+						</section>
+					</section>
+					
+				</section>
+					
+			</section>
 			
 				<button type="button" class="FAB bottom"> <!-- FAB at the right bottom corner -->
 					<i class="FABicon material-icons md-36 md-light"> mail </i>
@@ -132,6 +212,5 @@
 				<footer>
 				</footer>
 				
-			</section>
 	</body>
 </html>
