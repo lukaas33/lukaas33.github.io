@@ -1,4 +1,13 @@
 $(document).ready(function() {
+	// Rule for progress bars 
+	var progressText = function() {
+		var $progress = $(".progress");
+		$progress.children("p").hide();
+		$progress.children("p").delay(2500).fadeIn();
+	};
+	
+	progressText();
+	
 	// Toggles menu and button state 
 	var $menu = $(".menu");
 	var $main = $(".main");
@@ -71,16 +80,16 @@ $(document).ready(function() {
 		$('header').css('background-color', this.p500);
 		pageSelect(this.p300);
 		$('.navItem a').css('color', this.p100);
-		$('.FAB').css('background-color', this.s200);
+		$('.FAB').css('background-color', this.s400);
 		$('.progress').css('background-color', this.s200);
 		$('.card a:link').css('color', this.s200);
 		$('.card a:visited').css('color', this.s400);
 	};
 	
-	var purple = new Theme('#6D3D88', '#895DA1', '#895DA1', '#AD88C1', '#8ECEA1', '#63B27B', '#3F9659');
-	var teal = new Theme('#277554', '#499273', '#499273', '#7DB49C', '#FFB2B2', '#D76F6F', '#AA3939');
-	var blue = new Theme('#2C4770', '#4F6A8E', '#4F6A8E', '#7D91AD', '#EBA2B8', '#D87895', '#B64D6D');
-	var red =  new Theme('#AA3939', '#D76F6F', '#D76F6F', '#FFB2B2', '#8A9DC0', '#6077A0', '#415987');
+	var purple = new Theme('#673ab7', '#7e57c2', '#9575cd', '#d1c4e9', '#ff80ab', '#ff4081', '#f50057');
+	var teal = new Theme('#009688', '#26a69a', '#4db6ac', '#b2dfdb', '#ff9e80', '#ff6e40', '#ff3d00');
+	var blue = new Theme('#2196f3', '#42a5f5', '#64b5f6', '#bbdefb', '#ff8a80', '#ff5252', '#ff1744');
+	var red =  new Theme('#e53935', '#f44336', '#ef9a9a', '#ffcdd2', '#82b1ff', '#448aff', '#2979ff');
 	
 	var $purple = $('#purple');
 	var $teal = $('#teal');
@@ -129,7 +138,6 @@ $(document).ready(function() {
 		else if ($(this).attr('id') === 'red') {
 			activeTheme = red;
 			$red.addClass('active');
-			
 		}
 		activeTheme.change();
 		active();
@@ -174,6 +182,7 @@ $(document).ready(function() {
 				$aboutMe.hide();
 				$experience.hide();
 				$skills.show();
+				progressText();
 			}
 			else if ($(this).attr('id') === 'portfolio') {
 				$aboutMe.hide();
@@ -203,25 +212,10 @@ $(document).ready(function() {
 	});
 	$(".ui-accordion-content").css({
 		"border": "none",
-		"padding": "1rem 0rem"
+		"padding": "1rem 0rem",
+		"height": "100%"
 	});
-	
-	// Rule for progress bars 
-	var $progress = $(".progress");
-	$progress.children("p").hide();
-	
-	$progress.mouseenter(function() {
-		if ($(this).width() > 35) {
-			$(this).children("p").fadeIn("fast");
-		}
-		else {
-		}
-	});
-	$progress.mouseleave(function() {
-		$(this).children("p").fadeOut("fast");
-	});
-	
-	
+
 	// Shows option button on hover 
 	var $card = $(".card");
 	
@@ -276,9 +270,24 @@ $(document).ready(function() {
 	};
 	
 	$clear.click(function() {
-		var $clearCard = $(this).closest(".card");
+		var $clearCard = $(this).parents(".card");
 		$clearCard.hide();
 		undo($clearCard);
 		$undo.delay(5000).fadeOut("slow");	
 	});	
+	
+	// Shows the nav options
+	var $navMore = $('.navMore');
+	
+	$navMore.click(function(){
+		var $icon = $(this).children("i");
+		if ($icon.hasClass("down")) {
+			$icon.removeClass("down");
+			$icon.text('keyboard_arrow_up');
+		}
+		else if (!$icon.hasClass("down")) {
+			$icon.addClass("down");
+			$icon.text('keyboard_arrow_down');
+		}
+	});
 });

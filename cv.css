@@ -34,8 +34,8 @@ a { text-decoration: none; }
 
 /* Header */
 header {
-	z-index: 100;
 	overflow: hidden;
+	z-index: 100;
 	position: relative;
 	box-shadow: 0px 6px 8px rgba(0,0,0,0.2);
 	height: 5rem;
@@ -60,6 +60,7 @@ nav li {
 	margin: 0rem 2.5rem;
 	padding: 0.5rem;
 	list-style-type: none;
+	border-bottom: 4px solid transparent;
 }
 
 nav {
@@ -68,6 +69,13 @@ nav {
 	float: right;
 	height: 5rem;
 	padding: 1rem;
+}
+
+.navMore { display: none; }
+
+@media screen and (max-width: 1200px) {
+	.navItem { display: none; }
+	.navMore { display: inline-block }
 }
 
 .navItem a { font-weight: bold; }
@@ -123,13 +131,13 @@ nav {
 	list-style-type: none;
 }
 
-#purple { background-color: #6D3D88; }
+#purple { background-color: #673ab7; }
 
-#teal { background-color: #277554; }
+#teal { background-color: #009688; }
 
-#blue { background-color: #2C4770; }
+#blue { background-color: #2196f3; }
 
-#red { background-color: #AA3939; }
+#red { background-color: #e53935; }
 
 .changeTheme ul { text-align: center; }
 
@@ -269,22 +277,16 @@ button {
 }
 
 .progress {
-	height: 2.75rem;
 	overflow: hidden;
 	text-align: center;
 	padding: 0.75rem;
 	border-radius: 20px;
 }
 
-.progress p { color: #ffffff; }
-
-.card h1 { text-align: center; }
-
-.text { padding: 2rem; }
-
-.tstandard, .full { width: 100%; }
-
-.full { border-radius: 5px 5px 0px 0px; }
+.progress.small p { 
+	font-size: 0.65rem; 
+	font-weight: bold;
+}
 
 .card.small { width: 27.5rem }
 
@@ -316,9 +318,19 @@ button {
 	.card.big { width: 45rem; }
 }
 
-@media screen and (max-width: 1100px) {
-	.card { width: 29,75rem; }
-}
+.progress.normal { height: 2.75rem; }
+
+.progress.small { height: 2rem; }
+
+.progress p { color: #ffffff; }
+
+.card h1 { text-align: center; }
+
+.text { padding: 2rem; }
+
+.tstandard, .full { width: 100%; }
+
+.full { border-radius: 5px 5px 0px 0px; }
 
 
 /* -- Animations -- */

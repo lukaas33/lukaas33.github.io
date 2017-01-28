@@ -1,216 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<!-- Site info -->
-		<title>Lucas' resume</title>
-		<meta name="Lucas' resume" content="The resume of Lucas van Osenbruggen.">
-		
-		<!-- Js, jQuery and Css -->
-		<link type="text/css" rel="stylesheet" href="cv.css" />
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-		<script type="text/javascript" src="cv.js"></script>
-		
-		<!-- Icons and fonts https://www.fonts.google.com -->
-		<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-		
-		<!-- Make favicon at http://realfavicongenerator.net/ -->
-		<link rel="apple-touch-icon" href="Favicon/apple-touch-icon.png">
-		<link rel="icon" type="image/png" href="Favicon/favicon-32x32.png">
-		<link rel="icon" type="image/png" href="Favicon/favicon-16x16.png">
-		<link rel="manifest" href="Favicon/manifest.json">
-		<link rel="mask-icon" href="Favicon/safari-pinned-tab.svg" color="#757575">
-	</head>
-	<body class="disable-selection">
-	
-		<section class="overlay">
-		</section>
-		
-			<header> 
-				<button type="button" class="menu-icon hamburger"><i class="material-icons md-36 md-light"> menu </i></button>
-				<button type="button" class="menu-icon close"><i class="material-icons md-36 md-light"> close </i></button>
-				<section class="headtext">
-					<h1> Lucas van Osenbruggen </h1> <!-- Title -->
-				</section>
-				<nav>
-					<ul>
-						<li class="navItem current"><a href="#" id="aboutMe"> About me </a></li>
-						<li class="navItem"><a href="#" id="experience"> Experience </a></li>
-						<li class="navItem"><a href="#" id="skills"> Skills </a></li>						
-						<li class="navItem"><a href="#" id="portfolio"> Portpolio </a></li>
-					</ul>
-				</nav>
-				<button type="button" class="FAB top"> <!-- FAB at the header -->
-					<i class="FABicon material-icons md-36 md-light"> phone </i>
-				</button>
-			</header>
-				
-			<section class="menu">
-				<section class="menuItems">
-					<button type="button" class="menuItem theme"> <i class="material-icons md-36 md-dark"> palette </i> Theme </button> <!-- To change the theme -->
-				</section>
-			</section>
-			
-			<section class="changeTheme">
-				<ul>
-					<li><button type="button" class="themeOption" id="purple"></button></li>
-					<li><button type="button" class="themeOption" id="teal"></button></li>
-					<li><button type="button" class="themeOption" id="blue"></button></li>
-					<li><button type="button" class="themeOption" id="red"></button></li>
-				</ul>
-			</section>
-			
-			<section class="main">
-				
-				<section class="cards aboutMe">
-				
-					<section class="container">		
-						<section class="card small">
-							<section class="options">
-								<button class="more">
-									<i class="material-icons md-18 md-light"> more_vert </i>
-								</button>
-								<section class="cardMenu">
-									<button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
-								</section>
-							</section>
-							
-							<img class="full" src="Image/LucasPhoto.jpg" alt="A picture of my face."> <!-- Images outside text section -->
-							
-							<section class="text">
-								<p> My picture. </p>
-							</section>
-						</section>
-					</section>
-					
-					<section class="container">			
-						<section class="card medium">
-							<section class="options">
-								<button class="more">
-									<i class="material-icons md-18 md-dark"> more_vert </i>
-								</button>
-								<section class="cardMenu">
-									<button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
-								</section>
-							</section>
-							
-							<section class="text">
-								<h2> About me </h2>
-								<br/>
-								<p> 
-									My name is Lucas van Osenbruggen. <br/>
-									I'm <span class="age"> </span> years old and live in the Netherlands. <br/>
-									My interest include design and coding <i>(hence this site).</i> 
-									This website is made by me and serves as my resume as well as my portfolio.
-									It has some cool features like automaticly updating age counters and infocards you can hide. <br/>
-								</p>
-								<br>
-								<p>
-									To learn about my work history or skills, and to see some of my work check out the other pages in the navigation bar. <br/>
-									To contact me, use the button in the right corner. <br/>
-								</p>
-							</section>
-						</section>
-					</section>
-					
-				</section>
-
-				<section class="cards experience">
-				
-					<section class="container">		
-						<section class="card big">
-							<section class="options">
-								<button class="more">
-									<i class="material-icons md-18 md-dark"> more_vert </i>
-								</button>
-								<section class="cardMenu">
-									<button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
-								</section>
-							</section>
-							
-							<section class="text">
-							
-							</section>
-						</section>
-					</section>
-					
-				</section>
-				
-				<section class="cards skills">
-				
-					<section class="container">		
-						<section class="card big">
-							<section class="options">
-								<button class="more">
-									<i class="material-icons md-18 md-dark"> more_vert </i>
-								</button>
-								<section class="cardMenu">
-									<button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
-								</section>
-							</section>
-							
-								<section class="text">
-									<h1> Progress </h1>
-									<br/>
-										<section class="progressBar">
-											<section class="progress" style="width: 73%">
-												<p> 73% <p>
-											</section>
-										</section>
-									<br/>
-										<section class="progressBar">
-											<section class="progress" style="width: 13%">
-												<p> 13% </p>
-											</section>
-										</section>
-									<br/>
-										<section class="progressBar">
-											<section class="progress" style="width: 61%">	
-												<p> 61% </p>
-											</section>
-										</section>
-									</section>
-							</section>
-						</section>
-				</section>
-					
-				<section class="cards portfolio">
-				
-					<section class="container">		
-						<section class="card big">
-							<section class="options">
-								<button class="more">
-									<i class="material-icons md-18 md-dark"> more_vert </i>
-								</button>
-								<section class="cardMenu">
-									<button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
-								</section>
-							</section>
-							
-							<section class="text">
-							
-							</section>
-						</section>
-					</section>
-					
-				</section>
-					
-			</section>
-			
-				<button type="button" class="FAB bottom"> <!-- FAB at the right bottom corner -->
-					<i class="FABicon material-icons md-36 md-light"> mail </i>
-				</button>
-				
-				<section class="undo">
-					<button class="undoButton">
-						Undo <i class="undoIcon material-icons md-24 md-light"> undo </i>
-					</button>
-				</section>
-				
-				<footer>
-				</footer>
-				
-	</body>
+   <head>
+      <!-- Site info -->
+      <title>Lucas' resume</title>
+      <meta name="Lucas' resume" content="The online resume of Lucas van Osenbruggen.">
+      <!-- Js, jQuery and Css -->
+      <link type="text/css" rel="stylesheet" href="cv.css" />
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+      <script type="text/javascript" src="cv.js"></script>
+      <!-- Icons and fonts https://www.fonts.google.com -->
+      <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!-- Make favicon at http://realfavicongenerator.net/ -->
+      <link rel="apple-touch-icon" href="Favicon/apple-touch-icon.png">
+      <link rel="icon" type="image/png" href="Favicon/favicon-32x32.png">
+      <link rel="icon" type="image/png" href="Favicon/favicon-16x16.png">
+      <link rel="manifest" href="Favicon/manifest.json">
+      <link rel="mask-icon" href="Favicon/safari-pinned-tab.svg" color="#757575">
+   </head>
+   
+   <body class="disable-selection">
+   
+      <div class="overlay">
+      </div>
+	  
+      <header>
+         <button type="button" class="menu-icon hamburger"><i class="material-icons md-36 md-light"> menu </i></button>
+         <button type="button" class="menu-icon close"><i class="material-icons md-36 md-light"> close </i></button>
+         <div class="headtext">
+            <h1> Lucas van Osenbruggen </h1> <!-- Title -->
+         </div>
+         <nav>
+            <ul>
+               <li class="navItem current"><a href="#" id="aboutMe"> About me </a></li>
+               <li class="navItem"><a href="#" id="experience"> Experience </a></li>
+               <li class="navItem"><a href="#" id="skills"> Skills </a></li>
+               <li class="navItem"><a href="#" id="portfolio"> Portfolio </a></li>
+			   <li class="navMore "><i class="material-icons md-36 md-light down"> keyboard_arrow_down </i></li>
+            </ul>
+         </nav>
+         <button type="button" class="FAB top"> <!-- FAB at the header -->
+            <i class="FABicon material-icons md-36 md-light"> phone </i>
+         </button>
+      </header>
+	  
+      <div class="menu">
+         <div class="menuItems">
+            <button type="button" class="menuItem theme"> <i class="material-icons md-36 md-dark"> palette </i> Theme </button> <!-- To change the theme -->
+         </div>
+      </div>
+	  
+      <div class="changeTheme">
+         <ul>
+            <li><button type="button" class="themeOption" id="purple"></button></li>
+            <li><button type="button" class="themeOption" id="teal"></button></li>
+            <li><button type="button" class="themeOption" id="blue"></button></li>
+            <li><button type="button" class="themeOption" id="red"></button></li>
+         </ul>
+      </div>
+	  
+      <div class="main">
+	  
+         <div class="cards aboutMe">
+            <div class="container">
+               <div class="card small">
+                  <div class="options">
+                     <button class="more">
+                     <i class="material-icons md-18 md-light"> more_vert </i>
+                     </button>
+                     <div class="cardMenu">
+                        <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+                     </div>
+                  </div>
+                  <img class="full" src="Image/LucasPhoto.jpg" alt="A picture of my face."> <!-- Images outside text div -->
+                  <div class="text">
+                     <p> My picture. </p>
+                  </div>
+               </div>
+            </div>
+            <div class="container">
+               <div class="card medium">
+                  <div class="options">
+                     <button class="more">
+                     <i class="material-icons md-18 md-dark"> more_vert </i>
+                     </button>
+                     <div class="cardMenu">
+                        <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+                     </div>
+                  </div>
+                  <div class="text">
+                     <h2> About me </h2>
+                     <br/>
+                     <p> 
+                        My name is Lucas van Osenbruggen. <br/>
+                        I'm <span class="age"> </span> years old and live in the Netherlands. <br/>
+                        My interest include design and coding <i>(hence this site).</i> 
+                        I made this website from scratch and it serves as my resume as well as my portfolio.
+                        It has some cool features like automaticly updating age counters and infocards you can hide. <br/>
+                     </p>
+                     <br/>
+                     <p>
+                        To learn about my work history or skills, and to see some of my work check out the other pages in the navigation bar. <br/>
+                        To contact me, use the button in the right corner.
+                     </p>
+                  </div>
+               </div>
+            </div>
+         </div>
+		 
+         <div class="cards experience">
+            <div class="container">
+               <div class="card big">
+                  <div class="options">
+                     <button class="more">
+                     <i class="material-icons md-18 md-dark"> more_vert </i>
+                     </button>
+                     <div class="cardMenu">
+                        <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+                     </div>
+                  </div>
+                  <div class="text">
+                  </div>
+               </div>
+            </div>
+         </div>
+		 
+         <div class="cards skills">
+            <div class="container">
+               <div class="card medium">
+                  <div class="options">
+                     <button class="more">
+                     <i class="material-icons md-18 md-dark"> more_vert </i>
+                     </button>
+                     <div class="cardMenu">
+                        <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+                     </div>
+                  </div>
+                  <div class="text">
+                     <h1> Web development </h1>
+                     <br/>
+                     <div class="progressBar">
+                        <div class="progress normal" style="width: 65%">
+                           <p>  </p>
+                        </div>
+                     </div>
+                     <br/>
+                     <div class="collapse">
+                        <li>
+                           <h1> Skill breakdown </h1>
+                           <div>
+                              <div class="progressBar">
+                                 <div class="progress small" style="width: 63%">
+                                    <p> Html 
+                                    <p>
+                                 </div>
+                              </div>
+                              <br/>
+                              <div class="progressBar">
+                                 <div class="progress small" style="width: 58%">
+                                    <p> Css </p>
+                                 </div>
+                              </div>
+                              <br/>
+                              <div class="progressBar">
+                                 <div class="progress small" style="width: 60%">
+                                    <p> Js </p>
+                                 </div>
+                              </div>
+                           </div>
+                        </li>
+                     </div>
+                     <div class="collapse">
+                        <li>
+                           <h1> More </h1>
+                           <div>
+                              <p> </p>
+                           </div>
+                        </li>
+                     </div>
+                  </div>
+               </div>
+               <div class="card medium">
+                  <div class="options">
+                     <button class="more">
+                     <i class="material-icons md-18 md-dark"> more_vert </i>
+                     </button>
+                     <div class="cardMenu">
+                        <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+                     </div>
+                  </div>
+                  <div class="text">
+                     <h1> Graphic design </h1>
+                     <br/>
+                     <div class="progressBar">
+                        <div class="progress normal" style="width: 25%">
+                           <p>  </p>
+                        </div>
+                     </div>
+                     <br/>
+                     <div class="collapse">
+                        <li>
+                           <h1> Skill breakdown </h1>
+                           <div>
+                              <div class="progressBar">
+                                 <div class="progress small" style="width: 23%">
+                                    <p> Illustrator 
+                                    <p>
+                                 </div>
+                              </div>
+                              <br/>
+                              <div class="progressBar">
+                                 <div class="progress small" style="width: 16%">
+                                    <p> Photoshop </p>
+                                 </div>
+                              </div>
+                              <br/>
+                              <div class="progressBar">
+                                 <div class="progress small" style="width: 40%">
+                                    <p> Color </p>
+                                 </div>
+                              </div>
+                           </div>
+                        </li>
+                     </div>
+                     <div class="collapse">
+                        <li>
+                           <h1> More </h1>
+                           <div>
+                              <p> </p>
+                           </div>
+                        </li>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="container">
+               <div class="card small">
+                  <div class="options">
+                     <button class="more">
+                     <i class="material-icons md-18 md-dark"> more_vert </i>
+                     </button>
+                     <div class="cardMenu">
+                        <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+                     </div>
+                  </div>
+                  <div class="text">
+                     <h1> Languages </h1>
+                     <br/>
+                     <div class="progressBar">
+                        <div class="progress normal" style="width: 75%">
+                           <p> Dutch </p>
+                        </div>
+                     </div>
+                     <br/>
+                     <div class="progressBar">
+                        <div class="progress normal" style="width: 68%">
+                           <p> English </p>
+                        </div>
+                     </div>
+                     <br/>
+                     <div class="progressBar">
+                        <div class="progress normal" style="width: 34%">
+                           <p> German </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+		 
+         <div class="cards portfolio">
+            <div class="container">
+               <div class="card big">
+                  <div class="options">
+                     <button class="more">
+                     <i class="material-icons md-18 md-dark"> more_vert </i>
+                     </button>
+                     <div class="cardMenu">
+                        <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i> Clear card </button>
+                     </div>
+                  </div>
+                  <div class="text">
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+	  
+      <button type="button" class="FAB bottom"> <!-- FAB at the right bottom corner -->
+         <i class="FABicon material-icons md-36 md-light"> mail </i>
+      </button>
+	  
+      <div class="undo">
+         <button class="undoButton">
+         Undo <i class="undoIcon material-icons md-24 md-light"> undo </i>
+         </button>
+      </div>
+	  
+      <footer>
+      </footer>
+	  
+   </body>
 </html>
