@@ -1,393 +1,513 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<title> Boarding concept </title>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> <!-- jQuery -->
-		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> <!-- Font -->
-		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!-- Icons -->
-		<style>
-			* {
-			  margin: 0;
-			  padding: 0;
-			  box-sizing: border-box;
-			  font-family: 'Roboto', sans-serif;
-			  -webkit-user-select: none; 
-			  -webkit-touch-callout: none; 
-			  cursor: default;
-			  /*border: 1px solid grey;*/
+<html lang="en">
+<head>
+	<title>Boarding concept</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script><!-- jQuery -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"><!-- Font -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"><!-- Icons -->
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Roboto', sans-serif;
+			-webkit-user-select: none;
+			-webkit-touch-callout: none;
+			cursor: default;
+			/*border: 1px solid grey;*/
+		}
+		body {
+			background-color: #eeeeee;
+		}
+		.screen {
+			width: 411px;
+			height: 731px;
+			margin: auto;
+			background-color: #4caf50;
+			box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+			transition: 0.4s;
+			overflow: hidden;
+		}
+		.screen:hover {
+			box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.45);
+		}
+		:focus, :active {
+			outline: none;
+		}
+		::webkit-scrollbar {
+			visibility: hidden;
+		}
+		::selection {
+			background: transparent;
+		}
+		#main {
+			margin: 4%;
+		}
+		#contents {
+			height: 45%;
+		}
+		.content {
+			height: 100%;
+			position: relative;
+			display: none;
+		}
+		header {
+			height: 45%;
+			position: relative;
+		}
+		header img {
+			width: 100%;
+		}
+		.text {
+			height: 100%;
+			padding: 35px;
+		}
+		h2 {
+			color: rgba(255, 255, 255, 0.75);
+			font-weight: normal;
+		}
+		p {
+			color: rgba(255, 255, 255, 0.65);
+		}
+		ul {
+			heigth: 80%;
+			overflow: scroll;
+		}
+		li {
+			list-style-type: none;
+			color: rgba(255, 255, 255, 0.65);
+			margin: 5px;
+		}
+		.checkbox {
+			float: right;
+			font-size 20px;
+			color: #81c784
+		}
+		#options p {
+			display: inline;
+		}
+		#options li {
+			margin: 10px 0px;
+			vertical-align: middle;
+		}
+		.option {
+			display: inline-block;
+			float: left;
+			margin: 0px 20px;
+			font-size: 32px;
+			color: rgba(255, 255, 255, 0.65);
+		}
+		.button1 {
+			background-color: #66bb6a;
+			border: none;
+			padding: 10px;
+			margin: 10% 5%;
+			width: 90%;
+			color: rgba(255, 255, 255, 0.75);
+		}
+		#second input {
+			background-color: #43a047;
+			border: none;
+			padding: 10px;
+			width: 90%;
+			margin: 0% 5%;
+			color: rgba(255, 255, 255, 0.65)
+		}
+		footer {
+			height: 10%;
+			position: relative;
+		}
+		hr {
+			border: 1px solid #66bb6a;
+			width: 90%;
+			margin: 0% 5%
+		}
+		.options hr {
+			margin: 3% 5%
+		}
+		.container {
+			padding: 5% 0%;
+		}
+		.arrow {
+			background-color: transparent;
+			color: #ffffff;
+			border: none;
+			display: inline-block;
+			vertical-align: middle;
+			width: 15%;
+			height: 30px;
+		}
+		.next {
+			float: right;
+			text-align: left;
+		}
+		.previous {
+			float: left;
+			text-align: right;
+			visibility: hidden;
+		}
+		.page {
+			display: inline-block;
+			text-align: center;
+			width: 70%;
+			vertical-align: middle;
+			height: 30px;
+		}
+		.dots {
+			margin-top: 5px;
+		}
+		.dot {
+			transition: 0.4s;
+			display: inline-block;
+			border-radius: 100%;
+			height: 10px;
+			width: 10px;
+			margin: 0px 4px;
+			background-color: rgba(0, 0, 0, 0.25);
+		}
+		.dot.active {
+			background-color: rgba(255, 255, 255, 0.75);
+		}
+		.right {
+			font-size: 25px;
+			color: rgba(255, 255, 255, 0.75);
+		}
+		.left {
+			font-size: 25px;
+			color: rgba(255, 255, 255, 0.75);
+		}
+		.banner {
+			background-color: #e0e0e0;
+			padding: 10px;
+			text-align: center;
+		}
+		.banner a {
+			text-decoration: none;
+			color: #9e9e9e;
+			transition: 0.4s;
+		}
+		.close {
+			float: right;
+			font-size: 20px;
+		}
+		.close.dark {
+			color: #616161;
+		}
+		.close.light {
+			color: rgba(255, 255, 255, 0.75);
+		}
+		.banner a:hover {
+			color: #757575;
+		}
+		.loading {
+			width: 35%;
+			margin: 50% auto;
+			display: none;
+			text-align: center;
+		}
+		.loading h2 {
+			margin-bottom: 75%;
+		}
+		.spinner {
+			display: inline-block;
+			border: 15px solid #66bb6a;
+			border-top: 15px solid rgba(255, 255, 255, 0.45);
+			height: 100px;
+			width: 100px;
+			border-radius: 100%;
+			animation: spin 2s ease infinite;
+		}
+		@keyframes spin {
+			0% {
+				transform: rotate(0deg);
 			}
-			body {
-			  background-color: #eeeeee;
-			  padding: 5%;
+			100% {
+				transform: rotate(360deg);
 			}
-			.screen {
-			  width: 411px;
-			  height: 731px;
-			  margin: auto;
-			  background-color: #4caf50;
-			  box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
-			  transition: 0.4s;
-			  overflow: hidden;
-			}
-			.screen:hover {
-			  box-shadow: 0px 8px 25px rgba(0,0,0,0.45);
-			}
-			:focus, :active { 
-			  outline: none; 
-			}
-			::webkit-scrollbar {
-			  visibility: hidden;
-			}
-			
-			#contents {
-				height: 45%;
-			}
-			.content {
-			  height: 100%;
-			  position: relative;
-			  display: none;
-			}
-			header {
-			  height: 45%;
-			}
-			header img {
-			  width: 100%;
-			}
-			.text {
-			  height: 100%;
-			  padding: 35px;
-			}
-			h2 {
-			  color: rgba(255, 255, 255, 0.75);
-			  font-weight: normal;
-			}
-			p {
-			  color: rgba(255, 255, 255, 0.65);
-			}
-			ul {
-			  heigth: 80%;
-			  overflow: scroll;
-			}
-			li {
-		 	  list-style-type: none;
-			  color: rgba(255, 255, 255, 0.65);
-			  margin: 5px;
-			}
-			.checkbox {
-			  float: right;
-			  font-size 20px;
-			  color: #81c784
-			}
-			#options p {
-			  display: inline;
-			}
-			#options li {
-			  margin: 10px 0px;
-			  vertical-align: middle;
-			}
-			.option {
-			  display: inline-block;
-			  float: left;
-			  margin: 0px 20px;
-			  font-size: 32px;
-			  color: rgba(255, 255, 255, 0.65);
-			}
-			
-			.button1 {
-			  background-color: #66bb6a;
-			  border: none;
-			  padding: 10px;
-			  margin: 10% 5%;
-			  width: 90%;
-			  color: rgba(255, 255, 255, 0.75);
-			}
-			#second input {
-			  background-color: #43a047;
-			  border: none;
-			  padding: 10px;
-			  width: 90%;
-			  margin: 0% 5%;
-			  color: rgba(255, 255, 255, 0.65)
-			}
-			footer {
-			  height: 10%;
-			  position: relative;
-			}
-			hr {
-			  border: 1px solid #66bb6a;
-			  width: 90%; 
-			  margin: 0% 5%
-			}
-			.options hr {
-				margin: 3% 5%
-			}
-			.container {
-			  padding: 5% 0%;
-			}
-			.arrow {
-			  background-color: transparent;
-			  color: #ffffff;
-			  border: none;
-			  display: inline-block;
-			  vertical-align: middle;
-			  width: 15%;
-			  height: 30px;
-			}
-			.next {
-			  float: right;
-			  text-align: left;
-			}
-			.previous {
-			  float: left;
-			  text-align: right;
-			  visibility: hidden;
-			}
-			.page {
-			  display: inline-block;
-			  text-align: center;
-			  width: 70%;
-			  vertical-align: middle;
-			  height: 30px;
-			}
-			.dots {
-			  margin-top: 5px;
-			}
-			.dot {
-			  transition: 0.4s;
-			  display: inline-block;
-			  border-radius: 100%;
-			  height: 10px;
-			  width: 10px;
-			  margin: 0px 4px;
-			  background-color: rgba(0, 0, 0, 0.25);
-			}
-			.dot.active {
-			  background-color: rgba(255, 255, 255, 0.75);
-			}
-			.right {
-			  font-size: 25px;
-			  color: rgba(255, 255, 255, 0.75);
-			}
-			.left {
-			  font-size: 25px;
-			  color: rgba(255, 255, 255, 0.75);
-			}
-		</style>
-		<script type="text/javascript">
-			$(document).ready(function()
+		}
+		.thanks {
+			display: none;
+			margin: 4%;
+			width: 250px;
+			position: absolute;
+			background-color: #616161;
+			border-radius: 5px;
+			padding: 20px;
+			box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+			transition: 0.4s;
+		}
+		.thanks:hover {
+			box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.45);
+		}
+	</style>
+	<script type="text/javascript">
+		$(document).ready(function()
+		{
+			var $previous = $(".previous");
+			var $next = $(".next");
+			var $check = $(".checkbox");
+			var $close = $(".close");
+			var $footer = $("footer");
+			var $thanks = $(".thanks");
+			var $header = $("header");
+			var $loading = $(".loading");
+			var screens = [$("#first"), $("#second"), $("#third"), $("#fourth")];
+			var dots = [$("#one"), $("#two"), $("#three"), $("#four")];
+			var currentScreen = 0; 
+		
+			function switchScreen(num)
 			{
-				var $previous = $(".previous");
-				var $next = $(".next");
-				var $check = $(".checkbox");
-				var $done = $(".done");
-				var $footer = $("footer");
-				var screens = [$("#first"), $("#second"), $("#third"), $("#fourth")];
-				var dots = [$("#one"), $("#two"), $("#three"), $("#four")];
-				var currentScreen = 0; 
-				
-				$previous.css('visibility', 'hidden');
-				screens[0].show();
-			
-				function switchScreen(num)
+				function hideScreen() // Hides current screen with animation
 				{
-					function hideScreen() // Hides current screen with animation
+					if (num == 1) // To the left
 					{
-						if (num == 1) // To the left
+						console.log("Hiding screen num " + currentScreen + " to the left.");
+						screens[currentScreen].animate(
+						{left: "-100%"},
+						function()
 						{
-							console.log("Hiding screen num " + currentScreen + " to the left.");
-							screens[currentScreen].animate(
-							{left: "-100%"},
+							$(this).hide();
+						});
+						screens[currentScreen].css({left: "0%"});
+					}
+					else // To the right
+					{
+						console.log("Hiding screen num " + currentScreen + " to the right.");
+						screens[currentScreen].animate
+						(
+							{left: "100%", bottom: "100%"},
 							function()
 							{
 								$(this).hide();
-							});
-							screens[currentScreen].css({left: "0%"});
-						}
-						else // To the right
-						{
-							console.log("Hiding screen num " + currentScreen + " to the right.");
-							screens[currentScreen].animate
-							(
-								{left: "100%", bottom: "100%"},
-								function()
-								{
-									$(this).hide();
-								}
-							);
-							screens[currentScreen].css({left: "0%"});
-						}
-						dots[currentScreen].removeClass("active");
-					};
-
-					function buttons() // Changes the buttons
-					{
-						if (currentScreen > 0) // Not the first screen
-						{
-							$previous.css('visibility', 'visible');
-						}
-						else
-						{
-							$previous.css('visibility', 'hidden');
-						}
-						if (currentScreen == screens.length - 1) // At the final screen
-						{
-							$next.children().text("done");
-							$next.addClass("done");
-						}
-						else 
-						{
-							$next.children().text("keyboard_arrow_right");
-							$next.removeClass("done");
-						}
-					};
-					
-					function showScreen() // Shows new screen with animation
-					{
-						if (num == 1) // From the right
-						{
-							console.log("Showing screen num " + currentScreen + " from the right.");
-							screens[currentScreen].css({left: "100%", bottom: "0%"});
-							screens[currentScreen].show
-							(
-								function()
-								{
-									$(this).animate({left: "0%"})
-								}
-							);
-						}
-						else // From the left
-						{
-							console.log("Showing screen num " + currentScreen + " from the left.");
-							screens[currentScreen].css({left: "-100%"});
-							screens[currentScreen].show
-							(
-								function()
-								{
-									$(this).animate({left: "0%"})
-								}
-							);
-						}
-						dots[currentScreen].addClass("active");
-					};
-			
-					hideScreen();
-					currentScreen += num;
-					buttons();
-					showScreen();
+							}
+						);
+						screens[currentScreen].css({left: "0%"});
+					}
+					dots[currentScreen].removeClass("active");
 				};
-				
-				$next.click(function() // Forward
+				function buttons() // Changes the buttons
 				{
-					if (!$(this).hasClass("done"))
+					if (currentScreen > 0) // Not the first screen
 					{
-						switchScreen(1);
+						$previous.css('visibility', 'visible');
 					}
-				});
-				$previous.click(function() // Backwards
+					else
+					{
+						$previous.css('visibility', 'hidden');
+					}
+					if (currentScreen == screens.length - 1) // At the final screen
+					{
+						$next.children().text("done");
+						$next.addClass("done");
+					}
+					else 
+					{
+						$next.children().text("keyboard_arrow_right");
+						$next.removeClass("done");
+					}
+				};
+				function showScreen() // Shows new screen with animation
 				{
-					switchScreen(-1);
-				});
-				
-				$check.click(function()
+					if (num == 1) // From the right
+					{
+						console.log("Showing screen num " + currentScreen + " from the right.");
+						screens[currentScreen].css({left: "100%", bottom: "0%"});
+						screens[currentScreen].show(function()
+						{
+							$(this).animate
+							(
+								{left: "0%"},
+								function()
+								{
+									$next.attr("disabled", false); // Button can be clicked again
+								}
+							)
+						});
+					}
+					else // From the left
+					{
+						console.log("Showing screen num " + currentScreen + " from the left.");
+						screens[currentScreen].css({left: "-100%"});
+						screens[currentScreen].show(function()
+						{
+							$(this).animate
+							(
+								{left: "0%"},
+								function()
+								{
+									$previous.attr("disabled", false); // Button can be clicked again
+								}
+							)
+						});
+					}
+					dots[currentScreen].addClass("active");
+				};
+		
+				hideScreen();
+				currentScreen += num;
+				buttons();
+				showScreen();
+			};
+			function done()
+			{
+				console.log("Complete");
+				screens[currentScreen].fadeOut();
+				$footer.animate
+				(
+					{bottom: "-100%"},
+					function()
+					{
+						$footer.hide();
+					}
+				);
+				$header.animate
+				(
+					{top: "-100%"},
+					function()
+					{
+						$header.hide()
+						$loading.fadeIn()
+					}
+				);
+				$thanks.parent().hide();
+				$thanks.show();
+				$thanks.parent().delay(2500).fadeIn("slow");
+			}
+			
+			$next.click(function() // Forward
+			{
+				if (!$(this).hasClass("done"))
 				{
-					if ($(this).hasClass("checked")) // Unchecks box
-					{
-						$(this).removeClass("checked");
-						$(this).text("check_box_outline_blank");
-					}
-					else // Checks box
-					{
-						$(this).addClass("checked");
-						$(this).text("check_box");
-					}
-				});
+					$(this).attr("disabled", true); // No multiple clicks
+					switchScreen(1);
+				}
+				else 
+				{
+					done();
+				}
 			});
-		</script>
-	</head>
-	
-	<body>
+			$previous.click(function() // Backwards
+			{
+				$(this).attr("disabled", true); // No multiple clicks
+				switchScreen(-1);
+			});
+			$check.click(function()
+			{
+				if ($(this).hasClass("checked")) // Unchecks box
+				{
+					$(this).removeClass("checked");
+					$(this).text("check_box_outline_blank");
+				}
+				else // Checks box
+				{
+					$(this).addClass("checked");
+					$(this).text("check_box");
+				}
+			});
+			$close.click(function()
+			{
+				$(this).parent().parent().fadeOut();
+			});
+			
+			$previous.css('visibility', 'hidden');
+			screens[0].show();
+		});
+	</script>
+</head>
+<body>
+	<div>
 		<div class="banner">
-			<a href="https://material.uplabs.com/challenges/the-materialup-challenge"> The MaterialUp Onboarding challenge </a>
+			<a href="https://material.uplabs.com/challenges/the-materialup-challenge">The MaterialUp Onboarding challenge</a> <i class="material-icons close dark">close</i>
 		</div>
-		<div id="main">
-			<div class="screen">
-				<header> 
-					<img src="Images/bannerGreen.jpg"/>
-				</header>
-				<div id="contents">
-					<div id="first" class="content">
-						<section class="text"> 
-							<h2> Welcome to Android </h2>
-							<br/>
-							<p> 
-								Android is the most popular mobile OS today. 
-								Join the milions of people using Android.
-								In a moment you'll have acces to the milions of movies, songs, books, games and apps available on Google Play.
-							</p>
-							<br/>
-							<p> But first, let's get your device set up. </p>
-						</section>
-					</div>
-					<div id="second" class="content">
-						<section class="text">
-							<h2> Do you have a Google account? </h2>
-							<br/>
-							<input type="text" value="user@example.com"> </input> <br/>
-							<br/>
-							<input type="password" value="password"> </input> <br/>
-							<button class="button1"> Log in </button>
-						</section>
-					</div>
-					<div id="third" class="content">
-						<section class="text">
-							<h2> Customise your settings </h2>
-							<br/>
-							<ul id="options">
-								<li>
-									<i class="material-icons option"> fingerprint </i> <p> Setup your fingerprint scanner for more safety. </p>
-								</li>
-								<hr/>
-								<li>
-									<i class="material-icons option"> wb_cloudy </i> <p> Activate Google Now to get updates on weather, news and lot's more. </p>
-								</li>
-								<hr/>
-								<li>
-									<i class="material-icons option"> payment </i> <p> Setup Android Pay to pay with your phone. </p>
-								</li>
-							</ul>
-						</section>
-					</div>
-					<div id="fourth" class="content">
-						<section class="text">
-							<h2> What default apps would you like? </h2>
-							<br/> 
-							<ul>
-								<li> Play Games <i class="material-icons checked checkbox"> check_box </i></li>
-								<li> Play Movies <i class="material-icons checked checkbox"> check_box </i></li>
-								<li> Hangouts <i class="material-icons checked checkbox"> check_box </i></li>
-								<li> Google+ <i class="material-icons checked checkbox"> check_box </i></li>
-								<li> Duo <i class="material-icons checked checkbox"> check_box </i></li>
-								<li> Google Sheets <i class="material-icons checked checkbox"> check_box </i></li>
-							</ul>
-						</section>
-					</div>
-				</div>
-				<footer>
-					<hr/>
-					<div class="container">
-						<div class="page">
-							<div class="dots">
-								<div id="one" class="dot active"> </div>
-								<div id="two" class="dot"> </div>
-								<div id="three" class="dot"> </div>
-								<div id="four" class="dot"> </div>
-							</div>
-						</div>
-						<button class="next arrow"><i class="material-icons right"> keyboard_arrow_right </i></button>
-						<button class="previous arrow"><i class="material-icons left"> keyboard_arrow_left </i></button>
-					</div>		
-				</footer>
+	</div>
+	<div>
+		<div class="thanks">
+			<i class="material-icons close light">close</i>
+			<p>Thanks for viewing my idea. This is my first time making a concept with html, I hope it's working right.</p><br>
+			<p>If you have any ideas for improvement or suggestions, please comment.</p>
+		</div>
+	</div>
+	<div id="main">
+		<div class="screen">
+			<div class="loading">
+				<h2>Initialising</h2><br>
+				<div class="spinner"></div>
 			</div>
+			<header>
+				<img src="Images/bannerGreen.jpg">
+			</header>
+			<div id="contents">
+				<div class="content" id="first">
+					<section class="text">
+						<h2>Welcome to Android</h2><br>
+						<p>Android is the most popular mobile OS today. There are milions of unique people on Android on hundreds of different devices.<br>
+						The keystone feature of Android is customizability, you can make your device as unique as yourself.</p><br>
+						<p><i>"Be together, not the same"</i></p>
+					</section>
+				</div>
+				<div class="content" id="second">
+					<section class="text">
+						<h2>Do you have a Google account?</h2><br>
+						<br>
+						<input type="text" value="user@example.com"> <br>
+						<br>
+						<input type="password" value="password"> <br>
+						<button class="button1">Log in</button>
+					</section>
+				</div>
+				<div class="content" id="third">
+					<section class="text">
+						<h2>Customise your settings</h2><br>
+						<ul id="options">
+							<li>
+								<i class="material-icons option">fingerprint</i>
+								<p>Setup your fingerprint scanner for more safety.</p>
+							</li>
+							<li style="list-style: none; display: inline">
+								<hr>
+							</li>
+							<li>
+								<i class="material-icons option">wb_cloudy</i>
+								<p>Activate Google Now to get updates on weather, news and lot's more.</p>
+							</li>
+							<li style="list-style: none; display: inline">
+								<hr>
+							</li>
+							<li>
+								<i class="material-icons option">payment</i>
+								<p>Setup Android Pay to pay with your phone.</p>
+							</li>
+						</ul>
+					</section>
+				</div>
+				<div class="content" id="fourth">
+					<section class="text">
+						<h2>What default apps would you like?</h2><br>
+						<ul>
+							<li>Play Games <i class="material-icons checked checkbox">check_box</i></li>
+							<li>Play Movies <i class="material-icons checked checkbox">check_box</i></li>
+							<li>Hangouts <i class="material-icons checked checkbox">check_box</i></li>
+							<li>Google+ <i class="material-icons checked checkbox">check_box</i></li>
+							<li>Duo <i class="material-icons checked checkbox">check_box</i></li>
+							<li>Google Sheets <i class="material-icons checked checkbox">check_box</i></li>
+						</ul>
+					</section>
+				</div>
+			</div>
+			<footer>
+				<hr>
+				<div class="container">
+					<div class="page">
+						<div class="dots">
+							<div class="dot active" id="one"></div>
+							<div class="dot" id="two"></div>
+							<div class="dot" id="three"></div>
+							<div class="dot" id="four"></div>
+						</div>
+					</div><button class="next arrow"><i class="material-icons right">keyboard_arrow_right</i></button> <button class="previous arrow"><i class="material-icons left">keyboard_arrow_left</i></button>
+				</div>
+			</footer>
 		</div>
-	</body>
+	</div>
+</body>
 </html>
