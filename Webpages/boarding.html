@@ -45,15 +45,18 @@
 			margin: 4%;
 		}
 		#contents {
-			height: 45%;
+			height: 90%;
 		}
 		.content {
 			height: 100%;
 			position: relative;
 			display: none;
 		}
+		.centerContent {
+			margin: 20% 0%;
+		}
 		header {
-			height: 45%;
+			height: 50%;
 			position: relative;
 		}
 		header img {
@@ -76,7 +79,7 @@
 		li {
 			list-style-type: none;
 			color: rgba(255, 255, 255, 0.65);
-			margin: 5px;
+			margin: 15px;
 		}
 		.checkbox {
 			float: right;
@@ -87,7 +90,7 @@
 			display: inline;
 		}
 		#options li {
-			margin: 10px 0px;
+			margin: 20px 0px;
 			vertical-align: middle;
 		}
 		.option {
@@ -108,7 +111,7 @@
 		#second input {
 			background-color: #43a047;
 			border: none;
-			padding: 10px;
+			padding: 15px;
 			width: 90%;
 			margin: 0% 5%;
 			color: rgba(255, 255, 255, 0.65)
@@ -127,6 +130,20 @@
 		}
 		.container {
 			padding: 5% 0%;
+		}
+		.headBar {
+			height: 5%;
+			background-color: #43a047;
+			width: 100%;
+			display: none;
+			position: relative;
+		}
+		.statusIcon {
+			margin: 10px 4px;
+			font-size: 16px;
+			color: rgba(255, 255, 255, 0.75);
+			display: inline-block;
+			float: right;
 		}
 		.arrow {
 			background-color: transparent;
@@ -245,16 +262,18 @@
 		{
 			var $previous = $(".previous");
 			var $next = $(".next");
+			var $arrows = $(".arrow");
 			var $check = $(".checkbox");
 			var $close = $(".close");
 			var $footer = $("footer");
 			var $thanks = $(".thanks");
 			var $header = $("header");
+			var $headBar = $(".headBar");
 			var $loading = $(".loading");
-			var screens = [$("#first"), $("#second"), $("#third"), $("#fourth")];
-			var dots = [$("#one"), $("#two"), $("#three"), $("#four")];
+			var screens = [$("#first"), $("#second"), $("#third")]; // All screens
+			var dots = [$("#one"), $("#two"), $("#three")];
 			var currentScreen = 0; 
-		
+			
 			function switchScreen(num)
 			{
 				function hideScreen() // Hides current screen with animation
@@ -287,7 +306,7 @@
 				};
 				function buttons() // Changes the buttons
 				{
-					if (currentScreen > 0) // Not the first screen
+					if (currentScreen > 1) // Not the second screen
 					{
 						$previous.css('visibility', 'visible');
 					}
@@ -319,7 +338,13 @@
 								{left: "0%"},
 								function()
 								{
-									$next.attr("disabled", false); // Button can be clicked again
+									$arrows.attr("disabled", false); // Button can be clicked again
+									if (currentScreen == 1) // Only when going from 0 to 1
+									{
+										$headBar.css({height: "0%"});
+										$headBar.show();
+										$headBar.animate({height: "5%"});
+									}
 								}
 							)
 						});
@@ -335,7 +360,7 @@
 								{left: "0%"},
 								function()
 								{
-									$previous.attr("disabled", false); // Button can be clicked again
+									$arrows.attr("disabled", false); // Button can be clicked again
 								}
 							)
 						});
@@ -352,6 +377,14 @@
 			{
 				console.log("Complete");
 				screens[currentScreen].fadeOut();
+				$headBar.animate
+				(
+					{height: "0"},
+					function()
+					{
+						$headBar.hide();
+					}
+				);
 				$footer.animate
 				(
 					{bottom: "-100%"},
@@ -378,7 +411,7 @@
 			{
 				if (!$(this).hasClass("done"))
 				{
-					$(this).attr("disabled", true); // No multiple clicks
+					$arrows.attr("disabled", true); // No multiple clicks
 					switchScreen(1);
 				}
 				else 
@@ -388,7 +421,7 @@
 			});
 			$previous.click(function() // Backwards
 			{
-				$(this).attr("disabled", true); // No multiple clicks
+				$arrows.attr("disabled", true); // No multiple clicks
 				switchScreen(-1);
 			});
 			$check.click(function()
@@ -433,63 +466,71 @@
 				<h2>Initialising</h2><br>
 				<div class="spinner"></div>
 			</div>
-			<header>
-				<img src="Images/bannerGreen.jpg">
-			</header>
 			<div id="contents">
+				<div class="headBar">
+					<i class="material-icons statusIcon">battery_full</i>
+					<i class="material-icons statusIcon">signal_cellular_no_sim</i>
+					<i class="material-icons statusIcon">signal_wifi_off</i>
+				</div>
 				<div class="content" id="first">
+					<header>
+						<img src="Images/bannerGreen.jpg">
+					</header>
 					<section class="text">
 						<h2>Welcome to Android</h2><br>
-						<p>Android is the most popular mobile OS today. There are milions of unique people on Android on hundreds of different devices.<br>
-						The keystone feature of Android is customizability, you can make your device as unique as yourself.</p><br>
+						<p>Let's customise yout device to be as unique as yourself.</p>
+						<br>
 						<p><i>"Be together, not the same"</i></p>
 					</section>
 				</div>
 				<div class="content" id="second">
 					<section class="text">
-						<h2>Do you have a Google account?</h2><br>
-						<br>
-						<input type="text" value="user@example.com"> <br>
-						<br>
-						<input type="password" value="password"> <br>
-						<button class="button1">Log in</button>
+						<div class="centerContent">
+							<br/>
+							<h2>Do you have a Google account?</h2>
+							<br/>
+							<p>Login to retrieve your data and setup your settings right away.</p>
+							<br/> <br/> <br/>
+							<input type="text" value="user@example.com"> <br/>
+							<br/>
+							<input type="password" value="password"> <br/>
+							<br/>
+							<button class="button1">Log in</button>
+						</div>
 					</section>
 				</div>
 				<div class="content" id="third">
 					<section class="text">
-						<h2>Customise your settings</h2><br>
+						<br/> <br/>
+						<h2>Customise your settings</h2>
+						<br/>
+						<p>Settings you might want to change right now.</p>
+						<br/>
 						<ul id="options">
 							<li>
 								<i class="material-icons option">fingerprint</i>
 								<p>Setup your fingerprint scanner for more safety.</p>
 							</li>
-							<li style="list-style: none; display: inline">
-								<hr>
-							</li>
+							<hr/>
 							<li>
 								<i class="material-icons option">wb_cloudy</i>
 								<p>Activate Google Now to get updates on weather, news and lot's more.</p>
 							</li>
-							<li style="list-style: none; display: inline">
-								<hr>
-							</li>
+							<hr/>
 							<li>
 								<i class="material-icons option">payment</i>
 								<p>Setup Android Pay to pay with your phone.</p>
 							</li>
-						</ul>
-					</section>
-				</div>
-				<div class="content" id="fourth">
-					<section class="text">
-						<h2>What default apps would you like?</h2><br>
-						<ul>
-							<li>Play Games <i class="material-icons checked checkbox">check_box</i></li>
-							<li>Play Movies <i class="material-icons checked checkbox">check_box</i></li>
-							<li>Hangouts <i class="material-icons checked checkbox">check_box</i></li>
-							<li>Google+ <i class="material-icons checked checkbox">check_box</i></li>
-							<li>Duo <i class="material-icons checked checkbox">check_box</i></li>
-							<li>Google Sheets <i class="material-icons checked checkbox">check_box</i></li>
+							<hr/>
+							<li>
+								<i class="material-icons option">get_app</i>
+								<p>Choose the default apps you would like.</p>
+							</li>
+							<hr/>
+							<li>
+								<i class="material-icons option">network_wifi</i>
+								<p>Connect to your wifi network to acces the internet.</p>
+							</li>
 						</ul>
 					</section>
 				</div>
@@ -502,9 +543,10 @@
 							<div class="dot active" id="one"></div>
 							<div class="dot" id="two"></div>
 							<div class="dot" id="three"></div>
-							<div class="dot" id="four"></div>
 						</div>
-					</div><button class="next arrow"><i class="material-icons right">keyboard_arrow_right</i></button> <button class="previous arrow"><i class="material-icons left">keyboard_arrow_left</i></button>
+					</div>
+					<button class="next arrow"><i class="material-icons right">keyboard_arrow_right</i></button> 
+					<button class="previous arrow"><i class="material-icons left">keyboard_arrow_left</i></button>
 				</div>
 			</footer>
 		</div>
