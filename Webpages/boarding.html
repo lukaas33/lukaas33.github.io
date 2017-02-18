@@ -134,6 +134,7 @@
 		.headBar {
 			height: 5%;
 			background-color: #43a047;
+			padding: 0px 10px;
 			width: 100%;
 			display: none;
 			position: relative;
@@ -144,6 +145,12 @@
 			color: rgba(255, 255, 255, 0.75);
 			display: inline-block;
 			float: right;
+		}
+		#clock {
+			display: inline-block;
+			float: right;			
+			margin: 10px 2px;
+			font-size: 14px;
 		}
 		.arrow {
 			background-color: transparent;
@@ -405,7 +412,19 @@
 				$thanks.parent().hide();
 				$thanks.show();
 				$thanks.parent().delay(2500).fadeIn("slow");
-			}
+			};
+			function checkTime(i) {
+				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+				return i;
+			};
+			function startTime() {
+				var today = new Date();
+				var h = today.getHours();
+				var m = today.getMinutes();
+				m = checkTime(m);
+				$("#clock").text(h + ":" + m);
+				var t = setTimeout(startTime, 500);
+			};
 			
 			$next.click(function() // Forward
 			{
@@ -442,6 +461,7 @@
 				$(this).parent().parent().fadeOut();
 			});
 			
+			startTime();
 			$previous.css('visibility', 'hidden');
 			screens[0].show();
 		});
@@ -468,17 +488,18 @@
 			</div>
 			<div id="contents">
 				<div class="headBar">
+					<p id="clock"> </p>
 					<i class="material-icons statusIcon">battery_full</i>
 					<i class="material-icons statusIcon">signal_cellular_no_sim</i>
 					<i class="material-icons statusIcon">signal_wifi_off</i>
 				</div>
 				<div class="content" id="first">
 					<header>
-						<img src="Images/bannerGreen.jpg">
+						<img src="Images/bannerGreenRound.jpg">
 					</header>
 					<section class="text">
 						<h2>Welcome to Android</h2><br>
-						<p>Let's customise yout device to be as unique as yourself.</p>
+						<p>Let's customise your device to be as unique as yourself.</p>
 						<br>
 						<p><i>"Be together, not the same"</i></p>
 					</section>
@@ -489,7 +510,7 @@
 							<br/>
 							<h2>Do you have a Google account?</h2>
 							<br/>
-							<p>Login to retrieve your data and setup your settings right away.</p>
+							<p>Login to get all your data on your device.</p>
 							<br/> <br/> <br/>
 							<input type="text" value="user@example.com"> <br/>
 							<br/>
