@@ -24,7 +24,7 @@
 			width: 411px;
 			height: 731px;
 			margin: auto;
-			background-color: #4caf50;
+			background-color: #f5f5f5;
 			box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
 			transition: 0.4s;
 			overflow: hidden;
@@ -44,6 +44,9 @@
 		#main {
 			margin: 4%;
 		}
+		#first {
+			background-color: #4caf50;
+		}
 		#contents {
 			height: 90%;
 		}
@@ -52,8 +55,20 @@
 			position: relative;
 			display: none;
 		}
+		.head {
+			background-color: #4caf50;
+			padding: 35px;
+			box-shadow: 0px 8px 6px rgba(0,0,0,0.15);
+		}
+		.intro {
+			padding: 35px;
+		}
 		.centerContent {
-			margin: 20% 0%;
+			margin: 7.5% 0%;
+			padding: 35px;
+		}
+		.centerContent p {
+			color: #757575;
 		}
 		header {
 			height: 50%;
@@ -62,18 +77,19 @@
 		header img {
 			width: 100%;
 		}
-		.text {
-			height: 100%;
-			padding: 35px;
-		}
 		h2 {
-			color: rgba(255, 255, 255, 0.75);
+			color: rgba(255, 255, 255, 0.85);
 			font-weight: normal;
 			text-align: center;
 		}
 		p {
 			color: rgba(255, 255, 255, 0.65);
 			text-align: center;
+		}
+		.status {
+			display: block;
+			font-size: 14px;
+			color: rgba(0, 0, 0, 0.45);
 		}
 		ul {
 			heigth: 80%;
@@ -88,10 +104,11 @@
 			font-size 20px;
 			color: #81c784
 		}
-		#options p {
+		.options p {
 			display: inline;
+			margin-bottom: 5px;
 		}
-		#options li {
+		.options li {
 			margin: 20px 0px;
 			vertical-align: middle;
 		}
@@ -99,28 +116,50 @@
 			display: inline-block;
 			float: left;
 			margin: 0px 20px;
-			font-size: 32px;
-			color: rgba(255, 255, 255, 0.65);
+			color: rgba(0, 0, 0, 0.45);
+			font-size: 28px;
+		}
+		.wifi .option {
+			font-size: 24px;
 		}
 		.button1 {
-			background-color: #66bb6a;
+			background-color: #ff5252;
 			border: none;
 			padding: 10px;
 			margin: 10% 5%;
 			width: 90%;
 			color: rgba(255, 255, 255, 0.75);
 		}
-		#second input {
-			background-color: #43a047;
+		#fab {
+			border-radius: 100%;
+			padding: 12.5px;
+			height: 50px;
+			width: 50px;
+			background-color: #ff5252;
+			display: inline-block;
+			float: left;
+			position: absolute;
+			top: 45%;
+			right: 5%;
+			color: rgba(255, 255, 255, 0.75);
+			box-shadow: 0px 4px 4px rgba(0,0,0,0.10);
+			transition: 0.4s;
+		}
+		#fab:hover { 
+			box-shadow: 0px 6px 8px rgba(0,0,0,0.25); 
+		}
+		input {
+			background-color: #e0e0e0;
 			border: none;
 			padding: 15px;
 			width: 90%;
 			margin: 0% 5%;
-			color: rgba(255, 255, 255, 0.65)
+			color: rgba(0, 0, 0, 0.65)
 		}
 		footer {
 			height: 10%;
 			position: relative;
+			background-color: #4caf50;
 		}
 		hr {
 			border: 1px solid #66bb6a;
@@ -128,7 +167,8 @@
 			margin: 0% 5%
 		}
 		.options hr {
-			margin: 3% 5%
+			border: 1px solid #bdbdbd;
+			margin: 3% 5%;
 		}
 		.container {
 			padding: 5% 0%;
@@ -227,7 +267,7 @@
 		}
 		.loading {
 			width: 35%;
-			margin: 50% auto;
+			margin: 75% auto;
 			display: none;
 			text-align: center;
 		}
@@ -236,8 +276,8 @@
 		}
 		.spinner {
 			display: inline-block;
-			border: 15px solid #66bb6a;
-			border-top: 15px solid rgba(255, 255, 255, 0.45);
+			border: 15px solid #eeeeee;
+			border-top: 15px solid #66bb6a;
 			height: 100px;
 			width: 100px;
 			border-radius: 100%;
@@ -279,9 +319,12 @@
 			var $header = $("header");
 			var $headBar = $(".headBar");
 			var $loading = $(".loading");
-			var screens = [$("#first"), $("#second"), $("#third")]; // All screens
-			var dots = [$("#one"), $("#two"), $("#three")];
+			var $wifi = $(".wifi li");
+			var screens = [$("#first"), $("#second"), $("#third"), $("#fourth")]; // All screens
+			var dots = [$("#one"), $("#two"), $("#three"), $("#four")];
+			
 			var currentScreen = 0; 
+			var connected = false;
 			
 			function switchScreen(num)
 			{
@@ -290,12 +333,18 @@
 					if (num == 1) // To the left
 					{
 						console.log("Hiding screen num " + currentScreen + " to the left.");
-						screens[currentScreen].animate(
-						{left: "-100%"},
-						function()
-						{
-							$(this).hide();
-						});
+						screens[currentScreen].animate
+						(
+							{left: "-100%"},
+							{
+								queue: false,
+								complete: function()
+								{
+									console.log("done");
+									$(this).hide();
+								} 
+							}
+						);
 						screens[currentScreen].css({left: "0%"});
 					}
 					else // To the right
@@ -304,9 +353,13 @@
 						screens[currentScreen].animate
 						(
 							{left: "100%", bottom: "100%"},
-							function()
 							{
-								$(this).hide();
+								queue: false,
+								complete: function()
+								{
+									console.log("done");
+									$(this).hide();
+								}
 							}
 						);
 						screens[currentScreen].css({left: "0%"});
@@ -345,14 +398,17 @@
 							$(this).animate
 							(
 								{left: "0%"},
-								function()
 								{
-									$arrows.attr("disabled", false); // Button can be clicked again
-									if (currentScreen == 1) // Only when going from 0 to 1
+									queue: false,
+									complete: function()
 									{
-										$headBar.css({height: "0%"});
-										$headBar.show();
-										$headBar.animate({height: "5%"});
+										$arrows.attr("disabled", false); // Button can be clicked again
+										if (currentScreen == 1) // Only when going from 0 to 1
+										{
+											$headBar.css({height: "0%"});
+											$headBar.show();
+											$headBar.animate({height: "5%"});
+										}
 									}
 								}
 							)
@@ -367,9 +423,12 @@
 							$(this).animate
 							(
 								{left: "0%"},
-								function()
 								{
-									$arrows.attr("disabled", false); // Button can be clicked again
+									queue: false,
+									complete: function()
+									{
+										$arrows.attr("disabled", false); // Button can be clicked again
+									}
 								}
 							)
 						});
@@ -463,6 +522,20 @@
 				$(this).parent().parent().fadeOut();
 			});
 			
+			$wifi.click(function()
+			{
+				if (!connected)
+				{
+					connected = true;
+					$(this).append("<br/><span class='status'>Connecting...</span>"); 
+					$(".iconWifi").delay(1000).queue(function()
+					{
+						$(".iconWifi").text("network_wifi");
+						$(".status").text("Connected");
+					});
+				}
+			});
+			
 			startTime();
 			$previous.css('visibility', 'hidden');
 			screens[0].show();
@@ -472,7 +545,7 @@
 <body>
 	<div>
 		<div class="banner">
-			<a target="_blank" href="https://material.uplabs.com/challenges/the-materialup-challenge">The MaterialUp Onboarding challenge</a> <i class="material-icons close dark">close</i>
+			<a href="https://material.uplabs.com/challenges/the-materialup-challenge">The MaterialUp Onboarding challenge</a> <i class="material-icons close dark">close</i>
 		</div>
 	</div>
 	<div>
@@ -485,7 +558,6 @@
 	<div id="main">
 		<div class="screen">
 			<div class="loading">
-				<h2>Initialising</h2><br>
 				<div class="spinner"></div>
 			</div>
 			<div id="contents">
@@ -493,28 +565,80 @@
 					<p id="clock"> </p>
 					<i class="material-icons statusIcon">battery_full</i>
 					<i class="material-icons statusIcon">signal_cellular_no_sim</i>
-					<i class="material-icons statusIcon">signal_wifi_off</i>
+					<i class="material-icons statusIcon iconWifi">signal_wifi_off</i>
 				</div>
 				<div class="content" id="first">
 					<header>
 						<img src="Images/bannerGreenRound.jpg">
 					</header>
 					<section class="text">
-						<h2>Welcome to Android</h2><br>
-						<p>Let's customise your device to be <br/> as unique as yourself.</p>
-						<br>
-						<p><i>"Be together, not the same"</i></p>
+						<div id="fab">
+							<i class="material-icons">translate</i>
+						</div>
+						<div class="intro">
+							<h2>Welcome to Android</h2>
+							<br/>
+							<p>Let's customise your device to be <br/> as unique as yourself.</p>
+							<br/> <br/>
+							<p><i>"Be together, not the same"</i></p>
+						</div>
 					</section>
 				</div>
 				<div class="content" id="second">
 					<section class="text">
+						<div class="head">
+							<br/>
+							<h2>Connect to a WiFi network.</h2>
+							<br/>
+							<p>Get acces to the interweb.</p>
+							<br/>
+						</div>
 						<div class="centerContent">
+							<ul class="options wifi">
+								<li>
+									<i class="material-icons option">signal_wifi_4_bar</i>
+									<p>It hurts when IP</p>
+								</li>
+								<hr/>
+								<li>
+									<i class="material-icons option">signal_wifi_4_bar</i>
+									<p>Sitecom214145</p>
+								</li>
+								<hr/>
+								<li>
+									<i class="material-icons option">signal_wifi_4_bar</i>
+									<p>TellMyWifiLoveHer</p>
+								</li>
+								<hr/>
+								<li>
+									<i class="material-icons option">signal_wifi_4_bar</i>
+									<p>Home WiFi</p> 
+								</li>
+								<hr/>
+								<li>
+									<i class="material-icons option">signal_wifi_4_bar</i>
+									<p>Living room</p>
+								</li>
+							</ul>
+						</div>
+					</section>
+				</div>
+				<div class="content" id="third">
+					<section class="text">		
+						<div class="head">
 							<br/>
 							<h2>Do you have a Google account?</h2>
 							<br/>
-							<p>Login to get all your data on your device.</p>
-							<br/> <br/> <br/>
+							<p>Login to get all your data from your account.</p>
+							<br/>
+						</div>
+						<div class="centerContent">
+							<br/>
+							<p>Username</p>
+							<br/>
 							<input type="text" value="user@example.com"> <br/>
+							<br/>
+							<p>Password</p>
 							<br/>
 							<input type="password" value="password"> <br/>
 							<br/>
@@ -522,50 +646,50 @@
 						</div>
 					</section>
 				</div>
-				<div class="content" id="third">
+				<div class="content" id="fourth">
 					<section class="text">
-						<br/> 
-						<h2>Customise your settings</h2>
-						<br/>
-						<p>Settings you might want to change right now.</p>
-						<br/> <br/>
-						<ul id="options">
-							<li>
-								<i class="material-icons option">fingerprint</i>
-								<p>Setup your fingerprint scanner for more safety.</p>
-							</li>
-							<hr/>
-							<li>
-								<i class="material-icons option">wb_cloudy</i>
-								<p>Activate Google Now to get updates on weather, news and lot's more.</p>
-							</li>
-							<hr/>
-							<li>
-								<i class="material-icons option">payment</i>
-								<p>Setup Android Pay to pay with your phone.</p>
-							</li>
-							<hr/>
-							<li>
-								<i class="material-icons option">get_app</i>
-								<p>Choose the default apps you would like.</p> 
-							</li>
-							<hr/>
-							<li>
-								<i class="material-icons option">network_wifi</i>
-								<p>Connect to your wifi network to acces the internet.</p>
-							</li>
-						</ul>
+						<div class="head">
+							<br/> 
+							<h2>Customise your settings</h2>
+							<br/>
+							<p>Settings you might want to change right now.</p>
+							<br/>
+						</div>
+						<div class="centerContent">
+							<ul class="options settings">
+								<li>
+									<i class="material-icons option">fingerprint</i>
+									<p>Setup your fingerprint scanner for more safety.</p>
+								</li>
+								<hr/>
+								<li>
+									<i class="material-icons option">wb_cloudy</i>
+									<p>Activate Google Now to get updates on weather, news and lot's more.</p>
+								</li>
+								<hr/>
+								<li>
+									<i class="material-icons option">get_app</i>
+									<p>Choose the default apps you would like to have installed.</p> 
+								</li>
+								<hr/>
+								<li>
+									<i class="material-icons option">do_not_disturb_on</i>
+									<p>Setup a schedule for when you don't want to be disturbed.</p>
+								</li>
+							</ul>
+						</div>
 					</section>
 				</div>
 			</div>
 			<footer>
-				<hr>
+				<hr/>
 				<div class="container">
 					<div class="page">
 						<div class="dots">
 							<div class="dot active" id="one"></div>
 							<div class="dot" id="two"></div>
 							<div class="dot" id="three"></div>
+							<div class="dot" id="four"></div>
 						</div>
 					</div>
 					<button class="next arrow"><i class="material-icons right">keyboard_arrow_right</i></button> 
