@@ -57,8 +57,10 @@
 		}
 		.head {
 			background-color: #4caf50;
+			height: 40%;
 			padding: 35px;
 			box-shadow: 0px 8px 6px rgba(0,0,0,0.15);
+			position: relative;
 		}
 		.intro {
 			padding: 35px;
@@ -89,7 +91,7 @@
 		.status {
 			display: block;
 			font-size: 14px;
-			color: rgba(0, 0, 0, 0.45);
+			color: rgba(0, 0, 0, 0.40);
 		}
 		ul {
 			heigth: 80%;
@@ -146,7 +148,7 @@
 			transition: 0.4s;
 		}
 		#fab:hover { 
-			box-shadow: 0px 6px 8px rgba(0,0,0,0.25); 
+			box-shadow: 0px 6px 8px rgba(0,0,0,0.20); 
 		}
 		input {
 			background-color: #e0e0e0;
@@ -154,7 +156,7 @@
 			padding: 15px;
 			width: 90%;
 			margin: 0% 5%;
-			color: rgba(0, 0, 0, 0.65)
+			color: rgba(0, 0, 0, 0.55)
 		}
 		footer {
 			height: 10%;
@@ -256,11 +258,8 @@
 			float: right;
 			font-size: 20px;
 		}
-		.close.dark {
+		.close {
 			color: #616161;
-		}
-		.close.light {
-			color: rgba(255, 255, 255, 0.75);
 		}
 		.banner a:hover {
 			color: #757575;
@@ -296,11 +295,14 @@
 			margin: 4%;
 			width: 250px;
 			position: absolute;
-			background-color: #616161;
+			background-color: #fafafa;
 			border-radius: 5px;
 			padding: 20px;
 			box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
 			transition: 0.4s;
+		}
+		.thanks p {
+			color: #757575;
 		}
 		.thanks:hover {
 			box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.45);
@@ -312,6 +314,7 @@
 			var $previous = $(".previous");
 			var $next = $(".next");
 			var $arrows = $(".arrow");
+			var $wifi = $(".wifi li");
 			var $check = $(".checkbox");
 			var $close = $(".close");
 			var $footer = $("footer");
@@ -319,7 +322,6 @@
 			var $header = $("header");
 			var $headBar = $(".headBar");
 			var $loading = $(".loading");
-			var $wifi = $(".wifi li");
 			var screens = [$("#first"), $("#second"), $("#third"), $("#fourth")]; // All screens
 			var dots = [$("#one"), $("#two"), $("#three"), $("#four")];
 			
@@ -345,6 +347,7 @@
 								} 
 							}
 						);
+
 						screens[currentScreen].css({left: "0%"});
 					}
 					else // To the right
@@ -402,6 +405,7 @@
 									queue: false,
 									complete: function()
 									{
+										console.log("done");
 										$arrows.attr("disabled", false); // Button can be clicked again
 										if (currentScreen == 1) // Only when going from 0 to 1
 										{
@@ -427,6 +431,7 @@
 									queue: false,
 									complete: function()
 									{
+										console.log("done");
 										$arrows.attr("disabled", false); // Button can be clicked again
 									}
 								}
@@ -474,11 +479,13 @@
 				$thanks.show();
 				$thanks.parent().delay(2500).fadeIn("slow");
 			};
-			function checkTime(i) {
+			function checkTime(i) 
+			{
 				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
 				return i;
 			};
-			function startTime() {
+			function startTime() 
+			{
 				var today = new Date();
 				var h = today.getHours();
 				var m = today.getMinutes();
@@ -503,19 +510,6 @@
 			{
 				$arrows.attr("disabled", true); // No multiple clicks
 				switchScreen(-1);
-			});
-			$check.click(function()
-			{
-				if ($(this).hasClass("checked")) // Unchecks box
-				{
-					$(this).removeClass("checked");
-					$(this).text("check_box_outline_blank");
-				}
-				else // Checks box
-				{
-					$(this).addClass("checked");
-					$(this).text("check_box");
-				}
 			});
 			$close.click(function()
 			{
@@ -545,12 +539,13 @@
 <body>
 	<div>
 		<div class="banner">
-			<a href="https://material.uplabs.com/challenges/the-materialup-challenge">The MaterialUp Onboarding challenge</a> <i class="material-icons close dark">close</i>
+			<a target="blank" href="https://material.uplabs.com/challenges/the-materialup-challenge">The MaterialUp Onboarding challenge</a> 
+			<i class="material-icons close">close</i>
 		</div>
 	</div>
 	<div>
 		<div class="thanks">
-			<i class="material-icons close light">close</i>
+			<i class="material-icons close">close</i>
 			<p>Thanks for viewing my idea. This is my first time making a concept with html, I hope it's working right.</p><br>
 			<p>If you have any ideas for improvement or suggestions, please comment.</p>
 		</div>
@@ -636,11 +631,11 @@
 							<br/>
 							<p>Username</p>
 							<br/>
-							<input type="text" value="user@example.com"> <br/>
+							<input type="text" maxlength="14" placeholder="user@example.com"> <br/>
 							<br/>
 							<p>Password</p>
 							<br/>
-							<input type="password" value="password"> <br/>
+							<input type="password" maxlength="20" placeholder="password"> <br/>
 							<br/>
 							<button class="button1">Log in</button>
 						</div>
