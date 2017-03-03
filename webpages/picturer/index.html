@@ -15,6 +15,7 @@
 	<script type="text/javascript">
 		// These need to be global
 		var selectedColor;
+		var inputText;
 		var drawCircle = true;
 		var colors =
 		[
@@ -35,7 +36,7 @@
 			[["#ff9800", "#f57c00"], "orange"],
 			[["#ff5722", "#e64a19"], "deepOrange"],
 			[["#795548", "#5d4037"], "brown"],
-			[["#9e9e9e", "#616161"], "grey"],
+			[["#9e9e9e", "#757575"], "grey"],
 			[["#607d8b", "#455a64"], "blueGrey"]
 		];
 		// When the document loads
@@ -63,7 +64,17 @@
 				$(".blueGrey")
 			];
 
-			function applyColor()
+			var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+			console.log(letters);
+			inputText = letters[Math.round(Math.random() * (letters.length -1))]; // Random value on initialise
+			selectedColor = Math.floor(Math.random() * colors.length); // Random value on initialise
+
+			function update() // Needs to call the drawCanvas function
+			{
+				console.log("Updating canvas");
+			};
+
+			function applySelection()
 			{
 				$(".selected").children().empty();
 				$(".selected").removeClass("selected");
@@ -81,11 +92,21 @@
 						if ($(this).hasClass(colors[i][1]))
 						{
 							selectedColor = i;
-							console.log("You selected num " + selectedColor + " " + colors[i][1]);
-							applyColor();
+							console.log("You selected num " + selectedColor + ": " + colors[i][1]);
+							applySelection();
+							update();
 						}
 					}
 				}
+			});
+
+			var $text = $('.text');
+			$text.val(inputText) ;
+			$text.change(function()
+			{
+				inputText = $text.val();
+				console.log("You selected " + inputText);
+				update();
 			});
 
 			var $forward = $(".forward");
@@ -100,8 +121,10 @@
 				console.log("scrolling left");
 			});
 
-			selectedColor = Math.floor(Math.random() * colors.length);
-			applyColor();
+			applySelection();
+
+			console.log("-- Welcome to picturer --");
+			console.log("-- There are currently more than " + (colors.length * letters.length * 2) + " possible combinations that can be made --"); // Possible colors, possible letters and circle = true or false
 		});
 	</script>
 
@@ -115,19 +138,29 @@
 				var canvas = $('#canvas');
 				paper.setup(canvas[0]); // Only acceps DOM objects
 
+				console.log("Drawing canvas");
 				var canHeight = view.viewSize.height; // Height of canvas
-				var canCenter = new Point(canHeight / 2, canHeight / 2); // Center of canvas
 
 				var background = new Path.Rectangle([0, 0], [canHeight, canHeight]); // Fullscreen
 				background.fillColor = colors[selectedColor][0][0];
 
 				if (drawCircle)
 				{
-					var innerCircle = new Path.circle(canCenter, canHeight * 0.85);
+					var innerCircle = new Path.Circle(view.center, (canHeight * 0.80) / 2);
 					innerCircle.fillColor = colors[selectedColor][0][1];
 				}
+
+				var centerText = new PointText(
+				{
+					point: [view.center.x, view.center.y + (canHeight * 0.2)], // Center x and center y + half the height of the font
+					content: inputText,
+					fillColor: new Color(255, 255, 255, 0.90), // White with 85% opacity
+					fontSize: "45vh",
+					justification: "center"
+				});
 			};
-			drawCanvas();
+			drawCanvas(); // Initial draw
+			view.on("resize", drawCanvas); // Redraw when resized
 		});
 	</script>
 
@@ -151,6 +184,7 @@
 			padding: 0;
 			height: 100%;
 			background-color: #eeeeee;
+			color: #212121; /* Standard text color */
 		}
 		box {
 			height: 10vh;
@@ -180,6 +214,10 @@
 			background-color: #fafafa;
 			box-shadow: -2px 0px 10px rgba(0,0,0,0.10);
 		}
+		.sidebar hr {
+			margin: 20px 0px;
+			background-color: #BDBDBD;
+		}
 		.screen {
 			height: 90vh;
 			padding: 5vh;
@@ -195,11 +233,11 @@
 			width: 80vh;
 			display: block;
 			background-color: #ffffff;
-			box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
+			box-shadow: 0px 2px 2px rgba(0,0,0,0.25);
 			transition: 0.4s;
 		}
 		.canvas:hover {
-			box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+			box-shadow: 0px 4px 10px rgba(0,0,0,0.30);
 		}
 		canvas[resize] { /* canvas fills .canvas */
 			width: 100%;
@@ -221,6 +259,20 @@
 		}
 		.forward {
 			float: right;
+		}
+		.text {
+			border: 1px solid #e0e0e0;
+			padding: 5px;
+		}
+		.checkbox {
+			background-color: transparent;
+			width: 100%;
+			text-align: left;
+			font-size: 16px;
+		}
+		.checkbox i {
+			float: right;
+			color: rgba(0, 0, 0, 0.55);
 		}
 		.colors {
 			display: inline-block;
@@ -278,7 +330,7 @@
 		.blueGrey { background-color: #607d8b; }
 		.fab {
 			border-radius: 100%;
-			background-color: #ff5252;
+			background-color: #FF5252;
 			width: 60px;
 			height: 60px;
 			padding: 15px;
@@ -343,6 +395,16 @@
 			<button class="arrow forward">
 				<i class="material-icons"> keyboard_arrow_right </i>
 			</button>
+		</div>
+		<hr/>
+		<div class="selectOptions">
+			<button class="checkbox"> Inner circle <i class="material-icons"> check_box_outline_blank </i></button>
+		</div>
+		<hr/>
+		<div class="selectText">
+			<p>Symbol</p>
+			<br/>
+			<input class="text" type="text" maxlength="1" ></input>
 		</div>
 		<button class="fab">
 			<i class="material-icons"> file_download </i>
