@@ -7,7 +7,7 @@
   font-size: 1rem;
   color: #212121;
   vertical-align: middle; /* Aligns things like icons */
-  /*border: 1px dashed grey;*/ /* View the layout */
+  /* border: 1px dashed grey; */ /* View the layout */
 }
 
 .overlay {
@@ -121,6 +121,10 @@ nav li {
 	padding-right: 1rem;
 }
 
+hr {
+	border-color #bdbdbd;
+}
+
 .changeTheme {
 	display: none;
 	z-index: 1000;
@@ -135,7 +139,6 @@ nav li {
 
 .themeOption {
 	margin: auto;
-	border: 2px solid #e0e0e0;
 	width: 3rem;
 	height: 3rem;
 	border-radius: 100%;
@@ -156,7 +159,7 @@ nav li {
 
 #red { background-color: #e53935; }
 
-.changeTheme ul { text-align: center; }
+.changeTheme ul, .changeTheme h3 { text-align: center; }
 
 .menuItems { padding-top: 1rem; }
 
@@ -187,7 +190,7 @@ nav li {
 
 .cardMenuItem i {
 	display: inline;
-	padding-right: 0.5rem;
+	margin-right: 0.5rem;
 }
 
 .more {
@@ -196,6 +199,8 @@ nav li {
 }
 
 .options { position: absolute; }
+
+.cardMenuItem p { display: inline; }
 
 
 /* Buttons */
@@ -245,6 +250,7 @@ nav li {
 button { 
 	border: none;
 	background-color: transparent;
+	cursor: pointer;
 }
 
 .FABicon {
@@ -270,9 +276,18 @@ button {
 	border-radius: 5px;
 }
 
-.card ul {
-	padding-top: 1rem;
-	padding-left: 2rem;
+.card li {
+	color: #757575;
+	list-style-type: none;
+}
+
+.card ul li {
+	text-align: center;
+}
+
+ span, a {
+	position: relative;
+	top: -2px;
 }
 
 .tstandard th {
@@ -288,7 +303,7 @@ button {
 }
 
 .progressBar {
-	background-color: #f5f5f5;
+	background-color: #fafafa;
 	width: 100%;
 	border-radius: 20px;
 }
@@ -301,11 +316,9 @@ button {
 }
 
 .progress.small p { 
-	font-size: 0.65rem; 
+	font-size: 0.55rem; 
 	font-weight: bold;
 }
-
-.card h2 { font-weight: 300; }
 
 .progress.normal { height: 2.75rem; }
 
@@ -314,6 +327,8 @@ button {
 .progress p { color: #ffffff; }
 
 .card h1, .card h2{ text-align: center; }
+
+.card h2 { font-weight: 300; }
 
 .text { padding: 2rem; }
 
@@ -369,7 +384,7 @@ button {
 
 @keyframes up {
 	0% {
-		opacity: 0;		
+		opacity: 0.55;		
 		transform: translate3d(0, 100%, 0);	
 	}
 	100% {
@@ -392,7 +407,7 @@ button {
 
 .main, .menu, .cards { transition: 1s; }
 
-.themeOption, .card, .FAB, .menuItem, .undoButton, nav li, nav ul { transition: 0.4s; }
+.themeOption, .card, .FAB, .menuItem, .undoButton, nav li, nav ul, .progress, header { transition: 0.4s; }
 
 .card:hover { box-shadow: 0px 4px 10px rgba(0,0,0,0.2); }
 
@@ -401,8 +416,6 @@ button {
 .cardMenuItem:hover { background-color: #eeeeee; }
 
 .menuItem:hover { background-color: #e0e0e0; }
-
-.themeOption:hover { border: 2px solid #bdbdbd; }
 
 
 /* -- Icons source http://google.github.io/material-design-icons/ -- */
