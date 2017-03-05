@@ -3,6 +3,7 @@
 <head>
 	<title>Picturer</title>
 	<meta name="Picturer" content="Make a profile picture. By Lucas van Osenbruggen">
+	<meta charset="UTF-8"> 
 	<!-- http://realfavicongenerator.net -->
 	<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 	<link rel="icon" type="image/png" href="favicon/favicon-32x32.png" sizes="32x32">
@@ -17,10 +18,8 @@
 	<!-- Load the jQuery library -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-	<!-- Font -->
-	<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+	<!-- Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Architects+Daughter|Black+Ops+One|Creepster|Gloria+Hallelujah|Indie+Flower|Noto+Sans|Raleway|Ubuntu|Material+Icons" rel="stylesheet"> 
 	<!--  Code -->
 	<script type="text/paperscript" canvas="canvas">
 		paper.install(window); // No accessing through the paper object
@@ -31,7 +30,7 @@
 		var inputText;
 		var drawCircle = true;
 		var textOpacity = false;
-		var font = "sans-serif";
+		var font = "noto sans";
 		var colors =
 		[
 			[["#f44336", "#d32f2f"], "red"],
@@ -58,6 +57,7 @@
 		$(document).ready(function()
 		{
 			var canvas = $('#canvas');
+			var $canvas = $('.canvas');
 
 			var $colors =
 			[
@@ -82,10 +82,13 @@
 				$(".blueGrey")
 			];
 
-			// Initial setup is random
-			var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-			inputText = letters[Math.round(Math.random() * (letters.length - 1))];
+			// Initial setup of values
+			var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+			inputText = chars[Math.round(Math.random() * (chars.length - 1))];
 			selectedColor = Math.floor(Math.random() * colors.length);
+			var $icon = $(".icon");
+			var $options = $icon.children();
+			$($options[Math.floor(Math.random() * $options.length)]).attr("selected", true);
 
 			// --- Select colors ---
 			var $color = $(".color");
@@ -178,11 +181,12 @@
 
 			// --- Select font ---
 			var $font = $('.font');
+			$font.val(font);
 			$font.change(function()
 			{
 				font = $font.val();
 				console.log("You selected " + font);
-				drawCanvas();
+				setTimeout(drawCanvas, 100); // Delay for font loading time
 			});
 
 			// Symbol or icon
@@ -193,29 +197,25 @@
 				{
 					$(".iconContainer").addClass("inactive");
 					$(".charContainer").removeClass("inactive");
-					$font.attr("disabled", false);
 					inputIsChar = true;
 					font = $font.val();
 					inputText = $text.val().toUpperCase();
-					console.log("You selected " + inputText);
 					drawCanvas();
 				}
 				else
 				{
 					$(".iconContainer").removeClass("inactive");
 					$(".charContainer").addClass("inactive");
-					$font.attr("disabled", true);
 					inputIsChar = false;
 					font = "material icons";
 					inputText = $icon.val();
-					console.log("You selected an icon");
 					drawCanvas();
 				}
 			});
 
 			// --- Text input ---
 			var $text = $('.text');
-			$text.val(inputText) ;
+			$text.val(inputText);
 			$text.change(function()
 			{
 				inputText = $text.val().toUpperCase();
@@ -223,8 +223,7 @@
 				drawCanvas();
 			});
 
-			// --- Select icon ---
-			var $icon = $(".icon");
+			// --- Select icon ---			
 			$icon.change(function()
 			{
 				inputText = $icon.val();
@@ -280,11 +279,11 @@
 			};
 
 			// --- Download ---
-			var $fab = $(".fab");
-			$fab.click(function()
+			var $fabD = $(".fab.download");
+			$fabD.click(function()
 			{
 				var name = (colors[selectedColor][1] + "-" + inputText + ".jpg");
-				download($fab[0], name);
+				download($fabD[0], name);
 			});
 
 			function download(link, name)
@@ -293,6 +292,43 @@
 				link.download = name;
 				console.log("Downloading...");
 			};
+			
+			// --- View of canvas ---
+			var $fabV = $(".fab.view");
+			var square = true;
+			$fabV.click(function()
+			{
+				if (square)
+				{
+					$fabV.attr("disabled", true);
+					$fabV.children().text("panorama_fish_eye");
+					canvas.animate({borderRadius: "100%"});
+					$canvas.animate
+					(
+						{borderRadius: "100%"},
+						function()
+						{
+							$fabV.attr("disabled", false);
+						}
+					);
+					square = false;
+				}
+				else
+				{
+					$fabV.attr("disabled", true);
+					$fabV.children().text("crop_square");
+					$canvas.css({borderRadius: "0%"});
+					canvas.animate
+					(
+						{borderRadius: "0%"},
+						function()
+						{
+							$fabV.attr("disabled", false);
+						}
+					);
+					square = true;
+				}
+			});
 
 			// --- Draw ---
 			function drawCanvas()
@@ -316,30 +352,29 @@
 				// Contains symbol
 				var container = new Path.Rectangle(
 				{
-					size: canHeight * 0.6,
-					point: [view.center.x - canHeight * 0.6 / 2 , view.center.y - canHeight * 0.6 / 2 ],
+					size: [canHeight * 0.6, canHeight * 0.6],
+					point: [view.center.x - canHeight * 0.6 / 2 , view.center.y - canHeight * 0.6 / 2 ]
 				});
 				// Symbol
 				var color = new Color(255, 255, 255, 0.95);
 				if (textOpacity)
 				{
-					color = new Color(255, 255, 255, 0.65);
+					color = new Color(255, 255, 255, 0.55);
 				}
 				var centerText = new PointText(
 				{
 					content: inputText,
 					fillColor: color,
-					justification: "center",
 					fontFamily: font
 				});
 				centerText.fitBounds(container.bounds); // As big as the rectangle
-				if (inputIsChar)
+				if (inputIsChar) // For chars
 				{
-					centerText.position.y += 25;
+					centerText.position.y += (centerText.bounds.height / 15);
 				}
-				else
+				else // For icons
 				{
-					centerText.position.y += 75;
+					centerText.position.y += (centerText.bounds.height / 5.5);
 				}
 			};
 
@@ -356,7 +391,7 @@
 
 			// Welcome
 			console.log("-- Welcome to picturer --");
-			console.log("-- There are currently more than " + (colors.length * (26 + 20) * $font.children().length * 2 * 2 + colors.length * $icon.children().length * 2 * 2) + " possible combinations that can be made --");
+			console.log("-- There are currently more than " + (colors.length * (26 + 30) * $font.children().length * 2 * 2 + colors.length * $icon.children().length * 2 * 2) + " possible combinations that can be made --");
 		});
 	</script>
 
@@ -424,14 +459,16 @@
 			position: relative;
 		}
 		.container {
-			width: 75vw;
+			max-width: 75vw;
 			display: inline-block;
 			position: relative;
 			float: left;
 		}
 		.canvas {
+			/*border-radius: 100%;*/
 			z-index: 6;
 			margin: auto;
+			padding: 0;
 			height: 80vh;
 			width: 80vh;
 			display: block;
@@ -495,6 +532,9 @@
 		.checkbox.checked i {
 			color: #FF5252;
 		}
+		.contains {
+			transition: 0.4s
+		}
 		.inactive, .inactive select, .inactive input {
 			color: #9e9e9e;
 		}
@@ -549,32 +589,53 @@
 		.blueGrey { background-color: #607d8b; }
 		.fab {
 			border-radius: 100%;
-			background-color: #FF5252;
-			width: 60px;
-			height: 60px;
-			padding: 15px;
 			transition: 0.4s;
 			box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
-			position: absolute;
-			bottom: 50px;
-			right: 23.25vw;
 			z-index: 8;
 		}
 		.fab:hover {
 			box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.25);
 		}
-		.fab i {
+		.fab.download {
+			background-color: #ff1744;
+			bottom: 5vh;
+			right: 23vw;
+			position: absolute;
+			width: 4vw;
+			height: 4vw;
+			padding: 1vw;
+		}
+		.fab.download i {
+			font-size: 2vw;
 			color: rgba(255, 255, 255, 0.85);
-			font-size: 30px;
+		}
+		.fab.view {
+			width: 3vw;
+			height: 3vw;
+			padding: 0.75vw;
+			background-color: #ff5252;
+			margin: 1vw;
+			bottom: 12.5vh;
+			right: 22.5vw;
+			position: absolute;
+		}
+		.fab.view i {
+			font-size: 1.5vw;
+			color: rgba(255, 255, 255, 0.75);
 		}
 		footer {
-			width: 100%;
+			width: 25vw;
 			text-align: center;
 			color: #bdbdbd;
 			position: absolute;
 			bottom: 0px;
 			right: 0px;
 			padding: 25px;
+		}
+		@media screen and (max-height: 700px) {
+			footer {
+				visibility: hidden
+			}
 		}
 		footer a {
 			color: #bdbdbd;
@@ -648,10 +709,14 @@
 				<p>Font</p>
 				<br/>
 				<select class="font">
-					<option value="sans-serif">Sans Serif</option>
 					<option value="noto sans">Noto Sans</option>
-					<option value="comic sans ms">Comic Sans</option>
-					<option value="times new roman">Times new Roman</option>
+					<option value="ubuntu">Ubuntu</option>
+					<option value="creepster">Creepster</option>
+					<option value="black ops one">Black Ops One</option>
+					<option value="raleway">Raleway</option>
+					<option value="indie flower">Indie Flower</option>
+					<option value="gloria hallelujah">Gloria Hallelujah</option>
+					<option value="architects daughter">Architects Daughter</option>
 				</select><br/>
 			</div>
 			<hr/>
@@ -659,35 +724,39 @@
 				<p>Icon</p>
 				<br/>
 				<select class="icon">
-					<option value="fingerprint">Fingerprint</option>
-					<option value="favorite">Heart</option>
-					<option value="pets">Paw</option>
-					<option value="flash_on">Lightning</option>
-					<option value="star">Star</option>
-					<option value="whatshot">Fire</option>
-					<option value="cake">Cake</option>
-					<option value="mood">Happy face</option>
-					<option value="sentiment_neutral">Neutral face</option>
-					<option value="sentiment_dissatisfied">Sad face</option>
-					<option value="free_breakfast">Coffee</option>
-					<option value="fitness_center">Weight</option>
-					<option value="casino">Dice</option>
-					<option value="drive_eta">Car</option>
-					<option value="local_florist">Flower</option>
-					<option value="restaurant">Eat</option>
-					<option value="cloud">Cloud</option>
-					<option value="visibility">Eye</option>
-					<option value="thumb_up">Thumb up</option>
-					<option value="thumb_down">Thumb down</option>
-					<option value="build">Wrench</option>
 					<option value="account_circle">Account</option>
 					<option value="android">Android</option>
+					<option value="build">Wrench</option>
+					<option value="cake">Cake</option>
+					<option value="casino">Dice</option>
+					<option value="cloud">Cloud</option>
+					<option value="drive_eta">Car</option>
+					<option value="favorite">Heart</option>
+					<option value="fingerprint">Fingerprint</option>
+					<option value="fitness_center">Weight</option>
+					<option value="flash_on">Lightning</option>
+					<option value="free_breakfast">Coffee</option>
+					<option value="local_florist">Flower</option>
+					<option value="mood">Happy face</option>
+					<option value="pets">Paw</option>
+					<option value="restaurant">Eat</option>
+					<option value="sentiment_dissatisfied">Sad face</option>
+					<option value="sentiment_neutral">Neutral face</option>
+					<option value="star">Star</option>
+					<option value="thumb_down">Thumb down</option>
+					<option value="thumb_up">Thumb up</option>
+					<option value="visibility">Eye</option>
+					<option value="whatshot">Fire</option>
 				</select><br/>
 			</div>
 		</div>
-		<a class="fab">
+		<a class="fab download">
 			<i class="material-icons"> file_download </i>
 		</a>
+		<button class="fab view">
+			<i class="material-icons"> panorama_fish_eye </i>
+		</button>
+		</div>
 		<footer>
 			<a href="mailto:lukaas9000@gmail.com">Report a bug or give feedback</a>
 		</footer>
