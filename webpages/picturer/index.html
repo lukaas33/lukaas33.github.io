@@ -27,6 +27,7 @@
 
 		// These need to be global and can be setup before the document is ready
 		var selectedColor;
+		var inputIsChar = true;
 		var inputText;
 		var drawCircle = true;
 		var textOpacity = false;
@@ -175,6 +176,43 @@
 				selection.addClass("selected");
 			};
 
+			// --- Select font ---
+			var $font = $('.font');
+			$font.change(function()
+			{
+				font = $font.val();
+				console.log("You selected " + font);
+				drawCanvas();
+			});
+
+			// Symbol or icon
+			var	$contains = $(".contains");
+			$contains.click(function()
+			{
+				if 	($(this).hasClass("charContainer"))
+				{
+					$(".iconContainer").addClass("inactive");
+					$(".charContainer").removeClass("inactive");
+					$font.attr("disabled", false);
+					inputIsChar = true;
+					font = $font.val();
+					inputText = $text.val().toUpperCase();
+					console.log("You selected " + inputText);
+					drawCanvas();
+				}
+				else
+				{
+					$(".iconContainer").removeClass("inactive");
+					$(".charContainer").addClass("inactive");
+					$font.attr("disabled", true);
+					inputIsChar = false;
+					font = "material icons";
+					inputText = $icon.val();
+					console.log("You selected an icon");
+					drawCanvas();
+				}
+			});
+
 			// --- Text input ---
 			var $text = $('.text');
 			$text.val(inputText) ;
@@ -185,12 +223,12 @@
 				drawCanvas();
 			});
 
-			// --- Select font ---
-			var $font = $('.font');
-			$font.change(function()
+			// --- Select icon ---
+			var $icon = $(".icon");
+			$icon.change(function()
 			{
-				font = $font.val();
-				console.log("You selected " + font);
+				inputText = $icon.val();
+				console.log("You selected an icon");
 				drawCanvas();
 			});
 
@@ -237,17 +275,6 @@
 				{
 					console.log("Uncheck textOpacity");
 					textOpacity = false;
-				}
-				// Shadow
-				if ($("#shadow").hasClass("checked"))
-				{
-					console.log("Check shadow");
-					shadow = true;
-				}
-				else
-				{
-					console.log("Uncheck shadow");
-					shadow = false;
 				}
 				drawCanvas();
 			};
@@ -306,11 +333,21 @@
 					fontFamily: font
 				});
 				centerText.fitBounds(container.bounds); // As big as the rectangle
-				centerText.position.y += 25;
+				if (inputIsChar)
+				{
+					centerText.position.y += 25;
+				}
+				else
+				{
+					centerText.position.y += 75;
+				}
 			};
 
 			// Redraw when resized
-			//view.on("resize", drawCanvas());
+			view.onResize = function(event)
+			{
+				setTimeout(drawCanvas(), 1500);
+			};
 
 			// Initial setup finish
 			drawCanvas();
@@ -319,7 +356,7 @@
 
 			// Welcome
 			console.log("-- Welcome to picturer --");
-			console.log("-- There are currently more than " + (colors.length * (26 + 20) * 4 * 2 * 2) + " possible combinations that can be made --"); // Possible colors, possible characters on a keyboard, fonts, transparent symbol and circle
+			console.log("-- There are currently more than " + (colors.length * (26 + 20) * $font.children().length * 2 * 2 + colors.length * $icon.children().length * 2 * 2) + " possible combinations that can be made --");
 		});
 	</script>
 
@@ -381,12 +418,16 @@
 		}
 		.screen {
 			height: 90vh;
+			width: 60vw;
+			margin: auto;
 			padding: 5vh;
 			position: relative;
 		}
 		.container {
 			width: 75vw;
 			display: inline-block;
+			position: relative;
+			float: left;
 		}
 		.canvas {
 			z-index: 6;
@@ -395,11 +436,11 @@
 			width: 80vh;
 			display: block;
 			background-color: #ffffff;
-			box-shadow: 0px 2px 2px rgba(0,0,0,0.25);
+			box-shadow: 0px 2px 6px rgba(0,0,0,0.25);
 			transition: 0.4s;
 		}
 		.canvas:hover {
-			box-shadow: 0px 4px 10px rgba(0,0,0,0.30);
+			box-shadow: 0px 6px 10px rgba(0,0,0,0.30);
 		}
 		canvas {
 			z-index: 8;
@@ -435,6 +476,10 @@
 			border: 1px solid #e0e0e0;
 			padding: 5px;
 		}
+		.icon {
+			border: 1px solid #e0e0e0;
+			padding: 5px;
+		}
 		.checkbox {
 			background-color: transparent;
 			width: 100%;
@@ -449,6 +494,9 @@
 		}
 		.checkbox.checked i {
 			color: #FF5252;
+		}
+		.inactive, .inactive select, .inactive input {
+			color: #9e9e9e;
 		}
 		.colors {
 			display: inline-block;
@@ -588,29 +636,60 @@
 		<div class="selectOptions">
 			<button id="circle" class="checkbox checked"> Inner circle <i class="material-icons"> check_box </i></button><br/>
 			<br/>
-			<button id="textOpacity" class="checkbox"> Partly transparent symbol <i class="material-icons"> check_box_outline_blank </i></button><br/>
+			<button id="textOpacity" class="checkbox"> Partly transparent <i class="material-icons"> check_box_outline_blank </i></button><br/>
 		</div>
 		<hr/>
 		<div class="selectText">
-			<p>Symbol</p>
+			<div class="contains charContainer">
+				<p>Symbol</p>
+				<br/>
+				<input class="text" type="text" maxlength="1" ></input><br/>
 			<br/>
-			<input class="text" type="text" maxlength="1" ></input><br/>
-			<br/>
-			<p>Font</p>
-			<br/>
-			<select class="font">
-				<option value="sans-serif">Sans Serif</option>
-				<option value="noto sans">Noto Sans</option>
-				<option value="comic sans ms">Comic Sans</option>
-				<option value="times new roman">Times new Roman</option>
-			</select><br/>
+				<p>Font</p>
+				<br/>
+				<select class="font">
+					<option value="sans-serif">Sans Serif</option>
+					<option value="noto sans">Noto Sans</option>
+					<option value="comic sans ms">Comic Sans</option>
+					<option value="times new roman">Times new Roman</option>
+				</select><br/>
+			</div>
+			<hr/>
+			<div class="contains iconContainer inactive">
+				<p>Icon</p>
+				<br/>
+				<select class="icon">
+					<option value="fingerprint">Fingerprint</option>
+					<option value="favorite">Heart</option>
+					<option value="pets">Paw</option>
+					<option value="flash_on">Lightning</option>
+					<option value="star">Star</option>
+					<option value="whatshot">Fire</option>
+					<option value="cake">Cake</option>
+					<option value="mood">Happy face</option>
+					<option value="sentiment_neutral">Neutral face</option>
+					<option value="sentiment_dissatisfied">Sad face</option>
+					<option value="free_breakfast">Coffee</option>
+					<option value="fitness_center">Weight</option>
+					<option value="casino">Dice</option>
+					<option value="drive_eta">Car</option>
+					<option value="local_florist">Flower</option>
+					<option value="restaurant">Eat</option>
+					<option value="cloud">Cloud</option>
+					<option value="visibility">Eye</option>
+					<option value="thumb_up">Thumb up</option>
+					<option value="thumb_down">Thumb down</option>
+					<option value="build">Wrench</option>
+					<option value="account_circle">Account</option>
+					<option value="android">Android</option>
+				</select><br/>
+			</div>
 		</div>
 		<a class="fab">
 			<i class="material-icons"> file_download </i>
 		</a>
 		<footer>
-			<p>Made by Lucas van Osenbruggen<p/>
-			<a href="mailto:lukaas9000@gmail.com">Report a bug</a>
+			<a href="mailto:lukaas9000@gmail.com">Report a bug or give feedback</a>
 		</footer>
 	</div>
 </body>
