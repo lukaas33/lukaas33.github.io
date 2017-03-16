@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box; /* Fixes box sizing problem */
-  font-family: 'Noto Sans', sans-serif; 
+  font-family: 'Noto Sans', sans-serif;
   font-size: 1rem;
   color: #212121;
   vertical-align: middle; /* Aligns things like icons */
@@ -13,7 +13,7 @@
 .overlay {
 	overflow: hidden;
 	background-color: rgba(0,0,0,0.7);
-	display: none;	
+	display: none;
 	z-index: 500;
 	position: fixed;
 	width: 100%;
@@ -21,13 +21,16 @@
 }
 
 .disable-selection {
-  -webkit-user-select: none; 
-  -webkit-touch-callout: none; 
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+body {
+    background-color: #EEEEEE;
+    min-width: 500px;
 }
 
 :focus, :active { outline: none; }
-
-body { background-color: #EEEEEE; }
 
 a { text-decoration: none; }
 
@@ -49,8 +52,10 @@ header h1 {
 
 .headtext {
 	display: inline-block;
-	padding: 1.35rem; 
-	float: left
+	padding: 1.35rem;
+	float: left;
+    position: relative;
+    z-index: 120;
 }
 
 
@@ -68,12 +73,13 @@ nav {
 nav ul {
 	position: relative;
 	height: 3rem;
+    z-index: 90;
 }
 
 nav li {
 	margin: 0rem 2.5rem;
 	padding: 0.5rem;
-	list-style-type: none;	
+	list-style-type: none;
 }
 
 .navItem {
@@ -82,19 +88,20 @@ nav li {
 	width: 6rem;
 }
 
-.navItem a { 
-	font-weight: bold; 
+.navItem a {
+	font-weight: bold;
 	color: #ffffff;
 }
 
-.navMore { 
+.navMore {
     z-index: 150;
 	position: absolute;
 	right: 0;
 	top: 1rem;
-	display: none; 
+	display: none;
 	text-align: center;
 	width: 7rem;
+    cursor: pointer;
 }
 
 
@@ -194,7 +201,7 @@ hr {
 }
 
 .more {
-	display: none; 
+	display: none;
 	margin: 0.5rem;
 }
 
@@ -205,10 +212,10 @@ hr {
 
 /* Buttons */
 .FAB  {
-	text-align: center; 
+	text-align: center;
 	box-shadow: 0px 4px 4px rgba(0,0,0,0.15);
 	border-radius: 100%;
-	width: 4.5rem; 
+	width: 4.5rem;
 	height: 4.5rem;
 	padding: 1rem;
 }
@@ -216,13 +223,13 @@ hr {
 .FAB.top { /* Hidden, there is only one FAB */
 	position: absolute;
 	display: none;
-	right: 7rem; 
+	right: 7rem;
 	top: 2.75rem;
 }
 
 .FAB.bottom {
 	position: fixed;
-	right: 2.5rem; 
+	right: 2.5rem;
 	bottom: 2.5rem;
 }
 
@@ -245,9 +252,11 @@ hr {
 .menu-icon {
 	margin: 1.3rem;
 	float: left;
+    z-index: 110;
+    position: relative;
 }
 
-button { 
+button {
 	border: none;
 	background-color: transparent;
 	cursor: pointer;
@@ -255,7 +264,7 @@ button {
 
 .FABicon {
 	display: inline-block;
-	vertical-align: middle; 
+	vertical-align: middle;
 }
 
 .undoIcon { padding-left: 0.5rem; }
@@ -264,8 +273,8 @@ button {
 /* Cards and content */
 .cards {
 	margin: 2rem 0rem;
-	display: flex; 
-	flex-wrap: wrap; 
+	display: flex;
+	flex-wrap: wrap;
 	justify-content: center;
 }
 
@@ -296,9 +305,9 @@ button {
 	padding: 1rem;
 }
 
-.tstandard td { 
-	color: #616161; 
-	text-align: center; 
+.tstandard td {
+	color: #616161;
+	text-align: center;
 	padding: 1rem;
 }
 
@@ -315,8 +324,8 @@ button {
 	border-radius: 20px;
 }
 
-.progress.small p { 
-	font-size: 0.55rem; 
+.progress.small p {
+	font-size: 0.55rem;
 	font-weight: bold;
 }
 
@@ -384,30 +393,30 @@ button {
 
 @keyframes up {
 	0% {
-		opacity: 0.55;		
-		transform: translate3d(0, 100%, 0);	
+		opacity: 0.55;
+		transform: translate3d(0, 100%, 0);
 	}
 	100% {
-		opacity: 1; 	
+		opacity: 1;
 		transform: none;
 	}
 }
 
 .progress {
 	animation-timing-function: ease;
-	animation-name: width; 
+	animation-name: width;
 	animation-duration: 2.5s;
 }
 
 @keyframes width {
 	0% {
-		width: 5%; 
+		width: 5%;
 	}
 }
 
-.main, .menu, .cards { transition: 1s; }
+.cards { transition: 1s; }
 
-.themeOption, .card, .FAB, .menuItem, .undoButton, nav li, nav ul, .progress, header { transition: 0.4s; }
+.themeOption, .card, .FAB, .menuItem, .undoButton, nav li, .progress, header { transition: 0.4s; }
 
 .card:hover { box-shadow: 0px 4px 10px rgba(0,0,0,0.2); }
 
