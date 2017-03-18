@@ -28,6 +28,7 @@ $(document).ready(function()
     var $cards = $(".cards");
 
 	var $navMore = $('.navMore');
+	var $icon = $('.navMore i');
     var $nav = $("nav");
 	var $ul = $("nav ul");
 	var $header = $("header");
