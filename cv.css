@@ -125,10 +125,6 @@ nav li {
 	padding: 0.75rem;
 }
 
-.menuItem i {
-	padding-right: 1rem;
-}
-
 hr {
 	border-color #bdbdbd;
 }
@@ -136,10 +132,10 @@ hr {
 .changeTheme {
 	display: none;
 	z-index: 1000;
-	position: fixed;
+	position: absolute;
 	background-color: #ffffff;
 	width: 50%;
-	margin: 25%;
+	margin: 12.5% 25%;
 	padding: 2.5rem;
 	box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
 	border-radius: 5px;
@@ -196,11 +192,6 @@ hr {
 	padding: 0.5rem;
 }
 
-.cardMenuItem i {
-	display: inline;
-	margin-right: 0.5rem;
-}
-
 .more {
 	display: none;
 	margin: 0.5rem;
@@ -250,25 +241,11 @@ hr {
 	color: #ffffff;
 }
 
-.menu-icon {
-	margin: 1.3rem;
-	float: left;
-    z-index: 110;
-    position: relative;
-}
-
 button {
 	border: none;
 	background-color: transparent;
 	cursor: pointer;
 }
-
-.FABicon {
-	display: inline-block;
-	vertical-align: middle;
-}
-
-.undoIcon { padding-left: 0.5rem; }
 
 
 /* Cards and content */
@@ -301,9 +278,13 @@ button {
     border-top: 2px solid #e0e0e0;
 }
 
- span, a, i {
+ .card span, .card a, .card.italic {
 	position: relative;
 	top: -2px;
+}
+
+.card.italic {
+    font-style: italic;
 }
 
 .tstandard th {
@@ -448,8 +429,34 @@ button {
 
 .menuItem:hover { background-color: #e0e0e0; }
 
+.card a:hover {text-decoration: underline};
 
-/* -- Icons source http://google.github.io/material-design-icons/ -- */
+
+/* -- Icons -- */
+/* source http://google.github.io/material-design-icons/  */
+.menuItem i {
+	padding-right: 1rem;
+}
+
+.cardMenuItem i {
+	display: inline;
+	margin-right: 0.5rem;
+}
+
+.menu-icon {
+	margin: 1.3rem;
+	float: left;
+    z-index: 110;
+    position: relative;
+}
+
+.FABicon {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.undoIcon { padding-left: 0.5rem; }
+
 .material-icons.md-18 { font-size: 18px; }
 
 .material-icons.md-24 { font-size: 24px; }
