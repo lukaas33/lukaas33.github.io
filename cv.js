@@ -8,6 +8,8 @@ $(document).ready(function()
 {
 	var $main = $(".main");
 
+	$("body").show();
+
     // Rule for progress bars
     function progressText()
 	{
@@ -80,10 +82,7 @@ $(document).ready(function()
 					$close.attr("disabled", false);
 				}
 			});
-        $main.animate({"margin-left": "10rem"}, 800);
-        /*setTimeout(function() {
-            response();
-        }, 1000);*/
+        $main.animate({"margin-left": "10rem"}, 600);
     };
     function $closeMenu()
 	{
@@ -100,10 +99,7 @@ $(document).ready(function()
 					$hamburger.attr("disabled", false);
 				}
 			});
-        $main.animate({"margin-left": "0rem"}, 800);
-        /*setTimeout(function() {
-            response();
-        }, 1000);*/
+        $main.animate({"margin-left": "0rem"}, 600);
     };
 
     $hamburger.click(function()
@@ -168,8 +164,8 @@ $(document).ready(function()
         this.p300 = p300;
         this.p100 = p100;
         this.s100 = s100;
-        this.s200 = s100;
-        this.s400 = s100;
+        this.s200 = s200;
+        this.s400 = s400;
     };
 
     Theme.prototype.change = function()
@@ -178,8 +174,9 @@ $(document).ready(function()
 		$("nav ul").css('background-color', this.p500);
         pageSelect(this.p300);
         $('.navItem a').css('color', this.p100);
-        $('.FAB').css('background-color', this.s400);
-        $('.progress').css('background-color', this.s100);
+        $('.FAB').css('background-color', this.s200);
+        $('.progress.normal').css('background-color', this.s200);
+		$('.progress.small').css('background-color', this.s100);
         $('.card a:link').css('color', this.s200);
         $('.card a:visited').css('color', this.s400);
     };
@@ -249,47 +246,94 @@ $(document).ready(function()
 
     $navItem.children().click(function()
 	{
-		console.log("Changing page");
-        if (!$(this).parent().hasClass('current'))
+		var clicked = $(this);
+		var previousTab = $(".current");
+		var newTab = clicked.parent();
+		var tabs = $(".navItem a");
+		function pageSwitch()
 		{
-            $navItem.removeClass('current');
-            $(this).parent().addClass('current');
+			console.log("Changing page to " + clicked.attr('id'));
+			if (clicked.attr('id') == 'aboutMe')
+			{
+				$aboutMe.removeClass("goDown");
+				$aboutMe.addClass("goUp");
+				$aboutMe.show();
+			}
+			else if (clicked.attr('id') == 'experience')
+			{
+				$experience.removeClass("goDown");
+				$experience.addClass("goUp");
+				$experience.show();
+			}
+			else if (clicked.attr('id') == 'skills')
+			{
+				$skills.removeClass("goDown");
+				$skills.addClass("goUp");
+				$skills.show();
+				progressText();
+			}
+			else if (clicked.attr('id') == 'portfolio')
+			{
+				$portfolio.removeClass("goDown");
+				$portfolio.addClass("goUp");
+				$portfolio.show();
+			}
+			setTimeout(function()
+			{
+				tabs.removeClass("inactive");
+			}, 800);
+		};
+        if (!newTab.hasClass('current') && !clicked.hasClass('inactive'))
+		{
+			tabs.addClass("inactive");
+            previousTab.removeClass('current');
+            newTab.addClass('current');
             pageSelect(activeTheme.p300);
-            if ($(this).attr('id') == 'aboutMe')
+			$cards.removeClass("goUp");
+			$cards.addClass("goDown");
+			setTimeout(function()
 			{
-                $cards.hide();
-                $aboutMe.show();
-            }
-			else if ($(this).attr('id') == 'experience')
-			{
-                $cards.hide();
-                $experience.show();
-            }
-			else if ($(this).attr('id') == 'skills')
-			{
-                $cards.hide();
-                $skills.show();
-                progressText();
-            }
-			else if ($(this).attr('id') == 'portfolio')
-			{
-                $cards.hide();
-                $portfolio.show();
-            }
+				$cards.hide(0, pageSwitch);
+			}, 750);
         }
     });
 
     // Calculates age
     var $age = $('.age');
+	var $sinceCreated = $('.sinceCreated');
+	var $sinceHtml= $('.sinceHtml');
+	var $sinceGE= $('.sinceGE');
+	var $sinceNL= $('.sinceNL');
+	var $sinceEN= $('.sinceEN');
 
-    function age()
+	var millisecondsDay = 86400000;
+    var today = new Date();
+
+	function timePassed(date)
 	{
-        var today = new Date();
-        var birth = today.getTime() - (86400000 * 11192);
-        return Math.floor(birth / 31556952000);
-    };
+		var between = today.getTime() - date.getTime(); // Difference in milliseconds
+		var days = Math.floor(between / millisecondsDay); // Difference in days
+		var years = Math.floor(between / (millisecondsDay * 365.25)); // Difference in years
+		if (days < 365.25)
+		{
+			return (days + " days");
+		}
+		else if (years === 1) // 1 year
+		{
+			return (years + " year");
+		}
+		else
+		{
+			return (years + " years");
+		}
+	};
 
-    $age.text(age());
+    $age.text(timePassed(new Date(2000, 07, 22, 22, 22)));
+	$sinceCreated.text(timePassed(new Date(2016, 11, 23)));
+	$sinceHtml.text(timePassed(new Date(2016, 09, 24)));
+	$sinceEN.text(timePassed(new Date("2010")));
+	$sinceGE.text(timePassed(new Date("2014")));
+	$sinceNL.text(timePassed(new Date("2004")));
 
     // Sets collapse sections
     var $collapse = $('.collapse');

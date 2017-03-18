@@ -28,6 +28,7 @@
 body {
     background-color: #EEEEEE;
     min-width: 500px;
+    display: none;
 }
 
 :focus, :active { outline: none; }
@@ -294,7 +295,13 @@ button {
 	text-align: center;
 }
 
- span, a {
+.card hr {
+    margin: 0.75rem 0rem;
+    border: none;
+    border-top: 2px solid #e0e0e0;
+}
+
+ span, a, i {
 	position: relative;
 	top: -2px;
 }
@@ -385,20 +392,37 @@ button {
 
 
 /* -- Animations -- */
-.card, .FAB {
+.cards.goUp {
 	transition-timing-function: ease;
 	animation-name: up;
-	animation-duration: 1s;
+	animation-duration: 0.8s;
 }
 
 @keyframes up {
 	0% {
-		opacity: 0.55;
-		transform: translate3d(0, 100%, 0);
+		opacity: 0;
+		transform: translate3d(0, 75vh, 0);
 	}
 	100% {
 		opacity: 1;
 		transform: none;
+	}
+}
+
+.cards.goDown {
+	transition-timing-function: ease;
+	animation-name: down;
+	animation-duration: 0.8s;
+}
+
+@keyframes down {
+    0% {
+		opacity: 1;
+		transform: none;
+	}
+	100% {
+		opacity: 0;
+		transform: translate3d(0, 75vh, 0);
 	}
 }
 
@@ -413,8 +437,6 @@ button {
 		width: 5%;
 	}
 }
-
-.cards { transition: 1s; }
 
 .themeOption, .card, .FAB, .menuItem, .undoButton, nav li, .progress, header { transition: 0.4s; }
 
