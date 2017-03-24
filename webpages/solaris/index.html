@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Solaris</title>
+	<meta name="Solaris" content="Solar system simulation by Lucas van Osenbruggen.">
+	<meta charset="UTF-8">
+	<!-- http://realfavicongenerator.net -->
+	<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" href="favicon/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="favicon/android-chrome-192x192.png" sizes="192x192">
+	<link rel="icon" type="image/png" href="favicon/favicon-16x16.png" sizes="16x16">
+	<link rel="manifest" href="favicon/manifest.json">
+	<link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#6b93d6">
+	<link rel="shortcut icon" href="favicon/favicon.ico">
+	<meta name="msapplication-config" content="favicon/browserconfig.xml">
+	<meta name="theme-color" content="#ffffff">
+	<!-- Load the Paper.js library -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.10.2/paper-full.js"></script>
+	<!-- Load the jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<!-- Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans|Material+Icons" rel="stylesheet">
+	<!--  Code -->
+	<script type="text/paperscript" canvas="canvas">
+		paper.install(window); // No accessing through the paper object
+		$(document).ready(function()
+		{
+            paper.setup($('#canvas')[0]);
+            var canHeight = view.viewSize.height;
+            var canWidth = view.viewSize.width;
+
+			var star = [ ];
+			for (var i = 0; i <= 250; i++)
+			{
+				var radius = (canWidth / 1000 * (Math.random() * 1.5));
+				var position = [Math.ceil(Math.random() * canWidth), Math.ceil(Math.random() * canHeight)];
+				star[i] = new Path.Circle(position, radius);
+				star[i].fillColor = new Color(1, 1, 1, ((Math.random() * 50 + 50) / 100));
+			}
+
+			var systemCenter =  [0, (canHeight / 2)];
+
+			var Data = function(name, color, mass, radius, age, speed, orbitRadius)
+			{
+				this.name = name;
+				this.mass = mass; // kg
+				this.radius = radius; // m
+				this.volume = ((4 / 3) * Math.PI * Math.pow(this.radius, 3)); // m^3
+				this.density = (this.mass / this.volume); // kg/m^3
+				this.age = age; // years
+				this.speed = speed; // m/s
+				this.orbitRadius = orbitRadius; // m
+				this.orbit = (this.orbitRadius * Math.PI * 2); // m
+				this.orbitPeriod = ((this.orbit / this.speed) / (24 * 60 * 60)); // days
+				this.color = color;
+			}
+
+			var sun =
+			{
+				diameter: canHeight / 1.1,
+				center: systemCenter,
+				img: new Raster("sun"),
+				set: function()
+				{
+					this.img.size = [this.diameter, this.diameter];
+					this.img.position = this.center;
+				},
+				data: new Data
+				(
+					"The Sun",
+					"#ffcc4c",
+					1.98855e30,
+					6.957e8,
+					4.6e9,
+					null,
+					null
+				)
+			};
+			setTimeout(sun.set(), 1);
+
+			var Planet = function(name, diameter, orbitRadius, orbitSpeed, data)
+			{
+				this.diameter = diameter;
+				this.orbitSpeed = orbitSpeed;
+				this.center = new Path.Circle();
+				this.orbit = new Path.Circle(systemCenter, orbitRadius);
+				this.img = new Raster(name);
+				this.data = data;
+			}
+			Planet.prototype.rotate = function()
+			{
+				this.center.rotate(this.orbitSpeed, systemCenter);
+				this.img.position = this.center.position;
+			}
+			Planet.prototype.set = function()
+			{
+				this.center.position = this.orbit.bounds.rightCenter;
+				this.img.size = [this.diameter, this.diameter];
+				this.img.position = this.center.position;
+			}
+
+			// new Data("The moon", "#e0e0e0)";
+
+			var mercury = new Planet
+			(
+				"mercury",
+				(canHeight / 30),
+				(canWidth / 3.6),
+				0.5,
+				new Data
+				(
+					"Mercury",
+					"#9db4c0"
+				)
+			);
+			var venus = new Planet
+			(
+				"venus",
+				(canHeight / 13.5),
+				(canWidth / 3.1),
+				0.5,
+				new Data
+				(
+					"Venus",
+					"#dbae6d"
+				)
+			);
+			var earth = new Planet
+			(
+				"earth",
+				(canHeight / 13.5),
+				(canWidth / 2.65),
+				0.5,
+				new Data
+				(
+					"Earth",
+					"#6b93d6",
+					5.97237e24,
+					6.371e3,
+					4.54e9,
+					29.78e3,
+					1.496e11
+				)
+			);
+			var mars = new Planet
+			(
+				"mars",
+				(canHeight / 20),
+				(canWidth / 2.35),
+				0.5,
+				new Data
+				(
+					"Mars",
+					"#c1440e"
+				)
+			);
+			var jupiter = new Planet
+			(
+				"jupiter",
+				(canHeight / 4.5),
+				(canWidth / 1.75),
+				0.5,
+				new Data
+				(
+					"Jupiter",
+					"#d8ca9d"
+				)
+			);
+			var saturn = new Planet
+			(
+				"saturn",
+				(canHeight / 4.5),
+				(canWidth / 1.4),
+				0.5,
+				new Data
+				(
+					"Saturn",
+					"#eec87d"
+				)
+			);
+			var uranus = new Planet
+			(
+				"uranus",
+				(canHeight / 11.5),
+				(canWidth / 1.225),
+				0.5,
+				new Data
+				(
+					"Uranus",
+					"#a8f4f6"
+				)
+			);
+			var neptune = new Planet
+			(
+				"neptune",
+				(canHeight / 11.5),
+				(canWidth / 1.135),
+				0.5,
+				new Data
+				(
+					"Neptune",
+					"#3f54ba"
+				)
+			);
+
+			var solarSystem = [sun, [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune]];
+			console.log(solarSystem);
+
+			for (var i = 0; i < solarSystem[1].length; i++)
+			{
+				setTimeout(solarSystem[1][i].set(), 1);
+				// solarSystem[1][i].orbit.selected = true;
+			}
+
+			view.onFrame = function(event)
+			{
+				for (var i = 0; i < solarSystem[1].length; i++)
+				{
+					solarSystem[1][i].rotate();
+				}
+			}
+		});
+	</script>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box; /* Fixes box sizing problem */
+			font-family: 'Noto Sans', sans-serif;
+			-webkit-user-select: none;
+			-webkit-touch-callout: none;
+		}
+		:focus, :active {
+			outline: none;
+		}
+		::-webkit-scrollbar {
+			display: none;
+		}
+		body {
+			background-color: #212121;
+        }
+        button {
+            background-color: transparent;
+            border: 0px solid transparent;
+        }
+
+        #canvas[resize] { /* canvas fills .canvas */
+            width: 100%;
+            height: 100%;
+        }
+        .canvas { /* .canvas fills screen */
+            width: 100vw;
+            height: 100vh;
+        }
+		.images { display: none; }
+        .sidebar {
+			display: none;
+            background-color: #eeeeee;
+            position: absolute;
+            height: 90vh;
+            width: 20vw;
+            margin: 5vh 2.5vw;
+            border-radius: 0.5vh;
+            top: 0;
+            right: 0;
+        }
+        .more {
+            position: absolute;
+            margin: 10px;
+            right: 0;
+            top: 0;
+        }
+        .more i {
+            font-size: 20px;
+            color: rgba(0, 0, 0, 0.65);
+        }
+	</style>
+</head>
+<body>
+	<div class="screen">
+	    <div class="canvas">
+	        <canvas id="canvas" resize="true"  keepalive="true"></canvas>
+	    </div>
+		<div class="images">
+			<img id="sun" src="planetImgs/sun.svg"/>
+			<img id="mercury" src="planetImgs/mercury.svg"/>
+			<img id="venus" src="planetImgs/venus.svg"/>
+			<img id="earth" src="planetImgs/earth.svg"/>
+			<img id="moon" src="planetImgs/moon.svg"/>
+			<img id="mars" src="planetImgs/mars.svg"/>
+			<img id="ceres" src="planetImgs/ceres.svg"/>
+			<img id="jupiter" src="planetImgs/jupiter.svg"/>
+			<img id="saturn" src="planetImgs/saturn.svg"/>
+			<img id="uranus" src="planetImgs/uranus.svg"/>
+			<img id="neptune" src="planetImgs/neptune.svg"/>
+			<img id="pluto" src="planetImgs/pluto.svg"/>
+			<img id="astroid" src="planetImgs/astroid.svg"/>
+		</div>
+	</div>
+    <div class="sidebar">
+        <button class="more"><i class="material-icons ">more_vert</i></button>
+    </div>
+</body>
+</html>
