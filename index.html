@@ -90,7 +90,9 @@
                             <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i><p> Clear card </p></button>
                          </div>
                       </div>
-                      <img class="full" src="image/LucasPhoto.jpg" alt="A picture me at the age of 15."> <!-- Images outside text div -->
+                      <div class="image">
+                          <img class="full" src="image/LucasPhoto.jpg" alt="A picture me at the age of 15."> <!-- Images outside text div -->
+                       </div>
                       <section class="text">
                          <p> Not a fan of taglines. </p>
                       </section>
@@ -114,7 +116,7 @@
                             I'm <span class="count age"> </span> old and live in the Netherlands. <br/>
                             I made this website from scratch and it serves as my resume as well as my portfolio.
                             It came into existence <span class="count sinceCreated"> </span> ago.
-                            It has some cool features like an automaticly updating numbers <span class="italic">(like my age)</span> and resizable cards. <br/>
+                            It has some cool features like automatically updating numbers <span class="italic">(like my age)</span>, resizeable portfolio projects and a menu. <br/>
                          </p>
                          <br/>
                          <p>
@@ -459,23 +461,42 @@
                  <div class="container break">
                      <h2> Timeline </h2>
                  </div>
+                 <div class="container">
+                     <div class="card small resizable">
+                        <div class="options">
+                           <button class="more">
+                           <i class="material-icons md-18 md-light"> more_vert </i>
+                           </button>
+                           <div class="cardMenu">
+                              <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i><p> Clear card </p></button>
+                              <button class="cardMenuItem resize"> <i class="material-icons md-24 md-dark"> crop_free </i><p> Resize </p></button>
+                          </div>
+                        </div>
+                        <div class="image">
+                            <a href="webpages/boarding/index.html"><img class="full" src="image/boardingbanner.jpg"/></a>
+                        </div>
+                        <section class="text">
+                          <h3> Boarding </h3>
+                          <br/>
+                          <p> My Android boarding. </p>
+                          <br/>
+                          <div class="collapse">
+                              <li>
+                                  <h2>  Story </h2>
+                                  <div>
+                                  </div>
+                              </li>
+                              <li>
+                                  <h2> Details </h2>
+                                  <div>
+                                  </div>
+                              </li>
+                          </div>
+                        </section>
+                     </div>
+                 </div>
                 <div class="container">
-                   <div class="card small">
-                      <div class="options">
-                         <button class="more">
-                         <i class="material-icons md-18 md-dark"> more_vert </i>
-                         </button>
-                         <div class="cardMenu">
-                            <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i><p> Clear card </p></button>
-                            <button class="cardMenuItem resize"> <i class="material-icons md-24 md-dark"> crop_free </i><p> Resize </p></button>
-                         </div>
-                      </div>
-                      <section class="text">
-                      </section>
-                   </div>
-                </div>
-                <div class="container">
-                   <div class="card small">
+                   <div class="card small resizable">
                       <div class="options">
                          <button class="more">
                          <i class="material-icons md-18 md-light"> more_vert </i>
@@ -483,39 +504,64 @@
                          <div class="cardMenu">
                             <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i><p> Clear card </p></button>
                             <button class="cardMenuItem resize"> <i class="material-icons md-24 md-dark"> crop_free </i><p> Resize </p></button>
-                         </div>
+                        </div>
                       </div>
-                      <a href="webpages/picturer/"><img class="full" src="image/tealP.jpg"/></a>
+                      <div class="image">
+                          <a href="webpages/picturer/index.html"><img class="full" src="image/tealP.jpg"/></a>
+                      </div>
                       <section class="text">
                         <h3> Picturer </h3>
                         <br/>
                         <p> Make your own profile picture. </p>
                         <br/>
                         <div class="collapse">
-                           <li>
-                              <h2> More </h2>
-                              <div>
-
-                              </div>
-                           </li>
+                            <li>
+                                <h2>  Story </h2>
+                                <div>
+                                </div>
+                            </li>
+                            <li>
+                                <h2> Details </h2>
+                                <div>
+                                </div>
+                            </li>
                         </div>
                       </section>
                    </div>
                 </div>
                 <div class="container">
-                   <div class="card small">
-                      <div class="options">
-                         <button class="more">
-                         <i class="material-icons md-18 md-dark"> more_vert </i>
-                         </button>
-                         <div class="cardMenu">
-                            <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i><p> Clear card </p></button>
-                            <button class="cardMenuItem resize"> <i class="material-icons md-24 md-dark"> crop_free </i><p> Resize </p></button>
+                    <div class="card small resizable">
+                       <div class="options">
+                          <button class="more">
+                          <i class="material-icons md-18 md-light"> more_vert </i>
+                          </button>
+                          <div class="cardMenu">
+                             <button class="cardMenuItem clear"> <i class="material-icons md-24 md-dark"> clear </i><p> Clear card </p></button>
+                             <button class="cardMenuItem resize"> <i class="material-icons md-24 md-dark"> crop_free </i><p> Resize </p></button>
                          </div>
-                      </div>
-                      <section class="text">
-                      </section>
-                   </div>
+                       </div>
+                       <div class="image">
+                           <a href="webpages/solaris/index.html"><img class="full" src="image/solaris.jpg"/></a>
+                       </div>
+                       <section class="text">
+                         <h3> Solaris </h3>
+                         <br/>
+                         <p> Learn about the solar system. </p>
+                         <br/>
+                         <div class="collapse">
+                             <li>
+                                 <h2>  Story </h2>
+                                 <div>
+                                 </div>
+                             </li>
+                             <li>
+                                 <h2> Details </h2>
+                                 <div>
+                                 </div>
+                             </li>
+                         </div>
+                       </section>
+                    </div>
                 </div>
              </div>
 
