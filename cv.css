@@ -48,6 +48,8 @@ hr {
 
 a { text-decoration: none; }
 
+iframe { border: none; }
+
 
 /* Header */
 header {
@@ -291,6 +293,7 @@ button {
 	margin: 0.75rem;
 	box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
 	border-radius: 5px;
+    overflow: hidden;
 }
 
 .container.break {
@@ -451,6 +454,8 @@ button {
 
 .card .tstandard { width: 100%; }
 
+.tab, .count { cursor: pointer; }
+
 
 /* -- Animations -- */
 .cards.goUp {
@@ -499,7 +504,7 @@ button {
 	}
 }
 
-.themeOption, .card, .FAB, .menuItem, .undoButton, nav li, .progress, header { transition: 0.4s; }
+.themeOption, .card, .card .image, .card .text, .FAB, .menuItem, .undoButton, nav li, .progress, header { transition: 0.4s; }
 
 .card:hover { box-shadow: 0px 4px 10px rgba(0,0,0,0.2); }
 
@@ -509,7 +514,7 @@ button {
 
 .menuItem:hover { background-color: #e0e0e0; }
 
-.card a:hover {text-decoration: underline};
+.card a:hover, .tab:hover {text-decoration: underline};
 
 
 /* -- Icons -- */

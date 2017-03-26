@@ -18,7 +18,7 @@ $(document).ready(function()
     var $themeChange = $('.changeTheme');
     var $overlay = $('.overlay');
     var $themeOption = $('.themeOption');
-    var $navItem = $('.navItem');
+
     var $purple = $('#purple');
     var $teal = $('#teal');
     var $blue = $('#blue');
@@ -26,11 +26,19 @@ $(document).ready(function()
 
 	var $box = $(".box");
 
+	var $tabs = $(".navItem a");
+	var $navItem = $('.navItem');
 	var $aboutMe = $('.cards.aboutMe');
     var $experience = $('.cards.experience');
     var $skills = $('.cards.skills');
     var $portfolio = $('.cards.portfolio');
     var $cards = $(".cards");
+
+	var $tab = $('.tab');
+	var $aboutMeTab = $('.tab.one');
+    var $experienceTab = $('.tab.two');
+    var $skillsTab = $('.tab.three');
+    var $portfolioTab = $('.tab.four');
 
 	var $navMore = $('.navMore');
 	var $icon = $('.navMore i');
@@ -316,59 +324,87 @@ $(document).ready(function()
 		$mail.parent().fadeIn();
     });
 
-    $navItem.children().click(function()
+	function switchPage(to)
 	{
-		var clicked = $(this);
-		var previousTab = $(".current");
-		var newTab = clicked.parent();
-		var tabs = $(".navItem a");
-		function pageSwitch()
+		if (to == 'aboutMe')
 		{
-			console.log("Changing page to " + clicked.attr('id'));
-			if (clicked.attr('id') == 'aboutMe')
-			{
-				$aboutMe.removeClass("goDown");
-				$aboutMe.addClass("goUp");
-				$aboutMe.show();
-			}
-			else if (clicked.attr('id') == 'experience')
-			{
-				$experience.removeClass("goDown");
-				$experience.addClass("goUp");
-				$experience.show();
-			}
-			else if (clicked.attr('id') == 'skills')
-			{
-				$skills.removeClass("goDown");
-				$skills.addClass("goUp");
-				$skills.show();
-				progressText();
-			}
-			else if (clicked.attr('id') == 'portfolio')
-			{
-				$portfolio.removeClass("goDown");
-				$portfolio.addClass("goUp");
-				$portfolio.show();
-			}
-			setTimeout(function()
-			{
-				tabs.removeClass("inactive");
-			}, 800);
-		};
+			$aboutMe.removeClass("goDown");
+			$aboutMe.addClass("goUp");
+			$aboutMe.show();
+		}
+		else if (to == 'experience')
+		{
+			$experience.removeClass("goDown");
+			$experience.addClass("goUp");
+			$experience.show();
+		}
+		else if (to == 'skills')
+		{
+			$skills.removeClass("goDown");
+			$skills.addClass("goUp");
+			$skills.show();
+			progressText();
+		}
+		else if (to == 'portfolio')
+		{
+			$portfolio.removeClass("goDown");
+			$portfolio.addClass("goUp");
+			$portfolio.show();
+		}
+		setTimeout(function()
+		{
+			$tabs.removeClass("inactive");
+		}, 800);
+	}
+
+	function down(previousTab, newTab)
+	{
+		$tabs.addClass("inactive");
+		previousTab.removeClass('current');
+		newTab.addClass('current');
+		pageSelect(activeTheme.p300);
+		$cards.removeClass("goUp");
+		$cards.addClass("goDown");
+	}
+
+	function setPage(clicked)
+	{
+		var newTab = clicked.parent();
+		var previousTab = $(".current");
         if (!newTab.hasClass('current') && !clicked.hasClass('inactive'))
 		{
-			tabs.addClass("inactive");
-            previousTab.removeClass('current');
-            newTab.addClass('current');
-            pageSelect(activeTheme.p300);
-			$cards.removeClass("goUp");
-			$cards.addClass("goDown");
+			down(previousTab, newTab);
 			setTimeout(function()
 			{
-				$cards.hide(0, pageSwitch);
+				$cards.hide(0, function() {switchPage(clicked.attr("id"))});
 			}, 750);
         }
+	}
+
+    $navItem.children().click(function()
+	{
+		setPage($(this))
     });
+
+	$tab.click(function()
+	{
+		if ($(this).hasClass("one"))
+		{
+			setPage($("#aboutMe"));
+		}
+		else if ($(this).hasClass("two"))
+		{
+			setPage($("#experience"));
+		}
+		else if ($(this).hasClass("three"))
+		{
+			setPage($("#skills"));
+		}
+		else if ($(this).hasClass("four"))
+		{
+			setPage($("#portfolio"));
+		}
+	});
 
     $theme.click(function()
 	{
@@ -477,11 +513,6 @@ $(document).ready(function()
 		if ($resizeCard.hasClass("small"))
 		{
 			$resizeCard.removeClass("small");
-			$resizeCard.addClass("medium");
-		}
-		else if ($resizeCard.hasClass("medium"))
-		{
-			$resizeCard.removeClass("medium");
 			$resizeCard.addClass("big");
 		}
 		else
