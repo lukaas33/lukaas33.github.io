@@ -151,8 +151,8 @@
 			box-shadow: 0px 4px 4px rgba(0,0,0,0.10);
 			transition: 0.4s;
 		}
-		#fab:hover { 
-			box-shadow: 0px 6px 8px rgba(0,0,0,0.20); 
+		#fab:hover {
+			box-shadow: 0px 6px 8px rgba(0,0,0,0.20);
 		}
 		input {
 			background-color: #e0e0e0;
@@ -196,7 +196,7 @@
 		}
 		#clock {
 			display: inline-block;
-			float: right;			
+			float: right;
 			margin: 10px 2px;
 			font-size: 14px;
 		}
@@ -326,10 +326,10 @@
 			var $loading = $(".loading");
 			var screens = [$("#first"), $("#second"), $("#third"), $("#fourth")]; // All screens
 			var dots = [$("#one"), $("#two"), $("#three"), $("#four")];
-			
-			var currentScreen = 0; 
+
+			var currentScreen = 0;
 			var connected = false;
-			
+
 			function switchScreen(num)
 			{
 				function hideScreen() // Hides current screen with animation
@@ -346,7 +346,7 @@
 								{
 									console.log("done");
 									$(this).hide();
-								} 
+								}
 							}
 						);
 
@@ -386,7 +386,7 @@
 						$next.children().text("done");
 						$next.addClass("done");
 					}
-					else 
+					else
 					{
 						$next.children().text("keyboard_arrow_right");
 						$next.removeClass("done");
@@ -442,7 +442,7 @@
 					}
 					dots[currentScreen].addClass("active");
 				};
-		
+
 				hideScreen();
 				currentScreen += num;
 				buttons();
@@ -481,21 +481,21 @@
 				$thanks.show();
 				$thanks.parent().delay(2500).fadeIn("slow");
 			};
-			function checkTime(i) 
+			function checkTime(i)
 			{
 				if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
 				return i;
 			};
-			function startTime() 
+			function startTime()
 			{
 				var today = new Date();
 				var h = today.getHours();
 				var m = today.getMinutes();
 				m = checkTime(m);
 				$("#clock").text(h + ":" + m);
-				var t = setTimeout(startTime, 500);
+				var t = setTimeout(startTime, 1000);
 			};
-			
+
 			$next.click(function() // Forward
 			{
 				if (!$(this).hasClass("done"))
@@ -503,7 +503,7 @@
 					$arrows.attr("disabled", true); // No multiple clicks
 					switchScreen(1);
 				}
-				else 
+				else
 				{
 					done();
 				}
@@ -517,13 +517,13 @@
 			{
 				$(this).parent().parent().fadeOut();
 			});
-			
+
 			$wifi.click(function()
 			{
 				if (!connected)
 				{
 					connected = true;
-					$(this).append("<br/><span class='status'>Connecting...</span>"); 
+					$(this).append("<br/><span class='status'>Connecting...</span>");
 					$(".iconWifi").delay(1000).queue(function()
 					{
 						$(".iconWifi").text("network_wifi");
@@ -531,7 +531,7 @@
 					});
 				}
 			});
-			
+
 			startTime();
 			$previous.css('visibility', 'hidden');
 			screens[0].show();
@@ -541,7 +541,7 @@
 <body>
 	<div>
 		<div class="banner">
-			<a target="blank" href="https://material.uplabs.com/challenges/the-materialup-challenge">The MaterialUp Onboarding challenge</a> 
+			<a target="blank" href="https://material.uplabs.com/challenges/the-materialup-challenge">The MaterialUp Onboarding challenge</a>
 			<i class="material-icons close">close</i>
 		</div>
 	</div>
@@ -566,7 +566,7 @@
 				</div>
 				<div class="content" id="first">
 					<header>
-						<img src="images/bannerGreenRound.jpg">
+						<img src="image/bannerGreenRound.jpg">
 					</header>
 					<section class="text">
 						<div id="fab">
@@ -607,7 +607,7 @@
 								<hr/>
 								<li>
 									<i class="material-icons option">signal_wifi_4_bar</i>
-									<p>Home WiFi</p> 
+									<p>Home WiFi</p>
 								</li>
 								<hr/>
 								<li>
@@ -619,7 +619,7 @@
 					</section>
 				</div>
 				<div class="content" id="third">
-					<section class="text">		
+					<section class="text">
 						<div class="head">
 							<h2>Do you have a Google account?</h2>
 							<br/>
@@ -659,7 +659,7 @@
 								<hr/>
 								<li>
 									<i class="material-icons option">get_app</i>
-									<p>Choose the default apps you would like to have installed.</p> 
+									<p>Choose the default apps you would like to have installed.</p>
 								</li>
 								<hr/>
 								<li>
@@ -682,7 +682,7 @@
 							<div class="dot" id="four"></div>
 						</div>
 					</div>
-					<button class="next arrow"><i class="material-icons right">keyboard_arrow_right</i></button> 
+					<button class="next arrow"><i class="material-icons right">keyboard_arrow_right</i></button>
 					<button class="previous arrow"><i class="material-icons left">keyboard_arrow_left</i></button>
 				</div>
 			</footer>
