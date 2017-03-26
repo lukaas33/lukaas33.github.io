@@ -11,6 +11,9 @@ $(document).ready(function()
     var $hamburger = $(".hamburger");
     var $close = $(".close");
 
+	var $mail = $(".FAB.bottom");
+	var $sendMail = $(".sendMail");
+
 	var $theme = $('.theme');
     var $themeChange = $('.changeTheme');
     var $overlay = $('.overlay');
@@ -20,6 +23,8 @@ $(document).ready(function()
     var $teal = $('#teal');
     var $blue = $('#blue');
     var $red = $('#red');
+
+	var $box = $(".box");
 
 	var $aboutMe = $('.cards.aboutMe');
     var $experience = $('.cards.experience');
@@ -62,6 +67,8 @@ $(document).ready(function()
     var teal = new Theme('#00897b', '#009688', '#26a69a', '#4db6ac', '#b2dfdb', '#ff9e80', '#ff6e40', '#ff3d00');
     var blue = new Theme('#1e88e5', '#2196f3', '#42a5f5', '#64b5f6', '#bbdefb', '#ff8a80', '#ff5252', '#ff1744');
     var red = new Theme('#d32f2f', '#e53935', '#f44336', '#ef9a9a', '#ffcdd2', '#82b1ff', '#448aff', '#2979ff');
+
+	var boxView = false;
 
 	var clickable = true;
 
@@ -114,10 +121,10 @@ $(document).ready(function()
 
     function active()
 	{
-        $themeOption.empty();
+        $themeOption.children().empty();
         if ($themeOption.hasClass('active'))
 		{
-            $('.active').html('<i class="material-icons md-24 md-light">check</i>');
+            $('.active').children().html('check');
         }
     };
 	function pageSelect(color)
@@ -157,11 +164,11 @@ $(document).ready(function()
 		var between = today.getTime() - date.getTime(); // Difference in milliseconds
 		var days = Math.floor(between / millisecondsDay); // Difference in days
 		var years = Math.floor(between / (millisecondsDay * 365.25)); // Difference in years
-		if (days < 365.25)
+		if (days < 365)
 		{
 			return (days + " days");
 		}
-		else if (years === 1) // 1 year
+		else if (years == 1) // 1 year
 		{
 			return (years + " year");
 		}
@@ -294,29 +301,19 @@ $(document).ready(function()
 	{
         $closeMenu();
     });
-	$themeOption.click(function()
+
+	$mail.click(function()
 	{
-		console.log("Changing theme");
-        $('.active').removeClass('active');
-        if ($(this).attr('id') == 'purple')
-		{
-            activeTheme = purple;
-            $purple.addClass('active');
-        } else if ($(this).attr('id') == 'teal')
-		{
-            activeTheme = teal;
-            $teal.addClass('active');
-        } else if ($(this).attr('id') == 'blue')
-		{
-            activeTheme = blue;
-            $blue.addClass('active');
-        } else if ($(this).attr('id') == 'red')
-		{
-            activeTheme = red;
-            $red.addClass('active');
-        }
-        activeTheme.change();
-        active();
+        $closeMenu();
+		$mail.parent().fadeOut();
+        $sendMail.fadeIn();
+        $overlay.fadeIn();
+    });
+    $overlay.click(function()
+	{
+        $sendMail.fadeOut();
+        $overlay.fadeOut();
+		$mail.parent().fadeIn();
     });
 
     $navItem.children().click(function()
@@ -385,6 +382,34 @@ $(document).ready(function()
         $overlay.fadeOut();
     });
 
+	$themeOption.click(function()
+	{
+		console.log("Changing theme");
+        $('.active').removeClass('active');
+        if ($(this).attr('id') == 'purple')
+		{
+            activeTheme = purple;
+            $purple.addClass('active');
+        }
+		else if ($(this).attr('id') == 'teal')
+		{
+            activeTheme = teal;
+            $teal.addClass('active');
+        }
+		else if ($(this).attr('id') == 'blue')
+		{
+            activeTheme = blue;
+            $blue.addClass('active');
+        }
+		else if ($(this).attr('id') == 'red')
+		{
+            activeTheme = red;
+            $red.addClass('active');
+        }
+        activeTheme.change();
+        active();
+    });
+
 	$clear.click(function()
 	{
 		console.log("Hiding card");
@@ -392,6 +417,21 @@ $(document).ready(function()
 		$clearCard.hide();
 		undo($clearCard);
 		$undo.delay(5000).fadeOut("slow");
+	});
+
+	$box.click(function()
+	{
+		$closeMenu();
+		if (!boxView)
+		{
+			$("body *"). addClass("boxV");
+			boxView = true;
+		}
+		else
+		{
+			$("body *"). removeClass("boxV");
+			boxView = false;
+		}
 	});
 
 	$navMore.click(function()

@@ -5,9 +5,6 @@
   box-sizing: border-box; /* Fixes box sizing problem */
   font-family: 'Noto Sans', sans-serif;
   font-size: 1rem;
-  color: #212121;
-  vertical-align: middle; /* Aligns things like icons */
-  /* border: 1px dashed grey; */ /* View the layout */
 }
 
 .overlay {
@@ -16,8 +13,8 @@
 	display: none;
 	z-index: 500;
 	position: fixed;
-	width: 100%;
-	height: 100%;
+	width: 100vw;
+	height: 100vh;
 }
 
 .disable-selection {
@@ -25,10 +22,26 @@
   -webkit-touch-callout: none;
 }
 
+::-webkit-scrollbar {
+	display: none;
+}
+
 body {
     background-color: #EEEEEE;
+    color: #212121;
     min-width: 500px;
+	height: 100vh;
     display: none;
+	overflow-y: scroll;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #bdbdbd;
+}
+
+.boxV {
+    border: 1px dotted grey;
 }
 
 :focus, :active { outline: none; }
@@ -112,8 +125,9 @@ nav li {
 	display: block;
 	overflow: hidden;
 	width: 10rem;
+    margin-top: 5rem;
 	z-index: 10;
-	height: 100%;
+	height: 100vh;
 	left: -10rem;
 	position: absolute;
 }
@@ -125,20 +139,32 @@ nav li {
 	padding: 0.75rem;
 }
 
-hr {
-	border-color #bdbdbd;
+.menuItem p {
+    vertical-align: middle;
+    float: left;
+    color: #757575;
+    margin: 7.5px 10px;
 }
 
-.changeTheme {
-	display: none;
-	z-index: 1000;
-	position: absolute;
-	background-color: #ffffff;
-	width: 50%;
-	margin: 12.5% 25%;
-	padding: 2.5rem;
-	box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
-	border-radius: 5px;
+.centerCard {
+    z-index: 1000;
+    position: absolute;
+    background-color: #ffffff;
+    padding: 2.5rem;
+    box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    display: none;
+}
+
+.centerCard.sendMail {
+    width: 50vw;
+    height: 50vh;
+    margin: 25vh 25vw;
+}
+
+.centerCard.changeTheme {
+    width: 50vw;
+    margin: 35vh 25vw;
 }
 
 .themeOption {
@@ -168,6 +194,8 @@ hr {
 .menuItems { padding-top: 1rem; }
 
 .close { display: none; }
+
+.menuItem i { float: left; }
 
 
 /* Options */
@@ -199,7 +227,7 @@ hr {
 
 .options { position: absolute; }
 
-.cardMenuItem p { display: inline; }
+.cardMenuItem p, .cardMenuItem i { float: left; }
 
 
 /* Buttons */
@@ -212,7 +240,7 @@ hr {
 	padding: 1rem;
 }
 
-.FAB.top { /* Hidden, there is only one FAB */
+.FAB.top {
 	position: absolute;
 	display: none;
 	right: 7rem;
@@ -247,6 +275,8 @@ button {
 	cursor: pointer;
 }
 
+.undoButton p, .undoButton i { float: left; }
+
 
 /* Cards and content */
 .cards {
@@ -274,64 +304,77 @@ button {
 
 .card hr {
     margin: 0.75rem 0rem;
-    border: none;
-    border-top: 2px solid #e0e0e0;
-}
-
- .card span, .card a, .card.italic {
-	position: relative;
-	top: -2px;
 }
 
 .card.italic {
     font-style: italic;
 }
 
-.tstandard th {
+.card .tstandard th {
 	background-color: #e0e0e0;
 	color: #424242;
 	padding: 1rem;
 }
 
-.tstandard td {
+.card .tstandard td {
 	color: #616161;
 	text-align: center;
 	padding: 1rem;
 }
 
-.progressBar {
+.card .progressBar {
 	background-color: #fafafa;
 	width: 100%;
 	border-radius: 20px;
 }
 
-.progress {
+.card .progress {
 	overflow: hidden;
 	text-align: center;
 	padding: 0.6rem;
 	border-radius: 20px;
+    color: #ffffff;
 }
 
-.progress.small p {
+.card .progress.small p {
 	font-size: 0.55rem;
 	font-weight: bold;
 }
 
-.progress.normal { height: 2.75rem; }
+.card .full {
+    border-radius: 5px 5px 0px 0px;
+    width: 100%;
+}
 
-.progress.small { height: 2rem; }
+.container.break {
+    width: 80%;
+    margin: 0% 10%;
+    text-align: center;
+    color: #757575;
+    margin: 1.5rem 0rem 0.5rem 0rem;
+}
 
-.progress p { color: #ffffff; }
+.container h2 {
+    text-align: center;
+    font-weight: 300;
+}
 
-.card h1, .card h2{ text-align: center; }
+.container h3 {
+    font-weight: bold;
+}
 
-.card h2 { font-weight: 300; }
+.container h4 {
+    text-align: center;
+    font-weight: bold;
+}
 
-.text { padding: 2rem; }
+.card .progress.normal { height: 2.75rem; }
 
-.tstandard, .full { width: 100%; }
+.card .progress.small { height: 2rem; }
 
-.full { border-radius: 5px 5px 0px 0px; }
+.card .text { padding: 2rem; }
+
+.card .tstandard { width: 100%; }
 
 .card.small { width: 27.5rem }
 
