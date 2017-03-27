@@ -33,14 +33,14 @@
 			// Variables
             var canHeight = view.viewSize.height;
             var canWidth = view.viewSize.width;
-			var systemCenter =  [0, (canHeight / 2)];
+			var systemCenter =  [(canWidth /2), (canHeight / 2)];
 			var planetSpeed = 0.1;
 
 			// Stars
 			var star = [ ];
 			function stars()
 			{
-				for (var i = 0; i < 250; i++)
+				for (var i = 0; i < 500; i++)
 				{
 					var radius = (canWidth / 1000 * (Math.random() * 1.5));
 					var position = [Math.ceil(Math.random() * canWidth), Math.ceil(Math.random() * canHeight)];
@@ -71,7 +71,7 @@
 			{
 				this.diameter = diameter;
 				this.orbitSpeed = orbitSpeed;
-				this.center = new Path.Circle();
+
 				this.orbit = new Path.Circle(systemCenter, orbitRadius);
 				this.img = new Raster(name);
 				this.data = data;
@@ -83,8 +83,7 @@
 			}
 			Planet.prototype.set = function()
 			{
-				this.center.position = this.orbit.bounds.rightCenter;
-				this.center.size = [this.diameter / 2, this.diameter / 2];
+				this.center = new Path.Circle(this.orbit.bounds.leftCenter, (this.diameter /2))
 				this.img.set(
 				{
 					size: [this.diameter, this.diameter],
@@ -98,7 +97,6 @@
 				this.diameter = diameter;
 				this.orbits = orbits;
 				this.orbitSpeed = orbitSpeed;
-				this.center = new Path.Circle();
 				this.orbit = new Path.Circle([0, 0], orbitRadius);
 				this.img = new Raster(name);
 				this.data = data;
@@ -108,14 +106,13 @@
 				this.center.rotate(this.orbitSpeed, systemCenter);
 				this.img.position = this.center.position;
 				this.orbit.position = this.orbits.center.position;
-				this.center.rotate(this.orbitSpeed, this.orbit.position);
+				this.center.rotate(this.orbitSpeed + 0.2, this.orbit.position);
 				this.img.position = this.center.position;
 			}
 			Moon.prototype.set = function()
 			{
 				this.orbit.position = this.orbits.center.position;
-				this.center.position = this.orbit.bounds.rightCenter;
-				this.center.size = [this.diameter / 2, this.diameter / 2];
+				this.center = new Path.Circle(this.orbit.bounds.leftCenter, (this.diameter /2))
 				this.img.set(
 				{
 					size: [this.diameter, this.diameter],
@@ -126,7 +123,7 @@
 			// Sun object
 			var sun =
 			{
-				diameter: canHeight / 1.15,
+				diameter: canHeight / 4.5,
 				center: systemCenter,
 				img: new Raster("sun"),
 				set: function()
@@ -150,8 +147,8 @@
 			var mercury = new Planet
 			(
 				"mercury",
-				(canHeight / 30),
-				(canWidth / 3.6),
+				(canHeight / 35),
+				(canWidth / 10),
 				planetSpeed,
 				new Data
 				(
@@ -162,8 +159,8 @@
 			var venus = new Planet
 			(
 				"venus",
-				(canHeight / 13.5),
-				(canWidth / 3.1),
+				(canHeight / 25),
+				(canWidth / 7.75),
 				planetSpeed,
 				new Data
 				(
@@ -174,8 +171,8 @@
 			var earth = new Planet
 			(
 				"earth",
-				(canHeight / 13.5),
-				(canWidth / 2.65),
+				(canHeight / 25),
+				(canWidth / 6.1),
 				planetSpeed,
 				new Data
 				(
@@ -191,8 +188,8 @@
 			var mars = new Planet
 			(
 				"mars",
-				(canHeight / 20),
-				(canWidth / 2.35),
+				(canHeight / 27.5),
+				(canWidth / 5),
 				planetSpeed,
 				new Data
 				(
@@ -203,8 +200,8 @@
 			var jupiter = new Planet
 			(
 				"jupiter",
-				(canHeight / 4.5),
-				(canWidth / 1.75),
+				(canHeight / 10.5),
+				(canWidth / 3.5),
 				planetSpeed,
 				new Data
 				(
@@ -215,8 +212,8 @@
 			var saturn = new Planet
 			(
 				"saturn",
-				(canHeight / 4.5),
-				(canWidth / 1.4),
+				(canHeight / 10.5),
+				(canWidth / 2.85),
 				planetSpeed,
 				new Data
 				(
@@ -227,8 +224,8 @@
 			var uranus = new Planet
 			(
 				"uranus",
-				(canHeight / 11.5),
-				(canWidth / 1.225),
+				(canHeight / 14.5),
+				(canWidth / 2.45),
 				planetSpeed,
 				new Data
 				(
@@ -239,8 +236,8 @@
 			var neptune = new Planet
 			(
 				"neptune",
-				(canHeight / 11.5),
-				(canWidth / 1.135),
+				(canHeight / 14.5),
+				(canWidth / 2.2),
 				planetSpeed,
 				new Data
 				(
@@ -253,9 +250,9 @@
 			var moon = new Moon
 			(
 				"moon",
-				(canHeight / 60),
+				(canHeight / 75),
 				earth,
-				(canWidth / 36),
+				(canWidth / 55),
 				planetSpeed,
 				new Data
 				(
@@ -265,27 +262,33 @@
 			);
 
 			// All objects in the canvas
-			var solarSystem = [sun, star, [moon], [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune]];
+			var solarSystem = [[mercury, venus, earth, mars, jupiter, saturn, uranus, neptune], [moon], sun, star];
 
 			// Sets vars that can't be initialised
 			setTimeout(sun.set(), 1);
-			for (var i = 0; i < solarSystem[solarSystem.length -1].length; i++)
+			for (var i = 0; i < solarSystem[0].length; i++)
 			{
-				setTimeout(solarSystem[solarSystem.length -1][i].set(), 1);
-				// solarSystem[solarSystem.length -1][i].orbit.selected = true;
+				setTimeout(solarSystem[0][i].set(), 1);
+				//solarSystem[0][i].orbit.selected = true;
+				//solarSystem[0][i].center.selected = true;
 			}
-			setTimeout(moon.set(), 1);
+			for (var i = 0; i < solarSystem[1].length; i++)
+			{
+				setTimeout(solarSystem[1][i].set(), 1);
+				//solarSystem[1][i].orbit.selected = true;
+				//solarSystem[1][i].center.selected = true;
+			}
 
 			// The frame event
 			view.onFrame = function(event)
 			{
-				for (var i = 0; i < solarSystem[solarSystem.length -1].length; i++)
+				for (var i = 0; i < solarSystem[0].length; i++)
 				{
-					solarSystem[solarSystem.length -1][i].orbiting();
+					solarSystem[0][i].orbiting();
 				}
-				for (var i = 0; i < solarSystem[solarSystem.length -2].length; i++)
+				for (var i = 0; i < solarSystem[1].length; i++)
 				{
-					solarSystem[solarSystem.length -2][i].orbiting();
+					solarSystem[1][i].orbiting();
 				}
 
 			}
@@ -316,14 +319,20 @@
             border: 0px solid transparent;
         }
 
+		.canvas { /* .canvas fills screen */
+			width: 100vw;
+			height: 100vh;
+		}
+
+		#canvas {
+			display: block;
+		}
+
         #canvas[resize] { /* canvas fills .canvas */
             width: 100%;
             height: 100%;
         }
-        .canvas { /* .canvas fills screen */
-            width: 100vw;
-            height: 100vh;
-        }
+
 		.images { display: none; }
         .sidebar {
 			display: none;
@@ -356,19 +365,20 @@
 			</canvas>
 	    </div>
 		<div class="images">
-			<img id="sun" src="planetImgs/sun.svg"/>
-			<img id="mercury" src="planetImgs/mercury.svg"/>
-			<img id="venus" src="planetImgs/venus.svg"/>
-			<img id="earth" src="planetImgs/earth.svg"/>
-			<img id="moon" src="planetImgs/moon.svg"/>
-			<img id="mars" src="planetImgs/mars.svg"/>
-			<img id="ceres" src="planetImgs/ceres.svg"/>
-			<img id="jupiter" src="planetImgs/jupiter.svg"/>
-			<img id="saturn" src="planetImgs/saturn.svg"/>
-			<img id="uranus" src="planetImgs/uranus.svg"/>
-			<img id="neptune" src="planetImgs/neptune.svg"/>
-			<img id="pluto" src="planetImgs/pluto.svg"/>
-			<img id="astroid" src="planetImgs/astroid.svg"/>
+			<img id="sun" src="media/planetImgs/sun.svg"/>
+			<img id="mercury" src="media/planetImgs/mercury.svg"/>
+			<img id="venus" src="media/planetImgs/venus.svg"/>
+			<img id="earth" src="media/planetImgs/earth.svg"/>
+			<img id="moon" src="media/planetImgs/moon.svg"/>
+			<img id="mars" src="media/planetImgs/mars.svg"/>
+			<img id="ceres" src="media/planetImgs/ceres.svg"/>
+			<img id="jupiter" src="media/planetImgs/jupiter.svg"/>
+			<img id="saturn" src="media/planetImgs/saturn.svg"/>
+			<img id="uranus" src="media/planetImgs/uranus.svg"/>
+			<img id="neptune" src="media/planetImgs/neptune.svg"/>
+			<img id="pluto" src="media/planetImgs/pluto.svg"/>
+			<img id="astroid" src="media/planetImgs/astroid.svg"/>
+			<audio type="audio/mpeg" src="media/space.mp3" autoplay="true" loop="true"></audio>
 		</div>
 	</div>
     <div class="sidebar">
