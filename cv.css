@@ -158,15 +158,21 @@ nav li {
     display: none;
 }
 
+.centerCard.changeTheme {
+    width: 50vw;
+    margin: 35vh 25vw;
+}
+
 .centerCard.sendMail {
     width: 50vw;
     height: 50vh;
     margin: 25vh 25vw;
 }
 
-.centerCard.changeTheme {
+.centerCard.aboutWebsite {
     width: 50vw;
-    margin: 35vh 25vw;
+    height: 50vh;
+    margin: 25vh 25vw;
 }
 
 .themeOption {
@@ -194,8 +200,6 @@ nav li {
 .changeTheme ul, .changeTheme h3 { text-align: center; }
 
 .menuItems { padding-top: 1rem; }
-
-.close { display: none; }
 
 .menuItem i { float: left; }
 

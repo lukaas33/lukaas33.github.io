@@ -9,13 +9,19 @@ $(document).ready(function()
 	var $main = $(".main");
 	var $menu = $(".menu");
     var $hamburger = $(".hamburger");
-    var $close = $(".close");
+
+	var $box = $('.menuItem.box');
+
+	var $setLanguage = $('.menuItem.language');
+
+	var $openAbout = $('.menuItem.about');
+	var $aboutWeb = $('.centerCard.aboutWebsite');
 
 	var $mail = $(".FAB.bottom");
-	var $sendMail = $(".sendMail");
+	var $sendMail = $(".centerCard.sendMail");
 
-	var $theme = $('.theme');
-    var $themeChange = $('.changeTheme');
+	var $themeChange = $('.centerCard.changeTheme');
+	var $theme = $('.menuItem.theme');
     var $overlay = $('.overlay');
     var $themeOption = $('.themeOption');
 
@@ -23,8 +29,6 @@ $(document).ready(function()
     var $teal = $('#teal');
     var $blue = $('#blue');
     var $red = $('#red');
-
-	var $box = $(".box");
 
 	var $tabs = $(".navItem a");
 	var $navItem = $('.navItem');
@@ -76,12 +80,15 @@ $(document).ready(function()
     var blue = new Theme('#1e88e5', '#2196f3', '#42a5f5', '#64b5f6', '#bbdefb', '#ff8a80', '#ff5252', '#ff1744');
     var red = new Theme('#d32f2f', '#e53935', '#f44336', '#ef9a9a', '#ffcdd2', '#82b1ff', '#448aff', '#2979ff');
 
+	var language = navigator.language;
+
 	var boxView = false;
 
 	var clickable = true;
 
 	var millisecondsDay = 86400000;
     var today = new Date();
+
 
 	// Functions
     function progressText()
@@ -91,30 +98,26 @@ $(document).ready(function()
         $progress.children("p").delay(2500).fadeIn();
     };
 
-    function $openMenu()
+    function openMenu()
 	{
-		console.log("Opening menu");
-        $hamburger.hide();
-		$close.attr("disabled", true);
-        $close.show();
-		navState();
+		$hamburger.attr("disabled", true);
+		$hamburger.children().html("close");
         $menu.animate(
 			{"left": "0"},
 			{
 				duration: 800,
 			 	complete: function()
 				{
-					$close.attr("disabled", false);
+					$hamburger.attr("disabled", false);
+					navState();
 				}
 			});
         $main.animate({"margin-left": "10rem"}, 600);
     };
-    function $closeMenu()
+    function closeMenu()
 	{
-		console.log("Closing menu");
-        $close.hide();
 		$hamburger.attr("disabled", true);
-        $hamburger.show();
+		$hamburger.children().html("menu");
         $menu.animate(
 			{"left": "-10rem"},
 			{
@@ -122,6 +125,7 @@ $(document).ready(function()
 				complete: function()
 				{
 					$hamburger.attr("disabled", false);
+					navState();
 				}
 			});
         $main.animate({"margin-left": "0rem"}, 600);
@@ -188,7 +192,6 @@ $(document).ready(function()
 
     function undo(card)
 	{
-		console.log("Undid hide");
         $undo.fadeIn("slow");
         $undoButton.click(function()
 		{
@@ -199,7 +202,6 @@ $(document).ready(function()
 
     function inlineNav()
 	{
-		console.log("Normal nav");
 		highlightC = true;
         $navItem.css(
 			{
@@ -232,7 +234,6 @@ $(document).ready(function()
     };
     function lowerNav()
 	{
-		console.log("Lower nav");
 		highlightC = false;
         $navItem.css(
 			{
@@ -303,26 +304,49 @@ $(document).ready(function()
 	// Events
     $hamburger.click(function()
 	{
-        $openMenu();
-    });
-    $close.click(function()
-	{
-        $closeMenu();
+		if ($(this).hasClass("open"))
+		{
+			openMenu();
+		}
+		else if ($(this).hasClass("close"))
+		{
+			closeMenu();
+		}
+		$hamburger.toggleClass("open");
+		$hamburger.toggleClass("close");
     });
 
 	$mail.click(function()
 	{
-        $closeMenu();
+        closeMenu();
 		$mail.parent().fadeOut();
         $sendMail.fadeIn();
         $overlay.fadeIn();
     });
-    $overlay.click(function()
+
+	$openAbout.click(function()
 	{
-        $sendMail.fadeOut();
-        $overlay.fadeOut();
+		closeMenu();
+		$aboutWeb.fadeIn();
+		$overlay.fadeIn();
+	});
+
+	$setLanguage.click(function()
+	{
+
+	});
+
+	$overlay.click(function()
+	{
+		$overlay.fadeOut();
+
+		$aboutWeb.fadeOut();
+
+		$sendMail.fadeOut();
 		$mail.parent().fadeIn();
-    });
+
+		$themeChange.fadeOut();
+	});
 
 	function switchPage(to)
 	{
@@ -408,19 +432,13 @@ $(document).ready(function()
 
     $theme.click(function()
 	{
-        $closeMenu();
+        closeMenu();
         $themeChange.fadeIn();
         $overlay.fadeIn();
-    });
-    $overlay.click(function()
-	{
-        $themeChange.fadeOut();
-        $overlay.fadeOut();
     });
 
 	$themeOption.click(function()
 	{
-		console.log("Changing theme");
         $('.active').removeClass('active');
         if ($(this).attr('id') == 'purple')
 		{
@@ -448,7 +466,6 @@ $(document).ready(function()
 
 	$clear.click(function()
 	{
-		console.log("Hiding card");
 		var $clearCard = $(this).parents(".card");
 		$clearCard.hide();
 		undo($clearCard);
@@ -457,7 +474,7 @@ $(document).ready(function()
 
 	$box.click(function()
 	{
-		$closeMenu();
+		closeMenu();
 		if (!boxView)
 		{
 			$("body *"). addClass("boxV");
@@ -478,7 +495,7 @@ $(document).ready(function()
 			if ($icon.hasClass("down"))
 			{
 				state("extended");
-				$closeMenu();
+				closeMenu();
 	        }
 			else if (!$icon.hasClass("down"))
 			{
@@ -508,7 +525,6 @@ $(document).ready(function()
 
 	$resize.click(function()
 	{
-		console.log("Resizing");
 		var $resizeCard = $(this).closest(".card");
 		if ($resizeCard.hasClass("small"))
 		{
