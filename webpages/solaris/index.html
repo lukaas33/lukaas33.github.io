@@ -34,7 +34,7 @@
             var canHeight = view.viewSize.height;
             var canWidth = view.viewSize.width;
 			var systemCenter =  [(canWidth /2), (canHeight / 2)];
-			var planetSpeed = 0.1;
+			var globalSpeed = 0.1;
 
 			// Stars
 			var star = [ ];
@@ -51,27 +51,23 @@
 			stars();
 
 			// Data constructor
-			var Data = function(name, color, mass, radius, age, speed, orbitRadius)
+			var Data = function(name, color, mass, radius, speed, orbitDuration)
 			{
 				this.name = name;
 				this.mass = mass; // kg
 				this.radius = radius; // m
 				this.volume = ((4 / 3) * Math.PI * Math.pow(this.radius, 3)); // m^3
 				this.density = (this.mass / this.volume); // kg/m^3
-				this.age = age; // years
 				this.speed = speed; // m/s
-				this.orbitRadius = orbitRadius; // m
-				this.orbit = (this.orbitRadius * Math.PI * 2); // m
-				this.orbitPeriod = ((this.orbit / this.speed) / (24 * 60 * 60)); // days
+				this.orbitDuration = orbitDuration; // days
+				this.orbitLength = (this.speed * (this.orbitDuration * 24 * 60 * 60)); // m
 				this.color = color;
 			}
 
 			// Planet constructor
-			var Planet = function(name, diameter, orbitRadius, orbitSpeed, data)
+			var Planet = function(name, diameter, orbitRadius, data)
 			{
 				this.diameter = diameter;
-				this.orbitSpeed = orbitSpeed;
-
 				this.orbit = new Path.Circle(systemCenter, orbitRadius);
 				this.img = new Raster(name);
 				this.data = data;
@@ -83,7 +79,8 @@
 			}
 			Planet.prototype.set = function()
 			{
-				this.center = new Path.Circle(this.orbit.bounds.leftCenter, (this.diameter /2))
+				this.center = new Path.Circle(this.orbit.bounds.leftCenter, (this.diameter /2));
+				this.orbitSpeed = (this.data.speed / 100000);
 				this.img.set(
 				{
 					size: [this.diameter, this.diameter],
@@ -92,27 +89,27 @@
 			}
 
 			// Moon constructor
-			var Moon = function(name, diameter, orbits, orbitRadius, orbitSpeed, data)
+			var Moon = function(name, orbits, orbitRadius, data)
 			{
-				this.diameter = diameter;
 				this.orbits = orbits;
-				this.orbitSpeed = orbitSpeed;
 				this.orbit = new Path.Circle([0, 0], orbitRadius);
 				this.img = new Raster(name);
 				this.data = data;
 			}
 			Moon.prototype.orbiting = function()
 			{
-				this.center.rotate(this.orbitSpeed, systemCenter);
+				this.center.rotate(this.orbits.orbitSpeed, systemCenter);
 				this.img.position = this.center.position;
 				this.orbit.position = this.orbits.center.position;
-				this.center.rotate(this.orbitSpeed + 0.2, this.orbit.position);
+				this.center.rotate(this.orbitSpeed, this.orbit.position);
 				this.img.position = this.center.position;
 			}
 			Moon.prototype.set = function()
 			{
+				this.diameter = (this.orbits.diameter / 4.5);
 				this.orbit.position = this.orbits.center.position;
-				this.center = new Path.Circle(this.orbit.bounds.leftCenter, (this.diameter /2))
+				this.center = new Path.Circle(this.orbit.bounds.leftCenter, (this.diameter /2));
+				this.orbitSpeed = (this.data.speed / 100000);
 				this.img.set(
 				{
 					size: [this.diameter, this.diameter],
@@ -137,7 +134,6 @@
 					"#ffcc4c",
 					1.98855e30,
 					6.957e8,
-					4.6e9,
 					0,
 					0
 				)
@@ -149,11 +145,14 @@
 				"mercury",
 				(canHeight / 35),
 				(canWidth / 10),
-				planetSpeed,
 				new Data
 				(
 					"Mercury",
-					"#9db4c0"
+					"#9db4c0",
+					3.3011e23,
+					2.4397e6,
+					4.7362e4,
+					8.7969e1
 				)
 			);
 			var venus = new Planet
@@ -161,11 +160,14 @@
 				"venus",
 				(canHeight / 25),
 				(canWidth / 7.75),
-				planetSpeed,
 				new Data
 				(
 					"Venus",
-					"#dbae6d"
+					"#dbae6d",
+					4.8675e24,
+					6.0518e6,
+					3.502e4,
+					2.24701e2
 				)
 			);
 			var earth = new Planet
@@ -173,16 +175,14 @@
 				"earth",
 				(canHeight / 25),
 				(canWidth / 6.1),
-				planetSpeed,
 				new Data
 				(
 					"Earth",
 					"#6b93d6",
 					5.97237e24,
-					6.371e3,
-					4.54e9,
-					29.78e3,
-					1.496e11
+					6.371e6,
+					2.978e4,
+					3.65256363004e2
 				)
 			);
 			var mars = new Planet
@@ -190,11 +190,14 @@
 				"mars",
 				(canHeight / 27.5),
 				(canWidth / 5),
-				planetSpeed,
 				new Data
 				(
 					"Mars",
-					"#c1440e"
+					"#c1440e",
+					6.4171e23,
+					3.3895e6,
+					2.4077e4,
+					6.86971e2
 				)
 			);
 			var jupiter = new Planet
@@ -202,11 +205,14 @@
 				"jupiter",
 				(canHeight / 10.5),
 				(canWidth / 3.5),
-				planetSpeed,
 				new Data
 				(
 					"Jupiter",
-					"#d8ca9d"
+					"#d8ca9d",
+					1.8986e27,
+					6.9911e7,
+					1.307e4,
+					4.33259e3
 				)
 			);
 			var saturn = new Planet
@@ -214,11 +220,14 @@
 				"saturn",
 				(canHeight / 10.5),
 				(canWidth / 2.85),
-				planetSpeed,
 				new Data
 				(
 					"Saturn",
-					"#eec87d"
+					"#eec87d",
+					5.6836e26,
+					5.8232e7,
+					9.69e3,
+					1.075922e4
 				)
 			);
 			var uranus = new Planet
@@ -226,11 +235,14 @@
 				"uranus",
 				(canHeight / 14.5),
 				(canWidth / 2.45),
-				planetSpeed,
 				new Data
 				(
 					"Uranus",
-					"#a8f4f6"
+					"#a8f4f6",
+					8.6810e25,
+					2.5362e7,
+					6.80e3,
+					3.06885e4
 				)
 			);
 			var neptune = new Planet
@@ -238,11 +250,14 @@
 				"neptune",
 				(canHeight / 14.5),
 				(canWidth / 2.2),
-				planetSpeed,
 				new Data
 				(
 					"Neptune",
-					"#3f54ba"
+					"#3f54ba",
+					1.0243e26,
+					2.4622e7,
+					5.43e3,
+					6.0182e4
 				)
 			);
 
@@ -250,14 +265,16 @@
 			var moon = new Moon
 			(
 				"moon",
-				(canHeight / 75),
 				earth,
 				(canWidth / 55),
-				planetSpeed,
 				new Data
 				(
 					"The moon",
-					"#e0e0e0"
+					"#e0e0e0",
+					7.342e22,
+					1.7371e6,
+					1.022e3,
+					2.7321661e1
 				)
 			);
 
