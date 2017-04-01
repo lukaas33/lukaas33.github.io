@@ -175,6 +175,12 @@ nav li {
     margin: 25vh 25vw;
 }
 
+.centerCard.changeLanguage {
+    width: 50vw;
+    height: 50vh;
+    margin: 25vh 25vw;
+}
+
 .themeOption {
 	margin: auto;
 	width: 3rem;

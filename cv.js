@@ -13,6 +13,7 @@ $(document).ready(function()
 	var $box = $('.menuItem.box');
 
 	var $setLanguage = $('.menuItem.language');
+	var $changeLanguage = $('.centerCard.changeLanguage');
 
 	var $openAbout = $('.menuItem.about');
 	var $aboutWeb = $('.centerCard.aboutWebsite');
@@ -333,7 +334,9 @@ $(document).ready(function()
 
 	$setLanguage.click(function()
 	{
-
+		closeMenu();
+		$changeLanguage.fadeIn()
+		$overlay.fadeIn();
 	});
 
 	$overlay.click(function()
@@ -346,6 +349,8 @@ $(document).ready(function()
 		$mail.parent().fadeIn();
 
 		$themeChange.fadeOut();
+
+		$changeLanguage.fadeOut()
 	});
 
 	function switchPage(to)
@@ -393,6 +398,7 @@ $(document).ready(function()
 
 	function setPage(clicked)
 	{
+		closeMenu();
 		var newTab = clicked.parent();
 		var previousTab = $(".current");
         if (!newTab.hasClass('current') && !clicked.hasClass('inactive'))
@@ -405,6 +411,7 @@ $(document).ready(function()
         }
 	}
 
+	// Events
     $navItem.children().click(function()
 	{
 		setPage($(this))
