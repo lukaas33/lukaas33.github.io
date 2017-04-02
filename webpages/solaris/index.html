@@ -26,6 +26,21 @@
 
 		paper.install(window); // No accessing through the paper object
 
+		// Data constructor
+		var Data = function(name, color, mass, radius, speed, orbitDuration)
+		{
+			this.name = name;
+			this.color = color;
+
+			this.mass = mass; // kg
+			this.radius = radius; // m
+			this.volume = ((4 / 3) * Math.PI * Math.pow(this.radius, 3)); // m^3
+			this.density = (this.mass / this.volume); // kg/m^3
+			this.speed = speed; // m/s
+			this.orbitDuration = orbitDuration; // days
+			this.orbitLength = (this.speed * (this.orbitDuration * 24 * 60 * 60)); // m
+		}
+
 		$(document).ready(function()
 		{
 			paper.setup($('#canvas')[0]); // Selects canvas
@@ -36,50 +51,76 @@
 			var systemCenter =  new Point((canWidth / 2), (canHeight / 2));
 
 			// Stars
-			var star = [ ];
 			function stars()
 			{
+				var path = new Path.Circle(systemCenter, 3);
+				path.fillColor = new Color(1, 0.85);
+				var defineStar = new SymbolDefinition(path);
 				for (var i = 0; i < 500; i++)
 				{
-					var radius = (canWidth / 1000 * (Math.random() * 1.5));
-					var position = [Math.ceil(Math.random() * canWidth), Math.ceil(Math.random() * canHeight)];
-					star[i] = new Path.Circle(position, radius);
-					star[i].fillColor = new Color(1, 1, 1, ((Math.random() * 50 + 50) / 100));
+					var star = defineStar.place();
+					star.position = (Point.random() * view.viewSize);
+					star.scale(0.25 + (Math.random() * 0.75));
 				}
 			}
 			stars();
 
-			// Data constructor
-			var Data = function(name, color, mass, radius, speed, orbitDuration)
-			{
-				this.name = name;
-				this.color = color;
-
-				this.mass = mass; // kg
-				this.radius = radius; // m
-				this.volume = ((4 / 3) * Math.PI * Math.pow(this.radius, 3)); // m^3
-				this.density = (this.mass / this.volume); // kg/m^3
-				this.speed = speed; // m/s
-				this.orbitDuration = orbitDuration; // days
-				this.orbitLength = (this.speed * (this.orbitDuration * 24 * 60 * 60)); // m
-			}
-
 			// All space rocks (planets, moons, astroids) constructor
-			var SpaceRock = function(name, orbitRadius, orbits, data)
+			var SpaceRock = function(name, orbitRadius, orbits)
 			{
 				this.orbit = new Path.Circle(systemCenter, orbitRadius);
 				this.img = new Raster(name);
 				this.orbits = orbits;
-				this.data = data;
+
+				this.img.onFrame = function()
+				{
+					this.orbiting();
+				}.bind(this);
 			}
+
+			// Planetoid constructor
+			var Planetoid = function(name, orbitRadius, orbits, data)
+			{
+				SpaceRock.call(this, name, orbitRadius, orbits);
+				this.data = data;
+
+				this.tagLabel = new Group(
+				[
+					this.tag = new Path.Rectangle(
+					{
+						size: [Math.round(canWidth / 30), Math.round(canHeight / 35)],
+						fillColor: "#fafafa"
+					}),
+					this.label = new PointText(
+					{
+						position: [this.tag.position.x, (this.tag.position.y + 4)],
+						content: this.data.name,
+						fillColor: "#212121",
+						justification: "center",
+						fontFamily: "noto sans",
+					})
+				]);
+				this.tagLabel.visible = false;
+
+				this.img.onMouseEnter = function()
+				{
+					this.tagLabel.visible = true;
+				}.bind(this);
+				this.img.onMouseLeave = function()
+				{
+					this.tagLabel.visible = false;
+				}.bind(this);
+			}
+			Planetoid.prototype = Object.create(SpaceRock.prototype);
 
 			// Planet constructor
 			var Planet = function(name, diameter, orbitRadius, orbits, data)
 			{
-				SpaceRock.call(this, name, orbitRadius, orbits, data);
+				Planetoid.call(this, name, orbitRadius, orbits, data);
 
-				this.diameter = diameter;
 				this.orbitSpeed = this.data.speed / 200000;
+				this.diameter = diameter;
+
 				this.center = new Path.Circle(this.orbit.bounds.leftCenter, (this.diameter /2));
 				this.img.set(
 				{
@@ -87,18 +128,19 @@
 					position: this.center.position
 				});
 			}
-			Planet.prototype = Object.create(SpaceRock.prototype);
+			Planet.prototype = Object.create(Planetoid.prototype);
 
 			Planet.prototype.orbiting = function()
 			{
 				this.center.rotate(this.orbitSpeed, this.orbits.center.position);
 				this.img.position = this.center.position;
+				this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - 20)];
 			}
 
 			// Moon constructor
 			var Moon = function(name, orbitRadius, orbits, data)
 			{
-				SpaceRock.call(this, name, orbitRadius, orbits, data);
+				Planetoid.call(this, name, orbitRadius, orbits, data);
 
 				this.orbit.position = this.orbits.center.position;
 				this.diameter = Math.round(this.orbits.diameter / (this.orbits.data.radius / this.data.radius));
@@ -110,17 +152,18 @@
 					position: this.center.position
 				});
 			}
-			Moon.prototype = Object.create(SpaceRock.prototype);
+			Moon.prototype = Object.create(Planetoid.prototype);
 
 			Moon.prototype.orbiting = function()
 			{
 				this.center.rotate(this.orbits.orbitSpeed, this.orbits.orbits.center.position);
 				this.img.position = this.center.position;
-				//this.orbits.orbiting();
 
 				this.orbit.position = this.orbits.center.position;
 				this.center.rotate(this.orbits.orbitSpeed * 11, this.orbit.position);
 				this.img.position = this.center.position;
+
+				this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - 20)];
 			}
 
 			// Sun object
@@ -283,7 +326,7 @@
 				earth,
 				new Data
 				(
-					"The moon",
+					"Moon",
 					"#e0e0e0",
 					7.342e22,
 					1.7371e6,
@@ -293,7 +336,7 @@
 			);
 
 			// All objects in the canvas
-			var solarSystem = [[mercury, venus, earth, mars, jupiter, saturn, uranus, neptune], moon, sun, star];
+			var solarSystem = [[mercury, venus, earth, mars, jupiter, saturn, uranus, neptune], moon, sun];
 
 			// View invisible paths
 			function selected()
@@ -311,14 +354,10 @@
 			sun.set();
 			// selected();
 
-			// The frame event
-			view.onFrame = function(event)
+			// The resize event
+			view.onResize = function(event)
 			{
-				for (var i = 0; i < solarSystem[0].length; i++)
-				{
-					solarSystem[0][i].orbiting();
-				}
-				moon.orbiting();
+
 			}
 
 			console.log(solarSystem);
