@@ -22,10 +22,6 @@
   -webkit-touch-callout: none;
 }
 
-::-webkit-scrollbar {
-	display: none;
-}
-
 body {
     background-color: #EEEEEE;
     color: #212121;
@@ -44,9 +40,9 @@ hr {
     border: 1px dotted grey;
 }
 
-:focus, :active { outline: none; }
-
 a { text-decoration: none; }
+
+:focus, :active { outline: none; }
 
 iframe { border: none; }
 
@@ -107,6 +103,7 @@ nav li {
 .navItem a {
 	font-weight: bold;
 	color: #ffffff;
+	cursor: pointer;
 }
 
 .navMore {
@@ -293,9 +290,15 @@ button {
 /* Cards */
 .cards {
 	margin: 2rem 0rem;
+	display: -webkit-flex;
+	display: -ms-flexbox;
 	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
+	-webkit-flex-wrap: wrap;
+	    -ms-flex-wrap: wrap;
+	        flex-wrap: wrap;
+	-webkit-justify-content: center;
+	    -ms-flex-pack: center;
+	        justify-content: center;
 }
 
 .card {
@@ -323,18 +326,6 @@ button {
 
 .card.small .text {
     display: block;
-}
-
-.card.resizable.medium .image {
-    overflow: hidden;
-    border-radius: 5px 0px 0px 5px;
-    width: 50%;
-    display: inline-table;
-}
-
-.card.resizable.medium .text {
-    width: 50%;
-    float: right;
 }
 
 .card.resizable.big .image {
@@ -413,10 +404,6 @@ button {
 	list-style-type: none;
 }
 
-.card ul li {
-	text-align: center;
-}
-
 .card hr {
     margin: 0.75rem 0rem;
 }
@@ -470,42 +457,85 @@ button {
 /* -- Animations -- */
 .cards.goUp {
 	transition-timing-function: ease;
-	animation-name: up;
-	animation-duration: 0.8s;
+	-webkit-animation-name: up;
+	        animation-name: up;
+	-webkit-animation-duration: 0.8s;
+	        animation-duration: 0.8s;
+}
+
+@-webkit-keyframes up {
+	0% {
+		opacity: 0;
+		-webkit-transform: translate3d(0, 75vh, 0);
+		        transform: translate3d(0, 75vh, 0);
+	}
+	100% {
+		opacity: 1;
+		-webkit-transform: none;
+		        transform: none;
+	}
 }
 
 @keyframes up {
 	0% {
 		opacity: 0;
-		transform: translate3d(0, 75vh, 0);
+		-webkit-transform: translate3d(0, 75vh, 0);
+		        transform: translate3d(0, 75vh, 0);
 	}
 	100% {
 		opacity: 1;
-		transform: none;
+		-webkit-transform: none;
+		        transform: none;
 	}
 }
 
 .cards.goDown {
 	transition-timing-function: ease;
-	animation-name: down;
-	animation-duration: 0.8s;
+	-webkit-animation-name: down;
+	        animation-name: down;
+	-webkit-animation-duration: 0.8s;
+	        animation-duration: 0.8s;
+}
+
+@-webkit-keyframes down {
+    0% {
+		opacity: 1;
+		-webkit-transform: none;
+		        transform: none;
+	}
+	100% {
+		opacity: 0;
+		-webkit-transform: translate3d(0, 75vh, 0);
+		        transform: translate3d(0, 75vh, 0);
+	}
 }
 
 @keyframes down {
     0% {
 		opacity: 1;
-		transform: none;
+		-webkit-transform: none;
+		        transform: none;
 	}
 	100% {
 		opacity: 0;
-		transform: translate3d(0, 75vh, 0);
+		-webkit-transform: translate3d(0, 75vh, 0);
+		        transform: translate3d(0, 75vh, 0);
 	}
 }
 
 .progress {
-	animation-timing-function: ease;
-	animation-name: width;
-	animation-duration: 2.5s;
+	-webkit-animation-timing-function: ease;
+	        animation-timing-function: ease;
+	-webkit-animation-name: width;
+	        animation-name: width;
+	-webkit-animation-duration: 2.5s;
+	        animation-duration: 2.5s;
+}
+
+@-webkit-keyframes width {
+	0% {
+		width: 5%;
+	}
 }
 
 @keyframes width {
