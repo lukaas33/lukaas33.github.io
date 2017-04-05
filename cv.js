@@ -181,7 +181,7 @@ $(document).ready(function()
 		{
 			return (days + " days");
 		}
-		else if (years == 1) // 1 year
+		else if (years === 1) // 1 year
 		{
 			return (years + " year");
 		}
@@ -270,14 +270,14 @@ $(document).ready(function()
 
 	function state(state)
 	{
-		if (state == "collapsed")
+		if (state === "collapsed")
 		{
 			$icon.addClass("down");
             $icon.text('keyboard_arrow_down');
             inlineNav();
 			$navItem.hide();
 		}
-		else if (state == "extended")
+		else if (state === "extended")
 		{
 			$icon.removeClass("down");
             $icon.text('keyboard_arrow_up');
@@ -355,26 +355,26 @@ $(document).ready(function()
 
 	function switchPage(to)
 	{
-		if (to == 'aboutMe')
+		if (to === 'aboutMe')
 		{
 			$aboutMe.removeClass("goDown");
 			$aboutMe.addClass("goUp");
 			$aboutMe.show();
 		}
-		else if (to == 'experience')
+		else if (to === 'experience')
 		{
 			$experience.removeClass("goDown");
 			$experience.addClass("goUp");
 			$experience.show();
 		}
-		else if (to == 'skills')
+		else if (to === 'skills')
 		{
 			$skills.removeClass("goDown");
 			$skills.addClass("goUp");
 			$skills.show();
 			progressText();
 		}
-		else if (to == 'portfolio')
+		else if (to === 'portfolio')
 		{
 			$portfolio.removeClass("goDown");
 			$portfolio.addClass("goUp");
@@ -447,22 +447,22 @@ $(document).ready(function()
 	$themeOption.click(function()
 	{
         $('.active').removeClass('active');
-        if ($(this).attr('id') == 'purple')
+        if ($(this).attr('id') === 'purple')
 		{
             activeTheme = purple;
             $purple.addClass('active');
         }
-		else if ($(this).attr('id') == 'teal')
+		else if ($(this).attr('id') === 'teal')
 		{
             activeTheme = teal;
             $teal.addClass('active');
         }
-		else if ($(this).attr('id') == 'blue')
+		else if ($(this).attr('id') === 'blue')
 		{
             activeTheme = blue;
             $blue.addClass('active');
         }
-		else if ($(this).attr('id') == 'red')
+		else if ($(this).attr('id') === 'red')
 		{
             activeTheme = red;
             $red.addClass('active');
