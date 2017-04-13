@@ -22,6 +22,8 @@
 	<!-- Load the jQuery library -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<!-- Get Wikipedia entry -->
+	<script src='http://okfnlabs.org/wikipediajs/wikipedia.js'></script>
 	<!--  Js code -->
 	<script type="text/paperscript" canvas="canvas">
 
@@ -88,11 +90,14 @@
 					$sidebar.find(".header h2").text(object.data.name);
 					$sidebar.find(".info").html
 					(
+						"<p>" + this.info.summary + "</p>" +
+						"<br/>" +
 						"<p>" + object.data.name + " has a mass of " + (object.data.mass).toPrecision(2) + " kilograms.</p>" +
 						"<p>Its volume is " + (object.data.volume).toPrecision(2) + " square metres.</p>" +
 						"<p>It has a density of " + (object.data.density).toPrecision(2) + " kilogram per square metre.</p>" +
 						"</br>" +
-						"<p>" + object.data.name + "" + "</p>"
+						"<p>" + object.data.name + " takes " + (object.data.orbitDuration).toPrecision(2)  + " days to orbit.</p>" +
+						"<p>It travels with a speed of " + (object.data.speed).toPrecision(2)  + " metres per second.</p>"
 					);
 				}
 				if (sidebarState === "closed")
@@ -115,6 +120,7 @@
 				this.name = name;
 				this.color = color;
 
+				this.info = WIKIPEDIA.getData("https://en.wikipedia.org/wiki/" + name);
 				this.mass = mass; // kg
 				this.radius = radius; // m
 				this.volume = ((4 / 3) * Math.PI * Math.pow(this.radius, 3)); // m^3
