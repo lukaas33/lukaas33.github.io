@@ -86,15 +86,17 @@
 				{
 					$sidebar.find(".header").css({backgroundColor: object.data.color});
 					$sidebar.find(".header h2").text(object.data.name);
-					$sidebar.find(".info").html
-					(
-						"<p>" + object.data.name + " has a mass of " + (object.data.mass).toPrecision(2) + " kilograms.</p>" +
-						"<p>Its volume is " + (object.data.volume).toPrecision(2) + " square metres.</p>" +
-						"<p>It has a density of " + (object.data.density).toPrecision(2) + " kilogram per square metre.</p>" +
-						"</br>" +
-						"<p>" + object.data.name + " takes " + (object.data.orbitDuration).toPrecision(2)  + " days to orbit.</p>" +
-						"<p>It travels with a speed of " + (object.data.speed).toPrecision(2)  + " metres per second.</p>"
-					);
+					$sidebar.find(".info").empty();
+					$sidebar.find(".info").append($("<img/>").attr({alt: object.data.img, src: ("media/planetImgs/" + object.data.name + ".png")}));
+					$sidebar.find(".info").append("<br/><br/>");
+					$sidebar.find(".info").append("<p>" + object.data.name + " has a mass of " + (object.data.mass).toPrecision(2) + " kilograms.</p>");
+					$sidebar.find(".info").append("<p>Its volume is " + (object.data.volume).toPrecision(2) + " square metres.</p>");
+					$sidebar.find(".info").append("<p>It has a density of " + Math.round(object.data.density) + " kilogram per square metre.</p>");
+					$sidebar.find(".info").append("<br/>");
+					$sidebar.find(".info").append("<p>" + object.data.name + " takes " + Math.round(object.data.orbitDuration)  + " days to orbit.</p>");
+					$sidebar.find(".info").append("<p>It travels with a speed of " + Math.round(object.data.speed)  + " metres per second.</p>");
+					$sidebar.find(".info").append("<hr/>");
+					$sidebar.find(".info").append($("<a>More info</a>").attr({href: ("https://en.wikipedia.org/wiki/" + object.data.name), target: "_blank"}).css({color: object.data.color}) );
 				}
 				if (sidebarState === "closed")
 				{
@@ -111,10 +113,11 @@
 
 			// -- Constructors --
 			// Data constructor
-			var Data = function(name, color, mass, radius, speed, orbitDuration)
+			var Data = function(name, color, img, mass, radius, speed, orbitDuration)
 			{
 				this.name = name;
 				this.color = color;
+				this.img = img;
 				this.mass = mass; // kg
 				this.radius = radius; // m
 				this.volume = ((4 / 3) * Math.PI * Math.pow(this.radius, 3)); // m^3
@@ -147,7 +150,7 @@
 				[
 					this.tag = new Path.Rectangle(
 					{
-						size: [Math.round(canWidth / 30), Math.round(canHeight / 35)],
+						size: [Math.round(canWidth / 25), Math.round(canHeight / 35)],
 						fillColor: "#fafafa"
 					}),
 					this.label = new PointText(
@@ -263,6 +266,7 @@
 					(
 						"Sun",
 						"#ffcc4c",
+						null,
 						1.98855e30,
 						6.957e8,
 						0,
@@ -281,6 +285,7 @@
 					(
 						"Mercury",
 						"#9db4c0",
+						"https://upload.wikimedia.org/wikipedia/commons/d/d9/Mercury_in_color_-_Prockter07-edit1.jpg",
 						3.3011e23,
 						2.4397e6,
 						4.7362e4,
@@ -297,6 +302,7 @@
 					(
 						"Venus",
 						"#dbae6d",
+						"https://upload.wikimedia.org/wikipedia/commons/8/85/Venus_globe.jpg",
 						4.8675e24,
 						6.0518e6,
 						3.502e4,
@@ -313,6 +319,7 @@
 					(
 						"Earth",
 						"#6b93d6",
+						"https://upload.wikimedia.org/wikipedia/commons/6/6f/Earth_Eastern_Hemisphere.jpg",
 						5.97237e24,
 						6.371e6,
 						2.978e4,
@@ -329,6 +336,7 @@
 					(
 						"Mars",
 						"#c1440e",
+						"https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/1200px-OSIRIS_Mars_true_color.jpg",
 						6.4171e23,
 						3.3895e6,
 						2.4077e4,
@@ -345,6 +353,7 @@
 					(
 						"Jupiter",
 						"#d8ca9d",
+						"https://upload.wikimedia.org/wikipedia/commons/5/5a/Jupiter_by_Cassini-Huygens.jpg",
 						1.8986e27,
 						6.9911e7,
 						1.307e4,
@@ -361,6 +370,7 @@
 					(
 						"Saturn",
 						"#eec87d",
+						"http://amazingspace.org/uploads/resource_image/image/82/ff_saturn_lg.png",
 						5.6836e26,
 						5.8232e7,
 						9.69e3,
@@ -377,6 +387,7 @@
 					(
 						"Uranus",
 						"#6BE6E8",
+						"https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg",
 						8.6810e25,
 						2.5362e7,
 						6.80e3,
@@ -393,6 +404,7 @@
 					(
 						"Neptune",
 						"#3f54ba",
+						"https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Neptune_Full.jpg/1200px-Neptune_Full.jpg",
 						1.0243e26,
 						2.4622e7,
 						5.43e3,
@@ -408,8 +420,9 @@
 					earth,
 					new Data
 					(
-						"Moon",
-						"#d6d6d6",
+						"The Moon",
+						"#c1c1c1",
+						"https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg",
 						7.342e22,
 						1.7371e6,
 						1.022e3,
@@ -548,9 +561,27 @@
 			padding: 2vw;
 		}
 
-		.info {
+		.text .info {
 			padding: 2vw;
 			color: #424242;
+		}
+
+		.text .info a {
+			text-decoration: none;
+			transition: 0.4s;
+		}
+
+		.text .info a:hover {
+			text-decoration: underline;
+		}
+
+		.text .info img {
+			width: 100%;
+			border-radius: 0.5vh;
+		}
+
+		.text .info hr {
+			margin: 2vh 0vw;
 		}
 
 		/* -- Menu -- */
@@ -581,19 +612,19 @@
 			</canvas>
 	    </div>
 		<div class="images">
-			<img id="sun" src="media/planetImgs/sun.svg"/>
-			<img id="mercury" src="media/planetImgs/mercury.svg"/>
-			<img id="venus" src="media/planetImgs/venus.svg"/>
-			<img id="earth" src="media/planetImgs/earth.svg"/>
-			<img id="moon" src="media/planetImgs/moon.svg"/>
-			<img id="mars" src="media/planetImgs/mars.svg"/>
-			<img id="ceres" src="media/planetImgs/ceres.svg"/>
-			<img id="jupiter" src="media/planetImgs/jupiter.svg"/>
-			<img id="saturn" src="media/planetImgs/saturn.svg"/>
-			<img id="uranus" src="media/planetImgs/uranus.svg"/>
-			<img id="neptune" src="media/planetImgs/neptune.svg"/>
-			<img id="pluto" src="media/planetImgs/pluto.svg"/>
-			<img id="astroid" src="media/planetImgs/astroid.svg"/>
+			<img id="sun" src="media/planetSprites/sun.svg"/>
+			<img id="mercury" src="media/planetSprites/mercury.svg"/>
+			<img id="venus" src="media/planetSprites/venus.svg"/>
+			<img id="earth" src="media/planetSprites/earth.svg"/>
+			<img id="moon" src="media/planetSprites/moon.svg"/>
+			<img id="mars" src="media/planetSprites/mars.svg"/>
+			<img id="ceres" src="media/planetSprites/ceres.svg"/>
+			<img id="jupiter" src="media/planetSprites/jupiter.svg"/>
+			<img id="saturn" src="media/planetSprites/saturn.svg"/>
+			<img id="uranus" src="media/planetSprites/uranus.svg"/>
+			<img id="neptune" src="media/planetSprites/neptune.svg"/>
+			<img id="pluto" src="media/planetSprites/pluto.svg"/>
+			<img id="astroid" src="media/planetSprites/astroid.svg"/>
 			<audio type="audio/mpeg" src="media/space.mp3" autoplay="true" loop="true"></audio>
 		</div>
 	</div>
