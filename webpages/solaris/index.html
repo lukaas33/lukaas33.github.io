@@ -87,7 +87,7 @@
 					$sidebar.find(".header").css({backgroundColor: object.data.color});
 					$sidebar.find(".header h2").text(object.data.name);
 					$sidebar.find(".info").empty();
-					$sidebar.find(".info").append($("<img/>").attr({alt: object.data.img, src: ("media/planetImgs/" + object.data.name + ".png")}));
+					$sidebar.find(".info").append($("<img/>").attr({alt: "Picture of " + object.data.name + ", from " + object.data.img, src: ("media/planetImgs/" + object.data.name + ".png")}));
 					$sidebar.find(".info").append("<br/><br/>");
 					$sidebar.find(".info").append("<p>" + object.data.name + " has a mass of " + (object.data.mass).toPrecision(2) + " kilograms.</p>");
 					$sidebar.find(".info").append("<p>Its volume is " + (object.data.volume).toPrecision(2) + " square metres.</p>");
@@ -127,6 +127,10 @@
 				this.orbitLength = (this.speed * (this.orbitDuration * 24 * 60 * 60)); // m
 			}
 
+			// Main constructor
+			function Main()
+			{}
+
 			// Space rock constructor
 			function SpaceRock(name, orbitRadius, orbits)
 			{
@@ -140,12 +144,9 @@
 				}.bind(this);
 			}
 
-			// Planetoid constructor
-			function Planetoid(name, orbitRadius, orbits, data)
+			// Space object constructor
+			function SpaceObject()
 			{
-				SpaceRock.call(this, name, orbitRadius, orbits);
-				this.data = data;
-
 				this.tagLabel = new Group(
 				[
 					this.tag = new Path.Rectangle(
@@ -178,9 +179,36 @@
 					setData(this);
 				}.bind(this);
 			}
-			Planetoid.prototype = Object.create(SpaceRock.prototype);
 
-			// Planet constructor
+			// Planetoid constructor, is a SpaceObject and a SpaceRock
+			function Planetoid(name, orbitRadius, orbits, data)
+			{
+				SpaceRock.call(this, name, orbitRadius, orbits);
+				this.data = data;
+				SpaceObject.call(this);
+			}
+			Planetoid.prototype = Object.create(SpaceRock.prototype);
+			Planetoid.prototype = Object.create(SpaceObject.prototype);
+
+			// Star constructor, is a SpaceObject
+			function Star(name, diameter, data)
+			{
+				this.img = new Raster(name);
+				this.data = data;
+				SpaceObject.call(this);
+
+				this.diameter = diameter;
+
+				this.center = new Path.Circle(systemCenter, (this.diameter / 2));
+				this.img.set(
+				{
+					size: [this.diameter, this.diameter],
+					position: this.center.position
+				});
+			}
+			Star.prototype = Object.create(SpaceObject.prototype);
+
+			// Planet constructor, is a Planetoid
 			function Planet(name, diameter, orbitRadius, orbits, data)
 			{
 				Planetoid.call(this, name, orbitRadius, orbits, data);
@@ -188,7 +216,7 @@
 				this.orbitSpeed = this.data.speed / 200000;
 				this.diameter = diameter;
 
-				this.center = new Path.Circle(this.orbit.bounds.leftCenter, (this.diameter /2));
+				this.center = new Path.Circle(this.orbit.bounds.leftCenter, (this.diameter / 2));
 				this.img.set(
 				{
 					size: [this.diameter, this.diameter],
@@ -204,7 +232,7 @@
 				this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - 20)];
 			}
 
-			// Moon constructor
+			// Moon constructor, is a Planetoid
 			function Moon(name, orbitRadius, orbits, data)
 			{
 				Planetoid.call(this, name, orbitRadius, orbits, data);
@@ -252,27 +280,21 @@
 			function setupSolarsystem()
 			{
 				// Sun object
-				var sun =
-				{
-					diameter: Math.round(canHeight / 4.5),
-					center: new Path.Circle(systemCenter, ((canHeight / 4.5) / 2)),
-					img: new Raster("sun"),
-					set: function()
-					{
-						this.img.size = [this.diameter, this.diameter];
-						this.img.position = this.center.position;
-					},
+				var sun = new Star
+				(
+					"sun",
+					Math.round(canHeight / 4.5),
 					data: new Data
 					(
-						"Sun",
+						"The Sun",
 						"#ffcc4c",
-						null,
+						"http://i1-win.softpedia-static.com/screenshots/Sun-Space-Screensaver_1.jpg",
 						1.98855e30,
 						6.957e8,
 						0,
 						0
 					)
-				};
+				);
 
 				// Planet objects
 				var mercury = new Planet
@@ -533,7 +555,7 @@
             margin: 5vh 2.5vw;
             border-radius: 0.5vh;
 			z-index: 10;
-			overflow: hidden;
+			overflow: auto;
         }
 
 		.sidebar:hover {
@@ -578,6 +600,7 @@
 		.text .info img {
 			width: 100%;
 			border-radius: 0.5vh;
+			background-color: #e0e0e0;
 		}
 
 		.text .info hr {
