@@ -1,8 +1,3 @@
-/*
----BUGS---
-- Hide card only works once
-- Nav extended fails to work properly sometimes (Doesn't fill screen)
-*/
 $(document).ready(function()
 {
 	// Jquery vars
