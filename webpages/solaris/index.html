@@ -40,7 +40,61 @@
 			var $sidebar = $('.sidebarContainer');
 			var $close = $('#sidebar .close');
 
+			var $menu = $("#menu");
+			var $menuButton = $(".menuButton");
+			var $options = $(".options");
+
+			var musicState = "on";
+			var $musicButton = $(".option.music");
+			var $music = $("#music");
+
+			var $infoButton = $(".option.about");
+			var $overlay = $("#overlay");
+
 			// -- Website controls --
+			// Options visible
+			$menuButton.mouseenter(function()
+			{
+				$menuButton.addClass("active");
+				$options.show
+				(
+					"drop", {direction: "up"}, 400
+				);
+			});
+
+			$menu.mouseleave(function()
+			{
+				$options.hide
+				(
+					"drop",
+					{
+						direction: "up",
+						complete: function()
+						{
+							$menuButton.removeClass("active");
+						}
+					},
+					400
+				);
+			});
+
+			// Turns off music
+			$musicButton.click(function()
+			{
+				if (musicState === "on")
+				{
+					$musicButton.find("i").html("volume_off");
+					$music[0].pause();
+					musicState = "off";
+				}
+				else
+				{
+					$musicButton.find("i").html("volume_up");
+					$music[0].play();
+					musicState = "on";
+				}
+			});
+
 			// Shows button
 			$sidebar.mouseenter(function()
 			{
@@ -49,6 +103,21 @@
 			$sidebar.mouseleave(function()
 			{
 				$close .fadeOut();
+			});
+
+			// Shows info
+			$infoButton.click(function()
+			{
+				if (sidebarState === "opened")
+				{
+					sidebarOpen(false);
+				}
+				$overlay.fadeIn();
+			});
+
+			$overlay.click(function()
+			{
+				$overlay.fadeOut();
 			});
 
 			// Closes sidebar
@@ -68,13 +137,25 @@
 			{
 				if (open)
 				{
-					$sidebar.animate({right: 0}, setData.time);
-					sidebarState = "opened";
+					$sidebar.animate
+					(
+						{right: 0},
+						{
+							duration: setData.time,
+							complete: function() {sidebarState = "opened"; console.log("Opened sidebar");}
+						}
+					);
 				}
 				else
 				{
-					$sidebar.animate({right: -$sidebar.width()}, setData.time);
-					sidebarState = "closed";
+					$sidebar.animate
+					(
+						{right: -$sidebar.width()},
+						{
+							duration: setData.time,
+							complete: function() {sidebarState = "closed"; console.log("Closed sidebar");}
+						}
+					);
 				}
 			}
 
@@ -89,7 +170,7 @@
 					$sidebar.find(".info").empty();
 					$sidebar.find(".info").append($("<img/>").attr({alt: "Picture of " + object.data.name + ", from " + object.data.img, src: ("media/planetImgs/" + object.data.name + ".png")}));
 					$sidebar.find(".info").append("<br/><br/>");
-					$sidebar.find(".info").append("<p>The surface temperature of " + object.data.name + ".</p>");
+					$sidebar.find(".info").append("<p>The surface temperature of " + (object.data.name).toLowerCase() + ".</p>");
 					$sidebar.find(".info").append("<br/>");
 					$sidebar.find(".info").append("<p>" + object.data.name + " has a mass of " + (object.data.mass).toPrecision(2) + " kilograms.</p>");
 					$sidebar.find(".info").append("<p>Its volume is " + (object.data.volume).toPrecision(2) + " square metres.</p>");
@@ -159,7 +240,7 @@
 					{
 						position: [this.tag.position.x, (this.tag.position.y + 4)],
 						content: this.data.name,
-						fillColor: "#424242",
+						fillColor: "#757575",
 						justification: "center",
 						fontFamily: "noto sans"
 					})
@@ -505,6 +586,12 @@
 			-webkit-touch-callout: none;
 		}
 
+		body {
+			height: 100vh;
+			width: 100vw;
+			overflow: hidden;
+		}
+
 		:focus, :active {
 			outline: none;
 		}
@@ -513,6 +600,15 @@
             background-color: transparent;
             border: 0px solid transparent;
         }
+
+		#overlay {
+			background-color: rgba(0, 0, 0, 0.65);
+			display: none;
+			z-index: 15;
+			position: fixed;
+			width: 100vw;
+			height: 100vh;
+		}
 
 		/* -- Canvas -- */
 		.canvas { /* .canvas fills screen */
@@ -550,7 +646,6 @@
             margin: 5vh 2.5vw;
             border-radius: 0.5vh;
 			z-index: 10;
-			overflow: auto;
         }
 
 		#sidebar:hover {
@@ -570,17 +665,27 @@
 			color: rgba(255, 255, 255, 0.75);
 		}
 
+		.text {
+			height: 100%;
+		}
+
 		.text h2 {
 			text-align: center;
 			font-weight: normal;
-			font-size: 2em;
+			font-size: 1.5em;
 			color: #ffffff;
 			padding: 1.5vw;
 		}
 
+		.text .header {
+			height: 10%;
+		}
+
 		.text .info {
+			height: 90%;
 			padding: 2vw;
 			color: #424242;
+			overflow: scroll;
 		}
 
 		.text .info a {
@@ -610,28 +715,42 @@
 
 		.menuButton {
 			padding: 1em;
+			height: 5em;
+			width: 5em;
 			margin: 1em 0em;
 			border-radius: 100%;
+			z-index: 10;
 			display: block;
-			background-color: #f5f5f5;
-			color: #424242;
-			box-shadow: 0px 4px 4px rgba(0,0,0,0.15);
+			position: relative;
 			transition: 0.4s;
+			color: #f5f5f5;
 		}
 
 		.menuButton i { font-size: 3em; }
 
-		.menuButton:hover {
+		.menuButton.active {
+			background-color: #f5f5f5;
+			color: #424242;
 			box-shadow: 0px 6px 8px rgba(0,0,0,0.30);
+		}
+
+		.options {
+			display: none;
+			position: absolute;
+			margin-top: 4em;
+			top: 1em;
 		}
 
 		.option {
 			padding: 0.75em;
-			margin: 1em 0.75em;
+			height: 3.5em;
+			width: 3.5em;
+			margin: 1.5em 0.75em;
 			border-radius: 100%;
+			z-index: 5;
 			display: block;
 			background-color: #eeeeee;
-			color: #616161;
+			color: #757575;
 			box-shadow: 0px 4px 4px rgba(0,0,0,0.15);
 			transition: 0.4s;
 		}
@@ -643,6 +762,16 @@
 
 		.option:hover {
 			box-shadow: 0px 6px 8px rgba(0,0,0,0.30);
+		}
+
+		#credits {
+			position: absolute;
+			color: rgba(255, 255, 255, 0.65);
+			text-decoration: none;
+		}
+
+		#credits:hover {
+			color: rgba(255, 255, 255, 0.85);
 		}
 	</style>
 </head>
@@ -675,7 +804,9 @@
 			<img id="neptune" src="media/planetSprites/neptune.svg"/>
 			<img id="pluto" src="media/planetSprites/pluto.svg"/>
 			<img id="astroid" src="media/planetSprites/astroid.svg"/>
-			<audio type="audio/mpeg" src="media/space.mp3" autoplay="true" loop="true"></audio>
+			<audio id="music" autoplay="true" loop="true" controls="true">
+				<source src="media/space.mp3" type="audio/mpeg" alt="Music is from https://youtu.be/PRnn_-M-efM"/>
+			</audio>
 		</div>
 	</div>
 	<div class="sidebarContainer">
