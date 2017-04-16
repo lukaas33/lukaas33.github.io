@@ -49,7 +49,10 @@
 			var $music = $("#music");
 
 			var $infoButton = $(".option.about");
+			var $info = $(".infoContainer");
 			var $overlay = $("#overlay");
+
+			var $orbitButton = $(".option.orbits");
 
 			// -- Website controls --
 			// Options visible
@@ -113,11 +116,13 @@
 					sidebarOpen(false);
 				}
 				$overlay.fadeIn();
+				$info.fadeIn();
 			});
 
 			$overlay.click(function()
 			{
 				$overlay.fadeOut();
+				$info.fadeOut();
 			});
 
 			// Closes sidebar
@@ -142,7 +147,7 @@
 						{right: 0},
 						{
 							duration: setData.time,
-							complete: function() {sidebarState = "opened"; console.log("Opened sidebar");}
+							complete: function() {sidebarState = "opened";}
 						}
 					);
 				}
@@ -153,7 +158,7 @@
 						{right: -$sidebar.width()},
 						{
 							duration: setData.time,
-							complete: function() {sidebarState = "closed"; console.log("Closed sidebar");}
+							complete: function() {sidebarState = "closed";}
 						}
 					);
 				}
@@ -168,9 +173,9 @@
 					$sidebar.find(".header").css({backgroundColor: object.data.color});
 					$sidebar.find(".header h2").text(object.data.name);
 					$sidebar.find(".info").empty();
-					$sidebar.find(".info").append($("<img/>").attr({alt: "Picture of " + object.data.name + ", from " + object.data.img, src: ("media/planetImgs/" + object.data.name + ".png")}));
+					$sidebar.find(".info").append($("<img/>").attr({alt: "Source: " + object.data.img, src: ("media/planetImgs/" + object.data.name + ".png")}));
 					$sidebar.find(".info").append("<br/><br/>");
-					$sidebar.find(".info").append("<p>The surface temperature of " + (object.data.name).toLowerCase() + ".</p>");
+					$sidebar.find(".info").append("<p>The average surface temperature of " + (object.data.name).toLowerCase() + " is around " + object.data.temperature + " Kelvin or " + (object.data.temperature - 273) + " degrees Celcius.</p>");
 					$sidebar.find(".info").append("<br/>");
 					$sidebar.find(".info").append("<p>" + object.data.name + " has a mass of " + (object.data.mass).toPrecision(2) + " kilograms.</p>");
 					$sidebar.find(".info").append("<p>Its volume is " + (object.data.volume).toPrecision(2) + " square metres.</p>");
@@ -199,7 +204,7 @@
 
 			// -- Constructors --
 			// Data constructor
-			var Data = function(name, color, img, mass, radius, speed, orbitDuration)
+			var Data = function(name, color, img, mass, radius, speed, orbitDuration, temperature)
 			{
 				this.name = name;
 				this.color = color;
@@ -211,6 +216,7 @@
 				this.speed = speed; // m/s
 				this.orbitDuration = orbitDuration; // days
 				this.orbitLength = (this.speed * (this.orbitDuration * 24 * 60 * 60)); // m
+				this.temperature = temperature; // K
 			}
 
 			// Space rock constructor
@@ -229,6 +235,7 @@
 			// Space object constructor
 			function SpaceObject()
 			{
+				/*
 				this.tagLabel = new Group(
 				[
 					this.tag = new Path.Rectangle(
@@ -246,14 +253,16 @@
 					})
 				]);
 				this.tagLabel.visible = false;
-
+				*/
 				this.img.onMouseEnter = function()
 				{
-					this.tagLabel.visible = true;
+					$("body").css({cursor: "pointer"});
+					// this.tagLabel.visible = true;
 				}.bind(this);
 				this.img.onMouseLeave = function()
 				{
-					this.tagLabel.visible = false;
+					$("body").css({cursor: "default"});
+					// this.tagLabel.visible = false;
 				}.bind(this);
 
 				this.img.onClick = function()
@@ -290,7 +299,7 @@
 					position: this.center.position
 				});
 
-				this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
+				// this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
 			}
 			Star.prototype = Object.create(SpaceObject.prototype);
 
@@ -316,7 +325,7 @@
 				this.center.rotate(this.orbitSpeed, this.orbits.center.position);
 				this.img.position = this.center.position;
 
-				this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
+				// this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
 			}
 
 			// Moon constructor, is a Planetoid
@@ -345,7 +354,7 @@
 				this.center.rotate(this.orbits.orbitSpeed * 11, this.orbit.position);
 				this.img.position = this.center.position;
 
-				this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
+				// this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
 			}
 
 			function background()
@@ -384,7 +393,8 @@
 						1.98855e30,
 						6.957e8,
 						0,
-						0
+						0,
+						5.778e3
 					)
 				);
 
@@ -403,7 +413,8 @@
 						3.3011e23,
 						2.4397e6,
 						4.7362e4,
-						8.7969e1
+						8.7969e1,
+						3.40e2
 					)
 				);
 				var venus = new Planet
@@ -420,7 +431,8 @@
 						4.8675e24,
 						6.0518e6,
 						3.502e4,
-						2.24701e2
+						2.24701e2,
+						7.37e2
 					)
 				);
 				var earth = new Planet
@@ -437,7 +449,8 @@
 						5.97237e24,
 						6.371e6,
 						2.978e4,
-						3.65256363004e2
+						3.65256363004e2,
+						2.88e2
 					)
 				);
 				var mars = new Planet
@@ -454,7 +467,8 @@
 						6.4171e23,
 						3.3895e6,
 						2.4077e4,
-						6.86971e2
+						6.86971e2,
+						2.10e2
 					)
 				);
 				var jupiter = new Planet
@@ -471,7 +485,8 @@
 						1.8986e27,
 						6.9911e7,
 						1.307e4,
-						4.33259e3
+						4.33259e3,
+						1.65e2
 					)
 				);
 				var saturn = new Planet
@@ -484,11 +499,12 @@
 					(
 						"Saturn",
 						"#eec87d",
-						"https://photojournal.jpl.nasa.gov/jpegMod/PIA03158_modest.jpg",
+						"https://saturn.jpl.nasa.gov/system/resources/detail_files/7504_PIA21046_MAIN.jpg",
 						5.6836e26,
 						5.8232e7,
 						9.69e3,
-						1.075922e4
+						1.075922e4,
+						1.34e2
 					)
 				);
 				var uranus = new Planet
@@ -505,7 +521,8 @@
 						8.6810e25,
 						2.5362e7,
 						6.80e3,
-						3.06885e4
+						3.06885e4,
+						76
 					)
 				);
 				var neptune = new Planet
@@ -522,7 +539,8 @@
 						1.0243e26,
 						2.4622e7,
 						5.43e3,
-						6.0182e4
+						6.0182e4,
+						72
 					)
 				);
 
@@ -570,6 +588,8 @@
 			background(); // Draws stars and sets the background
 			setupSolarsystem(); // Sets everything in the solar system
 
+			$("body").animate({opacity: 1}, 1000); // Fade in the screen
+
 			console.log("");
 			console.log("-- Welcome to solaris -- ");
 		});
@@ -587,9 +607,11 @@
 		}
 
 		body {
+			opacity: 0;
 			height: 100vh;
 			width: 100vw;
 			overflow: hidden;
+			font-size: 16px; /* Base size */
 		}
 
 		:focus, :active {
@@ -599,6 +621,7 @@
         button {
             background-color: transparent;
             border: 0px solid transparent;
+			cursor: pointer;
         }
 
 		#overlay {
@@ -626,7 +649,7 @@
             height: 100%;
         }
 
-		.images { display: none; }
+		.media { display: none; }
 
 		/* -- Sidebar -- */
 		.sidebarContainer {
@@ -637,7 +660,7 @@
 		}
 
         #sidebar {
-            background-color: #eeeeee;
+            background-color: #f5f5f5;
 			box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
 			transition: 0.4s;
             height: 90vh;
@@ -649,7 +672,7 @@
         }
 
 		#sidebar:hover {
- 			box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+ 			box-shadow: 0px 4px 10px rgba(0,0,0,0.35);
 		}
 
 		.close {
@@ -707,6 +730,28 @@
 			margin: 2vh 0vw;
 		}
 
+		/* -- Info -- */
+		.infoContainer {
+			display: none;
+		}
+
+		#info {
+			position: absolute;
+			margin: 25vh 25vw;
+			width: 50vw;
+			height: 50vh;
+			padding: 2vw;
+			z-index: 20;
+			border-radius: 0.5vh;
+			background-color: #f5f5f5;
+			box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
+			transition: 0.4s;
+		}
+
+		#info:hover {
+			box-shadow: 0px 4px 10px rgba(0,0,0,0.35);
+		}
+
 		/* -- Menu -- */
 		#menu {
 			position: absolute;
@@ -714,10 +759,10 @@
 		}
 
 		.menuButton {
-			padding: 1em;
-			height: 5em;
-			width: 5em;
-			margin: 1em 0em;
+			padding: 1.5vh;
+			height: 7vh;
+			width: 7vh;
+			margin: 1vh 0vw;
 			border-radius: 100%;
 			z-index: 10;
 			display: block;
@@ -726,7 +771,7 @@
 			color: #f5f5f5;
 		}
 
-		.menuButton i { font-size: 3em; }
+		.menuButton i { font-size: 4vh; }
 
 		.menuButton.active {
 			background-color: #f5f5f5;
@@ -737,89 +782,106 @@
 		.options {
 			display: none;
 			position: absolute;
-			margin-top: 4em;
-			top: 1em;
+			margin-top: 6vh;
+			top: 2vh;
 		}
 
 		.option {
-			padding: 0.75em;
-			height: 3.5em;
-			width: 3.5em;
-			margin: 1.5em 0.75em;
+			padding: 1vh;
+			height: 5vh;
+			width: 5vh;
+			margin: 1vh 1vh;
 			border-radius: 100%;
 			z-index: 5;
 			display: block;
 			background-color: #eeeeee;
-			color: #757575;
 			box-shadow: 0px 4px 4px rgba(0,0,0,0.15);
 			transition: 0.4s;
 		}
 
 		.option i {
-			float: left;
-			font-size: 2em;
+			color: #757575;
+			font-size: 3vh;
 		}
 
 		.option:hover {
 			box-shadow: 0px 6px 8px rgba(0,0,0,0.30);
 		}
 
-		#credits {
+		.tooltip {
 			position: absolute;
-			color: rgba(255, 255, 255, 0.65);
-			text-decoration: none;
+			left: 4vw;
+			width: 5.5vw;
+			padding: 0.5vw;
+			font-size: 0.75em;
+			border-radius: 0.5vh;
+			box-shadow: 0px 4px 4px rgba(0,0,0,0.15);
+			background-color: #424242;
+			color: #f5f5f5;
+			transition: 0.4s;
+			opacity: 0;
 		}
 
-		#credits:hover {
-			color: rgba(255, 255, 255, 0.85);
+		.option:hover .tooltip {
+			opacity: 1;
 		}
 	</style>
 </head>
 <body>
 	<div id="overlay"></div>
-	<div id="menu">
-		<button class="menuButton"><i class="material-icons ">menu</i></button>
-		<div class="options">
-			<button class="option music"><i class="material-icons ">volume_up</i></button>
-			<button class="option about"><i class="material-icons ">info_outline</i></button>
+	<div class="infoContainer">
+		<div id="info">
+			<p>Made by Lucas van Osenbruggen.</p>
+			<br/>
+			<p></p>
+			<hr/>
+			<a href=""></a>
 		</div>
 	</div>
 	<div id="screen">
+		<div id="menu">
+			<button class="menuButton"><i class="material-icons ">menu</i></button>
+			<div class="options">
+				<button class="option music"><i class="material-icons ">volume_up</i><span class="tooltip">Toggle music</span></button>
+				<button class="option orbits"><i class="material-icons ">filter_tilt_shift</i><span class="tooltip">Toggle orbits</span></button>
+				<button class="option about"><i class="material-icons ">info_outline</i><span class="tooltip">Info</span></button>
+			</div>
+		</div>
 	    <div class="canvas">
 	        <canvas id="canvas" resize="true"  keepalive="true">
 				<button></button>
 			</canvas>
 	    </div>
-		<div class="images">
-			<img id="sun" src="media/planetSprites/sun.svg"/>
-			<img id="mercury" src="media/planetSprites/mercury.svg"/>
-			<img id="venus" src="media/planetSprites/venus.svg"/>
-			<img id="earth" src="media/planetSprites/earth.svg"/>
-			<img id="moon" src="media/planetSprites/moon.svg"/>
-			<img id="mars" src="media/planetSprites/mars.svg"/>
-			<img id="ceres" src="media/planetSprites/ceres.svg"/>
-			<img id="jupiter" src="media/planetSprites/jupiter.svg"/>
-			<img id="saturn" src="media/planetSprites/saturn.svg"/>
-			<img id="uranus" src="media/planetSprites/uranus.svg"/>
-			<img id="neptune" src="media/planetSprites/neptune.svg"/>
-			<img id="pluto" src="media/planetSprites/pluto.svg"/>
-			<img id="astroid" src="media/planetSprites/astroid.svg"/>
-			<audio id="music" autoplay="true" loop="true" controls="true">
-				<source src="media/space.mp3" type="audio/mpeg" alt="Music is from https://youtu.be/PRnn_-M-efM"/>
-			</audio>
+		<div class="sidebarContainer">
+			<div id="sidebar">
+				<button class="close"><i class="material-icons">close</i></button>
+				<div class="text">
+					<div class="header">
+						<h2></h2>
+					</div>
+					<section class="info">
+					</section>
+				</div>
+			</div>
 		</div>
 	</div>
-	<div class="sidebarContainer">
-	    <div id="sidebar">
-	        <button class="close"><i class="material-icons">close</i></button>
-			<div class="text">
-				<div class="header">
-					<h2></h2>
-				</div>
-				<section class="info">
-				</section>
-			</div>
-	    </div>
+	<div class="media">
+		<img id="sun" src="media/planetSprites/sun.svg"/>
+		<img id="mercury" src="media/planetSprites/mercury.svg"/>
+		<img id="venus" src="media/planetSprites/venus.svg"/>
+		<img id="earth" src="media/planetSprites/earth.svg"/>
+		<img id="moon" src="media/planetSprites/moon.svg"/>
+		<img id="mars" src="media/planetSprites/mars.svg"/>
+		<img id="ceres" src="media/planetSprites/ceres.svg"/>
+		<img id="jupiter" src="media/planetSprites/jupiter.svg"/>
+		<img id="saturn" src="media/planetSprites/saturn.svg"/>
+		<img id="uranus" src="media/planetSprites/uranus.svg"/>
+		<img id="neptune" src="media/planetSprites/neptune.svg"/>
+		<img id="pluto" src="media/planetSprites/pluto.svg"/>
+		<img id="astroid" src="media/planetSprites/astroid.svg"/>
+		<audio id="music" autoplay="true" loop="true" controls="true">
+			<source src="media/space.mp3" type="audio/mpeg" alt="Source: https://youtu.be/PRnn_-M-efM"/>
+		</audio>
 	</div>
 </body>
 </html>
