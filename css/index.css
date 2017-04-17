@@ -235,7 +235,7 @@ nav li {
 
 .more {
 	display: none;
-	margin: 0.5rem;
+	margin: 0.75rem;
 }
 
 .options { position: absolute; }
@@ -349,6 +349,8 @@ button {
     vertical-align: bottom;
 }
 
+
+/* Size based on screen size */
 .card.small { width: 27.5rem }
 
 .card.medium { width: 56.75rem }

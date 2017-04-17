@@ -57,12 +57,7 @@ $(document).ready(function()
 
 	var $card = $(".card");
 
-	var $age = $('.age');
-	var $sinceCreated = $('.sinceCreated');
-	var $sinceHtml= $('.sinceHtml');
-	var $sinceGE= $('.sinceGE');
-	var $sinceNL= $('.sinceNL');
-	var $sinceEN= $('.sinceEN');
+	var $count = $(".count");
 
 	var $collapse = $('.collapse');
 
@@ -594,12 +589,11 @@ $(document).ready(function()
         height: "100%"
     });
 
-	$age.text(timePassed(new Date(2000, 07, 22, 22, 22)));
-	$sinceCreated.text(timePassed(new Date(2016, 11, 23)));
-	$sinceHtml.text(timePassed(new Date(2016, 08, 24)));
-	$sinceEN.text(timePassed(new Date("2010")));
-	$sinceGE.text(timePassed(new Date("2014")));
-	$sinceNL.text(timePassed(new Date("2004")));
+	for (var i = 0; i < $count.length; i++)
+	{
+		$count[i].textContent = timePassed(new Date($count[i].getAttribute("date")));
+		$count[i].setAttribute("title", $count[i].getAttribute("date"));
+	}
 
-	$("body").show();
+	$("body").fadeIn();
 });
