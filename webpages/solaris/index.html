@@ -35,6 +35,7 @@
             var canHeight = view.viewSize.height;
             var canWidth = view.viewSize.width;
 			var systemCenter =  new Point((canWidth / 2), (canHeight / 2));
+			var solarSystem;
 
 			var sidebarState = "closed";
 			var $sidebar = $('.sidebarContainer');
@@ -52,7 +53,10 @@
 			var $info = $(".infoContainer");
 			var $overlay = $("#overlay");
 
+			var orbitState = "invisible";
 			var $orbitButton = $(".option.orbits");
+
+			var selectedObject = null;
 
 			// -- Website controls --
 			// Options visible
@@ -98,7 +102,22 @@
 				}
 			});
 
-			// TODO add functionality for orbit viewer
+			// Toggle orbits
+			$orbitButton.click(function()
+			{
+				if (orbitState === "visible")
+				{
+					$orbitButton.find("i").html("filter_tilt_shift");
+					orbits(false);
+					orbitState = "invisible";
+				}
+				else if (orbitState === "invisible")
+				{
+					$orbitButton.find("i").html("adjust");
+					orbits(true);
+					orbitState = "visible";
+				}
+			});
 
 			// Shows button
 			$sidebar.mouseenter(function()
@@ -175,7 +194,7 @@
 					$sidebar.find(".header").css({backgroundColor: object.data.color});
 					$sidebar.find(".header h2").text(object.data.name);
 					$sidebar.find(".info").empty();
-					$sidebar.find(".info").append($("<img/>").attr({alt: "Source: " + object.data.img, src: ("media/planetImgs/" + object.data.name + ".png")}));
+					$sidebar.find(".info").append($("<img/>").attr({source: object.data.img, alt: "Picture of " + object.data.name, src: ("media/planetImgs/" + object.data.name + ".png")}));
 					$sidebar.find(".info").append("<br/><br/>");
 					$sidebar.find(".info").append("<p>The average surface temperature of " + (object.data.name).toLowerCase() + " is around " + (object.data.temperature - 273) + " degrees Celcius.</p>");
 					$sidebar.find(".info").append("<br/>");
@@ -256,20 +275,48 @@
 				]);
 				this.tagLabel.visible = false;
 				*/
+
 				this.img.onMouseEnter = function()
 				{
 					$("body").css({cursor: "pointer"});
+
+					this.center.style =
+					{
+						strokeColor: "#eeeeee",
+						strokeWidth: 2
+					}
+
 					// this.tagLabel.visible = true;
 				}.bind(this);
+
 				this.img.onMouseLeave = function()
 				{
 					$("body").css({cursor: "default"});
+
+					if (selectedObject !== this)
+					{
+						this.center.style.strokeWidth = 0;
+					}
+
 					// this.tagLabel.visible = false;
 				}.bind(this);
 
 				this.img.onClick = function()
 				{
-					setData(this);
+					if (selectedObject !== null)
+					{
+						selectedObject.center.style.strokeWidth = 0;
+					}
+
+					this.center.style =
+					{
+						strokeColor: "#fafafa",
+						strokeWidth: 2
+					};
+					selectedObject = this;
+
+					setData(this); // Set info in the card
+
 				}.bind(this);
 			}
 
@@ -377,6 +424,30 @@
 					var star = defineStar.place();
 					star.position = (Point.random() * view.viewSize);
 					star.scale(0.25 + (Math.random() * 0.75));
+				}
+			}
+
+			// View invisible paths
+			function orbits(enable)
+			{
+				for (var i = 0; i < solarSystem[0].length; i++)
+				{
+					var width;
+					if (enable)
+					{
+						width = solarSystem[0][i].diameter;
+					}
+					else
+					{
+						width = 0;
+					}
+					// TODO finish styles http://paperjs.org/reference/color/
+					solarSystem[0][i].orbit.style =
+					{
+						strokeColor: solarSystem[0][i].data.color,
+						strokeCap: "square",
+						strokeWidth: width
+					};
 				}
 			}
 
@@ -515,7 +586,7 @@
 				(
 					"uranus",
 					Math.round(canHeight / 14.5),
-					Math.round(canWidth / 2.45),
+					Math.round(canWidth / 2.465),
 					sun,
 					new Data
 					(
@@ -568,22 +639,7 @@
 				);
 
 				// All objects in the canvas
-				var solarSystem = [[mercury, venus, earth, mars, jupiter, saturn, uranus, neptune], moon, sun];
-
-				// View invisible paths
-				function selected()
-				{
-					sun.center.selected = true;
-					for (var i = 0; i < solarSystem[0].length; i++)
-					{
-						solarSystem[0][i].center.selected = true;
-						solarSystem[0][i].orbit.selected = true;
-					}
-					moon.center.selected = true;
-					moon.orbit.selected = true;
-				}
-
-				// selected(); // Shows invisible paths
+				solarSystem = [[mercury, venus, earth, mars, jupiter, saturn, uranus, neptune], moon, sun];
 
 				console.log("All objects:");
 				console.log(solarSystem);
