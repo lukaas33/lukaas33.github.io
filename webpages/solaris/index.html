@@ -23,7 +23,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 	<!--  Js code -->
-	<script  type="text/paperscript" canvas="canvas" <!--src="index.js"-->>
+	<script  type="text/paperscript" canvas="canvas"> <!--src="index.js"-->
 	$(document).ready(function()
 	{
 	    paper.install(window); // No accessing through the paper object
@@ -89,12 +89,14 @@
 	    	if (musicState === "on")
 	    	{
 	    		$musicButton.find("i").html("volume_off");
+				$musicButton.find("span").html("Music on");
 	    		$music[0].pause();
 	    		musicState = "off";
 	    	}
 	    	else
 	    	{
 	    		$musicButton.find("i").html("volume_up");
+				$musicButton.find("span").html("Music off");
 	    		$music[0].play();
 	    		musicState = "on";
 	    	}
@@ -106,12 +108,14 @@
 	    	if (orbitState === "visible")
 	    	{
 	    		$orbitButton.find("i").html("filter_tilt_shift");
+				$orbitButton.find("span").html("Normal mode");
 	    		orbits(false);
 	    		orbitState = "invisible";
 	    	}
 	    	else if (orbitState === "invisible")
 	    	{
 	    		$orbitButton.find("i").html("adjust");
+				$orbitButton.find("span").html("Orbit mode");
 	    		orbits(true);
 	    		orbitState = "visible";
 	    	}
@@ -700,8 +704,8 @@
 		<div id="menu">
 			<button class="menuButton"><i class="material-icons ">menu</i></button>
 			<div class="options">
-				<button class="option music"><i class="material-icons ">volume_up</i><span class="tooltip">Music</span></button>
-				<button class="option orbits"><i class="material-icons ">filter_tilt_shift</i><span class="tooltip">Orbitview</span></button>
+				<button class="option music"><i class="material-icons ">volume_up</i><span class="tooltip">Music off</span></button>
+				<button class="option orbits"><i class="material-icons ">filter_tilt_shift</i><span class="tooltip">Orbit mode</span></button>
 				<button class="option about"><i class="material-icons ">info_outline</i><span class="tooltip">Info</span></button>
 				<!-- TODO add a solid color trail option -->
 			</div>
