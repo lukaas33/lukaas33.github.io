@@ -395,7 +395,27 @@ $(document).ready(function()
             fillColor: "#212121"
         });
 
-        var circle = new Path.Circle(systemCenter, 3);
+        var star = [ ];
+        for (var i = 0; i < 500; i++)
+        {
+            star[i] = new Path.Circle((Point.random() * view.viewSize), (Math.floor(Math.random() * 3 + 1))); // Math.floor(Math.random() * 3 + 1)
+            star[i].fillColor = new Color(1, (Math.floor(Math.random() *  30 + 65) / 100));
+        }
+
+        /*var gasCloud = [[ ], [ ]]
+        for (var i = 0; i < 25; i++)
+        {
+            gasCloud[0][i] = new Raster("cloud-2");
+            gasCloud[0][i] .scale(0.1);
+
+            gasCloud[1][i] = new Raster("cloud-1");
+            gasCloud[1][i] .scale(0.1);
+
+            //gasCloud[0][i].position = (Point.random() * view.viewSize)
+            //gasCloud[1][i].position = (Point.random() * view.viewSize)
+        }*/
+
+        /*var circle = new Path.Circle(systemCenter, 3);
         circle.style =
         {
             fillColor: new Color(1, 0.85)
@@ -405,9 +425,9 @@ $(document).ready(function()
         for (var i = 0; i < 500; i++)
         {
             var star = defineStar.place();
-            /*star.position = (Point.random() * view.viewSize);
-            star.scale(0.25 + (Math.random() * 0.75));*/
-        }
+            star.position = (Point.random() * view.viewSize);
+            star.scale(0.25 + (Math.random() * 0.75));
+        }*/
     }
 
     // View invisible paths
