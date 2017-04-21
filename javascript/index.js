@@ -76,7 +76,7 @@ $(document).ready(function()
 		blue: new Theme("blue", "red"),
 		red: new Theme("red", "indigo")
 	}
-	
+
 	var ran = Math.floor(Math.random() * Object.keys(themes).length);
     var activeTheme;
 	var highlightC = true;
@@ -145,7 +145,7 @@ $(document).ready(function()
 		if (highlightC)
 		{
 			$navItem.css('border-bottom', '4px solid transparent');
-			$('.current').css('border-bottom', 'solid 4px ' + color);
+			$('.current').css('border-bottom', ('solid 4px ' + color));
 		}
     };
 
