@@ -66,6 +66,12 @@ $(document).ready(function()
     var activeTheme;
 	var highlightC = true;
 
+	var colors;
+	var jason = $.getJSON("colors.json", function()
+	{
+			colors = JSON.parse(jason);
+	});
+	
 	var purple = new Theme('#5e35b1', '#673ab7', '#7e57c2', '#9575cd', '#d1c4e9', '#ff80ab', '#ff4081', '#f50057');
     var teal = new Theme('#00897b', '#009688', '#26a69a', '#4db6ac', '#b2dfdb', '#ff9e80', '#ff6e40', '#ff3d00');
     var blue = new Theme('#1e88e5', '#2196f3', '#42a5f5', '#64b5f6', '#bbdefb', '#ff8a80', '#ff5252', '#ff1744');
@@ -138,28 +144,23 @@ $(document).ready(function()
 			$('.current').css('border-bottom', 'solid 4px ' + color);
 		}
     };
-    function Theme(p600, p500, p400, p300, p100, s100, s200, s400)
+
+    function Theme(primary, secondary)
 	{
-		this.p600 = p600;
-        this.p500 = p500;
-        this.p400 = p400;
-        this.p300 = p300;
-        this.p100 = p100;
-        this.s100 = s100;
-        this.s200 = s200;
-        this.s400 = s400;
+		this.primary = primary;
+		this.secondary = secondary;
     };
     Theme.prototype.change = function()
 	{
-		pageSelect(this.p300);
-        $('header').css('background-color', this.p500);
-		$("nav ul").css('background-color', this.p500);
-        $('.navItem a').css('color', this.p100);
-        $('.FAB').css('background-color', this.s200);
-        $('.progress.normal').css('background-color', this.s200);
-		$('.progress.small').css('background-color', this.s100);
-        $('.card a:link').css('color', this.s200);
-        $('.card a:visited').css('color', this.s400);
+		pageSelect(this.primary[300]);
+        $('header').css('background-color', this.primary[500]);
+		$("nav ul").css('background-color', this.primary[500]);
+        $('.navItem a').css('color', this.primary[100]);
+        $('.FAB').css('background-color', this.secondary.a200);
+        $('.progress.normal').css('background-color', this.secondary.a200);
+		$('.progress.small').css('background-color', this.secondary.a100);
+        $('.card a:link').css('color', this.secondary.a200);
+        $('.card a:visited').css('color', this.secondary.a400);
     };
 
 	function timePassed(date)
