@@ -134,6 +134,7 @@ hr {
     width: 50vw;
     height: 50vh;
     padding: 2vw;
+    overflow: scroll;
     z-index: 20;
     border-radius: 0.5vh;
     background-color: #f5f5f5;
@@ -167,9 +168,9 @@ hr {
 
 .menuButton {
     padding: 1.5vh;
-    height: 7vh;
-    width: 7vh;
-    margin: 1vh 0vw;
+    height: 9vh;
+    width: 9vh;
+    margin: ;
     border-radius: 100%;
     z-index: 10;
     display: block;
@@ -178,7 +179,7 @@ hr {
     color: #f5f5f5;
 }
 
-.menuButton i { font-size: 4vh; }
+.menuButton i { font-size: 6vh; }
 
 .menuButton.active {
     background-color: #f5f5f5;
@@ -189,14 +190,15 @@ hr {
 .options {
     display: none;
     position: absolute;
-    top: 8vh;
+    top: 9vh;
+    padding-top: 1vh
 }
 
 .option {
     padding: 1vh;
-    height: 5vh;
-    width: 5vh;
-    margin: 1vh 1vh;
+    height: 6vh;
+    width: 6vh;
+    margin: 1.5vh 1.5vh;
     border-radius: 100%;
     z-index: 5;
     display: block;
@@ -207,17 +209,17 @@ hr {
 
 .option i {
     color: #757575;
-    font-size: 3vh;
+    font-size: 4vh;
 }
 
 .option:hover {
-    box-shadow: 0px 6px 8px rgba(0,0,0,0.30);
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.30);
 }
 
 .tooltip {
     position: absolute;
     left: 4vw;
-    width: 5.5vw;
+    width: 6vw;
     padding: 0.5vw;
     font-size: 0.75em;
     font-weight: bold;
