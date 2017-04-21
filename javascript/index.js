@@ -156,7 +156,7 @@ $(document).ready(function()
     };
     Theme.prototype.change = function()
 	{
-		pageSelect(this.primary[300]);
+		pageSelect(this.primary[200]);
         $('header').css('background-color', this.primary[500]);
 		$("nav ul").css('background-color', this.primary[500]);
         $('.navItem a').css('color', this.primary[100]);
@@ -208,7 +208,7 @@ $(document).ready(function()
 		$ul.css({boxShadow: "none"});
 		$ul.animate(
 			{
-				backgroundColor: activeTheme.p500,
+				backgroundColor: activeTheme.primary[500],
 				top: "0",
 			}, 400
 		);
@@ -245,7 +245,7 @@ $(document).ready(function()
 		);
 		$ul.animate(
 			{
-				backgroundColor: activeTheme.p600,
+				backgroundColor: activeTheme.primary[600],
 				top: $header.height(),
 				paddingTop: "0.25rem",
 			}, 400
@@ -287,7 +287,7 @@ $(document).ready(function()
 			$navMore.hide();
 			inlineNav()
 			$navItem.show();
-			pageSelect(activeTheme.p300);
+			pageSelect(activeTheme.primary[200]);
 		}
 		else if ($(window).width() < 1200)
 		{
@@ -386,7 +386,7 @@ $(document).ready(function()
 		$tabs.addClass("inactive");
 		previousTab.removeClass('current');
 		newTab.addClass('current');
-		pageSelect(activeTheme.p300);
+		pageSelect(activeTheme.primary[200]);
 		$cards.removeClass("goUp");
 		$cards.addClass("goDown");
 	}
