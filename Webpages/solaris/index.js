@@ -82,14 +82,14 @@ $(document).ready(function()
         if (orbitState === "visible")
         {
             $orbitButton.find("i").html("filter_tilt_shift");
-            $orbitButton.find("span").html("Normal mode");
+            $orbitButton.find("span").html("Orbit mode");
             orbits(false);
             orbitState = "invisible";
         }
         else if (orbitState === "invisible")
         {
             $orbitButton.find("i").html("adjust");
-            $orbitButton.find("span").html("Orbit mode");
+            $orbitButton.find("span").html("Normal mode");
             orbits(true);
             orbitState = "visible";
         }
@@ -284,12 +284,13 @@ $(document).ready(function()
                 selectedObject.center.style.strokeWidth = 0;
             }
 
-            this.center.style =
+            /*this.center.style =
             {
-                strokeColor: "#2196f3",
-                dashArray: [20, 10],
-                strokeWidth: 1
-            };
+                strokeColor: "#82b1ff",
+                strokeCap: "square",
+                dashArray: [10, 10],
+                strokeWidth: 3
+            };*/
             selectedObject = this;
 
             setData(this); // Set info in the card
@@ -387,20 +388,25 @@ $(document).ready(function()
 
     function background()
     {
-        new Path.Rectangle(
+        Path.Rectangle(
         {
             point: [0, 0],
             size: [canWidth, canHeight],
             fillColor: "#212121"
         });
-        var path = new Path.Circle(systemCenter, 3);
-        path.fillColor = new Color(1, 0.85);
-        var defineStar = new SymbolDefinition(path);
+
+        var circle = new Path.Circle(systemCenter, 3);
+        circle.style =
+        {
+            fillColor: new Color(1, 0.85)
+        }
+        var defineStar = new SymbolDefinition(circle);
+
         for (var i = 0; i < 500; i++)
         {
             var star = defineStar.place();
-            star.position = (Point.random() * view.viewSize);
-            star.scale(0.25 + (Math.random() * 0.75));
+            /*star.position = (Point.random() * view.viewSize);
+            star.scale(0.25 + (Math.random() * 0.75));*/
         }
     }
 
