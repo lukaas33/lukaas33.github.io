@@ -1,3 +1,10 @@
+// Loads asynchronously, fixed by moving outside ready
+var colors;
+$.getJSON("javascript/colors.json", function(json)
+{
+	colors = json;
+});
+
 $(document).ready(function()
 {
 	// Jquery vars
@@ -62,20 +69,17 @@ $(document).ready(function()
 	var $collapse = $('.collapse');
 
 	// Other vars
-	var ran = Math.floor(Math.random() * 4);
+	var themes =
+	{
+		purple: new Theme("purple", "pink"),
+		teal: new Theme("teal", "amber"),
+		blue: new Theme("blue", "red"),
+		red: new Theme("red", "indigo")
+	}
+	
+	var ran = Math.floor(Math.random() * Object.keys(themes).length);
     var activeTheme;
 	var highlightC = true;
-
-	var colors;
-	var jason = $.getJSON("colors.json", function()
-	{
-			colors = JSON.parse(jason);
-	});
-	
-	var purple = new Theme('#5e35b1', '#673ab7', '#7e57c2', '#9575cd', '#d1c4e9', '#ff80ab', '#ff4081', '#f50057');
-    var teal = new Theme('#00897b', '#009688', '#26a69a', '#4db6ac', '#b2dfdb', '#ff9e80', '#ff6e40', '#ff3d00');
-    var blue = new Theme('#1e88e5', '#2196f3', '#42a5f5', '#64b5f6', '#bbdefb', '#ff8a80', '#ff5252', '#ff1744');
-    var red = new Theme('#d32f2f', '#e53935', '#f44336', '#ef9a9a', '#ffcdd2', '#82b1ff', '#448aff', '#2979ff');
 
 	var language = navigator.language;
 
@@ -147,8 +151,8 @@ $(document).ready(function()
 
     function Theme(primary, secondary)
 	{
-		this.primary = primary;
-		this.secondary = secondary;
+		this.primary = colors[primary];
+		this.secondary = colors[secondary];
     };
     Theme.prototype.change = function()
 	{
@@ -440,22 +444,22 @@ $(document).ready(function()
         $('.active').removeClass('active');
         if ($(this).attr('id') === 'purple')
 		{
-            activeTheme = purple;
+            activeTheme = themes.purple;
             $purple.addClass('active');
         }
 		else if ($(this).attr('id') === 'teal')
 		{
-            activeTheme = teal;
+            activeTheme = themes.teal;
             $teal.addClass('active');
         }
 		else if ($(this).attr('id') === 'blue')
 		{
-            activeTheme = blue;
+            activeTheme = themes.blue;
             $blue.addClass('active');
         }
 		else if ($(this).attr('id') === 'red')
 		{
-            activeTheme = red;
+            activeTheme = themes.red;
             $red.addClass('active');
         }
         activeTheme.change();
@@ -552,19 +556,19 @@ $(document).ready(function()
 	switch (ran)
 	{
         case 0: // purple
-            activeTheme = purple;
+            activeTheme = themes.purple;
             $purple.addClass('active');
             break;
         case 1: // teal
-            activeTheme = teal;
+            activeTheme = themes.teal;
             $teal.addClass('active');
             break;
         case 2: // blue
-            activeTheme = blue;
+            activeTheme = themes.blue;
             $blue.addClass('active');
             break;
         case 3: // red
-            activeTheme = red;
+            activeTheme = themes.red;
             $red.addClass('active');
             break;
         default:
