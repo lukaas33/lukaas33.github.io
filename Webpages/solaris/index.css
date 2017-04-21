@@ -114,7 +114,7 @@ hr {
     height: 90%;
     padding: 2vw;
     color: #424242;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 .text .info img {
@@ -134,7 +134,7 @@ hr {
     width: 50vw;
     height: 50vh;
     padding: 2vw;
-    overflow: scroll;
+    overflow-y: scroll;
     z-index: 20;
     border-radius: 0.5vh;
     background-color: #f5f5f5;
@@ -163,14 +163,13 @@ hr {
 /* -- Menu -- */
 #menu {
     position: absolute;
-    margin: 1rem;
+    margin: 2vh;
 }
 
 .menuButton {
     padding: 1.5vh;
-    height: 9vh;
-    width: 9vh;
-    margin: ;
+    height: 8vh;
+    width: 8vh;
     border-radius: 100%;
     z-index: 10;
     display: block;
@@ -179,7 +178,7 @@ hr {
     color: #f5f5f5;
 }
 
-.menuButton i { font-size: 6vh; }
+.menuButton i { font-size: 5vh; }
 
 .menuButton.active {
     background-color: #f5f5f5;
@@ -190,14 +189,14 @@ hr {
 .options {
     display: none;
     position: absolute;
-    top: 9vh;
+    top: 8vh;
     padding-top: 1vh
 }
 
 .option {
     padding: 1vh;
-    height: 6vh;
-    width: 6vh;
+    height: 5vh;
+    width: 5vh;
     margin: 1.5vh 1.5vh;
     border-radius: 100%;
     z-index: 5;
@@ -209,7 +208,7 @@ hr {
 
 .option i {
     color: #757575;
-    font-size: 4vh;
+    font-size: 3vh;
 }
 
 .option:hover {
@@ -218,7 +217,7 @@ hr {
 
 .tooltip {
     position: absolute;
-    left: 4vw;
+    left: 5vw;
     width: 6vw;
     padding: 0.5vw;
     font-size: 0.75em;
