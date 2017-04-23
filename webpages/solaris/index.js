@@ -252,32 +252,34 @@ $(document).ready(function()
         this.tagLabel.visible = false;
         */
 
-        this.img.onMouseEnter = function()
+        function hover(event)
         {
-            $("body").css({cursor: "pointer"});
-
-            /*this.center.style =
+            if (event === "enter")
             {
-                strokeColor: "#e0e0e0",
-                strokeWidth: 1
-            }*/
+                $("body").css({cursor: "pointer"});
 
-            // this.tagLabel.visible = true;
-        }.bind(this);
+                /*this.center.style =
+                {
+                    strokeColor: "#e0e0e0",
+                    strokeWidth: 1
+                }*/
 
-        this.img.onMouseLeave = function()
-        {
-            $("body").css({cursor: "default"});
-
-            /*if (selectedObject !== this)
+                // this.tagLabel.visible = true;
+            }
+            else if (event === "leave")
             {
-                this.center.style.strokeWidth = 0;
-            }*/
+                $("body").css({cursor: "default"});
 
-            // this.tagLabel.visible = false;
-        }.bind(this);
+                /*if (selectedObject !== this)
+                {
+                    this.center.style.strokeWidth = 0;
+                }*/
 
-        this.img.onClick = function()
+                // this.tagLabel.visible = false;
+            }
+        };
+
+        function click(object)
         {
             if (selectedObject !== null)
             {
@@ -291,12 +293,20 @@ $(document).ready(function()
                 dashArray: [10, 10],
                 strokeWidth: 3
             };*/
-            selectedObject = this;
+            selectedObject = object;
 
-            setData(this); // Set info in the card
+            setData(object); // Set info in the card
+        };
 
-        }.bind(this);
-    }
+        this.center.onMouseEnter = function() { hover("enter"); };
+        this.img.onMouseEnter = function() { hover("enter"); };
+
+        this.center.onMouseLeave = function() { hover("leave"); };
+        this.img.onMouseLeave = function() { hover("leave"); };
+
+        this.center.onClick = function() { click(this); }.bind(this);
+        this.img.onClick = function() { click(this); }.bind(this);
+    };
 
     // Planetoid constructor, is a SpaceObject and a SpaceRock
     function Planetoid(name, orbitRadius, orbits, data)
@@ -304,7 +314,7 @@ $(document).ready(function()
         this.class = "Planetoid";
         SpaceRock.call(this, name, orbitRadius, orbits);
         this.data = data;
-        SpaceObject.call(this);
+        // SpaceObject.call(this);
     }
     Planetoid.prototype = Object.create(SpaceRock.prototype);
     Planetoid.prototype = Object.create(SpaceObject.prototype);
@@ -315,7 +325,6 @@ $(document).ready(function()
         this.class = "Star";
         this.img = new Raster(name);
         this.data = data;
-        SpaceObject.call(this);
 
         this.diameter = diameter;
 
@@ -325,6 +334,8 @@ $(document).ready(function()
             size: [this.diameter, this.diameter],
             position: this.center.position
         });
+
+        SpaceObject.call(this); // Has to be called after creation of center
 
         // this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
     }
@@ -344,6 +355,8 @@ $(document).ready(function()
             size: [this.diameter, this.diameter],
             position: this.center.position
         });
+
+        SpaceObject.call(this); // Has to be called after creation of center
     }
     Planet.prototype = Object.create(Planetoid.prototype);
 
@@ -369,6 +382,8 @@ $(document).ready(function()
             size: [this.diameter, this.diameter],
             position: this.center.position
         });
+
+        SpaceObject.call(this); // Has to be called after creation of center
     }
     Moon.prototype = Object.create(Planetoid.prototype);
 
@@ -403,16 +418,12 @@ $(document).ready(function()
         }
 
         /*var gasCloud = [[ ], [ ]]
-        for (var i = 0; i < 25; i++)
+        for (var i = 0; i < 5; i++)
         {
             gasCloud[0][i] = new Raster("cloud-2");
-            gasCloud[0][i] .scale(0.1);
+            gasCloud[0][i] .scale(0.2);
 
-            gasCloud[1][i] = new Raster("cloud-1");
-            gasCloud[1][i] .scale(0.1);
-
-            //gasCloud[0][i].position = (Point.random() * view.viewSize)
-            //gasCloud[1][i].position = (Point.random() * view.viewSize)
+            gasCloud[0][i].position = (Point.random() * view.viewSize);
         }*/
 
         /*var circle = new Path.Circle(systemCenter, 3);
@@ -667,5 +678,5 @@ $(document).ready(function()
     $("body").animate({opacity: 1}, 1000); // Fade in the screen
 
     console.log("");
-    console.log("-- Welcome to solaris -- ");
+    console.log("-- Welcome to Solaris -- ");
 });
