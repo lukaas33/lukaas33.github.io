@@ -28,6 +28,9 @@ $(document).ready(function()
     var orbitState = "invisible";
     var $orbitButton = $(".option.orbits");
 
+    var tagState = "off";
+    var $tagButton = $(".option.tags");
+
     var selectedObject = null;
 
     // -- Website controls --
@@ -63,14 +66,14 @@ $(document).ready(function()
         if (musicState === "on")
         {
             $musicButton.find("i").html("volume_off");
-            $musicButton.find("span").html("Music on");
+            $musicButton.find(".tooltip").html("Music on");
             $music[0].pause();
             musicState = "off";
         }
         else
         {
             $musicButton.find("i").html("volume_up");
-            $musicButton.find("span").html("Music off");
+            $musicButton.find(".tooltip").html("Music off");
             $music[0].play();
             musicState = "on";
         }
@@ -82,14 +85,14 @@ $(document).ready(function()
         if (orbitState === "visible")
         {
             $orbitButton.find("i").html("filter_tilt_shift");
-            $orbitButton.find("span").html("Orbit mode");
+            $orbitButton.find(".tooltip").html("Orbit mode");
             orbits(false);
             orbitState = "invisible";
         }
         else if (orbitState === "invisible")
         {
             $orbitButton.find("i").html("adjust");
-            $orbitButton.find("span").html("Normal mode");
+            $orbitButton.find(".tooltip").html("Normal mode");
             orbits(true);
             orbitState = "visible";
         }
@@ -120,6 +123,22 @@ $(document).ready(function()
     {
         $overlay.fadeOut();
         $info.fadeOut();
+    });
+
+    $tagButton.click(function()
+    {
+        if (tagState === "on")
+        {
+            $tagButton.find("i").html("_");
+            $tagButton.find(".tooltip").html("Show tags");
+            tagState = "off";
+        }
+        else if (tagState === "off")
+        {
+            $tagButton.find("i").html("__");
+            $tagButton.find(".tooltip").html("Hide tags");
+            tagState = "on";
+        }
     });
 
     // Closes sidebar
@@ -220,7 +239,7 @@ $(document).ready(function()
     function SpaceRock(name, orbitRadius, orbits)
     {
         this.orbit = new Path.Circle(systemCenter, orbitRadius);
-        this.img = new Raster(name);
+        this.img = new Raster("media/planetSprites/" + name + ".svg", 0);
         this.orbits = orbits;
 
         this.img.onFrame = function()
@@ -232,12 +251,11 @@ $(document).ready(function()
     // Space object constructor
     function SpaceObject()
     {
-        /*
-        this.tagLabel = new Group(
-        [
+        this.tagLabel = new Group
+        ([
             this.tag = new Path.Rectangle(
             {
-                size: [Math.round(canWidth / 25), Math.round(canHeight / 35)],
+                size: [Math.round(canWidth / 20), Math.round(canHeight / 35)],
                 fillColor: "#fafafa"
             }),
             this.label = new PointText(
@@ -250,9 +268,8 @@ $(document).ready(function()
             })
         ]);
         this.tagLabel.visible = false;
-        */
 
-        function hover(event)
+        function hover(object, event)
         {
             if (event === "enter")
             {
@@ -264,7 +281,10 @@ $(document).ready(function()
                     strokeWidth: 1
                 }*/
 
-                // this.tagLabel.visible = true;
+                if (tagState === "on")
+                {
+                    object.tagLabel.visible = true;
+                }
             }
             else if (event === "leave")
             {
@@ -275,7 +295,10 @@ $(document).ready(function()
                     this.center.style.strokeWidth = 0;
                 }*/
 
-                // this.tagLabel.visible = false;
+                if (tagState === "on")
+                {
+                    object.tagLabel.visible = false;
+                }
             }
         };
 
@@ -298,11 +321,11 @@ $(document).ready(function()
             setData(object); // Set info in the card
         };
 
-        this.center.onMouseEnter = function() { hover("enter"); };
-        this.img.onMouseEnter = function() { hover("enter"); };
+        this.center.onMouseEnter = function() { hover(this, "enter"); }.bind(this);
+        this.img.onMouseEnter = function() { hover(this, "enter"); }.bind(this);
 
-        this.center.onMouseLeave = function() { hover("leave"); };
-        this.img.onMouseLeave = function() { hover("leave"); };
+        this.center.onMouseLeave = function() { hover(this, "leave"); }.bind(this);
+        this.img.onMouseLeave = function() { hover(this, "leave"); }.bind(this);
 
         this.center.onClick = function() { click(this); }.bind(this);
         this.img.onClick = function() { click(this); }.bind(this);
@@ -337,7 +360,7 @@ $(document).ready(function()
 
         SpaceObject.call(this); // Has to be called after creation of center
 
-        // this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
+        this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
     }
     Star.prototype = Object.create(SpaceObject.prototype);
 
@@ -365,7 +388,7 @@ $(document).ready(function()
         this.center.rotate(this.orbitSpeed, this.orbits.center.position);
         this.img.position = this.center.position;
 
-        // this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
+        this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
     }
 
     // Moon constructor, is a Planetoid
@@ -396,7 +419,7 @@ $(document).ready(function()
         this.center.rotate(this.orbits.orbitSpeed * 11, this.orbit.position);
         this.img.position = this.center.position;
 
-        // this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
+        this.tagLabel.position = [this.center.position.x, (this.center.position.y - (this.diameter / 2) - (canHeight / 40))];
     }
 
     // TODO add asteroids
