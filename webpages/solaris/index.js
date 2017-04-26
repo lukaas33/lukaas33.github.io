@@ -129,13 +129,13 @@ $(document).ready(function()
     {
         if (tagState === "on")
         {
-            $tagButton.find("i").html("_");
+            $tagButton.find("i").html("chat_bubble");
             $tagButton.find(".tooltip").html("Show tags");
             tagState = "off";
         }
         else if (tagState === "off")
         {
-            $tagButton.find("i").html("__");
+            $tagButton.find("i").html("chat_bubble_outline");
             $tagButton.find(".tooltip").html("Hide tags");
             tagState = "on";
         }
