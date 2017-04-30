@@ -1,9 +1,25 @@
 // Loads asynchronously, fixed by moving outside ready
 var colors;
-$.getJSON("javascript/colors.json", function(json)
+$.getJSON("index/javascript/colors.json", function(json)
 {
 	colors = json;
 });
+
+function setHtml(name)
+{
+	var id = "cards-" + name;
+	$.get(
+		"index/html/" + name + ".html",
+		function(data)
+		{
+			w3DisplayData(id, {"code": data})
+		});
+};
+
+setHtml("aboutMe");
+setHtml("experience");
+setHtml("skills");
+setHtml("portfolio");
 
 $(document).ready(function()
 {
@@ -35,11 +51,13 @@ $(document).ready(function()
 
 	var $tabs = $(".navItem a");
 	var $navItem = $('.navItem');
-	var $aboutMe = $('.cards.aboutMe');
-    var $experience = $('.cards.experience');
-    var $skills = $('.cards.skills');
-    var $portfolio = $('.cards.portfolio');
+	var $aboutMe = $('#cards-aboutMe');
+    var $experience = $('#cards-experience');
+    var $skills = $('#cards-skills');
+    var $portfolio = $('#cards-portfolio');
     var $cards = $(".cards");
+
+	$aboutMe.html()
 
 	var $tab = $('.tab');
 	var $aboutMeTab = $('.tab.one');
