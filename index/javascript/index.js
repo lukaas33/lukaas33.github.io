@@ -1,26 +1,3 @@
-// Loads asynchronously, fixed by moving outside ready
-var colors;
-$.getJSON("index/javascript/colors.json", function(json)
-{
-	colors = json;
-});
-
-function setHtml(name)
-{
-	var id = "cards-" + name;
-	$.get(
-		"index/html/" + name + ".html",
-		function(data)
-		{
-			w3DisplayData(id, {"code": data})
-		});
-};
-
-setHtml("aboutMe");
-setHtml("experience");
-setHtml("skills");
-setHtml("portfolio");
-
 $(document).ready(function()
 {
 	// Jquery vars
