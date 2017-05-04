@@ -1,10 +1,11 @@
-// Loads asynchronously, fixed by moving to different file
+// Color hex codes
 var colors;
 $.getJSON("index/javascript/colors.json", function(json)
 {
 	colors = json;
 });
 
+// Html data from different files
 function setHtml(name)
 {
 	var id = "cards-" + name;
@@ -20,3 +21,6 @@ setHtml("aboutMe");
 setHtml("experience");
 setHtml("skills");
 setHtml("portfolio");
+
+// Loads pages javascript
+$.getScript("index/javascript/index.js");
