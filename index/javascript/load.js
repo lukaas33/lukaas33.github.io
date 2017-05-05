@@ -1,10 +1,3 @@
-// Color hex codes
-var colors;
-$.getJSON("index/javascript/colors.json", function(json)
-{
-	colors = json;
-});
-
 // Html data from different files
 function setHtml(name)
 {
@@ -22,5 +15,12 @@ setHtml("experience");
 setHtml("skills");
 setHtml("portfolio");
 
-// Loads pages javascript
-$.getScript("index/javascript/index.js");
+// Color hex codes
+var colors;
+$.getJSON("index/javascript/colors.json", function(json)
+{
+	colors = json;
+
+	// Loads pages javascript
+	$.getScript("index/javascript/index.js");
+});
