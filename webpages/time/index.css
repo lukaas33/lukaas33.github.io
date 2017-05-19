@@ -1,0 +1,80 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+:focus, :active {
+  outline: none;
+}
+
+body {
+  display: none;
+  background-color: #eeeeee;
+  font-size: 20px;
+}
+
+body .main {
+  height: 30vh;
+  padding: 7.5vh 25vw;
+  background-color: #e91e63;
+  position: relative;
+}
+
+body .main .timer {
+  text-align: center;
+}
+
+body .main .timer .number {
+  display: block;
+}
+
+body .main .timer .number span {
+  color: #fce4ec;
+  font-size: 6rem;
+}
+
+body .main .timer .number span:last-child {
+  color: #f8bbd0;
+  font-size: 2rem;
+}
+
+body .main .timer p {
+  color: #f48fb1;
+  font-size: 1.5rem;
+}
+
+body .main .date {
+  padding: 1vh 1vw;
+  border-radius: 5%;
+  border: 0px solid transparent;
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 2vh 2vh;
+  background-color: #ec407a;
+  color: #f8bbd0;
+  transition: 400ms;
+}
+
+body .main .date:hover {
+  background-color: #f06292;
+}
+
+body .more {
+  background-color: #d81b60;
+  text-align: center;
+}
+
+body .more .units .timer {
+  color: #9e9e9e;
+}
+
+body .more .units .timer .number {
+  margin-top: 2.5vh;
+  font-size: 2.5rem;
+  color: #424242;
+}

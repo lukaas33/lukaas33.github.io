@@ -1,0 +1,74 @@
+// General
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; // Box width includes padding
+  font-family: 'Noto Sans', sans-serif;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  // border: 1px solid grey; // For viewing the box model
+}
+
+:focus, :active { outline: none; }
+
+// Selectors
+body {
+    display: none; // Shows when Js in complete
+    background-color: #eeeeee;
+    font-size: 20px; // Base font
+    .main {
+            height: 30vh;
+            padding: 7.5vh 25vw;
+            background-color: #e91e63;
+            position: relative;
+        .timer {
+            text-align: center;
+            .number {
+                display: block;
+                span {
+                    color: #fce4ec;
+                    font-size: 6rem;
+                }
+                span:last-child {
+                    color: #f8bbd0;
+                    font-size: 2rem;
+                }
+            }
+            p {
+                color: #f48fb1;
+                font-size: 1.5rem;
+            }
+        }
+        .date {
+            padding: 1vh 1vw;
+            border-radius: 5%;
+            border: 0px solid transparent;
+            position: absolute;
+            left: 0;
+            top: 0;
+            margin: 2vh 2vh;
+            background-color: #ec407a;
+            color: #f8bbd0;
+            transition: 400ms;
+            &:hover {
+                background-color: #f06292;
+            }
+        }
+    }
+    .more {
+        background-color: #d81b60;
+        //box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        .units {
+
+            .timer {
+                color: #9e9e9e;
+                .number {
+                    margin-top: 2.5vh;
+                    font-size: 2.5rem;
+                    color: #424242;
+                }
+            }
+        }
+    }
+}
