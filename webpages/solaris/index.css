@@ -73,7 +73,6 @@ hr {
     width: 20vw;
     position: relative;
     margin: 5vh 2.5vw;
-    border-radius: 0.5vh;
     z-index: 10;
 }
 
@@ -119,7 +118,6 @@ hr {
 
 .text .info img {
     width: 100%;
-    border-radius: 0.5vh;
     background-color: #e0e0e0;
 }
 
@@ -222,7 +220,6 @@ hr {
     padding: 0.5vw;
     font-size: 0.75em;
     font-weight: bold;
-    border-radius: 0.5vh;
     box-shadow: 0px 4px 4px rgba(0,0,0,0.15);
     background-color: #424242;
     color: #f5f5f5;
