@@ -153,50 +153,119 @@ def Swap(index, target, array):
     array[index] = store
     return array
 
-def BubbleSort(array):
+def bubbleSort(array):
+    """ Sorts an array of numbers"""
+    working = True
+
+    while working:
+        working = False # Only true if is condition inside is true
+        for index in range(1, len(array)): # Not including 0
+            if array[index - 1] > array[index]: # Last value is higher than current
+                swap(index, index - 1, array) # Swap values
+                working = True
+
+    return array
+
+def insertSort(array):
     """ Sorts an array of numbers """
+    for index in range(1, len(array)): # Not including 0
+        value = array[index] # Iteration's value
+        current = index
+        while current > 0 and value < array[current - 1]: # Index is valid and the iteration's value is smaller than the last
+            array[current] = array[current - 1] # Current is the previous value
+            current -= 1
+        array[current] = value # Insert into last empty space
 
+    return array
 
-# Actions
-# 2.1
-browser.console.log(Gauss(5))
-#  2.2
-browser.console.log(Factorial(5))
-# 2.3
-browser.console.log(Divided(10, 5))
-# GCD of 10 and 5
-browser.console.log(GCD(10, 5))
-# 2.6
-browser.console.log(SCM(2, 5))
-# 3.1
-browser.console.log(IsPrime(5))
-# Trial division of 10
-browser.console.log(TrialDivision(10))
-# browser.console.log 10 Fibonacci numbers
-browser.console.log(Fibonacci(10))
-# 3.2
-browser.console.log(Sequence(10))
-# 3.3
-# Er wordt opgeteld vanaf twee t/m zeven. Getallen die met vermenigvuldigen al voorgekomen zijn worden overgeslagen.
-# Elk getal wordt vermenigvuldigd met oplopende getallen tot het maximum is bereikt.
-# De getallen die op het einde niet voorgekomen zijn in het vermenigvuldigen zijn priemgetallen.
-# Ook de getallen die bij het optellen voorgekomen zijn, zijn priemgetallen
-# 3.4
-# Voor een getal priemgetallen genereren met het getal zelf als maximum.
-# Kijken of het getal in de reeks zit.
-# browser.console.log prime number below 10
-browser.console.log(Eratosthenes(10))
-# 4.2
-# Van het laatst gevonden item wordt de index teruggegeven.
-# 4.3: Testing of the search function
-browser.console.log(LinearSearch('A', ['D', 'T', 'E']))
-browser.console.log(LinearSearch('O', ['O', 'A', 'C']))
-browser.console.log(LinearSearch('B', ['B', 'B', 'A']))
-# Testing my new algorithm and the old one
-browser.console.log(BinarySearch(11, Eratosthenes(110)))
-browser.console.log(LinearSearch(11, Eratosthenes(110)))
-# 5.1: Swapping indexes
-autos = ["Ford", "Audi", "Saab", "Opel"]
-Swap(0, 1, autos)
-Swap(2, 3, autos)
-browser.console.log(autos)
+def sortDesc(array):
+    """ Sorts an array of numbers descending """
+    for index in range(1, len(array)): # Not including 0
+        value = array[index]
+        current = index
+        while current > 0 and value > array[current - 1]:
+            array[current] = array[current - 1]
+            current -= 1
+        array[current] = value
+
+    return array
+
+def myQuickSort(array):
+    """ Sorts an array of numbers, this is my creation """
+    def Check(array):
+        """ Checks if the array is sorted """
+        result = True # Until proven false
+        previous = 0
+
+        for index in range(1, len(array)):
+            if array[previous] > array[index]: # Is higher than last one
+                result = False
+            previous = index
+
+        #print("Sorted", result)
+
+        return result
+
+    def Pivot(part):
+        """ Chooses a pivot point """
+        start = random.choice(part) # First to check is decided randomly
+        pivot = part.index(start)  # Index of first
+        return pivot
+
+    def Partition(part):
+        """ Partitions and returns a given array """
+        previous = 1 # Tracks last checked
+        higher = [] # Tracks last that is higher
+        lower = None # Tracks last that is lower
+
+        for index in range(1, len(part)): # Skips pivot
+            #print(part)
+            #print("check", index)
+            if part[index] < part[pivot]: # Value is lower than pivot value
+                #print(index, "less than", pivot)
+                if len(higher) != 0: # If not empty
+                    swap(higher[0], index, part) # Swaps with the value higher than the pivot with the lowest index
+                    #print("Switching", higher[0], "and", index)
+                    lower = higher[0] # Last switched
+                    higher.pop(0) # Won't be higher anymore
+                    higher.append(index) # New highest
+                else:
+                    lower = index # Is lower and doesn't have to be switched
+                    #print(lower, "no switch")
+            else:
+                higher.append(index)
+                #print(higher, "higher than", pivot)
+            previous = index
+
+        if lower != None: # There need to be lower and higher elements
+            #print("switch", lower, "and", pivot)
+            swap(lower, pivot, part)
+
+        return part
+
+    sorting = True
+
+    while sorting:
+        pivot = Pivot(array)
+        swap(0, pivot, array) # Needs to be left
+        pivot = 0 # New location
+        #print("pivot", pivot, "-", array[pivot])
+        if len(array[:pivot]) > 1:
+            array = Partition(array[:pivot]) # Lower than pivot
+        if len(array[pivot:]) > 1:
+            array = Partition(array[pivot:]) # Higher than pivot
+
+        if Check(array):
+            sorting = False
+
+    return array
+
+def performance(function, data):
+    """ Comparing the efficiencies of several sorting algorithms with the same array """
+    numbers = list(data)
+
+    timer = Timer(lambda: function(numbers)) # Create a timer object for this action
+    durations = timer.repeat(10, 1) # Recording time n times in a row
+    duration = sum(durations) / len(durations) # Average time
+
+    return duration
