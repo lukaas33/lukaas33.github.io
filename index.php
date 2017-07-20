@@ -20,24 +20,24 @@
         <!-- Css -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
-        <link href="/index/assets/css/main.css" rel="stylesheet">
+        <link href="index/assets/css/main.css" rel="stylesheet">
         <!-- Javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-        <script src="/index/assets/javascript/main.js"></script>
+        <script src="index/assets/javascript/main.js"></script>
 
         <!-- Database -->
         <?php
             /* Functions */
-            require "/index/database/functions.php"; // General functions
+            require "index/database/functions.php"; // General functions
 
-            require "/index/database/sorting.php"; // Change sorting of portfolio
+            require "index/database/sorting.php"; // Change sorting of portfolio
 
-            require "/index/database/interact.php"; // Sets and gets data in database
+            require "index/database/interact.php"; // Sets and gets data in database
 
-            require "/index/database/pages.php"; // Creates pages for portfolio TODO create pages for all projects here
+            require "index/database/pages.php"; // Creates pages for portfolio TODO create pages for all projects here
 
             /* Actions */
-            require "/index/database/connect.php"; // PHP that connects to the database
+            require "index/database/connect.php"; // PHP that connects to the database
 
             enterData(); // Adds and updates data
             sorted(); // Sets the sorting
@@ -45,7 +45,7 @@
     </head>
     <body>
         <div class="top">
-            <?php include "/index/elements/top.html" // The nav and header ?>
+            <?php include "index/elements/top.html" // The nav and header ?>
         </div>
 
         <div class="main">
@@ -53,7 +53,7 @@
                 <div class="content">
                     <div class="card">
                         <div class="container">
-                            <img src="/index/assets/images/other/photo.png" alt="A picture of me"/>
+                            <img src="index/assets/images/other/photo.png" alt="A picture of me"/>
                         </div>
                         <div class="text">
                             <h2>Lucas van Osenbruggen</h2>
@@ -90,7 +90,7 @@
                         foreach ($data as $row)
                         {
                             // Creates elements with new variables for each row
-                            include "/index/elements/templates/experience.php";
+                            include "index/elements/templates/experience.php";
                         }
                     ?>
                 </div>
@@ -107,7 +107,7 @@
                         foreach ($data as $row)
                         {
                             // Creates elements with new variables for each row
-                            include "/index/elements/templates/skills.php";
+                            include "index/elements/templates/skills.php";
                         }
                     ?>
                 </div>
@@ -132,7 +132,7 @@
                         foreach ($data as $row)
                         {
                             // Creates elements with new variables for each row
-                            include "/index/elements/templates/projects.php";
+                            include "index/elements/templates/projects.php";
                         }
                     ?>
                 </div>
