@@ -20,10 +20,10 @@
         <!-- Css -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
-        <link href="index/assets/css/main.css" rel="stylesheet">
+        <link href="/index/assets/css/main.css" rel="stylesheet">
         <!-- Javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-        <script src="index/assets/javascript/main.js"></script>
+        <script src="/index/assets/javascript/main.js"></script>
 
         <!-- Database -->
         <?php
