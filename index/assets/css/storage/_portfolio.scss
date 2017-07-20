@@ -1,0 +1,122 @@
+&#portfolio {
+    .sort {
+        margin: 0 auto; // Centers
+        text-align: center;
+        width: 25%; // Of portfolio
+
+        a {
+            @extend %form; // Is a type of form
+            color: #757575;
+            display: block; // Entire block is clickable
+            margin: 5%;
+            position: relative; // Absolute tooltip will be placed with regard to this
+            text-decoration: none;
+            text-transform: uppercase;
+
+            .material-icons {
+                display: inline-block; // More like a button
+                position: absolute; // The tag will be centered not both together
+                transform: translateX(-150%); // Will be next to the tag
+                vertical-align: middle;
+            }
+
+            span {
+                vertical-align: middle;
+            }
+
+            .tooltip {
+                @extend %tooltip;
+                left: 50%;
+                margin-left: -25%; // Centered
+                width: 50%; // Of sort
+            }
+        }
+    }
+
+    .content {
+        @extend %flex; // Pages next to eachother
+
+        .page {
+            @extend %grid; // Grid of cards
+            margin: $margin; // Becomes the same width as cards
+            width: 100%; // Of portfolio
+
+            .container {
+                width: calc(100% / 3); // One third of content
+
+                .preview {
+
+                    height: 100%; // Fill container
+                    position: relative; // Absolute of description works by positioned elements
+                    transition: $animation;
+                    width: 100%;
+                    z-index: 30; // Above main
+
+                    &:hover {
+                        @include shadow(8, 16);
+                        z-index: 40; // Above the others
+                    }
+
+                    img {
+                        display: block; // No white space on the bottom
+                        width: 100%; // Of preview
+                    }
+
+                    span {
+                        @extend %vertical; // Align text vertically
+                        height: 100%; // Text will be in the middle
+                        left: 0;
+                        position: absolute;
+                        top: 0;
+                        transition: $animation;
+                        width: 100%;
+
+                        &:hover {
+                            background-color: rgba(0, 0, 0, .45); // Darker shade
+                        }
+
+                        .tags {
+                            color: #fff;
+                            display: none; // Toggled on via Javascript
+                            margin: auto;
+                            text-align: center;
+
+                            h3 {
+                                font-size: 1.5rem;
+                            }
+
+                            p {
+                                font-size: .85rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .select {
+        margin: 0 40%; // Centers
+        text-align: center;
+        width: 20%; // Of portfolio
+
+        p {
+            color: #757575;
+            display: inline;
+            text-transform: uppercase;
+        }
+
+        button {
+            @extend %form; // Is a type of form
+            position: relative; // Absolute tooltip will be placed with regard to this
+
+            &.backward {
+                float: left;
+            }
+
+            &.forward {
+                float: right;
+            }
+        }
+    }
+}

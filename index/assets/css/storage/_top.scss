@@ -1,0 +1,76 @@
+.top {
+    nav {
+        // Local variables
+        $height: 5vh; // Height local to the nav
+		$padding: 1vh; // Padding local to nav
+
+        @include prefix(animation, slideDown $animation-long); // On load it slides in from the top with normal tranistion values
+        @include shadow(2, 10);
+        background-color: #fafafa;
+        height: $height;
+        left: 0;
+        overflow: hidden; // If elements are too big they are hidden
+        padding: $padding ($padding * 3); // More on the side than on the top
+        position: fixed; // Travels with scroll
+        top: 0;
+        width: 100vw;
+        z-index: 30; // Above main
+
+        .logo {
+            float: left;
+            height: ($height - ($padding * 2));
+            width: ($height - ($padding * 2));
+
+            img {
+                display: block;
+                height: 100%; // of logo
+                width: 100%; // Of logo
+            }
+        }
+
+        ul {
+            float: right;
+            height: ($height - ($padding * 2));
+
+            li {
+                display: inline-block;
+                margin-left: 2vw;
+                text-transform: uppercase;
+                vertical-align: middle; // Same height as button
+
+                a {
+                    color: #616161;
+                    text-decoration: none;
+                    transition: $animation;
+                }
+
+                .focus { // If the corresponding section is focused
+                    @include color('primary', 'color', 500);
+                }
+
+                &:last-child {
+                    @extend %round; // Round button
+                    @include color('secondary', 'background-color', 200);
+                    height: ($height - 2vh);
+                    width: ($height - 2vh);
+
+                    .material-icons {
+                        font-size: 2vh;
+                        margin-top: .5vh; // Needed to center icon
+                    }
+                }
+            }
+        }
+    }
+
+    header {
+        @include prefix(animation, slideDown $animation-long); // On load it slides in from the top with normal tranistion values
+        @include color('primary', 'background-color', 500);
+        @include shadow(2, 6);
+        height: 60vh;
+        position: absolute; // Background
+        top: 0;
+        width: 100vw;
+        z-index: 10; // Below main
+    }
+}

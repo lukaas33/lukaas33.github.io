@@ -1,0 +1,148 @@
+%card {
+    @include shadow(2, 6)
+    background-color: #fff;
+    transition: $animation;
+
+    &:hover {
+        @include shadow(6, 16)
+    }
+}
+
+%link {
+    @include color('secondary', 'color', 200);
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+%header {
+    @include color('primary', 'color', 500);
+    font-weight: normal; // Not bold
+}
+
+%progress {
+    border: 0 solid transparent;
+
+    &::-webkit-progress-value {
+        @include color('primary', 'background-color', 300); // The bar itself
+    }
+
+    &::-webkit-progress-bar {
+        background-color: #f5f5f5; // The background
+    }
+}
+
+%form { // TODO Add ripple effect for all buttons and input fields
+    background-color: transparent; // Hides default background
+    border: 0 solid transparent; // Hides border
+    cursor: pointer;
+    transition: $animation;
+
+    &:focus,
+    &:active {
+        outline: none;
+    }
+}
+
+%input {
+    @extend %form; // Part of a form
+    border-bottom: 1px solid #bdbdbd;
+    color: #757575;
+    width: 100%; // Of the card
+
+    &::-webkit-input-placeholder {
+        transition: $animation;
+    }
+
+    &:focus {
+        @include color('secondary', 'border-bottom-color', 200);
+
+        // Found the way to style this at https://codepen.io/mildrenben/pen/gbddEj
+        &::-webkit-input-placeholder {
+            @include color('secondary', 'color', 200);
+            font-size: .75rem;
+            transform: translateY(-150%); // Slightly above the input
+        }
+    }
+}
+
+%tooltip {
+    @include shadow(2, 6)
+    background-color: #424242;
+    border: 1px solid #424242;
+    color: #fff;
+    display: none; // Default state
+    font-size: .8rem;
+    left: 0;
+    padding: ($base-margin / 18) ($base-margin / 12);
+    position: absolute;
+    top: 0;
+    transform: translateY(-110%); // Above the selected
+    white-space: nowrap; // No two lines
+
+    // Got this from http://ilikepixels.co.uk/drop/bubbler/
+    &::after {
+        border-color: #424242 transparent;
+        border-style: solid;
+        border-width: 10px 10px 0;
+        bottom: -10px;
+        content: '';
+        display: block;
+        left: 50%;
+        margin-left: -10px; // Centered
+        position: absolute;
+        width: 0;
+    }
+}
+
+%button {
+    @extend %form; // Is a type of form
+    @include shadow(2, 6)
+    text-align: center; // Center horizontally
+
+    &:hover,
+    &:focus {
+        @include shadow(6, 14)
+    }
+
+    &  > p,
+    & > span,
+    & > i {
+        vertical-align: middle; // Centers text elements vertically
+    }
+}
+
+%normal {
+    @extend %button; // Is a button
+    @include color('primary', 'background-color', 500);
+    color: #fff;
+    padding: ($base-margin / 14) ($base-margin / 8);
+    text-transform: uppercase;
+}
+
+%round {
+    @extend %button; // Is a button
+    @include color('secondary', 'background-color', 200);
+    border-radius: 100%; // Round
+}
+
+%flex {
+    display: -webkit-flex; // Allows flexiable centering
+}
+
+%vertical {
+    @extend %flex; // Extention of flex
+    align-items: center; // Center element vertically
+}
+
+%colomn {
+    @extend %flex; // Extention of flex
+    @include prefix(flex-direction, column); // Vertically next to each other
+}
+
+%grid {
+    @extend %flex; // Extention of flex
+	@include prefix(flex-wrap, wrap); // Items to long for the line will overflow
+}
