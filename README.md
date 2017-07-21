@@ -1,26 +1,31 @@
-# My website
+# My websites
 
-In this repository I will store the websites that I make.
-The index page is my resume and portfolio.
+In this repository I keep the websites that I make.  
+It's published to a webhost which serves as my resume and portfolio.
+My websites are in English but some documentation in the portfolio may be Dutch.
+
+All my code is open source, so if I ever make something nice everyone can use it.
+
+![My personal logo](index\assets\images\other\logo.png)
+
+----
 
 Links:
+
 -   [Domain](lukaas33.com)
 -   [Google+](https://plus.google.com/u/0/+LucasvanOsenbruggen)
 -   [Email](mailto:lukaas9000@gmail.com)
 
-----
+Languages to learn:
 
-Testing markdown:
-
-``` python
-import fractions
-frac = fractions.Fraction
-
-print(frac(1, 7) + frac(3, 8))
-```
-
-> “Two things are infinite: the universe and human stupidity;
-> and I'm not sure about the universe.”
-> ― Albert Einstein
-
-![Abstract logo](https://s-media-cache-ak0.pinimg.com/736x/41/1a/48/411a4835d38ff899e55ce2802b08329c.jpg)
+-   Node.js
+-   Python
+-   CoffeeScript
+-   ~~Sass~~
+-   ~~PHP~~ _(Not interested anymore)_
+-   ~~SQL~~
+-   ~~Git~~ _(A little)_
+-   ~~jQuery~~
+-   ~~JavaScript~~
+-   ~~CSS~~
+-   ~~Html~~
