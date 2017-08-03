@@ -4,6 +4,7 @@
   "description": "My personal website, which serves as my resume",
   "main": "index.js",
   "scripts": {
+    "start": "index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -12,6 +13,8 @@
   },
   "keywords": [
     "heroku",
+    "node",
+    "express"
     "resume",
     "website"
   ],
