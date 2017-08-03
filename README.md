@@ -9,9 +9,7 @@ My websites are in English but some documentation in the portfolio may be Dutch.
 I currently only make websites for learning or for fun.
 All my code is open source, so if I ever make something nice everyone can use it.
 
-![My personal logo](public\assets\images\other\logo.png)
-
-----
+![My personal logo](\public\assets\images\other\logo.png)
 
 ## News
 
@@ -22,11 +20,9 @@ I've learned some Python and am not sure what I can do with it.
 
 I ordered a Raspberry Pi.
 
-----
-
 ## Links
 
--   [Domain](lukaas33.com)
+-   [Domain](https://www.lukaas33.com)
 -   [Google+](https://plus.google.com/u/0/+LucasvanOsenbruggen)
 -   [Email](mailto:lukaas9000@gmail.com)
 
