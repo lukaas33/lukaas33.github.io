@@ -10,8 +10,7 @@ app.set('index', [__dirname, '/index.html'].join(''));
 app.set('view engine', 'html');
 
 app.get('/', function(request, response) {
-  // response.render('index');
-  response.send("Hello world");
+  response.render('index');
 });
 
 app.listen(app.get('port'), function() {
