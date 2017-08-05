@@ -1,6 +1,6 @@
 {
   "name": "lucas-resume",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "My personal website, which serves as my resume",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,9 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.9.8",
-    "ejs": "2.5.6"
+    "ejs": "2.5.6",
+    "nodemailer": "4.0.1",
+    "body-parser": "1.17.2"
   },
   "engines": {
     "node": "6.10.3",

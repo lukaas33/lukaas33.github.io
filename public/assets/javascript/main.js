@@ -352,6 +352,7 @@
       name = $(this).attr("name");
       return cookie(name, $(this).val());
     });
+    $("#contact form").submit(function(event) {});
     $("#contact form").find("input[type='submit']").click(function() {
       cookie("name", "");
       cookie("email", "");

@@ -269,6 +269,9 @@ $ ->
     name = $(this).attr "name"
     cookie(name, $(this).val()) # Update in cookie
 
+  $("#contact form").submit (event) ->
+    # event.preventDefault()
+
   $("#contact form").find("input[type='submit']").click ->
     # Message has been sent, cookies should be emptied
     cookie("name", "")
