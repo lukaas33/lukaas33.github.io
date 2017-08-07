@@ -1,5 +1,25 @@
 ### Don't edit js file, edit coffeescript and upload created Js file ###
 
+
+
+### Variables ###
+state = # Not a cookie because it's an object
+  "experience": null
+  "skills": null
+timing = 400 # Default time for animations
+timeout = null # Tracks timeout in tooltip
+num = 0 # Tracks number of pages
+previous = null # Tracks previous page index
+
+initCookies = ->
+  # Cookies have to be initialised
+  cookie("map", off) if cookie("map") == undefined
+  cookie("page", 1) if cookie("page") == undefined
+  cookie("name", "") if cookie("name") == undefined
+  cookie("email", "") if cookie("email") == undefined
+  cookie("message", "") if cookie("message") == undefined
+
+### Functions ###
 cookie = (name, value) ->
   # Gets and sets cookies
   cookies = document.cookie.split ';'
@@ -12,24 +32,7 @@ cookie = (name, value) ->
     console.log "Set cookie #{name} to #{value}"
     document.cookie = "#{name}=#{value}; path=/"
 
-### Variables ###
-# Cookies have to be initialised
-cookie("map", off) if cookie("map") == undefined
-cookie("page", 1) if cookie("page") == undefined
-cookie("name", "") if cookie("name") == undefined
-cookie("email", "") if cookie("email") == undefined
-cookie("message", "") if cookie("message") == undefined
-
-state = # Not a cookie because it's an object
-  "experience": null
-  "skills": null
-timing = 400 # Default time for animations
-timeout = null # Tracks timeout in tooltip
-num = 0 # Tracks number of pages
-previous = null # Tracks previous page index
-
-### Functions ###
-highLight = () ->
+highLight = ->
   # Highlights items in the menu bar
   $li = $("nav ul li").find "a"
   $li.removeClass "focus" # Removes the focus each time
@@ -119,10 +122,6 @@ setDate = (dates) ->
       date.find(".end").text end # Set text to the string
       date.find(".tooltip").html "started #{sinceDate begin} ago"
 
-setBox = () ->
-  # Creates borders for all elements Called by console
-  $('*').css border: "1px solid grey"
-
 setMap = (change) ->
   # Toggles and initialises map
   $map = $("#contact .card").find ".map"
@@ -163,21 +162,23 @@ setMap = (change) ->
     else
       setOff(0) # Before page is loaded
 
-setForm = () ->
+setForm = ->
   $form = $("#contact form")
   $form.find("input[name='name']").val(cookie "name")
   $form.find("input[name='email']").val(cookie "email")
   $form.find("textarea").val(cookie "message")
 
-setProjects = () ->
+setProjects = ->
   # Divide projects into pages
   $portfolio = $("#portfolio .content")
   $content = $portfolio.find ".container"
   num = Math.ceil $content.length / 9 # Sets num
+
   for page in [1...(num + 1)] # Range of number pages
     $page = $("<div></div>").addClass "page"
     $page.attr("num", page)
     last = 9 * page # For page one the last index will be 9, for page two 18
+
     for card in [(last - 9)..last] # Range of 9
       $page.append $content[card]
     $portfolio.append $page
@@ -186,8 +187,7 @@ setPages = (time) ->
   $pages = $("#portfolio").find ".page"
   current = parseInt(cookie "page")
   target = $pages
-  if previous != null # There has been clicked before
-    target = $($pages[previous - 1])
+  target = $($pages[previous - 1]) if previous != null
 
   target.fadeOut  # Most are hidden
     duration: time
@@ -208,7 +208,7 @@ switchPage = (change) ->
   cookie("page", newPage) # Update
   setPages timing
 
-setDoc = () ->
+setDoc = ->
   # Sets some values in the document
   for since in $(".since")
     $(since).html sinceDate new Date($(since).attr "date") # Sets all date spans
@@ -219,8 +219,19 @@ setDoc = () ->
   setProjects() # Sets up page system
   setPages 0 # Sets the pages initial value
 
+### Actions ###
+initCookies()
+
 $ ->
-  # When document is ready
+  ### Actions ###
+  setTimeout -> # Prevents the flashing on of the about link on load
+    highLight() # Initial highlight at start of page
+    $(window).scroll -> # Sets scroll event
+      highLight() # Higlight correct link
+  , timing * 2
+  setDoc() # Set values
+  $("body").show() # After all actions are completed body is shown
+
   ### Events ###
   $("nav ul li").find("a").click (event) ->
     # Go to section
@@ -280,12 +291,3 @@ $ ->
 
   $("#contact .card").find(".show").click ->
     setMap(true) # Set map and change = true
-
-  ###Actions ###
-  setTimeout -> # Prevents the flashing on of the about link on load
-    highLight() # Initial highlight at start of page
-    $(window).scroll -> # Sets scroll event
-      highLight() #Higlight correct link
-  , timing * 2
-  setDoc() # Set values
-  $("body").show() # After all actions are completed body is shown

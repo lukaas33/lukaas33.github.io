@@ -1,8 +1,45 @@
 
 /* Don't edit js file, edit coffeescript and upload created Js file */
 
+
+/* Variables */
+
 (function() {
-  var cookie, highLight, num, previous, scrollToLoc, setBox, setDate, setDoc, setForm, setMap, setPages, setProjects, sinceDate, state, switchPage, timeout, timing, toggle;
+  var cookie, highLight, initCookies, num, previous, scrollToLoc, setDate, setDoc, setForm, setMap, setPages, setProjects, sinceDate, state, switchPage, timeout, timing, toggle;
+
+  state = {
+    "experience": null,
+    "skills": null
+  };
+
+  timing = 400;
+
+  timeout = null;
+
+  num = 0;
+
+  previous = null;
+
+  initCookies = function() {
+    if (cookie("map") === void 0) {
+      cookie("map", false);
+    }
+    if (cookie("page") === void 0) {
+      cookie("page", 1);
+    }
+    if (cookie("name") === void 0) {
+      cookie("name", "");
+    }
+    if (cookie("email") === void 0) {
+      cookie("email", "");
+    }
+    if (cookie("message") === void 0) {
+      return cookie("message", "");
+    }
+  };
+
+
+  /* Functions */
 
   cookie = function(name, value) {
     var cookies, current, i, len;
@@ -20,45 +57,6 @@
       return document.cookie = name + "=" + value + "; path=/";
     }
   };
-
-
-  /* Variables */
-
-  if (cookie("map") === void 0) {
-    cookie("map", false);
-  }
-
-  if (cookie("page") === void 0) {
-    cookie("page", 1);
-  }
-
-  if (cookie("name") === void 0) {
-    cookie("name", "");
-  }
-
-  if (cookie("email") === void 0) {
-    cookie("email", "");
-  }
-
-  if (cookie("message") === void 0) {
-    cookie("message", "");
-  }
-
-  state = {
-    "experience": null,
-    "skills": null
-  };
-
-  timing = 400;
-
-  timeout = null;
-
-  num = 0;
-
-  previous = null;
-
-
-  /* Functions */
 
   highLight = function() {
     var $li, calcTop, position;
@@ -154,12 +152,6 @@
       }
     }
     return results;
-  };
-
-  setBox = function() {
-    return $('*').css({
-      border: "1px solid grey"
-    });
   };
 
   setMap = function(change) {
@@ -290,7 +282,22 @@
     return setPages(0);
   };
 
+
+  /* Actions */
+
+  initCookies();
+
   $(function() {
+
+    /* Actions */
+    setTimeout(function() {
+      highLight();
+      return $(window).scroll(function() {
+        return highLight();
+      });
+    }, timing * 2);
+    setDoc();
+    $("body").show();
 
     /* Events */
     $("nav ul li").find("a").click(function(event) {
@@ -358,19 +365,9 @@
       cookie("email", "");
       return cookie("message", "");
     });
-    $("#contact .card").find(".show").click(function() {
+    return $("#contact .card").find(".show").click(function() {
       return setMap(true);
     });
-
-    /*Actions */
-    setTimeout(function() {
-      highLight();
-      return $(window).scroll(function() {
-        return highLight();
-      });
-    }, timing * 2);
-    setDoc();
-    return $("body").show();
   });
 
 }).call(this);
