@@ -1,56 +1,71 @@
-// Require
-var express = require("express");
-var nodemailer = require("nodemailer");
-var bodyParser = require("body-parser");
+(function() {
+  var app, bodyParser, express, formidable, nodemailer, send, transporter;
 
-// Vars
-var app = express();
-var parser = bodyParser.urlencoded({extended: false});
-var transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: "lucasnogwat@gmail.com",
-    pass: "kgqtsrtjzdbphoee"
-  }
-});
+  express = require("express");
 
-// Functions
+  nodemailer = require("nodemailer");
 
+  bodyParser = require("body-parser");
 
-// Port
-app.set("port", (process.env.PORT || 5000));
-app.use(express.static([__dirname, "/public"].join('')));
+  formidable = require("formidable");
 
-// Routes
-app.set("index", [__dirname, "/index.html"].join(''));
-app.set("view engine", "html");
+  app = express();
 
-// Events
-app.get("/", function(request, response) {
-  response.render("index");
-});
+  transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: "lucasnogwat@gmail.com",
+      pass: "kgqtsrtjzdbphoee"
+    }
+  });
 
-app.post("/send", parser, function (request, result) {
-   console.log("Got a POST request for the homepage");
+  send = function(request, response) {
+    var form;
+    form = new formidable.IncomingForm();
+    return form.parse(request, function(error, fields, files) {
+      var mailOptions;
+      mailOptions = {
+        from: "\"" + fields.email + "\" <" + fields.email + ">",
+        to: "\"Personal\" <lucasvanosenbruggen@gmail.com>",
+        subject: "[SITE MESSAGE]",
+        html: ("<em>Sent by: " + fields.name + "</em><br/>") + ("<em>Reply at: " + fields.email + "</em><br/><hr/>") + ("" + fields.message)
+      };
+      return transporter.sendMail(mailOptions, function(error, info) {
+        if (error) {
+          return console.log(error);
+        } else {
+          return console.log("Email sent: " + info.response);
+        }
+      });
+    });
+  };
 
-   var mailOptions = {
-     from: '\"' + request.body.name + '\" ' + '<' + request.body.email + '>',
-     to: '"Personal" <lucasvanosenbruggen@gmail.com>',
-     subject: "[SITE MESSAGE]",
-     html: "<em>Sent by: " + request.body.name + '</em><br>' + "<em>Reply at: " + request.body.email + '</em><br>' + '<hr>' + request.body.message
-   };
+  app.use(express["static"](__dirname + "/public"));
 
-   transporter.sendMail(mailOptions, function(error, info) {
-     if (error) {
-       console.log(error);
-     } else {
-       console.log("Email sent: " + info.response);
-     }
-   });
+  app.use(bodyParser.json());
 
-   result.end();
-})
+  app.use(bodyParser.urlencoded({
+    extended: true
+  }));
 
-app.listen(app.get("port"), function() {
-  console.log("Node app is running at localhost:" + app.get("port"));
-})
+  app.set("port", process.env.PORT || 5000);
+
+  app.set("index", __dirname + "/index");
+
+  app.set("view engine", "html");
+
+  app.get('/', function(request, response) {
+    return response.render("index");
+  });
+
+  app.post("/send", function(request, response) {
+    console.log("POST request from client");
+    send(request, response);
+    return response.end();
+  });
+
+  app.listen(app.get("port"), function() {
+    return console.log("Node app is running at " + (app.get("port")));
+  });
+
+}).call(this);

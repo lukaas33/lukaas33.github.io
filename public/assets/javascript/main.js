@@ -5,7 +5,7 @@
 /* Variables */
 
 (function() {
-  var cookie, highLight, initCookies, num, previous, scrollToLoc, setDate, setDoc, setForm, setMap, setPages, setProjects, sinceDate, state, switchPage, timeout, timing, toggle;
+  var cookie, highLight, initCookies, num, previous, scrollToLoc, sendMail, setDate, setDoc, setForm, setMap, setPages, setProjects, sinceDate, state, switchPage, timeout, timing, toggle;
 
   state = {
     "experience": null,
@@ -212,6 +212,19 @@
     return $form.find("textarea").val(cookie("message"));
   };
 
+  sendMail = function(data) {
+    $.ajax({
+      url: '/send',
+      data: data,
+      processData: false,
+      contentType: false,
+      type: 'POST'
+    });
+    cookie("name", "");
+    cookie("email", "");
+    return cookie("message", "");
+  };
+
   setProjects = function() {
     var $content, $page, $portfolio, card, i, j, last, page, ref, ref1, ref2, results;
     $portfolio = $("#portfolio .content");
@@ -359,11 +372,12 @@
       name = $(this).attr("name");
       return cookie(name, $(this).val());
     });
-    $("#contact form").submit(function(event) {});
-    $("#contact form").find("input[type='submit']").click(function() {
-      cookie("name", "");
-      cookie("email", "");
-      return cookie("message", "");
+    $("#contact form").submit(function(event) {
+      var formdata;
+      event.preventDefault();
+      formdata = new FormData(this);
+      sendMail(formdata);
+      return this.reset();
     });
     return $("#contact .card").find(".show").click(function() {
       return setMap(true);

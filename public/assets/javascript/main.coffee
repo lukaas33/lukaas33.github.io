@@ -1,7 +1,5 @@
 ### Don't edit js file, edit coffeescript and upload created Js file ###
 
-
-
 ### Variables ###
 state = # Not a cookie because it's an object
   "experience": null
@@ -168,6 +166,19 @@ setForm = ->
   $form.find("input[name='email']").val(cookie "email")
   $form.find("textarea").val(cookie "message")
 
+sendMail = (data) ->
+  $.ajax
+    url: '/send'
+    data: data
+    processData: false
+    contentType: false
+    type: 'POST'
+
+  # Mail sent, cookies can be reset
+  cookie("name", "")
+  cookie("email", "")
+  cookie("message", "")
+
 setProjects = ->
   # Divide projects into pages
   $portfolio = $("#portfolio .content")
@@ -281,13 +292,10 @@ $ ->
     cookie(name, $(this).val()) # Update in cookie
 
   $("#contact form").submit (event) ->
-    # event.preventDefault()
-
-  $("#contact form").find("input[type='submit']").click ->
-    # Message has been sent, cookies should be emptied
-    cookie("name", "")
-    cookie("email", "")
-    cookie("message", "")
+    event.preventDefault() # No reloading
+    formdata = new FormData(this)
+    sendMail(formdata)
+    this.reset() # Empties form
 
   $("#contact .card").find(".show").click ->
     setMap(true) # Set map and change = true
