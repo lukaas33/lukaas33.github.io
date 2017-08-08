@@ -9,8 +9,8 @@ app = express()
 transporter = nodemailer.createTransport
   service: "Gmail"
   auth:
-    user: "lucasnogwat@gmail.com"
-    pass: ""
+    user: process.env.emailDefault
+    pass: process.env.emailPassword
 
 # Functions
 send = (request, response) ->
