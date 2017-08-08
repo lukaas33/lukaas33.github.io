@@ -26,7 +26,7 @@
       var mailOptions;
       mailOptions = {
         from: "\"" + fields.email + "\" <" + fields.email + ">",
-        to: "\"Personal\" <lucasvanosenbruggen@gmail.com>",
+        to: "\"Personal\" <" + process.env.emailPersonal + ">",
         subject: "[SITE MESSAGE]",
         html: ("<em>Sent by: " + fields.name + "</em><br/>") + ("<em>Reply at: " + fields.email + "</em><br/><hr/>") + ("" + fields.message)
       };

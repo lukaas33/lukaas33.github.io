@@ -5,14 +5,19 @@
 /* Variables */
 
 (function() {
-  var cookie, highLight, initCookies, num, previous, scrollToLoc, sendMail, setDate, setDoc, setForm, setMap, setPages, setProjects, sinceDate, state, switchPage, timeout, timing, toggle;
+  var animation, cookie, highLight, initCookies, num, previous, scrollToLoc, sendMail, setDate, setDoc, setForm, setMap, setPages, setProjects, sinceDate, state, switchPage, timeout, timing, toggle;
+
+  animation = {
+    duration: timing,
+    easing: "swing"
+  };
+
+  timing = 400;
 
   state = {
     "experience": null,
     "skills": null
   };
-
-  timing = 400;
 
   timeout = null;
 
@@ -329,18 +334,12 @@
       $(this).find(".tooltip").off();
       return timeout = setTimeout((function(_this) {
         return function() {
-          return $(_this).find(".tooltip").fadeIn({
-            duration: timing,
-            easing: "swing"
-          });
+          return $(_this).find(".tooltip").fadeIn(animation);
         };
       })(this), 500);
     }, function() {
       clearTimeout(timeout);
-      return $(this).find(".tooltip").fadeOut({
-        duration: timing,
-        easing: "swing"
-      });
+      return $(this).find(".tooltip").fadeOut(animation);
     });
     $("#experience .card").find(".head").click(function() {
       return toggle($(this).closest(".card")[0], "experience");
@@ -349,15 +348,9 @@
       return toggle($(this).closest(".card")[0], "skills");
     });
     $("#portfolio .preview").hover(function() {
-      return $(this).find(".tags").fadeIn({
-        duration: timing,
-        easing: "swing"
-      });
+      return $(this).find(".tags").fadeIn(animation);
     }, function() {
-      return $(this).find(".tags").fadeOut({
-        duration: timing,
-        easing: "swing"
-      });
+      return $(this).find(".tags").fadeOut(animation);
     });
     $("#portfolio .select").find(".backward").click(function() {
       return switchPage(-1);
@@ -374,46 +367,45 @@
       return cookie(name, $(this).val());
     });
     $("#contact form").submit(function(event) {
-      var formdata, invalid;
+      var error, formdata, regex;
       event.preventDefault();
       $(this).find(".error").hide();
-      invalid = "none";
-      $(this).children("[type='text']").each(function() {
-        var regex;
-        if ($(this).val() === '') {
-          invalid = "empty";
-          console.log("Invalid: " + this);
-        }
-        if ($(this).attr("name") === "email") {
-          regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          if (regex.test($(this).val())) {
-            invalid = "email";
-            return console.log("Invalid: " + this);
+      try {
+        console.log("Testing input...");
+        $(this).children("[type='text']").each(function() {
+          if ($(this).val() === '') {
+            throw new Error("Input empty");
           }
+        });
+        regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\n])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!regex.test($(this).children("[name='email']").val())) {
+          throw new Error("Email incorrect");
         }
-      });
-      if (invalid === "none") {
         formdata = new FormData(this);
-        return sendMail(formdata, function(success) {
-          if (!success) {
-            return $("#contact .error").html("An error has occured, please try again");
-          } else if (success) {
-            $("#contact form")[0].reset();
-            return $("#contact .error").html("Email was successfully sent");
+        console.log("Sending...");
+        return sendMail(formdata, (function(success) {
+          console.log(this);
+          if (success) {
+            $(this).trigger("reset");
+            $(this).find(".error").html("Email was successfully sent");
+            return $(this).find(".error").fadeIn(animation);
+          } else {
+            return $(this).find(".error").html("An error has occured while sending");
           }
-        });
-      } else if (invalid === "empty") {
-        $(this).find(".error").html("Please fill out all fields");
-        return $(this).find(".error").fadeIn({
-          duration: timing,
-          easing: "swing"
-        });
-      } else if (invalid === "email") {
-        $(this).find(".error").html("The email entered is invalid");
-        return $(this).find(".error").fadeIn({
-          duration: timing,
-          easing: "swing"
-        });
+        }).bind(this));
+      } catch (error1) {
+        error = error1;
+        console.warn(error);
+        if (error.message === "Input empty") {
+          $(this).find(".error").html("Please fill out all fields");
+          return $(this).find(".error").fadeIn(animation);
+        } else if (error.message === "Email incorrect") {
+          $(this).find(".error").html("The email entered is invalid");
+          return $(this).find(".error").fadeIn(animation);
+        } else {
+          $(this).find(".error").html("An unknown error occured");
+          return $(this).find(".error").fadeIn(animation);
+        }
       }
     });
     return $("#contact .card").find(".show").click(function() {

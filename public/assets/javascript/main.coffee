@@ -1,10 +1,14 @@
 ### Don't edit js file, edit coffeescript and upload created Js file ###
 
 ### Variables ###
+animation = # Default animation options
+  duration: timing
+  easing: "swing"
+timing = 400 # Default time for animations
+
 state = # Not a cookie because it's an object
   "experience": null
   "skills": null
-timing = 400 # Default time for animations
 timeout = null # Tracks timeout in tooltip
 num = 0 # Tracks number of pages
 previous = null # Tracks previous page index
@@ -175,7 +179,6 @@ sendMail = (data, success) ->
     type: 'POST'
     success: ->
       success(true)
-
       # Mail sent, cookies can be reset
       cookie("name", "")
       cookie("email", "")
@@ -251,31 +254,31 @@ $ ->
   $("nav ul li").find("a").click (event) ->
     # Go to section
     event.preventDefault() # Default behaviour disabled
-    href = $(this).attr "href"
+    href = $(@).attr "href"
     scrollToLoc($(href) ) # Scroll to element with id
 
   $(".tooltip").parent().hover(
     ->  # MouseIn
-      $(this).find(".tooltip").off() # Doesn't respond to hover
+      $(@).find(".tooltip").off() # Doesn't respond to hover
       timeout = setTimeout => # After some time hovering
-        $(this).find(".tooltip").fadeIn duration: timing, easing: "swing"
+        $(@).find(".tooltip").fadeIn animation
       , 500
     -> # MouseOut
       clearTimeout(timeout) # Cancel if leave before 500 ms
-      $(this).find(".tooltip").fadeOut duration: timing, easing: "swing"
+      $(@).find(".tooltip").fadeOut animation
   )
 
   $("#experience .card").find(".head").click -> # Only click on the top
-    toggle($(this).closest(".card")[0], "experience")
+    toggle($(@).closest(".card")[0], "experience")
 
   $("#skills .card").find(".head").click -> # Only click on the top
-    toggle($(this).closest(".card")[0], "skills")
+    toggle($(@).closest(".card")[0], "skills")
 
   $("#portfolio .preview").hover(
     -> # MouseIn
-      $(this).find(".tags").fadeIn duration: timing, easing: "swing"
+      $(@).find(".tags").fadeIn animation
     -> #MouseOut
-      $(this).find(".tags").fadeOut duration: timing, easing: "swing"
+      $(@).find(".tags").fadeOut animation
   )
 
   $("#portfolio .select").find(".backward").click ->
@@ -288,38 +291,67 @@ $ ->
     cookie("page", 1) # Back to page 1
 
   $("#contact form").find("[type='text']").blur ->
-    name = $(this).attr "name"
-    cookie(name, $(this).val()) # Update in cookie
+    name = $(@).attr "name"
+    cookie(name, $(@).val()) # Update in cookie
 
   $("#contact form").submit (event) ->
     event.preventDefault() # No reloading
-    $(this).find(".error").hide()
+    $(@).find(".error").hide()
 
-    invalid = "none"
-    $(this).children("[type='text']").each ->
-      if $(this).val() == ''
-        invalid = "empty"
-        console.log "Invalid: #{this}"
-      if $(this).attr("name") == "email"
-        regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        if regex.test $(this).val()
-          invalid = "email"
-          console.log "Invalid: #{this}"
+    try
+      console.log "Testing input..."
+      $(@).children("[type='text']").each ->
+        if $(@).val() == ''
+          throw new Error "Input empty"
 
-    if invalid == "none"
-      formdata = new FormData(this)
-      sendMail formdata, (success) ->
-        if not success
-          $("#contact .error").html "An error has occured, please try again"
-        else if success
-          $("#contact form")[0].reset() # Empties form
-          $("#contact .error").html "Email was successfully sent"
-    else if invalid == "empty"
-      $(this).find(".error").html "Please fill out all fields"
-      $(this).find(".error").fadeIn duration: timing, easing: "swing"
-    else if invalid == "email"
-      $(this).find(".error").html "The email entered is invalid"
-      $(this).find(".error").fadeIn duration: timing, easing: "swing"
+      regex = /// ^ (
+        (
+          [^<>()[\]\\.,;:\s@\"]+
+          (\.[^<>()[\]\\.,;:\s@\"]+)*
+        )
+        | (\".+\")
+        ) @
+        (
+          ( \[
+            [0-9]{1,3}\.
+            [0-9]{1,3}\.
+            [0-9]{1,3}\.
+            [0-9]{1,3}\
+          ]
+        )
+        | (
+          ([a-zA-Z\-0-9]+\.)+
+          [a-zA-Z]{2,}
+        )
+      )$ ///
+      if not regex.test $(@).children("[name='email']").val()
+        throw new Error "Email incorrect"
+
+      # If no errors have been thrown
+      formdata = new FormData(@)
+      console.log "Sending..."
+      sendMail formdata, ((success) ->
+        console.log @
+        if success
+          $(@).trigger "reset" # Empties form
+          $(@).find(".error").html "Email was successfully sent"
+          $(@).find(".error").fadeIn animation
+        else
+          $(@).find(".error").html "An error has occured while sending"
+      ).bind @ # Will keep this in another scope
+
+    catch error
+      console.warn error
+      # Error has been thrown
+      if error.message == "Input empty"
+        $(@).find(".error").html "Please fill out all fields"
+        $(@).find(".error").fadeIn animation
+      else if error.message == "Email incorrect"
+        $(@).find(".error").html "The email entered is invalid"
+        $(@).find(".error").fadeIn animation
+      else
+        $(@).find(".error").html "An unknown error occured"
+        $(@).find(".error").fadeIn animation
 
   $("#contact .card").find(".show").click ->
     setMap(true) # Set map and change = true
