@@ -10,7 +10,7 @@ transporter = nodemailer.createTransport
   service: "Gmail"
   auth:
     user: "lucasnogwat@gmail.com"
-    pass: "kgqtsrtjzdbphoee"
+    pass: ""
 
 # Functions
 send = (request, response) ->
@@ -31,6 +31,7 @@ send = (request, response) ->
         console.log error
       else
         console.log "Email sent: #{info.response}"
+
 
 # Setup
 app.use(express.static "#{__dirname}/public")

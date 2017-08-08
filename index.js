@@ -15,7 +15,7 @@
     service: "Gmail",
     auth: {
       user: "lucasnogwat@gmail.com",
-      pass: "kgqtsrtjzdbphoee"
+      pass: ""
     }
   });
 

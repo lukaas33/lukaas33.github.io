@@ -100,14 +100,13 @@
 
                         // Local variables
                         $line-height: 1rem;
-                        $padding: ($line-height * 1.5); // Two lines
+                        $padding: $line-height;
 
                         height: 100%;
                         width: 100%; // Fills card
 
                         input[type='text'],
                         textarea {
-
                             @extend %input; // Input types
                             flex-grow: 1; // Grow to fill parent
                             margin-bottom: $line-height; // One line
@@ -120,12 +119,26 @@
                         }
 
                         textarea {
-							font-family: inherit; // Overwrites default behaviour
+                            font-family: inherit; // Overwrites default behaviour
                             resize: none; // Textarea can't be resized
                         }
 
-                        input[type='submit'] {
-                            @extend %normal; // Is a normal button
+                        .end {
+                          @extend %flex; // Best way to display two elements next to each other
+
+                          input[type='submit'] {
+                              @extend %normal; // Is a normal button
+                          }
+                          .box {
+                            @extend %vertical; // Vertical flex
+                            
+                            .error {
+                              @include color('secondary', 'color', 100);
+
+                              display: none;
+                              margin-left: $padding;
+                            }
+                          }
                         }
                     }
                 }

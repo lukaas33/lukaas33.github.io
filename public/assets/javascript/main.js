@@ -212,17 +212,23 @@
     return $form.find("textarea").val(cookie("message"));
   };
 
-  sendMail = function(data) {
-    $.ajax({
+  sendMail = function(data, success) {
+    return $.ajax({
       url: '/send',
       data: data,
       processData: false,
       contentType: false,
-      type: 'POST'
+      type: 'POST',
+      success: function() {
+        success(true);
+        cookie("name", "");
+        cookie("email", "");
+        return cookie("message", "");
+      },
+      error: function() {
+        return success(false);
+      }
     });
-    cookie("name", "");
-    cookie("email", "");
-    return cookie("message", "");
   };
 
   setProjects = function() {
@@ -362,22 +368,53 @@
     $("#portfolio .sort").find("a").click(function() {
       return cookie("page", 1);
     });
-    $("#contact form").find("input[type='text']").blur(function() {
-      var name;
-      name = $(this).attr("name");
-      return cookie(name, $(this).val());
-    });
-    $("#contact form").find("textarea").blur(function() {
+    $("#contact form").find("[type='text']").blur(function() {
       var name;
       name = $(this).attr("name");
       return cookie(name, $(this).val());
     });
     $("#contact form").submit(function(event) {
-      var formdata;
+      var formdata, invalid;
       event.preventDefault();
-      formdata = new FormData(this);
-      sendMail(formdata);
-      return this.reset();
+      $(this).find(".error").hide();
+      invalid = "none";
+      $(this).children("[type='text']").each(function() {
+        var regex;
+        if ($(this).val() === '') {
+          invalid = "empty";
+          console.log("Invalid: " + this);
+        }
+        if ($(this).attr("name") === "email") {
+          regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          if (regex.test($(this).val())) {
+            invalid = "email";
+            return console.log("Invalid: " + this);
+          }
+        }
+      });
+      if (invalid === "none") {
+        formdata = new FormData(this);
+        return sendMail(formdata, function(success) {
+          if (!success) {
+            return $("#contact .error").html("An error has occured, please try again");
+          } else if (success) {
+            $("#contact form")[0].reset();
+            return $("#contact .error").html("Email was successfully sent");
+          }
+        });
+      } else if (invalid === "empty") {
+        $(this).find(".error").html("Please fill out all fields");
+        return $(this).find(".error").fadeIn({
+          duration: timing,
+          easing: "swing"
+        });
+      } else if (invalid === "email") {
+        $(this).find(".error").html("The email entered is invalid");
+        return $(this).find(".error").fadeIn({
+          duration: timing,
+          easing: "swing"
+        });
+      }
     });
     return $("#contact .card").find(".show").click(function() {
       return setMap(true);

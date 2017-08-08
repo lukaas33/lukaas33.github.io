@@ -14,7 +14,7 @@ All my code is open source, so if I ever make something nice everyone can use it
 ## News
 
 I'm trying to switch to Node.js and to host this website at Heroku.
-The old _(working)_ PHP website can still be found [here](www.lukaas33.esy.es).
+The old _(working)_ PHP website can still be found [here](https://www.lukaas33.esy.es).
 
 I've learned some Python and am not sure what I can do with it.
 

@@ -166,18 +166,22 @@ setForm = ->
   $form.find("input[name='email']").val(cookie "email")
   $form.find("textarea").val(cookie "message")
 
-sendMail = (data) ->
+sendMail = (data, success) ->
   $.ajax
     url: '/send'
     data: data
     processData: false
     contentType: false
     type: 'POST'
+    success: ->
+      success(true)
 
-  # Mail sent, cookies can be reset
-  cookie("name", "")
-  cookie("email", "")
-  cookie("message", "")
+      # Mail sent, cookies can be reset
+      cookie("name", "")
+      cookie("email", "")
+      cookie("message", "")
+    error: ->
+      success(false)
 
 setProjects = ->
   # Divide projects into pages
@@ -283,19 +287,39 @@ $ ->
   $("#portfolio .sort").find("a").click ->
     cookie("page", 1) # Back to page 1
 
-  $("#contact form").find("input[type='text']").blur ->
-    name = $(this).attr "name"
-    cookie(name, $(this).val()) # Update in cookie
-
-  $("#contact form").find("textarea").blur ->
+  $("#contact form").find("[type='text']").blur ->
     name = $(this).attr "name"
     cookie(name, $(this).val()) # Update in cookie
 
   $("#contact form").submit (event) ->
     event.preventDefault() # No reloading
-    formdata = new FormData(this)
-    sendMail(formdata)
-    this.reset() # Empties form
+    $(this).find(".error").hide()
+
+    invalid = "none"
+    $(this).children("[type='text']").each ->
+      if $(this).val() == ''
+        invalid = "empty"
+        console.log "Invalid: #{this}"
+      if $(this).attr("name") == "email"
+        regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        if regex.test $(this).val()
+          invalid = "email"
+          console.log "Invalid: #{this}"
+
+    if invalid == "none"
+      formdata = new FormData(this)
+      sendMail formdata, (success) ->
+        if not success
+          $("#contact .error").html "An error has occured, please try again"
+        else if success
+          $("#contact form")[0].reset() # Empties form
+          $("#contact .error").html "Email was successfully sent"
+    else if invalid == "empty"
+      $(this).find(".error").html "Please fill out all fields"
+      $(this).find(".error").fadeIn duration: timing, easing: "swing"
+    else if invalid == "email"
+      $(this).find(".error").html "The email entered is invalid"
+      $(this).find(".error").fadeIn duration: timing, easing: "swing"
 
   $("#contact .card").find(".show").click ->
     setMap(true) # Set map and change = true
