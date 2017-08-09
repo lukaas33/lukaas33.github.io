@@ -1,0 +1,119 @@
+// Stylesheet for printing
+
+// Global variables and functions
+@import 'storage/variables';
+
+// Classes
+@import 'storage/classes';
+
+html {
+  font-size: 12px; // Base font size, all are based on this one via the rem unit
+}
+
+body {
+  color: #757575; // Default color, applies mostly to text
+  font-family: 'noto-sans', sans-serif; // Applies to everything
+  font-size: 1rem; // Defaults to base font-size
+}
+
+.top {
+  display: none;
+}
+
+.part {
+  page-break-after: always; // All parts get printed on a new page
+
+  .title {
+      @extend %header;
+      font-size: 1.75rem; // Based on base font-size
+      text-align: center; // Center horizontally
+      text-transform: uppercase;
+  }
+
+  .card {
+    hr {
+        border: 0; // No double borders
+        border-top: 1px solid #bdbdbd;
+        width: 100%;
+    }
+
+    .since {
+      &::after {
+        content: ' ['attr(date)']';
+      }
+    }
+
+    a {
+      &::after {
+        content: ' ['attr()']';
+      }
+    }
+  }
+}
+
+#about {
+  .container {
+    width: 100%;
+
+    img {
+        display: block;
+        height: auto; // Maintains aspect ratio
+        width: 100%; // Fills media
+    }
+  }
+
+  .text {
+      width: 100%;
+
+      h2 {
+        @extend %header;
+        font-size: 2rem; // Based on base font-size
+      }
+
+      .tagline {
+          color: #616161;
+          font-size: 1.2rem; // Based on base font-size
+      }
+  }
+}
+
+#contact {
+  .card {
+    &:nth-child(1) {
+      .show,
+      .map {
+        display: none;
+      }
+
+      .text {
+        margin: 0 25vw;
+        width: 50vw;
+
+        li {
+          list-style: none;
+          text-align: left;
+
+          .box {
+            @extend %vertical;
+
+            .icon {
+              margin: 1rem 2rem;
+            }
+
+            div {
+              display: inline-block;
+            }
+          }
+        }
+      }
+    }
+
+    &:nth-child(2) {
+      display: none;
+    }
+  }
+}
+
+#portfolio {
+  display: none;
+}

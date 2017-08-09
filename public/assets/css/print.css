@@ -1,0 +1,67 @@
+@keyframes slideDown { from { -moz-transform: translateY(-100%);
+    -ms-transform: translateY(-100%);
+    -o-transform: translateY(-100%);
+    -webkit-transform: translateY(-100%);
+    transform: translateY(-100%); }
+  to { -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    -webkit-transform: translateY(0);
+    transform: translateY(0); } }
+
+@keyframes slideUp { from { -moz-transform: translateY(100%);
+    -ms-transform: translateY(100%);
+    -o-transform: translateY(100%);
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%); }
+  to { -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    -webkit-transform: translateY(0);
+    transform: translateY(0); } }
+
+.part .title, #about .text h2 { color: #00bcd4; font-weight: normal; }
+
+#contact .card:nth-child(1) .text li .box { display: -webkit-flex; }
+
+#contact .card:nth-child(1) .text li .box { align-items: center; }
+
+html { font-size: 12px; }
+
+body { color: #757575; font-family: 'noto-sans', sans-serif; font-size: 1rem; }
+
+.top { display: none; }
+
+.part { page-break-after: always; }
+
+.part .title { font-size: 1.75rem; text-align: center; text-transform: uppercase; }
+
+.part .card hr { border: 0; border-top: 1px solid #bdbdbd; width: 100%; }
+
+.part .card .since::after { content: " [" attr(date) "]"; }
+
+.part .card a::after { content: " [" attr() "]"; }
+
+#about .container { width: 100%; }
+
+#about .container img { display: block; height: auto; width: 100%; }
+
+#about .text { width: 100%; }
+
+#about .text h2 { font-size: 2rem; }
+
+#about .text .tagline { color: #616161; font-size: 1.2rem; }
+
+#contact .card:nth-child(1) .show, #contact .card:nth-child(1) .map { display: none; }
+
+#contact .card:nth-child(1) .text { margin: 0 25vw; width: 50vw; }
+
+#contact .card:nth-child(1) .text li { list-style: none; text-align: left; }
+
+#contact .card:nth-child(1) .text li .box .icon { margin: 1rem 2rem; }
+
+#contact .card:nth-child(1) .text li .box div { display: inline-block; }
+
+#contact .card:nth-child(2) { display: none; }
+
+#portfolio { display: none; }

@@ -1,3 +1,5 @@
+// Loads scrips async
+
 function loadScript(url, callback) {
   var script = document.createElement("script")
 

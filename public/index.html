@@ -20,7 +20,8 @@
         <!-- Css -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
-        <link href="assets/css/main.css" rel="stylesheet">
+        <link href="assets/css/main.css" media="screen" rel="stylesheet">
+        <link href="assets/css/print.css" media="print" rel="stylesheet">
         <!-- No javascript exeption -->
         <noscript>
           <style>
@@ -90,7 +91,7 @@
                                 <br/>
                                 To see all the things that I think I'm good at, go to the skills section. <br/>
                                 <br/>
-                                This portfolio you're looking at right now was build from scratch by me. <br/>
+                                This portfolio you're looking at right now was build from scratch by me. It's responsive <em>(A little)</em> and printer-friendly. <br/>
                                 I started working on it <span class="since" date="2017-05-15"></span> ago.
                                 You can find more details about it in the portfolio section below. <br/>
                                 <br/>
@@ -207,11 +208,11 @@
                     <div class="card">
                         <div class="text">
                             <form>
-                                <input type="text" name="name" maxlength="25" placeholder="Name">
-                                <input type="text" name="email" maxlength="35" placeholder="Email">
-                                <textarea type="text" name="message" maxlength="1000" placeholder="Message"></textarea>
+                                <input type="text" name="name" maxlength="25" aria-label="Name" placeholder="Name">
+                                <input type="text" name="email" maxlength="35" aria-label="Email" placeholder="Email">
+                                <textarea type="text" name="message" maxlength="1000" placeholder="Message" aria-label="Message"></textarea>
                                 <div class="end">
-                                  <input type="submit" value="Send message">
+                                  <input type="submit" aria-label="Send" value="Send message">
                                   <div class="box">
                                     <p class="error"></p>
                                   </div>

@@ -1,7 +1,4 @@
 
-/* Don't edit js file, edit coffeescript and upload created Js file */
-
-
 /* Variables */
 
 (function() {

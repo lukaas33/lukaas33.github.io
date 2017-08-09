@@ -2,7 +2,7 @@
     nav {
         // Local variables
         $height: 5vh; // Height local to the nav
-		$padding: 1vh; // Padding local to nav
+		    $padding: 1vh; // Padding local to nav
 
         @include prefix(animation, slideDown $animation-long); // On load it slides in from the top with normal tranistion values
         @include shadow(2, 10);

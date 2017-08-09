@@ -1,4 +1,4 @@
-### Don't edit js file, edit coffeescript and upload created Js file ###
+# Main script for webste
 
 ### Variables ###
 animation = # Default animation options
