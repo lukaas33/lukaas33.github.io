@@ -1,5 +1,5 @@
 (function() {
-  var app, bodyParser, compression, express, formidable, nodemailer, send, transporter;
+  var app, bodyParser, compression, express, formidable, minify, nodemailer, send, transporter;
 
   express = require("express");
 
@@ -10,6 +10,8 @@
   formidable = require("formidable");
 
   compression = require("compression");
+
+  minify = require("express-minify");
 
   app = express();
 
@@ -42,6 +44,10 @@
     });
   };
 
+  app.use(compression());
+
+  app.use(minify());
+
   app.use(express["static"](__dirname + "/public"));
 
   app.use(bodyParser.json());
@@ -50,8 +56,6 @@
     extended: true
   }));
 
-  app.use(compression());
-
   app.set("port", process.env.PORT || 5000);
 
   app.set("index", __dirname + "/index");
@@ -59,6 +63,7 @@
   app.set("view engine", "html");
 
   app.get('/', function(request, response) {
+    response.set("Content-Encoding", "gzip");
     return response.render("index");
   });
 

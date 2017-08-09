@@ -4,6 +4,7 @@ nodemailer = require "nodemailer"
 bodyParser = require "body-parser"
 formidable = require "formidable"
 compression = require "compression"
+minify = require "express-minify"
 
 # Variables
 app = express()
@@ -15,6 +16,7 @@ transporter = nodemailer.createTransport
 
 # Functions
 send = (request, response) ->
+  # Handles email form
   form = new formidable.IncomingForm()
 
   form.parse request, (error, fields, files) ->
@@ -35,21 +37,29 @@ send = (request, response) ->
 
 
 # Setup
-app.use(express.static "#{__dirname}/public")
-app.use bodyParser.json()
+app.use compression() # Compression for site
+app.use minify() # Minifies code
+app.use(express.static "#{__dirname}/public") # Serve static files
+
+app.use bodyParser.json() # Enable json parsing
 app.use(bodyParser.urlencoded extended: true)
-app.use compression()
-app.set("port", process.env.PORT || 5000)
+
+app.set("port", process.env.PORT || 5000) # Chooses either port
 app.set("index", "#{__dirname}/index")
 app.set("view engine", "html")
 
-# Events
+# Routes
 app.get '/', (request, response) ->
+  response.set("Content-Encoding", "gzip")
   response.render("index")
 
+# Exceptions
+# if app.get()
+
+# Events
 app.post "/send", (request, response) ->
   console.log "POST request from client"
-  send(request, response)
+  send(request, response) # Email sender
   response.end()
 
 app.listen app.get("port"), ->
