@@ -242,13 +242,14 @@ initCookies()
 
 $ ->
   ### Actions ###
+  console.log "DOM ready for script"
+  $("body").css visibility: "visible"
   setTimeout -> # Prevents the flashing on of the about link on load
     highLight() # Initial highlight at start of page
     $(window).scroll -> # Sets scroll event
       highLight() # Higlight correct link
   , timing * 2
   setDoc() # Set values
-  $("body").show() # After all actions are completed body is shown
 
   ### Events ###
   $("nav ul li").find("a").click (event) ->

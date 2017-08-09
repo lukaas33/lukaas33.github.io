@@ -314,6 +314,10 @@
   $(function() {
 
     /* Actions */
+    console.log("DOM ready for script");
+    $("body").css({
+      visibility: "visible"
+    });
     setTimeout(function() {
       highLight();
       return $(window).scroll(function() {
@@ -321,7 +325,6 @@
       });
     }, timing * 2);
     setDoc();
-    $("body").show();
 
     /* Events */
     $("nav ul li").find("a").click(function(event) {

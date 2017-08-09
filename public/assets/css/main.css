@@ -84,7 +84,7 @@
 
 html { font-size: 16px; }
 
-body { -moz-text-size-adjust: none; -ms-text-size-adjust: none; -o-text-size-adjust: none; -webkit-text-size-adjust: none; text-size-adjust: none; background-color: #eee; color: #757575; display: none; font-family: 'noto-sans', sans-serif; font-size: 1rem; user-select: none; }
+body { -moz-text-size-adjust: none; -ms-text-size-adjust: none; -o-text-size-adjust: none; -webkit-text-size-adjust: none; text-size-adjust: none; background-color: #eee; color: #757575; font-family: 'noto-sans', sans-serif; font-size: 1rem; user-select: none; visibility: hidden; }
 
 .top nav { -moz-animation: slideDown 800ms ease-in-out; -ms-animation: slideDown 800ms ease-in-out; -o-animation: slideDown 800ms ease-in-out; -webkit-animation: slideDown 800ms ease-in-out; animation: slideDown 800ms ease-in-out; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) ; background-color: #fafafa; height: 5vh; left: 0; overflow: hidden; padding: 1vh 3vh; position: fixed; top: 0; width: 100vw; z-index: 30; }
 

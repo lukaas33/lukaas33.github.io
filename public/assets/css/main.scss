@@ -46,10 +46,10 @@ body {
     @include prefix('text-size-adjust', 'none'); // No automatic resizing of text
     background-color: #eee;
     color: #757575; // Default color, applies mostly to text
-    display: none; // Shown after Javascript actions complete
     font-family: 'noto-sans', sans-serif; // Applies to everything
     font-size: 1rem; // Defaults to base font-size
     user-select: none; // No selecting text is standard It is overwritten in some text divs
+    visibility: hidden; // Will be shown by Javascript
 }
 
 // Top style
