@@ -29,7 +29,10 @@ I ordered a Raspberry Pi.
 ## To learn
 
 -   C _(Perhaps some)_
+-   Regex
+-   Latex
 -   Node.js
+-   ~~Markdown~~
 -   Python
 -   CoffeeScript
 -   ~~Sass~~
