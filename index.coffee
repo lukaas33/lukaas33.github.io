@@ -3,6 +3,7 @@ express = require "express"
 nodemailer = require "nodemailer"
 bodyParser = require "body-parser"
 formidable = require "formidable"
+compression = require "compression"
 
 # Variables
 app = express()
@@ -37,6 +38,7 @@ send = (request, response) ->
 app.use(express.static "#{__dirname}/public")
 app.use bodyParser.json()
 app.use(bodyParser.urlencoded extended: true)
+app.use compression()
 app.set("port", process.env.PORT || 5000)
 app.set("index", "#{__dirname}/index")
 app.set("view engine", "html")

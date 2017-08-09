@@ -1,5 +1,5 @@
 (function() {
-  var app, bodyParser, express, formidable, nodemailer, send, transporter;
+  var app, bodyParser, compression, express, formidable, nodemailer, send, transporter;
 
   express = require("express");
 
@@ -8,6 +8,8 @@
   bodyParser = require("body-parser");
 
   formidable = require("formidable");
+
+  compression = require("compression");
 
   app = express();
 
@@ -47,6 +49,8 @@
   app.use(bodyParser.urlencoded({
     extended: true
   }));
+
+  app.use(compression());
 
   app.set("port", process.env.PORT || 5000);
 
