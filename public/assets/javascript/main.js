@@ -60,80 +60,6 @@
     }
   };
 
-  highLight = function() {
-    var $li, calcTop, position;
-    $li = $("nav ul li").find("a");
-    $li.removeClass("focus");
-    position = $(window).scrollTop();
-    calcTop = function(element) {
-      var location, top;
-      top = Math.round(element.offset().top + element.height());
-      location = top - parseInt(element.css("margin-bottom")) - $("nav").height();
-      return location;
-    };
-    if (position <= calcTop($("#about"))) {
-      return $($li[0]).addClass("focus");
-    } else if (position < calcTop($("#experience"))) {
-      return $($li[1]).addClass("focus");
-    } else if (position < calcTop($("#skills"))) {
-      return $($li[2]).addClass("focus");
-    } else if (position < calcTop($("#portfolio"))) {
-      return $($li[3]).addClass("focus");
-    } else if (position < calcTop($("#contact"))) {
-      return $($li[4]).addClass("focus");
-    }
-  };
-
-  scrollToLoc = function(section) {
-    var location, top;
-    top = Math.round(section.offset().top);
-    location = top - parseInt(section.css("margin-top")) - $("nav").height();
-    return $("html, body").animate({
-      scrollTop: location
-    }, {
-      duration: timing * 2,
-      easing: "swing"
-    });
-  };
-
-  toggle = function(card, active) {
-    var animate;
-    animate = function(card) {
-      var $collapse;
-      $collapse = $(card).find(".collapse");
-      return $collapse.slideToggle({
-        duration: timing,
-        easing: "swing"
-      });
-    };
-    if (state[active] !== card || state[active] === null) {
-      animate(state[active]);
-      state[active] = card;
-      return animate(card);
-    } else if (state[active] === card) {
-      animate(state[active]);
-      return state[active] = null;
-    }
-  };
-
-  sinceDate = function(date) {
-    var days, milli, offset, today, years;
-    milli = 86400000;
-    today = Date.now();
-    offset = today - date.getTime();
-    days = offset / milli;
-    years = days / 365.25;
-    if (days < 2) {
-      return String(Math.floor(days)) + " day";
-    } else if (years < 1) {
-      return String(Math.floor(days)) + " days";
-    } else if (years < 2) {
-      return String(Math.floor(years)) + " year";
-    } else {
-      return String(Math.floor(years)) + " years";
-    }
-  };
-
   setDate = function(dates) {
     var begin, date, end, i, len, results;
     results = [];
@@ -214,25 +140,6 @@
     return $form.find("textarea").val(cookie("message"));
   };
 
-  sendMail = function(data, success) {
-    return $.ajax({
-      url: '/send',
-      data: data,
-      processData: false,
-      contentType: false,
-      type: 'POST',
-      success: function() {
-        success(true);
-        cookie("name", "");
-        cookie("email", "");
-        return cookie("message", "");
-      },
-      error: function() {
-        return success(false);
-      }
-    });
-  };
-
   setProjects = function() {
     var $content, $page, $portfolio, card, i, j, last, page, ref, ref1, ref2, results;
     $portfolio = $("#portfolio .content");
@@ -274,6 +181,38 @@
     });
   };
 
+  setDoc = function() {
+    var i, len, ref, since;
+    ref = $(".since");
+    for (i = 0, len = ref.length; i < len; i++) {
+      since = ref[i];
+      $(since).html(sinceDate(new Date($(since).attr("date"))));
+    }
+    setDate($("#experience .card").find(".date"));
+    setMap(false);
+    setForm();
+    setProjects();
+    return setPages(0);
+  };
+
+  sinceDate = function(date) {
+    var days, milli, offset, today, years;
+    milli = 86400000;
+    today = Date.now();
+    offset = today - date.getTime();
+    days = offset / milli;
+    years = days / 365.25;
+    if (days < 2) {
+      return String(Math.floor(days)) + " day";
+    } else if (years < 1) {
+      return String(Math.floor(days)) + " days";
+    } else if (years < 2) {
+      return String(Math.floor(years)) + " year";
+    } else {
+      return String(Math.floor(years)) + " years";
+    }
+  };
+
   switchPage = function(change) {
     var newPage;
     previous = parseInt(cookie("page"));
@@ -289,18 +228,79 @@
     return setPages(timing);
   };
 
-  setDoc = function() {
-    var i, len, ref, since;
-    ref = $(".since");
-    for (i = 0, len = ref.length; i < len; i++) {
-      since = ref[i];
-      $(since).html(sinceDate(new Date($(since).attr("date"))));
+  highLight = function() {
+    var $li, calcTop, position;
+    $li = $("nav ul li").find("a");
+    $li.removeClass("focus");
+    position = $(window).scrollTop();
+    calcTop = function(element) {
+      var location, top;
+      top = Math.round(element.offset().top + element.height());
+      location = top - parseInt(element.css("margin-bottom")) - $("nav").height();
+      return location;
+    };
+    if (position <= calcTop($("#about"))) {
+      return $($li[0]).addClass("focus");
+    } else if (position < calcTop($("#experience"))) {
+      return $($li[1]).addClass("focus");
+    } else if (position < calcTop($("#skills"))) {
+      return $($li[2]).addClass("focus");
+    } else if (position < calcTop($("#portfolio"))) {
+      return $($li[3]).addClass("focus");
+    } else if (position < calcTop($("#contact"))) {
+      return $($li[4]).addClass("focus");
     }
-    setDate($("#experience .card").find(".date"));
-    setMap(false);
-    setForm();
-    setProjects();
-    return setPages(0);
+  };
+
+  scrollToLoc = function(section) {
+    var location, top;
+    top = Math.round(section.offset().top);
+    location = top - parseInt(section.css("margin-top")) - $("nav").height();
+    return $("html, body").animate({
+      scrollTop: location
+    }, {
+      duration: timing * 2,
+      easing: "swing"
+    });
+  };
+
+  toggle = function(card, active) {
+    var animate;
+    animate = function(card) {
+      var $collapse;
+      $collapse = $(card).find(".collapse");
+      return $collapse.slideToggle({
+        duration: timing,
+        easing: "swing"
+      });
+    };
+    if (state[active] !== card || state[active] === null) {
+      animate(state[active]);
+      state[active] = card;
+      return animate(card);
+    } else if (state[active] === card) {
+      animate(state[active]);
+      return state[active] = null;
+    }
+  };
+
+  sendMail = function(data, success) {
+    return $.ajax({
+      url: '/send',
+      data: data,
+      processData: false,
+      contentType: false,
+      type: 'POST',
+      success: function() {
+        success(true);
+        cookie("name", "");
+        cookie("email", "");
+        return cookie("message", "");
+      },
+      error: function() {
+        return success(false);
+      }
+    });
   };
 
 
@@ -311,7 +311,14 @@
   $(function() {
 
     /* Actions */
-    console.log("DOM ready for script");
+    console.log("// DOM ready for script");
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register("serviceworker.js").then(function(registration) {
+        return console.log("SW registration successfull in " + registration.scope);
+      }, function(error) {
+        return console.warn("SW registration failed: " + error);
+      });
+    }
     $("body").css({
       visibility: "visible"
     });

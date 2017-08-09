@@ -12,8 +12,8 @@ function loadScript(url, callback) {
 };
 
 loadScript("https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js", function() {
-  console.log("Jquery loaded");
+  console.log("// Jquery loaded");
   loadScript("assets/javascript/main.js", function() {
-    console.log("Main script loaded");
+    console.log("// Main script loaded");
   });
 });
