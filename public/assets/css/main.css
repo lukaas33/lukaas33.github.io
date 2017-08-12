@@ -20,59 +20,63 @@
     -webkit-transform: translateY(0);
     transform: translateY(0); } }
 
-.main .part .card { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) ; background-color: #fff; transition: 400ms ease-in-out; }
+main .part .card { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) ; background-color: #fff; transition: 400ms ease-in-out; }
 
-.main .part .card:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) ; }
+main .part .card:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) ; }
 
-.main .part#experience .card .text .collapse a { color: #ff6e40; text-decoration: none; }
+main .part#experience .card .text .collapse a { color: #ff6e40; text-decoration: none; }
 
-.main .part#experience .card .text .collapse a:hover { text-decoration: underline; }
+main .part#experience .card .text .collapse a:hover { text-decoration: underline; }
 
-.main .part .title, .main .part#about .card .text h2, .main .part#experience .card .text .head .tag h3, .main .part#skills .card .text .head .tag h3 { color: #00bcd4; font-weight: normal; }
+main .part .title, main .part#about .card .text h2, main .part#experience .card .text .head .tag h3, main .part#skills .card .text .head .tag h3 { color: #00bcd4; font-weight: normal; }
 
-.main .part#skills .card .text .head .box progress, .main .part#skills .card .text .collapse .box .progress .container div progress { border: 0 solid transparent; }
+main .part#skills .card .text .head .box progress, main .part#skills .card .text .collapse .box .progress .container div progress { border: 0 solid transparent; }
 
-.main .part#skills .card .text .head .box progress::-webkit-progress-value, .main .part#skills .card .text .collapse .box .progress .container div progress::-webkit-progress-value { background-color: #4dd0e1; }
+main .part#skills .card .text .head .box progress::-webkit-progress-value, main .part#skills .card .text .collapse .box .progress .container div progress::-webkit-progress-value { background-color: #4dd0e1; }
 
-.main .part#skills .card .text .head .box progress::-webkit-progress-bar, .main .part#skills .card .text .collapse .box .progress .container div progress::-webkit-progress-bar { background-color: #f5f5f5; }
+main .part#skills .card .text .head .box progress::-webkit-progress-bar, main .part#skills .card .text .collapse .box .progress .container div progress::-webkit-progress-bar { background-color: #f5f5f5; }
 
-.main .part#contact .content .card:nth-child(2) .text form input[type='text'], .main .part#contact .content .card:nth-child(2) .text form textarea, .main .part#experience .card .text .head .box .date, .main .part#contact .content .card:nth-child(1) button, .main .part#contact .content .card:nth-child(2) .text form .end input[type='submit'], .top nav ul li:last-child, .main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon, .main .part#portfolio .sort a, .main .part#portfolio .select button { background-color: transparent; border: 0 solid transparent; cursor: pointer; transition: 400ms ease-in-out; }
+main .part#contact .content .card:nth-child(2) .text fieldset input[type='text'], main .part#contact .content .card:nth-child(2) .text fieldset textarea, main .part#experience .card .text .head .box .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'], .top nav ul li:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon, main .part#portfolio .sort a, main .part#portfolio .select button { background-color: transparent; border: 0 solid transparent; cursor: pointer; transition: 400ms ease-in-out; }
 
-.main .part#contact .content .card:nth-child(2) .text form input[type='text']:focus, .main .part#contact .content .card:nth-child(2) .text form textarea:focus, .main .part#experience .card .text .head .box .date:focus, .main .part#contact .content .card:nth-child(1) button:focus, .main .part#contact .content .card:nth-child(2) .text form .end input[type='submit']:focus, .top nav ul li:focus:last-child, .main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus, .main .part#portfolio .sort a:focus, .main .part#portfolio .select button:focus, .main .part#contact .content .card:nth-child(2) .text form input[type='text']:active, .main .part#contact .content .card:nth-child(2) .text form textarea:active, .main .part#experience .card .text .head .box .date:active, .main .part#contact .content .card:nth-child(1) button:active, .main .part#contact .content .card:nth-child(2) .text form .end input[type='submit']:active, .top nav ul li:active:last-child, .main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:active, .main .part#portfolio .sort a:active, .main .part#portfolio .select button:active { outline: none; }
+main .part#contact .content .card:nth-child(2) .text fieldset input[type='text']:focus, main .part#contact .content .card:nth-child(2) .text fieldset textarea:focus, main .part#experience .card .text .head .box .date:focus, main .part#contact .content .card:nth-child(1) button:focus, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:focus, .top nav ul li:focus:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus, main .part#portfolio .sort a:focus, main .part#portfolio .select button:focus, main .part#contact .content .card:nth-child(2) .text fieldset input[type='text']:active, main .part#contact .content .card:nth-child(2) .text fieldset textarea:active, main .part#experience .card .text .head .box .date:active, main .part#contact .content .card:nth-child(1) button:active, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:active, .top nav ul li:active:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:active, main .part#portfolio .sort a:active, main .part#portfolio .select button:active { outline: none; }
 
-.main .part#contact .content .card:nth-child(2) .text form input[type='text'], .main .part#contact .content .card:nth-child(2) .text form textarea { border-bottom: 1px solid #bdbdbd; color: #757575; width: 100%; }
+main .part#contact .content .card:nth-child(2) .text fieldset input[type='text'], main .part#contact .content .card:nth-child(2) .text fieldset textarea { border-bottom: 1px solid #bdbdbd; color: #757575; width: 100%; }
 
-.main .part#contact .content .card:nth-child(2) .text form input[type='text']::-webkit-input-placeholder, .main .part#contact .content .card:nth-child(2) .text form textarea::-webkit-input-placeholder { transition: 400ms ease-in-out; }
+main .part#contact .content .card:nth-child(2) .text fieldset input[type='text']::-webkit-input-placeholder, main .part#contact .content .card:nth-child(2) .text fieldset textarea::-webkit-input-placeholder { transition: 400ms ease-in-out; }
 
-.main .part#contact .content .card:nth-child(2) .text form input[type='text']:focus, .main .part#contact .content .card:nth-child(2) .text form textarea:focus { border-bottom-color: #ff6e40; }
+main .part#contact .content .card:nth-child(2) .text fieldset input[type='text']:focus, main .part#contact .content .card:nth-child(2) .text fieldset textarea:focus { border-bottom-color: #ff6e40; }
 
-.main .part#contact .content .card:nth-child(2) .text form input[type='text']:focus::-webkit-input-placeholder, .main .part#contact .content .card:nth-child(2) .text form textarea:focus::-webkit-input-placeholder { color: #ff6e40; font-size: .75rem; transform: translateY(-150%); }
+main .part#contact .content .card:nth-child(2) .text fieldset input[type='text']:focus::-webkit-input-placeholder, main .part#contact .content .card:nth-child(2) .text fieldset textarea:focus::-webkit-input-placeholder { color: #ff6e40; font-size: .75rem; transform: translateY(-150%); }
 
-.main .part#experience .card .text .head .box .date .tooltip, .main .part#portfolio .sort a .tooltip { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) ; background-color: #424242; border: 1px solid #424242; color: #fff; display: none; font-size: .8rem; left: 0; padding: 0.55556vw 0.83333vw; position: absolute; top: 0; transform: translateY(-110%); white-space: nowrap; }
+main .part#experience .card .text .head .box .date .tooltip, main .part#portfolio .sort a .tooltip { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) ; background-color: #424242; border: 1px solid #424242; color: #fff; display: none; font-size: .8rem; left: 0; padding: 0.55556vw 0.83333vw; position: absolute; top: 0; transform: translateY(-110%); white-space: nowrap; }
 
-.main .part#experience .card .text .head .box .date .tooltip::after, .main .part#portfolio .sort a .tooltip::after { border-color: #424242 transparent; border-style: solid; border-width: 10px 10px 0; bottom: -10px; content: ''; display: block; left: 50%; margin-left: -10px; position: absolute; width: 0; }
+main .part#experience .card .text .head .box .date .tooltip::after, main .part#portfolio .sort a .tooltip::after { border-color: #424242 transparent; border-style: solid; border-width: 10px 10px 0; bottom: -10px; content: ''; display: block; left: 50%; margin-left: -10px; position: absolute; width: 0; }
 
-.main .part#experience .card .text .head .box .date, .main .part#contact .content .card:nth-child(1) button, .main .part#contact .content .card:nth-child(2) .text form .end input[type='submit'], .top nav ul li:last-child, .main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) ; text-align: center; }
+main .part#experience .card .text .head .box .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'], .top nav ul li:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) ; text-align: center; }
 
-.main .part#experience .card .text .head .box .date:hover, .main .part#contact .content .card:nth-child(1) button:hover, .main .part#contact .content .card:nth-child(2) .text form .end input[type='submit']:hover, .top nav ul li:hover:last-child, .main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:hover, .main .part#experience .card .text .head .box .date:focus, .main .part#contact .content .card:nth-child(1) button:focus, .main .part#contact .content .card:nth-child(2) .text form .end input[type='submit']:focus, .top nav ul li:focus:last-child, .main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus { box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15) ; }
+main .part#experience .card .text .head .box .date:hover, main .part#contact .content .card:nth-child(1) button:hover, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:hover, .top nav ul li:hover:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:hover, main .part#experience .card .text .head .box .date:focus, main .part#contact .content .card:nth-child(1) button:focus, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:focus, .top nav ul li:focus:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus { box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15) ; }
 
-.main .part#experience .card .text .head .box .date > p, .main .part#contact .content .card:nth-child(1) button > p, .main .part#contact .content .card:nth-child(2) .text form .end input[type='submit'] > p, .top nav ul li:last-child > p, .main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon > p, .main .part#experience .card .text .head .box .date > span, .main .part#contact .content .card:nth-child(1) button > span, .main .part#contact .content .card:nth-child(2) .text form .end input[type='submit'] > span, .top nav ul li:last-child > span, .main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon > span, .main .part#experience .card .text .head .box .date > i, .main .part#contact .content .card:nth-child(1) button > i, .main .part#contact .content .card:nth-child(2) .text form .end input[type='submit'] > i, .top nav ul li:last-child > i, .main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon > i { vertical-align: middle; }
+main .part#experience .card .text .head .box .date > p, main .part#contact .content .card:nth-child(1) button > p, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] > p, .top nav ul li:last-child > p, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon > p, main .part#experience .card .text .head .box .date > span, main .part#contact .content .card:nth-child(1) button > span, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] > span, .top nav ul li:last-child > span, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon > span, main .part#experience .card .text .head .box .date > i, main .part#contact .content .card:nth-child(1) button > i, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] > i, .top nav ul li:last-child > i, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon > i { vertical-align: middle; }
 
-.main .part#experience .card .text .head .box .date, .main .part#contact .content .card:nth-child(1) button, .main .part#contact .content .card:nth-child(2) .text form .end input[type='submit'] { background-color: #00bcd4; color: #fff; padding: 0.71429vw 1.25vw; text-transform: uppercase; }
+main .part#experience .card .text .head .box .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { background-color: #00bcd4; color: #fff; padding: 0.71429vw 1.25vw; text-transform: uppercase; }
 
-.top nav ul li:last-child, .main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { background-color: #ff6e40; border-radius: 100%; }
+.top nav ul li:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { background-color: #ff6e40; border-radius: 100%; }
 
-.main .part#experience .card .text .head .box, .main .part#skills .card .text .head .box, .main .part#portfolio .content .page .container .preview span, .main .part#contact .content .card:nth-child(1) .container .text ul li .box, .main .part#contact .content .card:nth-child(2) .text form .end .box, .main .part#skills .card .text .collapse .box .progress .container, .main .part#contact .content .card:nth-child(1) .container .text ul, .main .part#contact .content .card:nth-child(2) .text form, .main .part#portfolio .content .page, .main .part#about .card, .main .part#experience .card .text .head, .main .part#skills .card .text .head, .main .part#skills .card .text .collapse .box, .main .part#portfolio .content, .main .part#contact .content, .main .part#contact .content .card:nth-child(2) .text form .end { display: -webkit-flex; }
+main .part#experience .card .text .head .box, main .part#skills .card .text .head .box, main .part#portfolio .content .page .container .preview span, main .part#contact .content .card:nth-child(1) .container .text ul li .box, main .part#contact .content .card:nth-child(2) .text .end .box, main .part#skills .card .text .collapse .box .progress .container, main .part#contact .content .card:nth-child(1) .container .text ul, main .part#contact .content .card:nth-child(2) .text fieldset, main .part#portfolio .content .page, main .part#about .card, main .part#experience .card .text .head, main .part#skills .card .text .head, main .part#skills .card .text .collapse .box, main .part#portfolio .content, main .part#contact .content, main .part#contact .content .card:nth-child(2) .text .end { display: -webkit-flex; }
 
-.main .part#experience .card .text .head .box, .main .part#skills .card .text .head .box, .main .part#portfolio .content .page .container .preview span, .main .part#contact .content .card:nth-child(1) .container .text ul li .box, .main .part#contact .content .card:nth-child(2) .text form .end .box { align-items: center; }
+main .part#experience .card .text .head .box, main .part#skills .card .text .head .box, main .part#portfolio .content .page .container .preview span, main .part#contact .content .card:nth-child(1) .container .text ul li .box, main .part#contact .content .card:nth-child(2) .text .end .box { align-items: center; }
 
-.main .part#skills .card .text .collapse .box .progress .container, .main .part#contact .content .card:nth-child(1) .container .text ul, .main .part#contact .content .card:nth-child(2) .text form { -moz-flex-direction: column; -ms-flex-direction: column; -o-flex-direction: column; -webkit-flex-direction: column; flex-direction: column; }
+main .part#skills .card .text .collapse .box .progress .container, main .part#contact .content .card:nth-child(1) .container .text ul, main .part#contact .content .card:nth-child(2) .text fieldset { -moz-flex-direction: column; -ms-flex-direction: column; -o-flex-direction: column; -webkit-flex-direction: column; flex-direction: column; }
 
-.main .part#portfolio .content .page { -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap; -webkit-flex-wrap: wrap; flex-wrap: wrap; }
+main .part#portfolio .content .page { -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap; -webkit-flex-wrap: wrap; flex-wrap: wrap; }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 ::selection { background-color: #ff9e80; color: #fff; }
+
+:root { font-size: 16px; }
+
+body { -moz-text-size-adjust: none; -ms-text-size-adjust: none; -o-text-size-adjust: none; -webkit-text-size-adjust: none; text-size-adjust: none; background-color: #eee; color: #757575; font-family: 'noto-sans', sans-serif; font-size: 1rem; user-select: none; visibility: hidden; }
 
 .material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
 
@@ -81,10 +85,6 @@
 .material-icons.md-light { color: white; }
 
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.5); }
-
-html { font-size: 16px; }
-
-body { -moz-text-size-adjust: none; -ms-text-size-adjust: none; -o-text-size-adjust: none; -webkit-text-size-adjust: none; text-size-adjust: none; background-color: #eee; color: #757575; font-family: 'noto-sans', sans-serif; font-size: 1rem; user-select: none; visibility: hidden; }
 
 .top nav { -moz-animation: slideDown 800ms ease-in-out; -ms-animation: slideDown 800ms ease-in-out; -o-animation: slideDown 800ms ease-in-out; -webkit-animation: slideDown 800ms ease-in-out; animation: slideDown 800ms ease-in-out; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) ; background-color: #fafafa; height: 5vh; left: 0; overflow: hidden; padding: 1vh 3vh; position: fixed; top: 0; width: 100vw; z-index: 30; }
 
@@ -106,160 +106,160 @@ body { -moz-text-size-adjust: none; -ms-text-size-adjust: none; -o-text-size-adj
 
 .top header { -moz-animation: slideDown 800ms ease-in-out; -ms-animation: slideDown 800ms ease-in-out; -o-animation: slideDown 800ms ease-in-out; -webkit-animation: slideDown 800ms ease-in-out; animation: slideDown 800ms ease-in-out; background-color: #00bcd4; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) ; height: 60vh; position: absolute; top: 0; width: 100vw; z-index: 10; }
 
-.main { -moz-animation: slideUp 800ms ease-in-out; -ms-animation: slideUp 800ms ease-in-out; -o-animation: slideUp 800ms ease-in-out; -webkit-animation: slideUp 800ms ease-in-out; animation: slideUp 800ms ease-in-out; margin: 0 10vw; position: relative; width: 80vw; z-index: 20; }
+main { -moz-animation: slideUp 800ms ease-in-out; -ms-animation: slideUp 800ms ease-in-out; -o-animation: slideUp 800ms ease-in-out; -webkit-animation: slideUp 800ms ease-in-out; animation: slideUp 800ms ease-in-out; margin: 0 10vw; position: relative; width: 80vw; z-index: 20; }
 
-.main .part { margin: 5vw; }
+main .part { margin: 5vw; }
 
-.main .part .card { margin: 2.5vw; z-index: 30; }
+main .part .card { margin: 2.5vw; z-index: 30; }
 
-.main .part .card .text { overflow: hidden; padding: 2vw; }
+main .part .card .text { overflow: hidden; padding: 2vw; }
 
-.main .part .card .text hr { border: 0; border-top: 1px solid #bdbdbd; margin: 1.66667vw 0 0.83333vw; width: 100%; }
+main .part .card .text hr { border: 0; border-top: 1px solid #bdbdbd; margin: 1.66667vw 0 0.83333vw; width: 100%; }
 
-.main .part .title { font-size: 1.75rem; text-align: center; text-transform: uppercase; }
+main .part .title { font-size: 1.75rem; text-align: center; text-transform: uppercase; }
 
-.main .part#about { margin-top: 30vh; }
+main .part#about { margin-top: 30vh; }
 
-.main .part#about .card { height: 60vh; }
+main .part#about .card { height: 60vh; }
 
-.main .part#about .card .container { height: 60vh; overflow: hidden; width: 50%; }
+main .part#about .card .container { height: 60vh; overflow: hidden; width: 50%; }
 
-.main .part#about .card .container img { display: block; height: 100%; transition: 400ms ease-in-out; width: auto; }
+main .part#about .card .container img { display: block; height: 100%; transition: 400ms ease-in-out; width: auto; }
 
-.main .part#about .card .text { user-select: text; width: 50%; }
+main .part#about .card .text { user-select: text; width: 50%; }
 
-.main .part#about .card .text h2 { font-size: 2rem; margin-bottom: 0.625vw; }
+main .part#about .card .text h2 { font-size: 2rem; margin-bottom: 0.625vw; }
 
-.main .part#about .card .text .tagline { color: #616161; font-size: 1.2rem; }
+main .part#about .card .text .tagline { color: #616161; font-size: 1.2rem; }
 
-.main .part#experience .card .text .head { cursor: pointer; }
+main .part#experience .card .text .head { cursor: pointer; }
 
-.main .part#experience .card .text .head .tag { margin-right: 40%; width: 40%; }
+main .part#experience .card .text .head .tag { margin-right: 40%; width: 40%; }
 
-.main .part#experience .card .text .head .tag h3 { font-size: 1.75rem; margin-bottom: 0.625vw; }
+main .part#experience .card .text .head .tag h3 { font-size: 1.75rem; margin-bottom: 0.625vw; }
 
-.main .part#experience .card .text .head .tag p { color: #616161; }
+main .part#experience .card .text .head .tag p { color: #616161; }
 
-.main .part#experience .card .text .head .box { width: 20%; }
+main .part#experience .card .text .head .box { width: 20%; }
 
-.main .part#experience .card .text .head .box .date { position: relative; }
+main .part#experience .card .text .head .box .date { position: relative; }
 
-.main .part#experience .card .text .head .box .date span { color: #b2ebf2; margin: 0 0.41667vw; }
+main .part#experience .card .text .head .box .date span { color: #b2ebf2; margin: 0 0.41667vw; }
 
-.main .part#experience .card .text .head .box .date .tooltip { width: 100%; }
+main .part#experience .card .text .head .box .date .tooltip { width: 100%; }
 
-.main .part#experience .card .text .collapse { display: none; }
+main .part#experience .card .text .collapse { display: none; }
 
-.main .part#experience .card .text .collapse p { user-select: text; }
+main .part#experience .card .text .collapse p { user-select: text; }
 
-.main .part#experience .card .text .collapse .number { color: #ff6e40; }
+main .part#experience .card .text .collapse .number { color: #ff6e40; }
 
-.main .part#skills .card .text .head { cursor: pointer; }
+main .part#skills .card .text .head { cursor: pointer; }
 
-.main .part#skills .card .text .head .tag { margin-right: auto; overflow: hidden; width: 35%; }
+main .part#skills .card .text .head .tag { margin-right: auto; overflow: hidden; width: 35%; }
 
-.main .part#skills .card .text .head .tag h3 { font-size: 1.75rem; }
+main .part#skills .card .text .head .tag h3 { font-size: 1.75rem; }
 
-.main .part#skills .card .text .head .box { width: 60%; }
+main .part#skills .card .text .head .box { width: 60%; }
 
-.main .part#skills .card .text .head .box progress { width: 100%; }
+main .part#skills .card .text .head .box progress { width: 100%; }
 
-.main .part#skills .card .text .collapse { display: none; }
+main .part#skills .card .text .collapse { display: none; }
 
-.main .part#skills .card .text .collapse .box { align-items: stretch; }
+main .part#skills .card .text .collapse .box { align-items: stretch; }
 
-.main .part#skills .card .text .collapse .box .description { margin-right: auto; user-select: text; width: 40%; }
+main .part#skills .card .text .collapse .box .description { margin-right: auto; user-select: text; width: 40%; }
 
-.main .part#skills .card .text .collapse .box .progress { width: 55%; }
+main .part#skills .card .text .collapse .box .progress { width: 55%; }
 
-.main .part#skills .card .text .collapse .box .progress .container { height: 100%; width: 100%; }
+main .part#skills .card .text .collapse .box .progress .container { height: 100%; width: 100%; }
 
-.main .part#skills .card .text .collapse .box .progress .container div { flex-grow: 1; width: 100%; }
+main .part#skills .card .text .collapse .box .progress .container div { flex-grow: 1; width: 100%; }
 
-.main .part#skills .card .text .collapse .box .progress .container div p { text-align: center; }
+main .part#skills .card .text .collapse .box .progress .container div p { text-align: center; }
 
-.main .part#skills .card .text .collapse .box .progress .container div progress { margin: 0.3125vw 0; width: 100%; }
+main .part#skills .card .text .collapse .box .progress .container div progress { margin: 0.3125vw 0; width: 100%; }
 
-.main .part#portfolio .sort { margin: 0 auto; text-align: center; width: 25%; }
+main .part#portfolio .sort { margin: 0 auto; text-align: center; width: 25%; }
 
-.main .part#portfolio .sort a { color: #757575; display: block; margin: 5%; position: relative; text-decoration: none; text-transform: uppercase; }
+main .part#portfolio .sort a { color: #757575; display: block; margin: 5%; position: relative; text-decoration: none; text-transform: uppercase; }
 
-.main .part#portfolio .sort a .material-icons { display: inline-block; position: absolute; transform: translateX(-150%); vertical-align: middle; }
+main .part#portfolio .sort a .material-icons { display: inline-block; position: absolute; transform: translateX(-150%); vertical-align: middle; }
 
-.main .part#portfolio .sort a span { vertical-align: middle; }
+main .part#portfolio .sort a span { vertical-align: middle; }
 
-.main .part#portfolio .sort a .tooltip { left: 50%; margin-left: -25%; width: 50%; }
+main .part#portfolio .sort a .tooltip { left: 50%; margin-left: -25%; width: 50%; }
 
-.main .part#portfolio .content .page { margin: 2.5vw; width: 100%; }
+main .part#portfolio .content .page { margin: 2.5vw; width: 100%; }
 
-.main .part#portfolio .content .page .container { width: calc(100% / 3); }
+main .part#portfolio .content .page .container { width: calc(100% / 3); }
 
-.main .part#portfolio .content .page .container .preview { height: 100%; position: relative; transition: 400ms ease-in-out; width: 100%; z-index: 30; }
+main .part#portfolio .content .page .container .preview { height: 100%; position: relative; transition: 400ms ease-in-out; width: 100%; z-index: 30; }
 
-.main .part#portfolio .content .page .container .preview:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) ; z-index: 40; }
+main .part#portfolio .content .page .container .preview:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) ; z-index: 40; }
 
-.main .part#portfolio .content .page .container .preview img { display: block; width: 100%; }
+main .part#portfolio .content .page .container .preview img { display: block; width: 100%; }
 
-.main .part#portfolio .content .page .container .preview span { height: 100%; left: 0; position: absolute; top: 0; transition: 400ms ease-in-out; width: 100%; }
+main .part#portfolio .content .page .container .preview span { height: 100%; left: 0; position: absolute; top: 0; transition: 400ms ease-in-out; width: 100%; }
 
-.main .part#portfolio .content .page .container .preview span:hover { background-color: rgba(0, 0, 0, 0.45); }
+main .part#portfolio .content .page .container .preview span:hover { background-color: rgba(0, 0, 0, 0.45); }
 
-.main .part#portfolio .content .page .container .preview span .tags { color: #fff; display: none; margin: auto; text-align: center; }
+main .part#portfolio .content .page .container .preview span .tags { color: #fff; display: none; margin: auto; text-align: center; }
 
-.main .part#portfolio .content .page .container .preview span .tags h3 { font-size: 1.5rem; }
+main .part#portfolio .content .page .container .preview span .tags h3 { font-size: 1.5rem; }
 
-.main .part#portfolio .content .page .container .preview span .tags p { font-size: .85rem; }
+main .part#portfolio .content .page .container .preview span .tags p { font-size: .85rem; }
 
-.main .part#portfolio .select { margin: 0 40%; text-align: center; width: 20%; }
+main .part#portfolio .select { margin: 0 40%; text-align: center; width: 20%; }
 
-.main .part#portfolio .select p { color: #757575; display: inline; text-transform: uppercase; }
+main .part#portfolio .select p { color: #757575; display: inline; text-transform: uppercase; }
 
-.main .part#portfolio .select button { position: relative; }
+main .part#portfolio .select button { position: relative; }
 
-.main .part#portfolio .select button.backward { float: left; }
+main .part#portfolio .select button.backward { float: left; }
 
-.main .part#portfolio .select button.forward { float: right; }
+main .part#portfolio .select button.forward { float: right; }
 
-.main .part#contact { margin-bottom: 40vh; }
+main .part#contact { margin-bottom: 40vh; }
 
-.main .part#contact .content .card { height: 40vh; }
+main .part#contact .content .card { height: 40vh; }
 
-.main .part#contact .content .card:nth-child(1) { margin-right: 2.5%; width: 30%; }
+main .part#contact .content .card:nth-child(1) { margin-right: 2.5%; width: 30%; }
 
-.main .part#contact .content .card:nth-child(1) .container { height: 34vh; }
+main .part#contact .content .card:nth-child(1) .container { height: 34vh; }
 
-.main .part#contact .content .card:nth-child(1) .container .text { height: 100%; width: 100%; }
+main .part#contact .content .card:nth-child(1) .container .text { height: 100%; width: 100%; }
 
-.main .part#contact .content .card:nth-child(1) .container .text ul { height: 100%; width: 100%; }
+main .part#contact .content .card:nth-child(1) .container .text ul { height: 100%; width: 100%; }
 
-.main .part#contact .content .card:nth-child(1) .container .text ul li { flex-grow: 1; list-style: none; text-align: left; width: 100%; }
+main .part#contact .content .card:nth-child(1) .container .text ul li { flex-grow: 1; list-style: none; text-align: left; width: 100%; }
 
-.main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { cursor: default; height: 4vh; margin: 1vh 4vh 1vh 0; width: 4vh; }
+main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { cursor: default; height: 4vh; margin: 1vh 4vh 1vh 0; width: 4vh; }
 
-.main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon .material-icons { font-size: 2vh; margin: 1vh; }
+main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon .material-icons { font-size: 2vh; margin: 1vh; }
 
-.main .part#contact .content .card:nth-child(1) .container .text ul li .box div { display: inline-block; }
+main .part#contact .content .card:nth-child(1) .container .text ul li .box div { display: inline-block; }
 
-.main .part#contact .content .card:nth-child(1) .container .text ul li .box div p { user-select: text; }
+main .part#contact .content .card:nth-child(1) .container .text ul li .box div p { user-select: text; }
 
-.main .part#contact .content .card:nth-child(1) .container .map { display: none; height: 100%; width: 100%; }
+main .part#contact .content .card:nth-child(1) .container .map { display: none; height: 100%; width: 100%; }
 
-.main .part#contact .content .card:nth-child(1) .container .map iframe { height: 100%; width: 100%; }
+main .part#contact .content .card:nth-child(1) .container .map iframe { height: 100%; width: 100%; }
 
-.main .part#contact .content .card:nth-child(1) button { box-shadow: none; height: 6vh; width: 100%; }
+main .part#contact .content .card:nth-child(1) button { box-shadow: none; height: 6vh; width: 100%; }
 
-.main .part#contact .content .card:nth-child(1) button:hover, .main .part#contact .content .card:nth-child(1) button:focus { box-shadow: none; }
+main .part#contact .content .card:nth-child(1) button:hover, main .part#contact .content .card:nth-child(1) button:focus { box-shadow: none; }
 
-.main .part#contact .content .card:nth-child(2) { margin-left: 2.5%; width: 65%; }
+main .part#contact .content .card:nth-child(2) { margin-left: 2.5%; width: 65%; }
 
-.main .part#contact .content .card:nth-child(2) .text { height: 100%; width: 100%; }
+main .part#contact .content .card:nth-child(2) .text { height: 100%; width: 100%; }
 
-.main .part#contact .content .card:nth-child(2) .text form { height: 100%; width: 100%; }
+main .part#contact .content .card:nth-child(2) .text fieldset { border: 0; height: 100%; width: 100%; }
 
-.main .part#contact .content .card:nth-child(2) .text form input[type='text'], .main .part#contact .content .card:nth-child(2) .text form textarea { flex-grow: 1; margin-bottom: 1rem; padding-bottom: 0.5rem; padding-top: 1rem; }
+main .part#contact .content .card:nth-child(2) .text fieldset input[type='text'], main .part#contact .content .card:nth-child(2) .text fieldset textarea { flex-grow: 1; margin-bottom: 1rem; padding-bottom: 0.5rem; padding-top: 1rem; }
 
-.main .part#contact .content .card:nth-child(2) .text form input[type='text'] { max-height: 2rem; }
+main .part#contact .content .card:nth-child(2) .text fieldset input[type='text'] { max-height: 2rem; }
 
-.main .part#contact .content .card:nth-child(2) .text form textarea { font-family: inherit; resize: none; }
+main .part#contact .content .card:nth-child(2) .text fieldset textarea { font-family: inherit; resize: none; }
 
-.main .part#contact .content .card:nth-child(2) .text form .end .box .error { color: #ff9e80; display: none; margin-left: 1rem; }
+main .part#contact .content .card:nth-child(2) .text .end .box .error { color: #ff9e80; display: none; margin-left: 1rem; }

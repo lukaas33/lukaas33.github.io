@@ -11,106 +11,106 @@
 
 // Universal and global
 * {
-    box-sizing: border-box; // Width includes padding
-    margin: 0;
-    padding: 0; // Overwrites default random margins and padding
+  box-sizing: border-box; // Width includes padding
+  margin: 0;
+  padding: 0; // Overwrites default random margins and padding
 }
 
 ::selection {
-    @include color('secondary', 'background-color', 100);
-    color: #fff;
+  @include color('secondary', 'background-color', 100);
+  color: #fff;
+}
+
+:root {
+  font-size: 16px; // Base font size, all are based on this one via the rem unit
+}
+
+body {
+  @include prefix('text-size-adjust', 'none'); // No automatic resizing of text
+  background-color: #eee;
+  color: #757575; // Default color, applies mostly to text
+  font-family: 'noto-sans', sans-serif; // Applies to everything
+  font-size: 1rem; // Defaults to base font-size
+  user-select: none; // No selecting text is standard It is overwritten in some text divs
+  visibility: hidden; // Will be shown by Javascript
 }
 
 // Needed to display the icon font properly
 .material-icons {
-    &.md-dark {
-        color: rgba(0, 0, 0, .54);
-    }
+  &.md-dark {
+    color: rgba(0, 0, 0, .54);
+  }
 
-    &.md-dark.md-inactive {
-        color: rgba(0, 0, 0, .26);
-    }
+  &.md-dark.md-inactive {
+    color: rgba(0, 0, 0, .26);
+  }
 
-    &.md-light {
-        color: rgba(255, 255, 255, 1);
-    }
+  &.md-light {
+    color: rgba(255, 255, 255, 1);
+  }
 
-    &.md-light.md-inactive {
-        color: rgba(255, 255, 255, .5);
-    }
-}
-
-html {
-    font-size: 16px; // Base font size, all are based on this one via the rem unit
-}
-
-body {
-    @include prefix('text-size-adjust', 'none'); // No automatic resizing of text
-    background-color: #eee;
-    color: #757575; // Default color, applies mostly to text
-    font-family: 'noto-sans', sans-serif; // Applies to everything
-    font-size: 1rem; // Defaults to base font-size
-    user-select: none; // No selecting text is standard It is overwritten in some text divs
-    visibility: hidden; // Will be shown by Javascript
+  &.md-light.md-inactive {
+    color: rgba(255, 255, 255, .5);
+  }
 }
 
 // Top style
 @import 'storage/top';
 
 // Page style
-.main {
-    @include prefix(animation, slideUp $animation-long); // On load it slides in from the bottom with normal tranistion values
-    margin: 0 $base-margin; // Main gets centered horizontally
-    position: relative; // Z-index doesn't work on static elements
-    width: (100vw - (2 * $base-margin));
-    z-index: 20; // Above the header
+main {
+  @include prefix(animation, slideUp $animation-long); // On load it slides in from the bottom with normal tranistion values
+  margin: 0 $base-margin; // Main gets centered horizontally
+  position: relative; // Z-index doesn't work on static elements
+  width: (100vw - (2 * $base-margin));
+  z-index: 20; // Above the header
 
-    .part {
-        // Local variables
-        $margin: ($base-margin / 4); // The margin local to part
-        $padding: ($base-margin / 5); // Padding local to part
+  .part {
+    // Local variables
+    $margin: ($base-margin / 4); // The margin local to part
+    $padding: ($base-margin / 5); // Padding local to part
 
-        margin: ($margin * 2); // Two times bigger than the card margins
+    margin: ($margin * 2); // Two times bigger than the card margins
 
-        // Shared values for each part
-        .card {
-            @extend %card; // Card
-            margin: $margin; // Parts are further from each other than cards
-            z-index: 30; // Above main
+    // Shared values for each part
+    .card {
+      @extend %card; // Card
+      margin: $margin; // Parts are further from each other than cards
+      z-index: 30; // Above main
 
-            .text {
-                overflow: hidden; // Doesn't show the text there is too much of
-                padding: $padding; // Will be like the padding for card but allows images to fill card
+      .text {
+        overflow: hidden; // Doesn't show the text there is too much of
+        padding: $padding; // Will be like the padding for card but allows images to fill card
 
-                hr {
-                    border: 0; // No double borders
-                    border-top: 1px solid #bdbdbd;
-                    margin: ($margin / 1.5) 0 ($margin / 3); // One third of the card margin on the bottom and double that on the top
-                    width: 100%;
-                }
-            }
+        hr {
+          border: 0; // No double borders
+          border-top: 1px solid #bdbdbd;
+          margin: ($margin / 1.5) 0 ($margin / 3); // One third of the card margin on the bottom and double that on the top
+          width: 100%;
         }
-
-        .title {
-            @extend %header;
-            font-size: 1.75rem; // Based on base font-size
-            text-align: center; // Center horizontally
-            text-transform: uppercase;
-        }
-
-        // About part
-        @import 'storage/about';
-
-        // Experience part
-        @import 'storage/experience';
-
-        // Skills part
-        @import 'storage/skills';
-
-        // Portfolio part
-        @import 'storage/portfolio';
-
-        // Contact part
-        @import 'storage/contact';
+      }
     }
+
+    .title {
+      @extend %header;
+      font-size: 1.75rem; // Based on base font-size
+      text-align: center; // Center horizontally
+      text-transform: uppercase;
+    }
+
+    // About part
+    @import 'storage/about';
+
+    // Experience part
+    @import 'storage/experience';
+
+    // Skills part
+    @import 'storage/skills';
+
+    // Portfolio part
+    @import 'storage/portfolio';
+
+    // Contact part
+    @import 'storage/contact';
+  }
 }
