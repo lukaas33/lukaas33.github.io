@@ -76,7 +76,7 @@ main .part#portfolio .content .page { -moz-flex-wrap: wrap; -ms-flex-wrap: wrap;
 
 :root { font-size: 16px; }
 
-body { -moz-text-size-adjust: none; -ms-text-size-adjust: none; -o-text-size-adjust: none; -webkit-text-size-adjust: none; text-size-adjust: none; background-color: #eee; color: #757575; font-family: 'noto-sans', sans-serif; font-size: 1rem; user-select: none; visibility: hidden; }
+body { -moz-text-size-adjust: none; -ms-text-size-adjust: none; -o-text-size-adjust: none; -webkit-text-size-adjust: none; text-size-adjust: none; background-color: #eee; color: #757575; font-family: 'noto-sans', sans-serif; font-size: 1rem; min-width: 400px; user-select: none; visibility: hidden; }
 
 .material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
 
@@ -108,7 +108,13 @@ body { -moz-text-size-adjust: none; -ms-text-size-adjust: none; -o-text-size-adj
 
 main { -moz-animation: slideUp 800ms ease-in-out; -ms-animation: slideUp 800ms ease-in-out; -o-animation: slideUp 800ms ease-in-out; -webkit-animation: slideUp 800ms ease-in-out; animation: slideUp 800ms ease-in-out; margin: 0 10vw; position: relative; width: 80vw; z-index: 20; }
 
-main .part { margin: 5vw; }
+@media only screen and (max-width: 599px) { main .part { margin: 2.5vw; } }
+
+@media only screen and (min-width: 600px) { main .part { margin: 2.5vw; } }
+
+@media only screen and (min-width: 900px) { main .part { margin: 5vw; } }
+
+@media only screen and (min-width: 1200px) { main .part { margin: 5vw; } }
 
 main .part .card { margin: 2.5vw; z-index: 30; }
 
@@ -120,13 +126,35 @@ main .part .title { font-size: 1.75rem; text-align: center; text-transform: uppe
 
 main .part#about { margin-top: 30vh; }
 
-main .part#about .card { height: 60vh; }
+@media only screen and (max-width: 599px) { main .part#about .card { -moz-flex-direction: column; -ms-flex-direction: column; -o-flex-direction: column; -webkit-flex-direction: column; flex-direction: column; height: 120vh; } }
 
-main .part#about .card .container { height: 60vh; overflow: hidden; width: 50%; }
+@media only screen and (min-width: 600px) { main .part#about .card { -moz-flex-direction: column; -ms-flex-direction: column; -o-flex-direction: column; -webkit-flex-direction: column; flex-direction: column; height: 120vh; } }
 
-main .part#about .card .container img { display: block; height: 100%; transition: 400ms ease-in-out; width: auto; }
+@media only screen and (min-width: 900px) { main .part#about .card { -moz-flex-direction: row; -ms-flex-direction: row; -o-flex-direction: row; -webkit-flex-direction: row; flex-direction: row; height: 60vh; } }
 
-main .part#about .card .text { user-select: text; width: 50%; }
+@media only screen and (min-width: 1200px) { main .part#about .card { -moz-flex-direction: row; -ms-flex-direction: row; -o-flex-direction: row; -webkit-flex-direction: row; flex-direction: row; height: 60vh; } }
+
+main .part#about .card .container { overflow: hidden; }
+
+@media only screen and (max-width: 599px) { main .part#about .card .container { height: auto; width: 100%; } }
+
+@media only screen and (min-width: 600px) { main .part#about .card .container { height: auto; width: 100%; } }
+
+@media only screen and (min-width: 900px) { main .part#about .card .container { height: 60vh; width: 50%; } }
+
+@media only screen and (min-width: 1200px) { main .part#about .card .container { height: 60vh; width: 50%; } }
+
+main .part#about .card .container img { display: block; transition: 400ms ease-in-out; height: auto; width: 100%; }
+
+main .part#about .card .text { user-select: text; }
+
+@media only screen and (max-width: 599px) { main .part#about .card .text { margin-top: 1.25vw; width: 100%; } }
+
+@media only screen and (min-width: 600px) { main .part#about .card .text { margin-top: 1.25vw; width: 100%; } }
+
+@media only screen and (min-width: 900px) { main .part#about .card .text { margin-top: 0; width: 50%; } }
+
+@media only screen and (min-width: 1200px) { main .part#about .card .text { margin-top: 0; width: 50%; } }
 
 main .part#about .card .text h2 { font-size: 2rem; margin-bottom: 0.625vw; }
 

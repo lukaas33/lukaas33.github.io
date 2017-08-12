@@ -30,7 +30,7 @@
                         position: relative; // Absolute tooltip will be placed with regard to this
 
                         span {
-                            @include color('primary', 'color', 100);
+                            @include color(primary, 'color', 100);
                             margin: 0 ($margin / 6); // One sixth of the card margin
                         }
 
@@ -54,7 +54,7 @@
                 }
 
                 .number {
-                    @include color('secondary', 'color', 200);
+                    @include color(secondary, 'color', 200);
                 }
             }
         }

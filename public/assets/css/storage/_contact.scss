@@ -124,7 +124,7 @@
                             resize: none; // Textarea can't be resized
                         }
                     }
-                    
+
                     .end {
                       @extend %flex; // Best way to display two elements next to each other
 
@@ -135,7 +135,7 @@
                         @extend %vertical; // Vertical flex
 
                         .error {
-                          @include color('secondary', 'color', 100);
+                          @include color(secondary, 'color', 100);
 
                           display: none;
                           margin-left: $padding;

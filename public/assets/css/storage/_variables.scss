@@ -3,67 +3,94 @@ $animation-long: 800ms ease-in-out;
 $base-margin: 10vw; // Base margin for site
 
 @mixin color($class, $declaration, $num) {
-    // Returns colors based on arguments provided
-    @if $class == 'primary' {
-        @if $num == 500 {
-            #{$declaration}: #00bcd4; // Sets the css declaration to this value
-        }
-        @else if $num == 400 {
-            #{$declaration}: #26c6da; // Sets the css declaration to this value
-        }
-        @else if $num == 300 {
-            #{$declaration}: #4dd0e1; // Sets the css declaration to this value
-        }
-        @else if $num == 200 {
-            #{$declaration}: #80deea; // Sets the css declaration to this value
-        }
-        @else if $num == 100 {
-            #{$declaration}: #b2ebf2; // Sets the css declaration to this value
-        }
+  // Returns colors based on arguments provided
+  @if $class ==  primary  {
+    @if $num == 500 {
+      #{$declaration}: #00bcd4; // Sets the css declaration to this value
     }
-    @else if $class == 'secondary' {
-        @if $num == 100 {
-            #{$declaration}: #ff9e80; // Sets the css declaration to this value
-        }
-        @else if $num == 200 {
-            #{$declaration}: #ff6e40; // Sets the css declaration to this value
-        }
-        @else if $num == 400 {
-            #{$declaration}: #ff3d00; // Sets the css declaration to this value
-        }
+    @else if $num == 400 {
+      #{$declaration}: #26c6da; // Sets the css declaration to this value
     }
+    @else if $num == 300 {
+      #{$declaration}: #4dd0e1; // Sets the css declaration to this value
+    }
+    @else if $num == 200 {
+      #{$declaration}: #80deea; // Sets the css declaration to this value
+    }
+    @else if $num == 100 {
+      #{$declaration}: #b2ebf2; // Sets the css declaration to this value
+    }
+    @else {
+      @error "Invalid argument";
+    }
+  }
+  @else if $class ==  secondary  {
+    @if $num == 100 {
+      #{$declaration}: #ff9e80; // Sets the css declaration to this value
+    }
+    @else if $num == 200 {
+      #{$declaration}: #ff6e40; // Sets the css declaration to this value
+    }
+    @else if $num == 400 {
+      #{$declaration}: #ff3d00; // Sets the css declaration to this value
+    }
+    @else {
+      @error "Invalid argument";
+    }
+  }
+}
+
+@mixin media($size) {
+  @if $size == phone-only {
+    @media only screen and (max-width: 599px) { @content; }
+  }
+  @else if $size == tablet-portrait-up {
+    @media only screen and (min-width: 600px) { @content; }
+  }
+  @else if $size == tablet-landscape-up {
+    @media only screen and (min-width: 900px) { @content; }
+  }
+  @else if $size == desktop-up {
+    @media only screen and (min-width: 1200px) { @content; }
+  }
+  @else if $size == big-desktop-up {
+    @media only screen and (min-width: 1800px) { @content; }
+  }
+  @else {
+    @error "Invalid argument";
+  }
 }
 
 @mixin prefix($name, $argument) {
-    // Adds prefixes to increase browser support Use prefixes for animations, flexbox and transform
-    -moz-#{$name}: #{$argument};
-    -ms-#{$name}: #{$argument};
-    -o-#{$name}: #{$argument};
+  // Adds prefixes to increase browser support Use prefixes for animations, flexbox and transform
+  -moz-#{$name}: #{$argument};
+  -ms-#{$name}: #{$argument};
+  -o-#{$name}: #{$argument};
    -webkit-#{$name}: #{$argument};
-    #{$name}: #{$argument};
+  #{$name}: #{$argument};
 }
 
 @mixin shadow($x, $blur, $dir: '') {
-    // Easy editing of universal values
-    box-shadow: 0 #{$x}px #{$blur}px rgba(0, 0, 0, .15) #{$dir};
+  // Easy editing of universal values
+  box-shadow: 0 #{$x}px #{$blur}px rgba(0, 0, 0, .15) #{$dir};
 }
 
 @keyframes slideDown {
-    from {
-        @include prefix(transform, translateY(-100%));
-    }
+  from {
+    @include prefix(transform, translateY(-100%));
+  }
 
-    to {
-        @include prefix(transform, translateY(0));
-    }
+  to {
+    @include prefix(transform, translateY(0));
+  }
 }
 
 @keyframes slideUp {
-    from {
-        @include prefix(transform, translateY(100%));
-    }
+  from {
+    @include prefix(transform, translateY(100%));
+  }
 
-    to {
-        @include prefix(transform, translateY(0));
-    }
+  to {
+    @include prefix(transform, translateY(0));
+  }
 }

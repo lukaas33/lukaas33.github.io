@@ -45,12 +45,12 @@
                 }
 
                 .focus { // If the corresponding section is focused
-                    @include color('primary', 'color', 500);
+                    @include color(primary, 'color', 500);
                 }
 
                 &:last-child {
                     @extend %round; // Round button
-                    @include color('secondary', 'background-color', 200);
+                    @include color(secondary, 'background-color', 200);
                     height: ($height - 2vh);
                     width: ($height - 2vh);
 
@@ -65,7 +65,7 @@
 
     header {
         @include prefix(animation, slideDown $animation-long); // On load it slides in from the top with normal tranistion values
-        @include color('primary', 'background-color', 500);
+        @include color(primary, 'background-color', 500);
         @include shadow(2, 6);
         height: 60vh;
         position: absolute; // Background

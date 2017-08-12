@@ -1,40 +1,88 @@
 &#about {
-    // Local variables
-    $height: 60vh; // For the card
+  // Local variables
+  $height: 60vh; // For the card
 
-    margin-top: ($height / 2); // Card will be halfway aligned with header
 
-    .card {
-        @extend %flex; // Best way to display two elements next to each other
-        height: $height;
+  margin-top: ($height / 2); // Card will be halfway aligned with header
 
-        .container {
-            height: $height;
-            overflow: hidden;
-            width: 50%; // Of card
+  .card {
+    @extend %flex; // Best way to display two elements next to each other
 
-            img {
-                display: block;
-                height: 100%; // Fills media
-                transition: $animation; // Smooth resizing
-                width: auto; // Maintains aspect ratio
-            }
-        }
-
-        .text {
-            user-select: text; // Can be selected
-            width: 50%; // Of card
-
-            h2 {
-                @extend %header;
-                font-size: 2rem; // Based on base font-size
-                margin-bottom: ($margin / 4); // One fourth of card margin
-            }
-
-            .tagline {
-                color: #616161;
-                font-size: 1.2rem; // Based on base font-size
-            }
-        }
+    @include media(phone-only) {
+      @include prefix(flex-direction, column); // Can't extend here
+      height: ($height * 2);
     }
+    @include media(tablet-portrait-up) {
+      @include prefix(flex-direction, column); // Can't extend here
+      height: ($height * 2);
+    }
+    @include media(tablet-landscape-up) {
+      @include prefix(flex-direction, row); // Can't extend here
+      height: $height;
+    }
+    @include media(desktop-up) {
+      @include prefix(flex-direction, row); // Can't extend here
+      height: $height;
+    }
+
+    .container {
+      overflow: hidden;
+
+      @include media(phone-only) {
+        height: auto;
+        width: 100%;
+      }
+      @include media(tablet-portrait-up) {
+        height: auto;
+        width: 100%;
+      }
+      @include media(tablet-landscape-up) {
+        height: $height;
+        width: 50%; // Of card
+      }
+      @include media(desktop-up) {
+        height: $height;
+        width: 50%; // Of card
+      }
+
+      img {
+        display: block;
+        transition: $animation; // Smooth resizing
+        height: auto;
+        width: 100%;
+      }
+    }
+
+    .text {
+      user-select: text; // Can be selected
+
+      @include media(phone-only) {
+        margin-top: ($margin / 2);
+        width: 100%;
+      }
+      @include media(tablet-portrait-up) {
+        margin-top: ($margin / 2);
+        width: 100%;
+      }
+      @include media(tablet-landscape-up) {
+        margin-top: 0;
+        width: 50%; // Of card
+      }
+      @include media(desktop-up) {
+        margin-top: 0;
+        width: 50%; // Of card
+      }
+
+      h2 {
+        @extend %header;
+        font-size: 2rem; // Based on base font-size
+        margin-bottom: ($margin / 4); // One fourth of card margin
+      }
+
+      .tagline {
+        color: #616161;
+        font-size: 1.2rem; // Based on base font-size
+      }
+    }
+  }
 }
