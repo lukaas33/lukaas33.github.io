@@ -90,15 +90,11 @@
             <p>
               Hello world. My name is Lucas van Osenbruggen. <br>
               I'm <span class="since" date="2000-08-22"></span> old and live in the Netherlands. <br>
-              <br>
               I'm currently unemployed and a student in high school. For details, checkout the cards in the experience section. <br>
-              <br>
               To see all the things that I think I'm good at, go to the skills section. <br>
-              <br>
               This portfolio you're looking at right now was build from scratch by me. It's responsive <em>(A little)</em> and printer-friendly. <br>
               I started working on it <span class="since" date="2017-05-15"></span> ago.
               You can find more details about it in the portfolio section below. <br>
-              <br>
               You can contact me anytime via the contact section. <br>
             </p>
             <!-- TODO Add social media icons here -->
@@ -213,14 +209,14 @@
           <div class="text">
             <form>
               <fieldset>
-                <input type="text" name="name" maxlength="25" aria-label="Name" placeholder="Name"/>
-                <input type="text" name="email" maxlength="35" aria-label="Email" placeholder="Email"/>
-                <textarea type="text" name="message" maxlength="1000" placeholder="Message" aria-label="Message"></textarea>
+                <input type="text" name="name" maxlength="25" required aria-label="Name" placeholder="Name"/>
+                <input type="text" name="email" maxlength="35" required aria-label="Email" placeholder="Email"/>
+                <textarea type="text" name="message" maxlength="1000" required placeholder="Message" aria-label="Message"></textarea>
               </fieldset>
               <div class="end">
                 <input type="submit" aria-label="Send" value="Send message"/>
                 <div class="box">
-                <p class="error"></p>
+                  <p class="error"></p>
                 </div>
               </div>
             </form>

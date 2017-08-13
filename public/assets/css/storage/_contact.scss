@@ -1,149 +1,172 @@
 &#contact {
-    // Local variables
-    $height: 40vh; // For the card
+  // Local variables
+  $height: 45vh; // For the card
 
-    margin-bottom: $height; // Extra room on the bottom to allow the section to be in view
+  margin-bottom: $height; // Extra room on the bottom to allow the section to be in view
 
-    .content {
-        @extend %flex; // Best way to display two elements next to each other
+  .content {
+    @extend %res-cards; // Displays next to each other or above
 
-        .card {
-            height: $height;
+    .card {
+      	height: $height;
 
-            // Card 1
-            &:nth-child(1) {
-                margin-right: 2.5%;
-                width: 30%; // Of main
-
-                .container {
-                    height: ($height * .85); // 85% of card
-
-                    .text {
-                        height: 100%;
-                        width: 100%; // Fills container
-
-                        ul {
-                            @extend %colomn; // Distributes li's evenly
-                            height: 100%;
-                            width: 100%; // Fills text
-
-                            li {
-                                flex-grow: 1; // Grow to fill parent
-                                list-style: none;
-                                text-align: left;
-                                width: 100%;
-
-                                .box {
-                                    @extend %vertical; // Best way to display two elements next to each other
-
-                                    .icon {
-                                        @extend %round; // Round button appearance
-                                        cursor: default; // Is not clickable so cursor shouldn't be a pointer
-                                        height: 4vh;
-                                        margin: 1vh 4vh 1vh 0; // Smaller on the top than on the sides None on the left
-                                        width: 4vh;
-
-                                        .material-icons {
-                                            font-size: 2vh;
-                                            margin: 1vh;
-                                        }
-                                    }
-
-                                    div {
-                                        display: inline-block;
-
-                                        p {
-                                            user-select: text; // Can be selected
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    .map {
-                        display: none; // Starts off
-                        height: 100%;
-                        width: 100%; // Fills container
-
-                        iframe {
-                            height: 100%;
-                            width: 100%; // Fills map
-                        }
-                    }
-                }
-
-                button {
-                    @extend %normal; // Is a normal button
-                    box-shadow: none; // Overwrites default button
-                    height: ($height * .15); // 15% of card height
-                    width: 100%; // Fills card
-
-                    &:hover,
-                    &:focus {
-                        box-shadow: none; // Overwrites default button
-                    }
-                }
-            }
-
-            // Card 2
-            &:nth-child(2) {
-                margin-left: 2.5%;
-                width: 65%; // Of main
-
-                .text {
-                    height: 100%;
-                    width: 100%; // Fills container
-
-                    fieldset {
-                        @extend %colomn; // Distributes input fields evenly
-
-                        // Local variables
-                        $line-height: 1rem;
-                        $padding: $line-height;
-
-                        border: 0;
-                        height: 100%;
-                        width: 100%; // Fills card
-
-                        input[type='text'],
-                        textarea {
-                            @extend %input; // Input types
-                            flex-grow: 1; // Grow to fill parent
-                            margin-bottom: $line-height; // One line
-                            padding-bottom: ($padding / 2); // Decorative space between the line
-                            padding-top: $padding; // Clears space for placeholder
-                        }
-
-                        input[type='text'] {
-                            max-height: ($line-height + $padding); // Height of one line
-                        }
-
-                        textarea {
-                            font-family: inherit; // Overwrites default behaviour
-                            resize: none; // Textarea can't be resized
-                        }
-                    }
-
-                    .end {
-                      @extend %flex; // Best way to display two elements next to each other
-
-                      input[type='submit'] {
-                          @extend %normal; // Is a normal button
-                      }
-                      .box {
-                        @extend %vertical; // Vertical flex
-
-                        .error {
-                          @include color(secondary, 'color', 100);
-
-                          display: none;
-                          margin-left: $padding;
-                        }
-                      }
-                    }
-                }
-            }
+      // Card 1
+      &:nth-child(1) {
+        @include media(phone-only) {
+          width: 100%; // Of main
         }
+        @include media(tablet-portrait-up) {
+          width: 100%; // Of main
+        }
+        @include media(tablet-landscape-up) {
+          margin-right: 2.5%;
+          width: 30%; // Of main
+        }
+        @include media(desktop-up) {
+          margin-right: 2.5%;
+          width: 30%; // Of main
+        }
+
+        .container {
+          height: ($height * .85); // 85% of card
+
+          .text {
+            height: 100%;
+            width: 100%; // Fills container
+
+            ul {
+              @extend %colomn; // Distributes li's evenly
+              height: 100%;
+              width: 100%; // Fills text
+
+              li {
+                flex-grow: 1; // Grow to fill parent
+                list-style: none;
+                text-align: left;
+                width: 100%;
+
+                .box {
+                  @extend %vertical; // Best way to display two elements next to each other
+
+                  .icon {
+                    @extend %round; // Round button appearance
+                    cursor: default; // Is not clickable so cursor shouldn't be a pointer
+                    height: 4vh;
+                    margin: 1vh 4vh 1vh 0; // Smaller on the top than on the sides None on the left
+                    width: 4vh;
+
+                    .material-icons {
+                      font-size: 2vh;
+                      margin: 1vh;
+                    }
+                  }
+
+                  div {
+                    display: inline-block;
+
+                    p {
+                      user-select: text; // Can be selected
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          .map {
+            display: none; // Starts off
+            height: 100%;
+            width: 100%; // Fills container
+
+            iframe {
+              height: 100%;
+              width: 100%; // Fills map
+            }
+          }
+        }
+
+        button {
+          @extend %normal; // Is a normal button
+          box-shadow: none; // Overwrites default button
+          height: ($height * .15); // 15% of card height
+          width: 100%; // Fills card
+
+          &:hover,
+          &:focus {
+            box-shadow: none; // Overwrites default button
+          }
+        }
+      }
+
+      // Card 2
+      &:nth-child(2) {
+        @include media(phone-only) {
+          width: 100%; // Of main
+        }
+        @include media(tablet-portrait-up) {
+          width: 100%; // Of main
+        }
+        @include media(tablet-landscape-up) {
+          margin-left: 2.5%;
+          width: 65%; // Of main
+        }
+        @include media(desktop-up) {
+          margin-left: 2.5%;
+          width: 65%; // Of main
+        }
+
+        .text {
+          height: 100%;
+          width: 100%; // Fills container
+
+          fieldset {
+            @extend %colomn; // Distributes input fields evenly
+
+            // Local variables
+            $line-height: 1rem;
+            $padding: $line-height;
+
+            border: 0;
+            height: 100%;
+            width: 100%; // Fills card
+
+            [type='text'] {
+              @extend %input; // Input types
+              flex-grow: 1; // Grow to fill parent
+              margin-bottom: $line-height; // One line
+              padding-bottom: ($padding / 2); // Decorative space between the line
+              padding-top: $padding; // Clears space for placeholder
+            }
+
+            input[type='text'] {
+              max-height: ($line-height + $padding); // Height of one line
+            }
+
+            textarea {
+              font-family: inherit; // Overwrites default behaviour
+              resize: none; // Textarea can't be resized
+            }
+          }
+
+          .end {
+            @extend %flex; // Best way to display two elements next to each other
+
+            input[type='submit'] {
+              @extend %normal; // Is a normal button
+            }
+            .box {
+              @extend %vertical; // Vertical flex
+
+              .error {
+                @include color(secondary, 'color', 100);
+
+                display: none;
+                margin-left: $padding;
+              }
+            }
+          }
+        }
+      }
     }
+  }
 }

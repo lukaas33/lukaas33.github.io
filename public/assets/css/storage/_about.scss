@@ -2,26 +2,21 @@
   // Local variables
   $height: 60vh; // For the card
 
-
   margin-top: ($height / 2); // Card will be halfway aligned with header
 
   .card {
-    @extend %flex; // Best way to display two elements next to each other
+    @extend %res-cards; // Displays next to each other or above
 
     @include media(phone-only) {
-      @include prefix(flex-direction, column); // Can't extend here
       height: ($height * 2);
     }
     @include media(tablet-portrait-up) {
-      @include prefix(flex-direction, column); // Can't extend here
-      height: ($height * 2);
+      height: ($height * 2.5);
     }
     @include media(tablet-landscape-up) {
-      @include prefix(flex-direction, row); // Can't extend here
       height: $height;
     }
     @include media(desktop-up) {
-      @include prefix(flex-direction, row); // Can't extend here
       height: $height;
     }
 
@@ -76,7 +71,7 @@
       h2 {
         @extend %header;
         font-size: 2rem; // Based on base font-size
-        margin-bottom: ($margin / 4); // One fourth of card margin
+        margin: ($margin / 4) 0; // One fourth of card margin
       }
 
       .tagline {

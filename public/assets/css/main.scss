@@ -11,9 +11,8 @@
 
 // Universal and global
 * {
-  box-sizing: border-box; // Width includes padding
-  margin: 0;
-  padding: 0; // Overwrites default random margins and padding
+  padding: 0;
+  box-sizing: border-box; // Box model acts normal
 }
 
 ::selection {
@@ -22,11 +21,22 @@
 }
 
 :root {
-  font-size: 16px; // Base font size, all are based on this one via the rem unit
+  @include media(phone-only) {
+    font-size: 20px; // Base font size, all are based on this one via the rem unit
+  }
+  @include media(tablet-portrait-up) {
+    font-size: 18px; // Base font size, all are based on this one via the rem unit
+  }
+  @include media(tablet-landscape-up) {
+    font-size: 16px; // Base font size, all are based on this one via the rem unit
+  }
+  @include media(desktop-up) {
+    font-size: 16px; // Base font size, all are based on this one via the rem unit
+  }
+
 }
 
 body {
-  @include prefix('text-size-adjust', 'none'); // No automatic resizing of text
   background-color: #eee;
   color: #757575; // Default color, applies mostly to text
   font-family: 'noto-sans', sans-serif; // Applies to everything
@@ -72,10 +82,10 @@ main {
     $padding: ($base-margin / 5); // Padding local to part
 
     @include media(phone-only) {
-      margin: $margin;
+      margin: ($margin * 2) $margin;
     }
     @include media(tablet-portrait-up) {
-      margin: $margin;
+      margin: ($margin * 2) $margin;
     }
     @include media(tablet-landscape-up) {
       margin: ($margin * 2); // Two times bigger than the card margins
@@ -91,8 +101,21 @@ main {
       z-index: 30; // Above main
 
       .text {
-        overflow: hidden; // Doesn't show the text there is too much of
-        padding: $padding; // Will be like the padding for card but allows images to fill card
+        overflow-y: auto; // User can scroll if content isn't visible
+        overflow-x: hidden;
+
+        @include media(phone-only) {
+          padding: ($padding * 1.5); // Will be like the padding for card but allows images to fill card
+        }
+        @include media(tablet-portrait-up) {
+          padding: ($padding * 1.5); // Will be like the padding for card but allows images to fill card
+        }
+        @include media(tablet-landscape-up) {
+          padding: $padding; // Will be like the padding for card but allows images to fill card
+        }
+        @include media(desktop-up) {
+          padding: $padding; // Will be like the padding for card but allows images to fill card
+        }
 
         hr {
           border: 0; // No double borders

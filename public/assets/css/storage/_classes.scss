@@ -132,19 +132,6 @@
   display: -webkit-flex; // Allows flexiable centering
 }
 
-%flex-fill {
-  @extend %flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-
-  img {
-    flex-shrink: 0;
-    min-width: 100%;
-    min-height: 100%
-  }
-}
-
 %vertical {
   @extend %flex; // Extention of flex
   align-items: center; // Center element vertically
@@ -158,4 +145,34 @@
 %grid {
   @extend %flex; // Extention of flex
 	@include prefix(flex-wrap, wrap); // Items to long for the line will overflow
+}
+
+%flex-fill {
+  @extend %flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  img {
+    flex-shrink: 0;
+    min-width: 100%;
+    min-height: 100%
+  }
+}
+
+%res-cards {
+  display: -webkit-flex; // Allows flexiable centering
+
+  @include media(phone-only) {
+    @include prefix(flex-direction, column); // Can't extend here
+  }
+  @include media(tablet-portrait-up) {
+    @include prefix(flex-direction, column); // Can't extend here
+  }
+  @include media(tablet-landscape-up) {
+    @include prefix(flex-direction, row); // Can't extend here
+  }
+  @include media(desktop-up) {
+    @include prefix(flex-direction, row); // Can't extend here
+  }
 }
