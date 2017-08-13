@@ -322,7 +322,7 @@ $ ->
 
     try
       console.log "Testing input..."
-      $(@).children("[type='text']").each ->
+      $(@).find("[type='text']").each ->
         if $(@).val() == ''
           throw new Error "Input empty"
 
@@ -347,7 +347,7 @@ $ ->
         )
       )$ ///
 
-      if not regex.test $(@).children("[name='email']").val()
+      if not regex.test $(@).find("[name='email']").val()
         throw new Error "Email incorrect"
 
       # If no errors have been thrown
@@ -361,6 +361,7 @@ $ ->
           $(@).find(".error").fadeIn animation
         else
           $(@).find(".error").html "An error has occured while sending"
+          $(@).find(".error").fadeIn animation
       ).bind @ # Will keep this in another scope
 
     catch error

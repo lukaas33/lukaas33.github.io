@@ -390,13 +390,13 @@
       $(this).find(".error").hide();
       try {
         console.log("Testing input...");
-        $(this).children("[type='text']").each(function() {
+        $(this).find("[type='text']").each(function() {
           if ($(this).val() === '') {
             throw new Error("Input empty");
           }
         });
         regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\n])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if (!regex.test($(this).children("[name='email']").val())) {
+        if (!regex.test($(this).find("[name='email']").val())) {
           throw new Error("Email incorrect");
         }
         formdata = new FormData(this);
@@ -408,7 +408,8 @@
             $(this).find(".error").html("Email was successfully sent");
             return $(this).find(".error").fadeIn(animation);
           } else {
-            return $(this).find(".error").html("An error has occured while sending");
+            $(this).find(".error").html("An error has occured while sending");
+            return $(this).find(".error").fadeIn(animation);
           }
         }).bind(this));
       } catch (error1) {
