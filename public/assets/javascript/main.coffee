@@ -312,6 +312,9 @@ $ ->
   $("#portfolio .sort").find("a").click ->
     cookie("page", 1) # Back to page 1
 
+  $("#contact .card").find(".show").click ->
+    setMap(true) # Set map and change = true
+
   $("#contact form").find("[type='text']").blur ->
     name = $(@).attr "name"
     cookie(name, $(@).val()) # Update in cookie
@@ -322,7 +325,7 @@ $ ->
 
     try
       console.log "Testing input..."
-      $(@).find("[type='text']").each ->
+      $(@).children("fieldset").find("[type='text']").each ->
         if $(@).val() == ''
           throw new Error "Input empty"
 
@@ -354,7 +357,6 @@ $ ->
       formdata = new FormData(@)
       console.log "Sending..."
       sendMail formdata, ((success) ->
-        console.log @
         if success
           $(@).trigger "reset" # Empties form
           $(@).find(".error").html "Email was successfully sent"
@@ -376,6 +378,3 @@ $ ->
       else
         $(@).find(".error").html "An unknown error occured"
         $(@).find(".error").fadeIn animation
-
-  $("#contact .card").find(".show").click ->
-    setMap(true) # Set map and change = true

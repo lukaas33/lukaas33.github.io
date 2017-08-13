@@ -379,18 +379,21 @@
     $("#portfolio .sort").find("a").click(function() {
       return cookie("page", 1);
     });
+    $("#contact .card").find(".show").click(function() {
+      return setMap(true);
+    });
     $("#contact form").find("[type='text']").blur(function() {
       var name;
       name = $(this).attr("name");
       return cookie(name, $(this).val());
     });
-    $("#contact form").submit(function(event) {
+    return $("#contact form").submit(function(event) {
       var error, formdata, regex;
       event.preventDefault();
       $(this).find(".error").hide();
       try {
         console.log("Testing input...");
-        $(this).find("[type='text']").each(function() {
+        $(this).children("fieldset").find("[type='text']").each(function() {
           if ($(this).val() === '') {
             throw new Error("Input empty");
           }
@@ -402,7 +405,6 @@
         formdata = new FormData(this);
         console.log("Sending...");
         return sendMail(formdata, (function(success) {
-          console.log(this);
           if (success) {
             $(this).trigger("reset");
             $(this).find(".error").html("Email was successfully sent");
@@ -426,9 +428,6 @@
           return $(this).find(".error").fadeIn(animation);
         }
       }
-    });
-    return $("#contact .card").find(".show").click(function() {
-      return setMap(true);
     });
   });
 
