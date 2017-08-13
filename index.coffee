@@ -46,18 +46,15 @@ app.use(bodyParser.urlencoded extended: true)
 
 app.set("port", process.env.PORT || 5000) # Chooses either port
 app.set("index", "#{__dirname}/index")
-# app.set('views', __dirname + '/views');
-# app.set('view engine', 'ejs');
-app.set("view engine", "html")
+app.set("views", "#{__dirname}/views")
+app.set("view engine", "ejs")
+# app.set("view engine", "html")
 
 # Routes
 app.get '/', (request, response) ->
   response.set("Content-Encoding", "gzip")
-  response.render("index")
-
-# app.get('/', function(req, res){
-#  	res.render('index',{user: "Great User",title:"homepage"});
-# });
+  # response.render("index")
+  response.render "index"
 
 # Exceptions
 

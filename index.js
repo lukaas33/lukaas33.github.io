@@ -60,7 +60,9 @@
 
   app.set("index", __dirname + "/index");
 
-  app.set("view engine", "html");
+  app.set("views", __dirname + "/views");
+
+  app.set("view engine", "ejs");
 
   app.get('/', function(request, response) {
     response.set("Content-Encoding", "gzip");
