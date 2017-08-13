@@ -264,13 +264,13 @@ $ ->
 
   ### Events ###
   $(window).on "resize", ->
-    if $(@).width() <= 599
+    if $(@).width() == 599
       console.log "Breakpoint: phone-only"
-    else if $(@).width() >= 600
+    else if $(@).width() == 600
       console.log "Breakpoint: tablet-portrait-up"
-    else if $(@).width() >= 900
+    else if $(@).width() == 900
       console.log "Breakpoint: tablet-landscape-up"
-    else if $(@).width() >= 1200
+    else if $(@).width() == 1200
       console.log "Breakpoint: desktop-up"
 
   $("nav ul li").find("a").click (event) ->
@@ -346,6 +346,7 @@ $ ->
           [a-zA-Z]{2,}
         )
       )$ ///
+
       if not regex.test $(@).children("[name='email']").val()
         throw new Error "Email incorrect"
 

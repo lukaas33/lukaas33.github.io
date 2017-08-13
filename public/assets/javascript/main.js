@@ -332,13 +332,13 @@
 
     /* Events */
     $(window).on("resize", function() {
-      if ($(this).width() <= 599) {
+      if ($(this).width() === 599) {
         return console.log("Breakpoint: phone-only");
-      } else if ($(this).width() >= 600) {
+      } else if ($(this).width() === 600) {
         return console.log("Breakpoint: tablet-portrait-up");
-      } else if ($(this).width() >= 900) {
+      } else if ($(this).width() === 900) {
         return console.log("Breakpoint: tablet-landscape-up");
-      } else if ($(this).width() >= 1200) {
+      } else if ($(this).width() === 1200) {
         return console.log("Breakpoint: desktop-up");
       }
     });
