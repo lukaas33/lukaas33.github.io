@@ -259,9 +259,20 @@ $ ->
     $(window).scroll -> # Sets scroll event
       highLight() # Higlight correct link
   , timing * 2
+
   setDoc() # Set values
 
   ### Events ###
+  $(window).on "resize", ->
+    if $(@).width() <= 599
+      console.log "Breakpoint: phone-only"
+    else if $(@).width() >= 600
+      console.log "Breakpoint: tablet-portrait-up"
+    else if $(@).width() >= 900
+      console.log "Breakpoint: tablet-landscape-up"
+    else if $(@).width() >= 1200
+      console.log "Breakpoint: desktop-up"
+
   $("nav ul li").find("a").click (event) ->
     # Go to section
     event.preventDefault() # Default behaviour disabled
