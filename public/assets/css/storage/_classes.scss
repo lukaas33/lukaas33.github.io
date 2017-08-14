@@ -48,8 +48,8 @@
 
 %input {
   @extend %form; // Part of a form
-  border-bottom: 1px solid #bdbdbd;
-  color: #757575;
+  border-bottom: 1px solid $color-lightgrey;
+  color: $color-darkgrey;
   width: 100%; // Of the card
 
   &::-webkit-input-placeholder {
@@ -84,7 +84,7 @@
 
   // Got this from http://ilikepixels.co.uk/drop/bubbler/
   &::after {
-    border-color: #424242 transparent;
+    border-color: $color-lightgrey transparent;
     border-style: solid;
     border-width: 10px 10px 0;
     bottom: -10px;

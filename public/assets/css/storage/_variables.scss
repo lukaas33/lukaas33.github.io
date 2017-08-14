@@ -2,6 +2,9 @@ $animation: 400ms ease-in-out;
 $animation-long: 800ms ease-in-out;
 $base-margin: 10vw; // Base margin for site
 
+$color-darkgrey: #757575;
+$color-lightgrey: #bdbdbd;
+
 @mixin color($class, $declaration, $num) {
   // Returns colors based on arguments provided
   @if $class ==  primary  {
@@ -72,8 +75,8 @@ $base-margin: 10vw; // Base margin for site
 
 @mixin shadow($x, $blur) {
   // Edited from values at https://codepen.io/sdthornton/pen/wBZdXq
-  box-shadow: 0 #{$x}px #{$blur}px rgba(0, 0, 0, .12),
-  0 #{ceil($x / 1.4)}px #{ceil($blur / 1.4)}px rgba(0, 0, 0, .24);
+  box-shadow: 0 #{$x}px #{$blur}px rgba(0, 0, 0, .1),
+  0 #{ceil($x / 1.4)}px #{ceil($blur / 1.4)}px rgba(0, 0, 0, .2);
 }
 
 @keyframes slideDown {

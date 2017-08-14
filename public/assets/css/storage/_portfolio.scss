@@ -6,7 +6,7 @@
 
         a {
             @extend %form; // Is a type of form
-            color: #757575;
+            color: $color-darkgrey;
             display: block; // Entire block is clickable
             margin: 5%;
             position: relative; // Absolute tooltip will be placed with regard to this
@@ -101,7 +101,7 @@
         width: 20%; // Of portfolio
 
         p {
-            color: #757575;
+            color: $color-darkgrey;
             display: inline;
             text-transform: uppercase;
         }
