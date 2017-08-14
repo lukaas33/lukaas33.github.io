@@ -26,9 +26,9 @@
 
 #contact .card:nth-child(1) .text li .box { align-items: center; }
 
-html { font-size: 12px; }
+:root { font-size: 12px; }
 
-body { color: #757575; font-family: 'noto-sans', sans-serif; font-size: 1rem; }
+body { color: #757575; font-family: 'noto-sans', 'roboto', sans-serif; font-size: 1rem; }
 
 .top { display: none; }
 
@@ -38,9 +38,9 @@ body { color: #757575; font-family: 'noto-sans', sans-serif; font-size: 1rem; }
 
 .part .card hr { border: 0; border-top: 1px solid #bdbdbd; width: 100%; }
 
-.part .card .since::after { content: " [" attr(date) "]"; }
+.part .card .since::after { content: " <em>[" attr(date) "]</em>"; }
 
-.part .card a::after { content: " [" attr() "]"; }
+.part .card a::after { content: " <em>[" attr(href) "]</em>"; }
 
 #about .container { width: 100%; }
 
@@ -50,7 +50,7 @@ body { color: #757575; font-family: 'noto-sans', sans-serif; font-size: 1rem; }
 
 #about .text h2 { font-size: 2rem; }
 
-#about .text .tagline { color: #616161; font-size: 1.2rem; }
+#about .text .tagline { font-size: 1.2rem; }
 
 #contact .card:nth-child(1) .show, #contact .card:nth-child(1) .map { display: none; }
 

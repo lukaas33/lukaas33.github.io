@@ -11,8 +11,8 @@
 }
 
 body {
-  color: #757575; // Default color, applies mostly to text
-  font-family: 'noto-sans', sans-serif; // Applies to everything
+  color: $color-darkgrey; // Default color, applies mostly to text
+  font-family: 'noto-sans', 'roboto', sans-serif; // Applies to everything
   font-size: 1rem; // Defaults to base font-size
 }
 
@@ -33,19 +33,19 @@ body {
   .card {
     hr {
         border: 0; // No double borders
-        border-top: 1px solid #bdbdbd;
+        border-top: 1px solid $color-lightgrey;
         width: 100%;
     }
 
     .since {
       &::after {
-        content: ' ['attr(date)']';
+        content: ' <em>['attr(date)']</em>';
       }
     }
 
     a {
       &::after {
-        content: ' ['attr()']';
+        content: ' <em>['attr(href)']</em>';
       }
     }
   }
@@ -71,7 +71,6 @@ body {
       }
 
       .tagline {
-          color: #616161;
           font-size: 1.2rem; // Based on base font-size
       }
   }

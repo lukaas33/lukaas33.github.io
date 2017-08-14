@@ -1,7 +1,8 @@
 // Main stylesheet for screen
 
-// TODO Add mobile rules
+// TODO Add more mobile rules
 // TODO Make layout more responsive
+// TODO More shallow nesting
 
 // Global variables and functions
 @import 'storage/variables';
@@ -11,8 +12,9 @@
 
 // Universal and global
 * {
-  padding: 0;
   box-sizing: border-box; // Box model acts normal
+  padding: 0;
+  margin: 0;
 }
 
 ::selection {
@@ -38,8 +40,8 @@
 
 body {
   background-color: #eee;
-  color: #757575; // Default color, applies mostly to text
-  font-family: 'noto-sans', sans-serif; // Applies to everything
+  color: $color-darkgrey; // Default color, applies mostly to text
+  font-family: 'noto-sans', 'roboto', sans-serif; // Applies to everything
   font-size: 1rem; // Defaults to base font-size
   min-width: 400px; // Can't be resized smaller
   user-select: none; // No selecting text is standard It is overwritten in some text divs
@@ -48,11 +50,11 @@ body {
 // Needed to display the icon font properly
 .material-icons {
   &.md-dark {
-    color: rgba(0, 0, 0, .54);
+    color: rgba(0, 0, 0, .55);
   }
 
   &.md-dark.md-inactive {
-    color: rgba(0, 0, 0, .26);
+    color: rgba(0, 0, 0, .45);
   }
 
   &.md-light {
@@ -87,16 +89,16 @@ main {
       margin: ($margin * 2) $margin;
     }
     @include media(tablet-landscape-up) {
-      margin: ($margin * 2); // Two times bigger than the card margins
+      margin: ($margin * 2);
     }
     @include media(desktop-up) {
-      margin: ($margin * 2); // Two times bigger than the card margins
+      margin: ($margin * 2);
     }
 
     // Shared values for each part
     .card {
       @extend %card; // Card
-      margin: $margin; // Parts are further from each other than cards
+      margin: $margin; // Distance between cards
       z-index: 30; // Above main
 
       .text {
@@ -105,20 +107,24 @@ main {
 
         @include media(phone-only) {
           padding: ($padding * 1.5); // Will be like the padding for card but allows images to fill card
+          text-align: center;
         }
         @include media(tablet-portrait-up) {
           padding: ($padding * 1.5); // Will be like the padding for card but allows images to fill card
+          text-align: center;
         }
         @include media(tablet-landscape-up) {
           padding: $padding; // Will be like the padding for card but allows images to fill card
+          text-align: left;
         }
         @include media(desktop-up) {
           padding: $padding; // Will be like the padding for card but allows images to fill card
+          text-align: left;
         }
 
         hr {
           border: 0; // No double borders
-          border-top: 1px solid #bdbdbd;
+          border-top: 1px solid $color-lightgrey;
           margin: ($margin / 1.5) 0 ($margin / 3); // One third of the card margin on the bottom and double that on the top
           width: 100%;
         }

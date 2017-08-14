@@ -37,16 +37,18 @@
             ul {
               @extend %colomn; // Distributes li's evenly
               height: 100%;
+              margin: 0;
               width: 100%; // Fills text
 
               li {
+                @extend %vertical; // Items vertically aligned
                 flex-grow: 1; // Grow to fill parent
-                list-style: none;
+                list-style: none; // No bullets
                 text-align: left;
                 width: 100%;
 
                 .box {
-                  @extend %vertical; // Best way to display two elements next to each other
+                  @extend %flex; // Display items next to each other
 
                   .icon {
                     @extend %round; // Round button appearance
@@ -62,7 +64,7 @@
                   }
 
                   div {
-                    display: inline-block;
+                    @extend %vertical; // Items vertically aligned
 
                     p {
                       user-select: text; // Can be selected
@@ -128,14 +130,15 @@
 
             border: 0;
             height: 100%;
+            padding: 0;
             width: 100%; // Fills card
 
             [type='text'] {
               @extend %input; // Input types
               flex-grow: 1; // Grow to fill parent
-              margin-bottom: $line-height; // One line
-              padding-bottom: ($padding / 2); // Decorative space between the line
-              padding-top: $padding; // Clears space for placeholder
+              margin-bottom: ($line-height / 2);
+              padding-bottom: ($padding); // Decorative space between the line
+              padding-top: ($padding * 1.5); // Clears space for placeholder
             }
 
             input[type='text'] {
@@ -149,19 +152,46 @@
           }
 
           .end {
-            @extend %flex; // Best way to display two elements next to each other
+            @extend %res-cards; // Best way to display two elements next to each other
 
             input[type='submit'] {
               @extend %normal; // Is a normal button
+              width: 50%;
+
+              @include media(phone-only) {
+                margin: 0 25%;
+              }
+              @include media(tablet-portrait-up) {
+                margin: 0 25%;
+              }
+              @include media(tablet-landscape-up) {
+                margin: 0;
+              }
+              @include media(desktop-up) {
+                margin: 0;
+              }
             }
+
             .box {
               @extend %vertical; // Vertical flex
 
               .error {
                 @include color(secondary, 'color', 100);
-
                 display: none;
                 margin-left: $padding;
+
+                @include media(phone-only) {
+                  text-align: center;
+                }
+                @include media(tablet-portrait-up) {
+                  text-align: center;
+                }
+                @include media(tablet-landscape-up) {
+                  text-align: left;
+                }
+                @include media(desktop-up) {
+                  text-align: left;
+                }
               }
             }
           }
