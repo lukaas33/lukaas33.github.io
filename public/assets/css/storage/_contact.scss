@@ -178,18 +178,22 @@
               .error {
                 @include color(secondary, 'color', 100);
                 display: none;
-                margin-left: $padding;
+                width: 100%;
 
                 @include media(phone-only) {
+                  margin-top: $padding;
                   text-align: center;
                 }
                 @include media(tablet-portrait-up) {
+                  margin-top: $padding;
                   text-align: center;
                 }
                 @include media(tablet-landscape-up) {
+                  margin-left: $padding;
                   text-align: left;
                 }
                 @include media(desktop-up) {
+                  margin-left: $padding;
                   text-align: left;
                 }
               }

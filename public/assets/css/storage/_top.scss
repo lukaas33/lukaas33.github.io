@@ -39,6 +39,7 @@
                 vertical-align: middle; // Same height as button
 
                 a {
+                    @extend %click;
                     color: $color-darkgrey;
                     text-decoration: none;
                     transition: $animation;

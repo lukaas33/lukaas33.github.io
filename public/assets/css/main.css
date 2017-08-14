@@ -24,6 +24,10 @@ main .part .card { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0
 
 main .part .card:hover { box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.2); }
 
+main .part#experience .card .text .collapse a, main .part#contact .content .card:nth-child(2) .text fieldset [type='text'], main .part#experience .card .text .head .box .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'], .top nav ul li:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon, main .part#portfolio .sort a, main .part#portfolio .select button, .top nav ul li a { cursor: pointer; }
+
+main .part#experience .card .text .collapse a:focus, main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:focus, main .part#experience .card .text .head .box .date:focus, main .part#contact .content .card:nth-child(1) button:focus, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:focus, .top nav ul li:focus:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus, main .part#portfolio .sort a:focus, main .part#portfolio .select button:focus, .top nav ul li a:focus, main .part#experience .card .text .collapse a:active, main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:active, main .part#experience .card .text .head .box .date:active, main .part#contact .content .card:nth-child(1) button:active, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:active, .top nav ul li:active:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:active, main .part#portfolio .sort a:active, main .part#portfolio .select button:active, .top nav ul li a:active { outline: none; }
+
 main .part#experience .card .text .collapse a { color: #ff6e40; text-decoration: none; }
 
 main .part#experience .card .text .collapse a:hover { text-decoration: underline; }
@@ -36,9 +40,7 @@ main .part#skills .card .text .head .box progress::-webkit-progress-value, main 
 
 main .part#skills .card .text .head .box progress::-webkit-progress-bar, main .part#skills .card .text .collapse .box .progress .container div progress::-webkit-progress-bar { background-color: #f5f5f5; }
 
-main .part#contact .content .card:nth-child(2) .text fieldset [type='text'], main .part#experience .card .text .head .box .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'], .top nav ul li:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon, main .part#portfolio .sort a, main .part#portfolio .select button { background-color: transparent; border: 0 solid transparent; cursor: pointer; transition: 400ms ease-in-out; }
-
-main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:focus, main .part#experience .card .text .head .box .date:focus, main .part#contact .content .card:nth-child(1) button:focus, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:focus, .top nav ul li:focus:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus, main .part#portfolio .sort a:focus, main .part#portfolio .select button:focus, main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:active, main .part#experience .card .text .head .box .date:active, main .part#contact .content .card:nth-child(1) button:active, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:active, .top nav ul li:active:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:active, main .part#portfolio .sort a:active, main .part#portfolio .select button:active { outline: none; }
+main .part#contact .content .card:nth-child(2) .text fieldset [type='text'], main .part#experience .card .text .head .box .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'], .top nav ul li:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon, main .part#portfolio .sort a, main .part#portfolio .select button { background-color: transparent; border: 0 solid transparent; transition: 400ms ease-in-out; }
 
 main .part#contact .content .card:nth-child(2) .text fieldset [type='text'] { border-bottom: 1px solid #bdbdbd; color: #757575; width: 100%; }
 
@@ -50,7 +52,7 @@ main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:focu
 
 main .part#experience .card .text .head .box .date .tooltip, main .part#portfolio .sort a .tooltip { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.2); background-color: #424242; border: 1px solid #424242; color: #fff; display: none; font-size: .8rem; left: 0; padding: 0.55556vw 0.83333vw; position: absolute; top: 0; transform: translateY(-110%); white-space: nowrap; }
 
-main .part#experience .card .text .head .box .date .tooltip::after, main .part#portfolio .sort a .tooltip::after { border-color: #bdbdbd transparent; border-style: solid; border-width: 10px 10px 0; bottom: -10px; content: ''; display: block; left: 50%; margin-left: -10px; position: absolute; width: 0; }
+main .part#experience .card .text .head .box .date .tooltip::after, main .part#portfolio .sort a .tooltip::after { border-color: #424242 transparent; border-style: solid; border-width: 10px 10px 0; bottom: -10px; content: ''; display: block; left: 50%; margin-left: -10px; position: absolute; width: 0; }
 
 main .part#experience .card .text .head .box .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'], .top nav ul li:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.2); text-align: center; }
 
@@ -334,11 +336,13 @@ main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] {
 
 @media only screen and (min-width: 1200px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0; } }
 
-main .part#contact .content .card:nth-child(2) .text .end .box .error { color: #ff9e80; display: none; margin-left: 1rem; }
+main .part#contact .content .card:nth-child(2) .text .end .box { margin-left: 1rem; }
 
-@media only screen and (max-width: 599px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { text-align: center; } }
+main .part#contact .content .card:nth-child(2) .text .end .box .error { color: #ff9e80; display: none; width: 100%; }
 
-@media only screen and (min-width: 600px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { text-align: center; } }
+@media only screen and (max-width: 599px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin: 1rem; text-align: center; } }
+
+@media only screen and (min-width: 600px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin: 1rem; text-align: center; } }
 
 @media only screen and (min-width: 900px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { text-align: left; } }
 
