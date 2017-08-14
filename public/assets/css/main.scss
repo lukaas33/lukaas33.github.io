@@ -43,7 +43,6 @@ body {
   font-size: 1rem; // Defaults to base font-size
   min-width: 400px; // Can't be resized smaller
   user-select: none; // No selecting text is standard It is overwritten in some text divs
-  visibility: hidden; // Will be shown by Javascript
 }
 
 // Needed to display the icon font properly

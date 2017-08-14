@@ -21,20 +21,14 @@
   <!-- Verify ownership -->
   <meta name="google-site-verification" content="uBKBwodm244IRdbB2qDBus4wgTX706KrGGqC-SdZPFA" />
   <!-- Css -->
-
+  <style> body { display: none; /* Until Js loads */ } </style>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css" rel="stylesheet">
   <link href="assets/css/main.css" media="screen" rel="stylesheet">
   <link href="assets/css/print.css" media="print" rel="stylesheet">
-  <!-- No javascript exeption -->
-  <noscript>
-    <style>
-    body {
-      visibility: visible; !important /* Is normally done via js */
-    }
-    </style>
-  </noscript>
+  <!-- No javascript -->
+  <noscript><style> body { display: block; /* Is normally done via Js */ } </style></noscript>
   <!-- Javascript -->
   <script async src="assets/javascript/scripts.js"></script>
   <!-- Database -->
@@ -224,10 +218,6 @@
         </div>
       </div>
     </section>
-  <!-- <?php
-    $conn->close(); // Ends connection with database
-    cLog("Connection closed");
-  ?> -->
   </main>
 </body>
 </html>
