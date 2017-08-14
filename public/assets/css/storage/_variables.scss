@@ -37,6 +37,9 @@ $color-lightgrey: #bdbdbd;
     @else if $num == 400 {
       #{$declaration}: #ff3d00; // Sets the css declaration to this value
     }
+    @else if $num == 700 {
+      #{$declaration}: #dd2c00;
+    }
     @else {
       @error "Invalid argument";
     }
