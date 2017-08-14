@@ -253,7 +253,7 @@ $ ->
     , (error) ->
       console.warn "SW registration failed: #{error}"
 
-  $("body").css visibility: "visible"
+  $("body").fadeIn animation
   setTimeout -> # Prevents the flashing on of the about link on load
     highLight() # Initial highlight at start of page
     $(window).scroll -> # Sets scroll event

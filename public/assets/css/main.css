@@ -20,9 +20,9 @@
     -webkit-transform: translateY(0);
     transform: translateY(0); } }
 
-main .part .card { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) ; background-color: #fff; transition: 400ms ease-in-out; }
+main .part .card { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.24); background-color: #fff; transition: 400ms ease-in-out; }
 
-main .part .card:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) ; }
+main .part .card:hover { box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12), 0 10px 20px rgba(0, 0, 0, 0.24); }
 
 main .part#experience .card .text .collapse a { color: #ff6e40; text-decoration: none; }
 
@@ -48,13 +48,13 @@ main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:focu
 
 main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:focus::-webkit-input-placeholder { color: #ff6e40; font-size: .75rem; transform: translateY(-150%); }
 
-main .part#experience .card .text .head .box .date .tooltip, main .part#portfolio .sort a .tooltip { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) ; background-color: #424242; border: 1px solid #424242; color: #fff; display: none; font-size: .8rem; left: 0; padding: 0.55556vw 0.83333vw; position: absolute; top: 0; transform: translateY(-110%); white-space: nowrap; }
+main .part#experience .card .text .head .box .date .tooltip, main .part#portfolio .sort a .tooltip { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 2px 5px rgba(0, 0, 0, 0.24); background-color: #424242; border: 1px solid #424242; color: #fff; display: none; font-size: .8rem; left: 0; padding: 0.55556vw 0.83333vw; position: absolute; top: 0; transform: translateY(-110%); white-space: nowrap; }
 
 main .part#experience .card .text .head .box .date .tooltip::after, main .part#portfolio .sort a .tooltip::after { border-color: #424242 transparent; border-style: solid; border-width: 10px 10px 0; bottom: -10px; content: ''; display: block; left: 50%; margin-left: -10px; position: absolute; width: 0; }
 
-main .part#experience .card .text .head .box .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'], .top nav ul li:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) ; text-align: center; }
+main .part#experience .card .text .head .box .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'], .top nav ul li:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 2px 5px rgba(0, 0, 0, 0.24); text-align: center; }
 
-main .part#experience .card .text .head .box .date:hover, main .part#contact .content .card:nth-child(1) button:hover, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:hover, .top nav ul li:hover:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:hover, main .part#experience .card .text .head .box .date:focus, main .part#contact .content .card:nth-child(1) button:focus, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:focus, .top nav ul li:focus:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus { box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15) ; }
+main .part#experience .card .text .head .box .date:hover, main .part#contact .content .card:nth-child(1) button:hover, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:hover, .top nav ul li:hover:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:hover, main .part#experience .card .text .head .box .date:focus, main .part#contact .content .card:nth-child(1) button:focus, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:focus, .top nav ul li:focus:last-child, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus { box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12), 0 5px 10px rgba(0, 0, 0, 0.24); }
 
 main .part#experience .card .text .head .box .date > p, main .part#contact .content .card:nth-child(1) button > p, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] > p, .top nav ul li:last-child > p, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon > p, main .part#experience .card .text .head .box .date > span, main .part#contact .content .card:nth-child(1) button > span, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] > span, .top nav ul li:last-child > span, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon > span, main .part#experience .card .text .head .box .date > i, main .part#contact .content .card:nth-child(1) button > i, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] > i, .top nav ul li:last-child > i, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon > i { vertical-align: middle; }
 
@@ -92,7 +92,7 @@ main .part#about .card, main .part#contact .content { display: -webkit-flex; }
 
 @media only screen and (min-width: 1200px) { :root { font-size: 16px; } }
 
-body { background-color: #eee; color: #757575; font-family: 'noto-sans', sans-serif; font-size: 1rem; min-width: 400px; user-select: none; visibility: hidden; }
+body { background-color: #eee; color: #757575; font-family: 'noto-sans', sans-serif; font-size: 1rem; min-width: 400px; user-select: none; }
 
 .material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
 
@@ -102,7 +102,7 @@ body { background-color: #eee; color: #757575; font-family: 'noto-sans', sans-se
 
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.5); }
 
-.top nav { -moz-animation: slideDown 800ms ease-in-out; -ms-animation: slideDown 800ms ease-in-out; -o-animation: slideDown 800ms ease-in-out; -webkit-animation: slideDown 800ms ease-in-out; animation: slideDown 800ms ease-in-out; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) ; background-color: #fafafa; height: 5vh; left: 0; overflow: hidden; padding: 1vh 3vh; position: fixed; top: 0; width: 100vw; z-index: 30; }
+.top nav { -moz-animation: slideDown 800ms ease-in-out; -ms-animation: slideDown 800ms ease-in-out; -o-animation: slideDown 800ms ease-in-out; -webkit-animation: slideDown 800ms ease-in-out; animation: slideDown 800ms ease-in-out; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.24); background-color: #fafafa; height: 5vh; left: 0; overflow: hidden; padding: 1vh 3vh; position: fixed; top: 0; width: 100vw; z-index: 30; }
 
 .top nav .logo { float: left; height: 3vh; width: 3vh; }
 
@@ -120,7 +120,7 @@ body { background-color: #eee; color: #757575; font-family: 'noto-sans', sans-se
 
 .top nav ul li:last-child .material-icons { font-size: 2vh; margin-top: .5vh; }
 
-.top header { -moz-animation: slideDown 800ms ease-in-out; -ms-animation: slideDown 800ms ease-in-out; -o-animation: slideDown 800ms ease-in-out; -webkit-animation: slideDown 800ms ease-in-out; animation: slideDown 800ms ease-in-out; background-color: #00bcd4; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) ; height: 60vh; position: absolute; top: 0; width: 100vw; z-index: 10; }
+.top header { -moz-animation: slideDown 800ms ease-in-out; -ms-animation: slideDown 800ms ease-in-out; -o-animation: slideDown 800ms ease-in-out; -webkit-animation: slideDown 800ms ease-in-out; animation: slideDown 800ms ease-in-out; background-color: #00bcd4; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 2px 5px rgba(0, 0, 0, 0.24); height: 60vh; position: absolute; top: 0; width: 100vw; z-index: 10; }
 
 main { -moz-animation: slideUp 800ms ease-in-out; -ms-animation: slideUp 800ms ease-in-out; -o-animation: slideUp 800ms ease-in-out; -webkit-animation: slideUp 800ms ease-in-out; animation: slideUp 800ms ease-in-out; margin: 0 10vw; position: relative; width: 80vw; z-index: 20; }
 
@@ -248,7 +248,7 @@ main .part#portfolio .content .page .container { width: calc(100% / 3); }
 
 main .part#portfolio .content .page .container .preview { height: 100%; position: relative; transition: 400ms ease-in-out; width: 100%; z-index: 30; }
 
-main .part#portfolio .content .page .container .preview:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) ; z-index: 40; }
+main .part#portfolio .content .page .container .preview:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12), 0 6px 12px rgba(0, 0, 0, 0.24); z-index: 40; }
 
 main .part#portfolio .content .page .container .preview img { display: block; width: 100%; }
 

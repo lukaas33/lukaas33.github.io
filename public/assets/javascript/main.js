@@ -319,9 +319,7 @@
         return console.warn("SW registration failed: " + error);
       });
     }
-    $("body").css({
-      visibility: "visible"
-    });
+    $("body").fadeIn(animation);
     setTimeout(function() {
       highLight();
       return $(window).scroll(function() {

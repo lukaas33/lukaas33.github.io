@@ -1,80 +1,76 @@
-(function() {
-  var app, bodyParser, compression, express, formidable, minify, nodemailer, send, transporter;
+// Require
+const express = require("express");
+const nodemailer = require("nodemailer");
+const bodyParser = require("body-parser");
+const formidable = require("formidable");
+const compression = require("compression");
+const minify = require("express-minify");
 
-  express = require("express");
+// Variables
+const app = express();
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.emailDefault,
+    pass: process.env.emailPassword
+  }
+});
 
-  nodemailer = require("nodemailer");
+// Functions
+const send = function(request, response) {
+  // Handles email form
+  const form = new formidable.IncomingForm();
 
-  bodyParser = require("body-parser");
+  return form.parse(request, function(error, fields, files) {
+    const mailOptions = {
+      from: `"${fields.email}" <${fields.email}>`,
+      to: `"Personal" <${process.env.emailPersonal}>`,
+      subject: "[SITE MESSAGE]",
+      html:
+        `<em>Sent by: ${fields.name}</em><br/>` +
+        `<em>Reply at: ${fields.email}</em><br/><hr/>` +
+        `${fields.message}`
+    };
 
-  formidable = require("formidable");
-
-  compression = require("compression");
-
-  minify = require("express-minify");
-
-  app = express();
-
-  transporter = nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: process.env.emailDefault,
-      pass: process.env.emailPassword
-    }
-  });
-
-  send = function(request, response) {
-    var form;
-    form = new formidable.IncomingForm();
-    return form.parse(request, function(error, fields, files) {
-      var mailOptions;
-      mailOptions = {
-        from: "\"" + fields.email + "\" <" + fields.email + ">",
-        to: "\"Personal\" <" + process.env.emailPersonal + ">",
-        subject: "[SITE MESSAGE]",
-        html: ("<em>Sent by: " + fields.name + "</em><br/>") + ("<em>Reply at: " + fields.email + "</em><br/><hr/>") + ("" + fields.message)
-      };
-      return transporter.sendMail(mailOptions, function(error, info) {
-        if (error) {
-          return console.log(error);
-        } else {
-          return console.log("Email sent: " + info.response);
-        }
-      });
+    return transporter.sendMail(mailOptions, function(error, info) {
+      if (error) {
+        return console.log(error);
+      } else {
+        return console.log(`Email sent: ${info.response}`);
+      }
     });
-  };
-
-  app.use(compression());
-
-  app.use(minify());
-
-  app.use(express["static"](__dirname + "/public"));
-
-  app.use(bodyParser.json());
-
-  app.use(bodyParser.urlencoded({
-    extended: true
-  }));
-
-  app.set("port", process.env.PORT || 5000);
-
-  app.set("index", __dirname + "/index");
-
-  app.set("view engine", "html");
-
-  app.get('/', function(request, response) {
-    response.set("Content-Encoding", "gzip");
-    return response.render("index");
   });
+};
 
-  app.post("/send", function(request, response) {
-    console.log("POST request from client");
-    send(request, response);
-    return response.end();
-  });
 
-  app.listen(app.get("port"), function() {
-    return console.log("Node app is running at " + (app.get("port")));
-  });
+// Setup
+app.use(compression()); // Compression for site
+app.use(minify()); // Minifies code
+app.use(express.static(`${__dirname}/public`)); // Serve static files
 
-}).call(this);
+app.use(bodyParser.json()); // Enable json parsing
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.set("port", process.env.PORT || 5000); // Chooses either port
+app.set("index", `${__dirname}/index`);
+app.set("views", `${__dirname}/views`);
+app.set("view engine", "ejs");
+// app.set("view engine", "html")
+
+// Routes
+app.get('/', function(request, response) {
+  response.set("Content-Encoding", "gzip");
+  // response.render("index")
+  return response.render("index");
+});
+
+// Exceptions
+
+// Events
+app.post("/send", function(request, response) {
+  console.log("POST request from client");
+  send(request, response); // Email sender
+  return response.end();
+});
+
+app.listen(app.get("port"), () => console.log(`Node app is running at ${app.get("port")}`));
