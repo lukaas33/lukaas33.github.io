@@ -40,11 +40,6 @@
 
         .focus { // If the corresponding section is focused
           @include color(primary, 'color', 500);
-
-          &:focus,
-          &:hover {
-            opacity: 1;
-          }
         }
 
         a {
@@ -55,8 +50,8 @@
           transition: $animation;
         }
 
-        &:not(:last-child) a {
-          // All but last
+        &:not(:last-child) a:not(.focus) {
+          // All but last, not focused
           &:focus,
           &:hover {
             opacity: .55;

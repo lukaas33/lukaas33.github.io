@@ -118,15 +118,15 @@
         }
 
         .text {
+          // Local variables
+          $line-height: 1rem;
+          $padding: $line-height;
+
           height: 100%;
           width: 100%; // Fills container
 
           fieldset {
             @extend %colomn; // Distributes input fields evenly
-
-            // Local variables
-            $line-height: 1rem;
-            $padding: $line-height;
 
             border: 0;
             height: 100%;
@@ -153,22 +153,26 @@
 
           .end {
             @extend %res-cards; // Best way to display two elements next to each other
+            margin-top: $line-height;
 
             input[type='submit'] {
               @extend %normal; // Is a normal button
-              width: 50%;
 
               @include media(phone-only) {
-                margin: 0 25%;
+                margin: 0 15%;
+                width: 70%;
               }
               @include media(tablet-portrait-up) {
-                margin: 0 25%;
+                margin: 0 15%;
+                width: 70%;
               }
               @include media(tablet-landscape-up) {
                 margin: 0;
+                width: 40%;
               }
               @include media(desktop-up) {
                 margin: 0;
+                width: 40%;
               }
             }
 
@@ -182,17 +186,21 @@
 
                 @include media(phone-only) {
                   margin-top: $padding;
+                  margin-left: 0;
                   text-align: center;
                 }
                 @include media(tablet-portrait-up) {
                   margin-top: $padding;
+                  margin-left: 0;
                   text-align: center;
                 }
                 @include media(tablet-landscape-up) {
+                  margin-top: 0;
                   margin-left: $padding;
                   text-align: left;
                 }
                 @include media(desktop-up) {
+                  margin-top: 0;
                   margin-left: $padding;
                   text-align: left;
                 }

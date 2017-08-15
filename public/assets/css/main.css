@@ -120,7 +120,7 @@ body { background-color: #eee; color: #757575; font-family: 'noto-sans', 'roboto
 
 .top nav ul li a { color: #757575; text-decoration: none; transition: 400ms ease-in-out; }
 
-.top nav ul li:not(:last-child) a:focus, .top nav ul li:not(:last-child) a:hover { opacity: .55; }
+.top nav ul li:not(:last-child) a:not(.focus):focus, .top nav ul li:not(:last-child) a:not(.focus):hover { opacity: .55; }
 
 .top nav ul li:last-child a { background-color: #ff6e40; display: inline-block; height: 3vh; width: 3vh; }
 
@@ -330,22 +330,22 @@ main .part#contact .content .card:nth-child(2) .text fieldset input[type='text']
 
 main .part#contact .content .card:nth-child(2) .text fieldset textarea { font-family: inherit; resize: none; }
 
-main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { width: 50%; }
+main .part#contact .content .card:nth-child(2) .text .end { margin-top: 1rem; }
 
-@media only screen and (max-width: 599px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0 25%; } }
+@media only screen and (max-width: 599px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0 15%; width: 70%; } }
 
-@media only screen and (min-width: 600px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0 25%; } }
+@media only screen and (min-width: 600px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0 15%; width: 70%; } }
 
-@media only screen and (min-width: 900px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0; } }
+@media only screen and (min-width: 900px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0; width: 40%; } }
 
-@media only screen and (min-width: 1200px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0; } }
+@media only screen and (min-width: 1200px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0; width: 40%; } }
 
 main .part#contact .content .card:nth-child(2) .text .end .box .error { color: #ff9e80; display: none; width: 100%; }
 
-@media only screen and (max-width: 599px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-top: 1rem; text-align: center; } }
+@media only screen and (max-width: 599px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-top: 1rem; margin-left: 0; text-align: center; } }
 
-@media only screen and (min-width: 600px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-top: 1rem; text-align: center; } }
+@media only screen and (min-width: 600px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-top: 1rem; margin-left: 0; text-align: center; } }
 
-@media only screen and (min-width: 900px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-left: 1rem; text-align: left; } }
+@media only screen and (min-width: 900px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-top: 0; margin-left: 1rem; text-align: left; } }
 
-@media only screen and (min-width: 1200px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-left: 1rem; text-align: left; } }
+@media only screen and (min-width: 1200px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-top: 0; margin-left: 1rem; text-align: left; } }
