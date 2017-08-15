@@ -362,9 +362,9 @@
       return toggle($(this).closest(".card")[0], "skills");
     });
     $("#portfolio .preview").hover(function() {
-      return $(this).find(".tags").fadeIn(global.animation);
+      return $(this).find(".tags").fadeTo(global.timing, 1);
     }, function() {
-      return $(this).find(".tags").fadeOut(global.animation);
+      return $(this).find(".tags").fadeTo(global.timing, 0);
     });
     $("#portfolio .select").find(".backward").click(function() {
       return switchPage(-1);

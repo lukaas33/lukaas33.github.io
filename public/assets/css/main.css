@@ -246,11 +246,15 @@ main .part#portfolio .sort a .material-icons { display: inline-block; position: 
 
 main .part#portfolio .sort a span { vertical-align: middle; }
 
-main .part#portfolio .sort a .tooltip { left: 50%; margin-left: -25%; width: 50%; }
-
 main .part#portfolio .content .page { margin: 2.5vw; width: 100%; }
 
-main .part#portfolio .content .page .container { width: calc(100% / 3); }
+@media only screen and (max-width: 599px) { main .part#portfolio .content .page .container { width: 100%; } }
+
+@media only screen and (min-width: 600px) { main .part#portfolio .content .page .container { width: 100%; } }
+
+@media only screen and (min-width: 900px) { main .part#portfolio .content .page .container { width: calc(100% / 2); } }
+
+@media only screen and (min-width: 1200px) { main .part#portfolio .content .page .container { width: calc(100% / 3); } }
 
 main .part#portfolio .content .page .container .preview { height: 100%; position: relative; transition: 400ms ease-in-out; width: 100%; z-index: 30; }
 
@@ -262,7 +266,7 @@ main .part#portfolio .content .page .container .preview span { height: 100%; lef
 
 main .part#portfolio .content .page .container .preview span:hover { background-color: rgba(0, 0, 0, 0.45); }
 
-main .part#portfolio .content .page .container .preview span .tags { color: #fff; display: none; margin: auto; text-align: center; }
+main .part#portfolio .content .page .container .preview span .tags { color: #fff; margin: auto; opacity: 0; text-align: center; }
 
 main .part#portfolio .content .page .container .preview span .tags h3 { font-size: 1.5rem; }
 

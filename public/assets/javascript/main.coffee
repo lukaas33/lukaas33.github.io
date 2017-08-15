@@ -298,9 +298,9 @@ $ ->
 
   $("#portfolio .preview").hover(
     -> # MouseIn
-      $(@).find(".tags").fadeIn global.animation
-    -> #MouseOut
-      $(@).find(".tags").fadeOut global.animation
+      $(@).find(".tags").fadeTo(global.timing, 1)
+    -> # MouseOut
+      $(@).find(".tags").fadeTo(global.timing, 0)
   )
 
   $("#portfolio .select").find(".backward").click ->
