@@ -2,6 +2,7 @@ var cacheUrls = [
   "index.html",
   "manifest.json",
   "assets/css/main.css",
+  "assets/javascript/setup.js",
   "assets/javascript/main.js",
   "assets/javascript/scripts.js"
 ];
