@@ -1,62 +1,62 @@
 &#experience {
 
-    .card {
-        .text {
-            .head {
-                @extend %flex; // Best way to display two elements next to each other
-                cursor: pointer; // Can be clicked
+  .card {
+    .text {
+      .head {
+        @extend %flex; // Best way to display two elements next to each other
+        cursor: pointer; // Can be clicked
 
-                .tag {
-                    margin-right: 40%; // Of card
-                    width:  40%; // Of card
+        .tag {
+          margin-right: 40%; // Of card
+          width:  40%; // Of card
 
-                    h3 {
-                        @extend %header;
-                        font-size: 1.75rem; // Based on base font-size
-                        margin-bottom: ($margin / 4); // Room between the paragraph
-                    }
+          h3 {
+            @extend %header;
+            font-size: 1.75rem; // Based on base font-size
+            margin-bottom: ($margin / 4); // Room between the paragraph
+          }
 
-                    p {
-                        color: #616161;
-                    }
-                }
-
-                .box {
-                    @extend %vertical; // Vertical flex
-                    width: 20%; // Of head
-
-                    .date {
-                        @extend %normal;
-                        position: relative; // Absolute tooltip will be placed with regard to this
-
-                        span {
-                            @include color(primary, 'color', 100);
-                            margin: 0 ($margin / 6); // One sixth of the card margin
-                        }
-
-                        .tooltip {
-                            @extend %tooltip;
-                            width: 100%;
-                        }
-                    }
-                }
-                }
-
-            .collapse {
-                display: none; // Collapsed state
-
-                p {
-                    user-select: text; // Can be selected
-                }
-
-                a {
-                    @extend %link; // Default link
-                }
-
-                .number {
-                    @include color(secondary, 'color', 200);
-                }
-            }
+          p {
+            color: #616161;
+          }
         }
+
+        .box {
+          @extend %vertical; // Vertical flex
+          width: 20%; // Of head
+
+          .date {
+            @extend %normal;
+            position: relative; // Absolute tooltip will be placed with regard to this
+
+            span {
+              @include color(primary, 'color', 100);
+              margin: 0 ($margin / 6); // One sixth of the card margin
+            }
+
+            .tooltip {
+              @extend %tooltip;
+              width: 100%;
+            }
+          }
+        }
+        }
+
+      .collapse {
+        display: none; // Collapsed state
+
+        p {
+          user-select: text; // Can be selected
+        }
+
+        a {
+          @extend %link; // Default link
+        }
+
+        .number {
+          @include color(secondary, 'color', 200);
+        }
+      }
     }
+  }
 }

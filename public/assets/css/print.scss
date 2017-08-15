@@ -20,33 +20,42 @@ body {
   display: none;
 }
 
+a {
+  color: $color-darkgrey;
+  text-decoration: none;
+
+  &::after {
+    content: ' ['attr(href)']'; // Won't be visible in print
+    font-style: italic;
+  }
+}
+
 .part {
   page-break-after: always; // All parts get printed on a new page
 
   .title {
-      @extend %header;
-      font-size: 1.75rem; // Based on base font-size
-      text-align: center; // Center horizontally
-      text-transform: uppercase;
+    @extend %header;
+    font-size: 1.75rem; // Based on base font-size
+    text-align: center; // Center horizontally
+    text-transform: uppercase;
   }
 
   .card {
     hr {
-        border: 0; // No double borders
-        border-top: 1px solid $color-lightgrey;
-        width: 100%;
+      border: 0; // No double borders
+      border-top: 1px solid $color-lightgrey;
+      width: 100%;
     }
 
     .since {
       &::after {
-        content: ' <em>['attr(date)']</em>';
+        content: ' ['attr(date)']'; // Won't be visible in print
+        font-style: italic;
       }
     }
 
-    a {
-      &::after {
-        content: ' <em>['attr(href)']</em>';
-      }
+    .collapse {
+      display: block;
     }
   }
 }
@@ -56,9 +65,9 @@ body {
     width: 100%;
 
     img {
-        display: block;
-        height: auto; // Maintains aspect ratio
-        width: 100%; // Fills media
+      display: block;
+      height: auto; // Maintains aspect ratio
+      width: 100%; // Fills media
     }
   }
 
@@ -74,6 +83,14 @@ body {
           font-size: 1.2rem; // Based on base font-size
       }
   }
+}
+
+#skills {
+
+}
+
+#experience {
+
 }
 
 #contact {

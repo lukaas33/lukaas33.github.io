@@ -90,6 +90,10 @@
       .tagline {
         font-size: 1.2rem; // Based on base font-size
       }
+
+      a {
+        @extend %link; // Default link
+      }
     }
   }
 }

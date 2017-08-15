@@ -32,15 +32,19 @@ body { color: #757575; font-family: 'noto-sans', 'roboto', sans-serif; font-size
 
 .top { display: none; }
 
+a { color: #757575; text-decoration: none; }
+
+a::after { content: " [" attr(href) "]"; font-style: italic; }
+
 .part { page-break-after: always; }
 
 .part .title { font-size: 1.75rem; text-align: center; text-transform: uppercase; }
 
 .part .card hr { border: 0; border-top: 1px solid #bdbdbd; width: 100%; }
 
-.part .card .since::after { content: " <em>[" attr(date) "]</em>"; }
+.part .card .since::after { content: " [" attr(date) "]"; font-style: italic; }
 
-.part .card a::after { content: " <em>[" attr(href) "]</em>"; }
+.part .card .collapse { display: block; }
 
 #about .container { width: 100%; }
 

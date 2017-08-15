@@ -17,12 +17,12 @@ global = {
 (function() {
 
   global.cookie = function(name, value) {
-    var cookies, current, i, len;
-    cookies = document.cookie.split(';');
+    // Cookie function
+    var cookies = document.cookie.split(';');
     if (value === void 0) {
-      for (i = 0, len = cookies.length; i < len; i++) {
-        value = cookies[i];
-        current = value.split('=');
+      for (var i = 0; i < cookies.length; i++) {
+        var value = cookies[i];
+        var current = value.split('=');
         if (current[0].trim() === name) {
           return current[1];
         }

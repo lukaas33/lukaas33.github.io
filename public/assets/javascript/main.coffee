@@ -130,6 +130,7 @@ $ ->
 
   setMap()
   setForm()
+
   setTimeout -> # Prevents the flashing on of the about link on load
     highLight() # Initial highlight at start of page
     $(window).scroll -> # Sets scroll event

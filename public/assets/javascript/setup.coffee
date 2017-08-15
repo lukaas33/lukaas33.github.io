@@ -79,7 +79,7 @@ $ ->
   ### Actions ###
   console.log "// DOM setup via Js loading..."
 
-  setDoc() # Set values TODO Use ejs for this
+  setDoc() # Set values
 
   if 'serviceWorker' of navigator
     # Enable the service worker
