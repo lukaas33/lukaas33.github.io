@@ -300,7 +300,7 @@ $ ->
     -> # MouseIn
       $(@).find(".tags").fadeTo(global.timing, 1)
     -> # MouseOut
-      $(@).find(".tags").fadeTo(global.timing, 0)
+      $(@).find(".tags").fadeTo(global.timing, )
   )
 
   $("#portfolio .select").find(".backward").click ->

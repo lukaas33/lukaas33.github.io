@@ -364,7 +364,7 @@
     $("#portfolio .preview").hover(function() {
       return $(this).find(".tags").fadeTo(global.timing, 1);
     }, function() {
-      return $(this).find(".tags").fadeTo(global.timing, 0);
+      return $(this).find(".tags").fadeTo(global.timing);
     });
     $("#portfolio .select").find(".backward").click(function() {
       return switchPage(-1);

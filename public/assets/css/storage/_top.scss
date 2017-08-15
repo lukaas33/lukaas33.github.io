@@ -2,24 +2,55 @@
   nav {
     // Local variables
     $height: 5vh; // Height local to the nav
-		  $padding: 1vh; // Padding local to nav
+	  $padding: 1vh; // Padding local to nav
 
     @include prefix(animation, slideDown $animation-long); // On load it slides in from the top with normal tranistion values
     @include shadow(2, 10);
     background-color: #fafafa;
-    height: $height;
+
     left: 0;
     overflow: hidden; // If elements are too big they are hidden
-    padding: $padding ($padding * 3); // More on the side than on the top
     position: fixed; // Travels with scroll
     top: 0;
     width: 100vw;
     z-index: 30; // Above main
 
+    @include media(phone-only) {
+      height: ($height + 3vh);
+      padding: ($padding + 1vh) ($padding * 3 + 1vh); // More on the side than on the top
+    }
+    @include media(tablet-portrait-up) {
+      height: ($height + 3vh);
+      padding: ($padding + 1.4vh) ($padding * 3 + 1vh); // More on the side than on the top
+    }
+    @include media(tablet-landscape-up) {
+      height: $height;
+      padding: $padding ($padding * 3); // More on the side than on the top
+    }
+    @include media(desktop-up) {
+      height: $height;
+      padding: $padding ($padding * 3); // More on the side than on the top
+    }
+
     .logo {
       float: left;
-      height: ($height - ($padding * 2));
-      width: ($height - ($padding * 2));
+
+      @include media(phone-only) {
+        height: ($height + 3vh - ($padding + 1vh) * 2);
+        width: ($height + 3vh - ($padding + 1vh) * 2);
+      }
+      @include media(tablet-portrait-up) {
+        height: ($height + 3vh - ($padding + 1.4vh) * 2);
+        width: ($height + 3vh - ($padding + 1.4vh) * 2);
+      }
+      @include media(tablet-landscape-up) {
+        height: ($height - ($padding * 2));
+        width: ($height - ($padding * 2));
+      }
+      @include media(desktop-up) {
+        height: ($height - ($padding * 2));
+        width: ($height - ($padding * 2));
+      }
 
       img {
         display: block;
@@ -68,6 +99,7 @@
 
           .material-icons {
             font-size: 2vh;
+            margin-bottom: .4vh;
           }
         }
       }

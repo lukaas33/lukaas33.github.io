@@ -21,8 +21,6 @@
     }
 
     .container {
-      overflow: hidden;
-
       @include media(phone-only) {
         height: auto;
         width: 100%;
@@ -33,18 +31,33 @@
       }
       @include media(tablet-landscape-up) {
         height: $height;
-        width: 50%; // Of card
+        width: auto; // Of card
       }
       @include media(desktop-up) {
         height: $height;
-        width: 50%; // Of card
+        width: auto; // Of card
       }
 
       img {
         display: block;
         transition: $animation; // Smooth resizing
-        height: auto;
-        width: 100%;
+
+        @include media(phone-only) {
+          height: auto;
+          width: 100%;
+        }
+        @include media(tablet-portrait-up) {
+          height: auto;
+          width: 100%;
+        }
+        @include media(tablet-landscape-up) {
+          height: 100%;
+          width: auto;
+        }
+        @include media(desktop-up) {
+          height: 100%;
+          width: auto;
+        }
       }
     }
 
@@ -61,11 +74,11 @@
       }
       @include media(tablet-landscape-up) {
         margin-top: 0;
-        width: 50%; // Of card
+        width: auto; // Of card
       }
       @include media(desktop-up) {
         margin-top: 0;
-        width: 50%; // Of card
+        width: auto; // Of card
       }
 
       h2 {

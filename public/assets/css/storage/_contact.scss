@@ -20,11 +20,11 @@
         }
         @include media(tablet-landscape-up) {
           margin-right: 2.5%;
-          width: 30%; // Of main
+          min-width: 30%; // Of main
         }
         @include media(desktop-up) {
           margin-right: 2.5%;
-          width: 30%; // Of main
+          min-width: 30%; // Of main
         }
 
         .container {
@@ -110,11 +110,11 @@
         }
         @include media(tablet-landscape-up) {
           margin-left: 2.5%;
-          width: 65%; // Of main
+          min-width: 65%; // Of main
         }
         @include media(desktop-up) {
           margin-left: 2.5%;
-          width: 65%; // Of main
+          min-width: 65%; // Of main
         }
 
         .text {
