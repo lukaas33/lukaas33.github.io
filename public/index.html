@@ -28,36 +28,18 @@
   <link href="assets/css/print.css" media="print" rel="stylesheet">
   <!-- Javascript -->
   <script async src="assets/javascript/scripts.js"></script>
-  <!-- Database -->
-  <!-- <?php
-    /* Functions */
-    require "database/functions.php"; // General functions
-
-    require "database/sorting.php"; // Change sorting of portfolio
-
-    require "database/interact.php"; // Sets and gets data in database
-
-    /* Actions */
-    require "database/connect.php"; // PHP that connects to the database
-
-    enterData(); // Adds and updates data
-    sorted(); // Sets the sorting
-  ?> -->
 </head>
 <body onload="console.log('// DOM completely loaded')">
   <div class="top">
-    <!-- <?php include "elements/top.html" // The nav and header ?> -->
-  </div>
-  <!-- !TEST -->
-  <div class="top">
+    <!-- !TEST -->
     <nav>
       <a class="logo" href=""><img src="assets/images/other/logo.png" alt="The website's logo"></a>
       <ul>
-          <li><a rel="noreferrer" href="#about">About</a></li>
-          <li><a rel="noreferrer" href="#experience">Experience</a></li>
-          <li><a rel="noreferrer" href="#skills">Skills</a></li>
-          <li><a rel="noreferrer" href="#portfolio">Portfolio</a></li>
-          <li><a rel="noreferrer" href="#contact"><i class="material-icons md-light">person</i></a></li>
+        <li><a rel="noreferrer" href="#about">About</a></li>
+        <li><a rel="noreferrer" href="#experience">Experience</a></li>
+        <li><a rel="noreferrer" href="#skills">Skills</a></li>
+        <li><a rel="noreferrer" href="#portfolio">Portfolio</a></li>
+        <li><a rel="noreferrer" href="#contact"><i class="material-icons md-light">person</i></a></li>
       </ul>
     </nav>
     <header>
@@ -141,16 +123,6 @@
         	</div>
         </div>
 
-        <!-- <?php
-          // Get from database table
-          $data = getData('experience', 'date_start', '*');
-          // Loop through the rows in the returned array
-          foreach ($data as $row)
-          {
-            // Creates elements with new variables for each row
-            include "elements/templates/experience.php";
-          }
-        ?> -->
       </div>
     </section>
 
@@ -198,16 +170,6 @@
         	</div>
         </div>
 
-        <!-- <?php
-          // Get from database table
-          $data = getData('skills');
-          // Loop through the rows in the returned array
-          foreach ($data as $row)
-          {
-            // Creates elements with new variables for each row
-            include "elements/templates/skills.php";
-          }
-        ?> -->
       </div>
     </section>
 
@@ -216,11 +178,15 @@
       <br>
       <!-- TODO Add search here -->
       <div class="sort">
-        <!-- <a rel="tag" href="<?= "?sort=" . $next; // Adds href to sort link on page load ?>">
-          <i class="material-icons md-dark">sort</i>
-          <span><?= $_GET['sort']; ?></span>
-          <div class="tooltip"><?= "Sort by " . $next; ?></div>
-        </a> -->
+        <!-- !TEST -->
+        <div class="sort">
+          <a rel="tag" href="?sort=Oldest">
+            <i class="material-icons md-dark">sort</i>
+            <span>Newest</span>
+            <div class="tooltip" style="display: none;">Sort by Oldest</div>
+          </a>
+        </div>
+
       </div>
       <div class="content">
         <!-- !TEST -->
@@ -238,16 +204,6 @@
         	</div>
         </div>
 
-        <!-- <?php
-          // Get from database table
-          $data = getData('projects',  sortStr($_GET['sort']), 'title, type, thumbnail');
-          // Loop through the rows in the returned array
-          foreach ($data as $row)
-          {
-            // Creates elements with new variables for each row
-            include "elements/templates/projects.php";
-          }
-        ?> -->
       </div>
       <div class="select">
         <button class="backward">
