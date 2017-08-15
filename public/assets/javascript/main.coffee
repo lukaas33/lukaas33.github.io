@@ -1,17 +1,18 @@
 # Main script for webste
 
 ### Variables ###
-animation = # Default animation options
-  duration: timing
-  easing: "swing"
-timing = 400 # Default time for animations
+global =
+  timing: 400 # Default time for animations
+  animation: # Default animation options
+    duration: 400
+    easing: "swing"
 
-state = # Not a cookie because it's an object
-  "experience": null
-  "skills": null
-timeout = null # Tracks timeout in tooltip
-num = 0 # Tracks number of pages
-previous = null # Tracks previous page index
+  state: # Not a cookie because it's an object
+    "experience": null
+    "skills": null
+  timeout: null # Tracks timeout in tooltip
+  pageNum: 0 # Tracks number of pages
+  previous: null # Tracks previous page index
 
 initCookies = ->
   # Cookies have to be initialised
@@ -83,12 +84,12 @@ setMap = (change) ->
   # Actions based on map cookie and if the cookie should be changed
   if cookie("map") == "true"
     if change
-      setOff(timing / 2) # When clicked
+      setOff(global.timing / 2) # When clicked
     else
       setOn(0) # Before page is loaded
   else if cookie("map") == "false"
     if change
-      setOn(timing / 2) # When clicked
+      setOn(global.timing / 2) # When clicked
     else
       setOff(0) # Before page is loaded
 
@@ -102,10 +103,9 @@ setProjects = ->
   # Divide projects into pages
   $portfolio = $("#portfolio .content")
   $content = $portfolio.find ".container"
-  num = Math.ceil $content.length / 9 # Sets num
-
-  for page in [1...(num + 1)] # Range of number pages
-    $page = $("<div></div>").addClass "page"
+  global.pageNum = Math.ceil $content.length / 9 # Sets number of pages
+  for page in [1...(global.pageNum + 1)] # Range of number pages
+    $page = $("<div></div>").addClass "page" # Create element
     $page.attr("num", page)
     last = 9 * page # For page one the last index will be 9, for page two 18
 
@@ -117,7 +117,7 @@ setPages = (time) ->
   $pages = $("#portfolio").find ".page"
   current = parseInt(cookie "page")
   target = $pages
-  target = $($pages[previous - 1]) if previous != null
+  target = $($pages[global.previous - 1]) if global.previous != null
 
   target.fadeOut  # Most are hidden
     duration: time
@@ -160,13 +160,14 @@ sinceDate = (date) ->
     return String(Math.floor years) + " years"
 
 switchPage = (change) ->
-  previous = parseInt(cookie "page")
-  newPage = previous + change
-  newPage = num if newPage < 1 # To the last page
-  newPage = 1 if newPage > num # To the last page
-  console.log "Switching to #{newPage}"
-  cookie("page", newPage) # Update
-  setPages timing
+  if global.pageNum > 1
+    global.previous = parseInt(cookie "page")
+    newPage = global.previous + change
+    newPage = global.pageNum if newPage < 1 # To the last page
+    newPage = 1 if newPage > global.pageNum # To the last page
+    console.log "Switching to #{newPage}"
+    cookie("page", newPage) # Update
+    setPages global.timing
 
 highLight = ->
   # Highlights items in the menu bar
@@ -198,7 +199,7 @@ scrollToLoc = (section) ->
   $("html, body").animate
     scrollTop: location # Fully visible
     {
-      duration: timing * 2 # Double the standard time
+      duration: global.timing * 2 # Double the standard time
       easing: "swing" # Animate with swing easing
     }
 
@@ -207,19 +208,19 @@ toggle = (card, active) ->
   animate = (card) ->
     $collapse = $(card).find ".collapse"
     $collapse.slideToggle
-      duration: timing
+      duration: global.timing
       easing: "swing" # Animate with swing easing
 
   # If this card isn't selected
-  if state[active] != card or state[active] == null
-    animate state[active] # Toggle previous
-    state[active] = card # Update
+  if global.state[active] != card or global.state[active] == null
+    animate global.state[active] # Toggle previous
+    global.state[active] = card # Update
     animate card # Toggle new
 
   # If already selected
-  else if state[active] == card
-    animate state[active] # Toggle previous
-    state[active] = null
+  else if global.state[active] == card
+    animate global.state[active] # Toggle previous
+    global.state[active] = null
 
 sendMail = (data, success) ->
   $.ajax
@@ -253,13 +254,13 @@ $ ->
     , (error) ->
       console.warn "SW registration failed: #{error}"
 
+  setDoc() # Set values TODO Use ejs for this
+
   setTimeout -> # Prevents the flashing on of the about link on load
     highLight() # Initial highlight at start of page
     $(window).scroll -> # Sets scroll event
       highLight() # Higlight correct link
-  , timing * 2
-
-  setDoc() # Set values
+  , global.timing * 2
 
   ### Events ###
   $(window).on "resize", ->
@@ -281,12 +282,12 @@ $ ->
   $(".tooltip").parent().hover(
     ->  # MouseIn
       $(@).find(".tooltip").off() # Doesn't respond to hover
-      timeout = setTimeout => # After some time hovering
-        $(@).find(".tooltip").fadeIn animation
+      global.timeout = setTimeout => # After some time hovering
+        $(@).find(".tooltip").fadeIn global.animation
       , 500
     -> # MouseOut
-      clearTimeout(timeout) # Cancel if leave before 500 ms
-      $(@).find(".tooltip").fadeOut animation
+      clearTimeout(global.timeout) # Cancel if leave before 500 ms
+      $(@).find(".tooltip").fadeOut global.animation
   )
 
   $("#experience .card").find(".head").click -> # Only click on the top
@@ -297,9 +298,9 @@ $ ->
 
   $("#portfolio .preview").hover(
     -> # MouseIn
-      $(@).find(".tags").fadeIn animation
+      $(@).find(".tags").fadeIn global.animation
     -> #MouseOut
-      $(@).find(".tags").fadeOut animation
+      $(@).find(".tags").fadeOut global.animation
   )
 
   $("#portfolio .select").find(".backward").click ->
@@ -359,10 +360,10 @@ $ ->
         if success
           $(@).trigger "reset" # Empties form
           $(@).find(".error").html "Email was successfully sent"
-          $(@).find(".error").fadeIn animation
+          $(@).find(".error").fadeIn global.animation
         else
           $(@).find(".error").html "An error has occured while sending"
-          $(@).find(".error").fadeIn animation
+          $(@).find(".error").fadeIn global.animation
       ).bind @ # Will keep this in another scope
 
     catch error
@@ -370,10 +371,10 @@ $ ->
       # Error has been thrown
       if error.message == "Input empty"
         $(@).find(".error").html "Please fill out all fields"
-        $(@).find(".error").fadeIn animation
+        $(@).find(".error").fadeIn global.animation
       else if error.message == "Email incorrect"
         $(@).find(".error").html "The email entered is invalid"
-        $(@).find(".error").fadeIn animation
+        $(@).find(".error").fadeIn global.animation
       else
         $(@).find(".error").html "An unknown error occured"
-        $(@).find(".error").fadeIn animation
+        $(@).find(".error").fadeIn global.animation

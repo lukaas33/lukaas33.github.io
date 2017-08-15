@@ -2,25 +2,22 @@
 /* Variables */
 
 (function() {
-  var animation, cookie, highLight, initCookies, num, previous, scrollToLoc, sendMail, setDate, setDoc, setForm, setMap, setPages, setProjects, sinceDate, state, switchPage, timeout, timing, toggle;
+  var cookie, global, highLight, initCookies, scrollToLoc, sendMail, setDate, setDoc, setForm, setMap, setPages, setProjects, sinceDate, switchPage, toggle;
 
-  animation = {
-    duration: timing,
-    easing: "swing"
+  global = {
+    timing: 400,
+    animation: {
+      duration: 400,
+      easing: "swing"
+    },
+    state: {
+      "experience": null,
+      "skills": null
+    },
+    timeout: null,
+    pageNum: 0,
+    previous: null
   };
-
-  timing = 400;
-
-  state = {
-    "experience": null,
-    "skills": null
-  };
-
-  timeout = null;
-
-  num = 0;
-
-  previous = null;
 
   initCookies = function() {
     if (cookie("map") === void 0) {
@@ -119,13 +116,13 @@
     };
     if (cookie("map") === "true") {
       if (change) {
-        return setOff(timing / 2);
+        return setOff(global.timing / 2);
       } else {
         return setOn(0);
       }
     } else if (cookie("map") === "false") {
       if (change) {
-        return setOn(timing / 2);
+        return setOn(global.timing / 2);
       } else {
         return setOff(0);
       }
@@ -144,9 +141,9 @@
     var $content, $page, $portfolio, card, i, j, last, page, ref, ref1, ref2, results;
     $portfolio = $("#portfolio .content");
     $content = $portfolio.find(".container");
-    num = Math.ceil($content.length / 9);
+    global.pageNum = Math.ceil($content.length / 9);
     results = [];
-    for (page = i = 1, ref = num + 1; 1 <= ref ? i < ref : i > ref; page = 1 <= ref ? ++i : --i) {
+    for (page = i = 1, ref = global.pageNum + 1; 1 <= ref ? i < ref : i > ref; page = 1 <= ref ? ++i : --i) {
       $page = $("<div></div>").addClass("page");
       $page.attr("num", page);
       last = 9 * page;
@@ -163,8 +160,8 @@
     $pages = $("#portfolio").find(".page");
     current = parseInt(cookie("page"));
     target = $pages;
-    if (previous !== null) {
-      target = $($pages[previous - 1]);
+    if (global.previous !== null) {
+      target = $($pages[global.previous - 1]);
     }
     return target.fadeOut({
       duration: time,
@@ -215,17 +212,19 @@
 
   switchPage = function(change) {
     var newPage;
-    previous = parseInt(cookie("page"));
-    newPage = previous + change;
-    if (newPage < 1) {
-      newPage = num;
+    if (global.pageNum > 1) {
+      global.previous = parseInt(cookie("page"));
+      newPage = global.previous + change;
+      if (newPage < 1) {
+        newPage = global.pageNum;
+      }
+      if (newPage > global.pageNum) {
+        newPage = 1;
+      }
+      console.log("Switching to " + newPage);
+      cookie("page", newPage);
+      return setPages(global.timing);
     }
-    if (newPage > num) {
-      newPage = 1;
-    }
-    console.log("Switching to " + newPage);
-    cookie("page", newPage);
-    return setPages(timing);
   };
 
   highLight = function() {
@@ -259,7 +258,7 @@
     return $("html, body").animate({
       scrollTop: location
     }, {
-      duration: timing * 2,
+      duration: global.timing * 2,
       easing: "swing"
     });
   };
@@ -270,17 +269,17 @@
       var $collapse;
       $collapse = $(card).find(".collapse");
       return $collapse.slideToggle({
-        duration: timing,
+        duration: global.timing,
         easing: "swing"
       });
     };
-    if (state[active] !== card || state[active] === null) {
-      animate(state[active]);
-      state[active] = card;
+    if (global.state[active] !== card || global.state[active] === null) {
+      animate(global.state[active]);
+      global.state[active] = card;
       return animate(card);
-    } else if (state[active] === card) {
-      animate(state[active]);
-      return state[active] = null;
+    } else if (global.state[active] === card) {
+      animate(global.state[active]);
+      return global.state[active] = null;
     }
   };
 
@@ -319,13 +318,13 @@
         return console.warn("SW registration failed: " + error);
       });
     }
+    setDoc();
     setTimeout(function() {
       highLight();
       return $(window).scroll(function() {
         return highLight();
       });
-    }, timing * 2);
-    setDoc();
+    }, global.timing * 2);
 
     /* Events */
     $(window).on("resize", function() {
@@ -347,14 +346,14 @@
     });
     $(".tooltip").parent().hover(function() {
       $(this).find(".tooltip").off();
-      return timeout = setTimeout((function(_this) {
+      return global.timeout = setTimeout((function(_this) {
         return function() {
-          return $(_this).find(".tooltip").fadeIn(animation);
+          return $(_this).find(".tooltip").fadeIn(global.animation);
         };
       })(this), 500);
     }, function() {
-      clearTimeout(timeout);
-      return $(this).find(".tooltip").fadeOut(animation);
+      clearTimeout(global.timeout);
+      return $(this).find(".tooltip").fadeOut(global.animation);
     });
     $("#experience .card").find(".head").click(function() {
       return toggle($(this).closest(".card")[0], "experience");
@@ -363,9 +362,9 @@
       return toggle($(this).closest(".card")[0], "skills");
     });
     $("#portfolio .preview").hover(function() {
-      return $(this).find(".tags").fadeIn(animation);
+      return $(this).find(".tags").fadeIn(global.animation);
     }, function() {
-      return $(this).find(".tags").fadeOut(animation);
+      return $(this).find(".tags").fadeOut(global.animation);
     });
     $("#portfolio .select").find(".backward").click(function() {
       return switchPage(-1);
@@ -405,10 +404,10 @@
           if (success) {
             $(this).trigger("reset");
             $(this).find(".error").html("Email was successfully sent");
-            return $(this).find(".error").fadeIn(animation);
+            return $(this).find(".error").fadeIn(global.animation);
           } else {
             $(this).find(".error").html("An error has occured while sending");
-            return $(this).find(".error").fadeIn(animation);
+            return $(this).find(".error").fadeIn(global.animation);
           }
         }).bind(this));
       } catch (error1) {
@@ -416,13 +415,13 @@
         console.warn(error);
         if (error.message === "Input empty") {
           $(this).find(".error").html("Please fill out all fields");
-          return $(this).find(".error").fadeIn(animation);
+          return $(this).find(".error").fadeIn(global.animation);
         } else if (error.message === "Email incorrect") {
           $(this).find(".error").html("The email entered is invalid");
-          return $(this).find(".error").fadeIn(animation);
+          return $(this).find(".error").fadeIn(global.animation);
         } else {
           $(this).find(".error").html("An unknown error occured");
-          return $(this).find(".error").fadeIn(animation);
+          return $(this).find(".error").fadeIn(global.animation);
         }
       }
     });
