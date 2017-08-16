@@ -7,8 +7,8 @@
   sinceDate = function(date) {
     var days, milli, offset, today, years;
     milli = 8.64e7;
-    today = Date.now();
-    offset = today - date.getTime();
+    today = new Date(Date.now());
+    offset = Date.UTC(today) - Date.UTC(date);
     days = offset / milli;
     years = days / 365.2425;
     if (days < 2) {
@@ -35,10 +35,10 @@
       if (end !== "now") {
         end = new Date(end);
         date.find(".end").text(end.getFullYear());
-        results.push(date.find(".tooltip").html("ended " + (sinceDate(begin)) + " ago"));
+        results.push(date.find(".tooltip").html("Ended " + (sinceDate(begin)) + " ago"));
       } else {
         date.find(".end").text(end);
-        results.push(date.find(".tooltip").html("started " + (sinceDate(begin)) + " ago"));
+        results.push(date.find(".tooltip").html("Started " + (sinceDate(begin)) + " ago"));
       }
     }
     return results;

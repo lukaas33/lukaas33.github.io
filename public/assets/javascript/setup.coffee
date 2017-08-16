@@ -2,8 +2,8 @@
 sinceDate = (date) ->
   # Calculates time since date
   milli = 8.64e7 # Milliseconds in a day
-  today = Date.now() # Right now in milliseconds since 1970-01-01
-  offset = today - date.getTime()  # Difference with 1970-01-01
+  today = new Date Date.now() # Right now as object
+  offset = Date.UTC(today) - Date.UTC(date)  # Difference with 1970-01-01 in UTC
 
   days = offset / milli
   years = days / 365.2425
@@ -31,10 +31,10 @@ setDate = (dates) ->
     if end != "now" # If the string is not "current" convert to date
       end = new Date end
       date.find(".end").text end.getFullYear() # Set text to the year
-      date.find(".tooltip").html "ended #{sinceDate begin} ago"
+      date.find(".tooltip").html "Ended #{sinceDate begin} ago"
     else
       date.find(".end").text end # Set text to the string
-      date.find(".tooltip").html "started #{sinceDate begin} ago"
+      date.find(".tooltip").html "Started #{sinceDate begin} ago"
 
 setProjects = ->
   # Divide projects into pages
