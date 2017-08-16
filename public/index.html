@@ -6,6 +6,8 @@
   <meta name="description" content="The personal resume and portfolio of Lucas van Osenbruggen.">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Verify ownership -->
+  <meta name="google-site-verification" content="uBKBwodm244IRdbB2qDBus4wgTX706KrGGqC-SdZPFA"/>
   <!-- App data -->
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -22,8 +24,6 @@
   <link rel="mask-icon" href="assets/images/favicon/safari-pinned-tab.svg" color="#00bcd4">
   <link rel="shortcut icon" href="assets/images/favicon/favicon.ico">
   <meta name="msapplication-TileImage" content="assets/images/favicon/mstile-144x144.png">
-  <!-- Verify ownership -->
-  <meta name="google-site-verification" content="uBKBwodm244IRdbB2qDBus4wgTX706KrGGqC-SdZPFA" />
   <!-- Css -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -31,7 +31,7 @@
   <link href="assets/css/main.css" media="screen" rel="stylesheet">
   <link href="assets/css/print.css" media="print" rel="stylesheet">
   <!-- Javascript -->
-  <script async src="assets/javascript/scripts.js"></script>
+  <script src="assets/javascript/scripts.js" async></script>
 </head>
 <body onload="console.log('// DOM completely loaded')">
   <div class="top">
@@ -46,8 +46,7 @@
         <li><a rel="noreferrer" href="#contact"><i class="material-icons md-light">person</i></a></li>
       </ul>
     </nav>
-    <header>
-    </header>
+    <header></header>
   </div>
   <!-- TODO Take the main out of the file to make an app shell -->
   <!-- TODO load parts of the page when needed -->
@@ -83,7 +82,8 @@
             <p>
               Hello world. My name is Lucas van Osenbruggen. <br>
               I'm <span class="since" date="2000-08-22 22:22"></span> old and live in the Netherlands. <br>
-              I'm currently unemployed and a student in high school. For details, checkout the cards in the experience section. <br>
+              I'm currently unemployed and a student in high school.
+              For details, checkout the cards in the experience section. <br>
               To see all the things that I think I'm good at, go to the skills section. <br>
               This portfolio you're looking at right now was build from scratch by me.
               You can see how smoothly it all went at <a rel="noopener" target="_blank" href="https://github.com/lukaas33/lukaas33.github.io">my repo</a>.
@@ -149,11 +149,13 @@
         			<hr>
         			<div class="box">
         				<div class="description">
-        					<p>Like most people I learned a lot of my English from the internet. <br>
-                  <br>
-                  I always liked the idea of an universal language and English comes pretty close.
-                  Because information is more widely available in English I always do my research in English.
-                  Most of my products are in English because it will have the potential to reach more people.</p>
+        					<p>
+                    Like most people I learned a lot of my English from the internet. <br>
+                    <br>
+                    I always liked the idea of an universal language and English comes pretty close.
+                    Because information is more widely available in English I always do my research in English.
+                    Most of my products are in English because it will have the potential to reach more people.
+                  </p>
         				</div>
         				<div class="progress">
         					<div class="container">

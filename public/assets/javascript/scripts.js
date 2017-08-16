@@ -40,8 +40,8 @@ global = {
     script.onload = function() {
       callback();
     };
-
     script.src = url;
+    script.async = true;
     document.getElementsByTagName("head")[0].appendChild(script);
   };
 
