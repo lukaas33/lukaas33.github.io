@@ -61,7 +61,7 @@
           z-index: 30; // Above main
 
           &:hover {
-            @include shadow(8, 16);
+            @include shadow(14, 28)
             z-index: 40; // Above the others
           }
 
@@ -80,13 +80,13 @@
             width: 100%;
 
             &:hover {
-              background-color: rgba(0, 0, 0, .45); // Darker shade
+              background-color: rgba(0, 0, 0, .25); // Darker shade to show text
             }
 
             .tags {
               color: #fff;
               margin: auto;
-              opacity: 0;
+              opacity: 0; // Displayed on hover
               text-align: center;
 
               h3 {

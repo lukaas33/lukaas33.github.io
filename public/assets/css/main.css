@@ -290,13 +290,13 @@ main .part#portfolio .content .page { margin: 2.5vw; width: 100%; }
 
 main .part#portfolio .content .page .container .preview { height: 100%; position: relative; transition: 400ms ease-in-out; width: 100%; z-index: 30; }
 
-main .part#portfolio .content .page .container .preview:hover { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.2); z-index: 40; }
+main .part#portfolio .content .page .container .preview:hover { box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.2); z-index: 40; }
 
 main .part#portfolio .content .page .container .preview img { display: block; width: 100%; }
 
 main .part#portfolio .content .page .container .preview span { height: 100%; left: 0; position: absolute; top: 0; transition: 400ms ease-in-out; width: 100%; }
 
-main .part#portfolio .content .page .container .preview span:hover { background-color: rgba(0, 0, 0, 0.45); }
+main .part#portfolio .content .page .container .preview span:hover { background-color: rgba(0, 0, 0, 0.25); }
 
 main .part#portfolio .content .page .container .preview span .tags { color: #fff; margin: auto; opacity: 0; text-align: center; }
 
