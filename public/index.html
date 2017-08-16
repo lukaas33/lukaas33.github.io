@@ -37,7 +37,21 @@
   <div class="top">
     <!-- !TEST TODO Use ejs for this -->
     <nav>
-      <a class="logo" href=""><img src="assets/images/other/logo.png" alt="The website's logo"></a>
+      <a class="logo" href="">
+        <picture>
+        <img
+          sizes="(max-width: 360px) 100vw, 360px"
+          srcset="
+          assets/images/other/logo_50.png 50w,
+          assets/images/other/logo_130.png 130w,
+          assets/images/other/logo_191.png 191w,
+          assets/images/other/logo_248.png 248w,
+          assets/images/other/logo_311.png 311w,
+          assets/images/other/logo_360.png 360w"
+          src="assets/images/other/logo_360.png"
+          alt="My personal logo">
+        </picture>
+      </a>
       <ul>
         <li><a rel="noreferrer" href="#about">About</a></li>
         <li><a rel="noreferrer" href="#experience">Experience</a></li>
