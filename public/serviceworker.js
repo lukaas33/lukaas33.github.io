@@ -1,4 +1,10 @@
-var cacheUrls = [];
+var cacheUrls = [
+  "index.html",
+  "manifest.json",
+  "assets/css/main.css",
+  "assets/javascript/main.js",
+  "assets/javascript/scripts.js"
+];
 
 self.addEventListener("install", function(event) {
   event.waitUntil(

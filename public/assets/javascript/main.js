@@ -194,19 +194,19 @@
 
   sinceDate = function(date) {
     var days, milli, offset, today, years;
-    milli = 86400000;
+    milli = 8.64e7;
     today = Date.now();
     offset = today - date.getTime();
     days = offset / milli;
-    years = days / 365.25;
+    years = days / 365.2425;
     if (days < 2) {
-      return String(Math.floor(days)) + " day";
+      return (String(Math.floor(days))) + " day";
     } else if (years < 1) {
-      return String(Math.floor(days)) + " days";
+      return (String(Math.floor(days))) + " days";
     } else if (years < 2) {
-      return String(Math.floor(years)) + " year";
+      return (String(Math.floor(years))) + " year";
     } else {
-      return String(Math.floor(years)) + " years";
+      return (String(Math.floor(years))) + " years";
     }
   };
 
@@ -364,7 +364,7 @@
     $("#portfolio .preview").hover(function() {
       return $(this).find(".tags").fadeTo(global.timing, 1);
     }, function() {
-      return $(this).find(".tags").fadeTo(global.timing);
+      return $(this).find(".tags").fadeTo(global.timing, 0);
     });
     $("#portfolio .select").find(".backward").click(function() {
       return switchPage(-1);

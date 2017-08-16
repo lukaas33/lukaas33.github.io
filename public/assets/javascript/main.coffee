@@ -137,27 +137,28 @@ setDoc = ->
 
   setMap false # Initial value of map
   setForm() # Set previous value saved in cookie
+  # TODO Following via ejs
   setProjects() # Sets up page system
   setPages 0 # Sets the pages initial value
 
 sinceDate = (date) ->
   # Calculates time since date
-  milli = 86400000 # Milliseconds in a day
+  milli = 8.64e7 # Milliseconds in a day
   today = Date.now() # Right now in milliseconds since 1970-01-01
   offset = today - date.getTime()  # Difference with 1970-01-01
 
   days = offset / milli
-  years = days / 365.25
+  years = days / 365.2425
 
   # Returns as integer with unit
   if days < 2
-    return String(Math.floor days) + " day"
+    return "#{String(Math.floor days)} day"
   else if years < 1
-    return String(Math.floor days) + " days"
+    return "#{String(Math.floor days)} days"
   else if years < 2
-    return String(Math.floor years) + " year"
+    return "#{String(Math.floor years)} year"
   else
-    return String(Math.floor years) + " years"
+    return "#{String(Math.floor years)} years"
 
 switchPage = (change) ->
   if global.pageNum > 1
@@ -300,7 +301,7 @@ $ ->
     -> # MouseIn
       $(@).find(".tags").fadeTo(global.timing, 1)
     -> # MouseOut
-      $(@).find(".tags").fadeTo(global.timing, )
+      $(@).find(".tags").fadeTo(global.timing, 0)
   )
 
   $("#portfolio .select").find(".backward").click ->
