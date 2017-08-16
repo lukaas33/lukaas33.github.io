@@ -7,7 +7,7 @@
 @import 'storage/classes';
 
 :root {
-  font-size: 12px; // Base font size, all are based on this one via the rem unit
+  font-size: 14px; // Base font size, all are based on this one via the rem unit
 }
 
 body {
@@ -21,13 +21,9 @@ body {
 }
 
 a {
+  @include show-attr(href);
   color: $color-darkgrey;
   text-decoration: none;
-
-  &::after {
-    content: ' ['attr(href)']'; // Won't be visible in print
-    font-style: italic;
-  }
 }
 
 .part {
@@ -42,16 +38,11 @@ a {
 
   .card {
     hr {
-      border: 0; // No double borders
-      border-top: 1px solid $color-lightgrey;
-      width: 100%;
+      display: none;
     }
 
     .since {
-      &::after {
-        content: ' ['attr(date)']'; // Won't be visible in print
-        font-style: italic;
-      }
+      @include show-attr(date);
     }
 
     .collapse {
@@ -80,17 +71,46 @@ a {
       }
 
       .tagline {
-          font-size: 1.2rem; // Based on base font-size
+        font-size: 1.2rem; // Based on base font-size
       }
   }
 }
 
-#skills {
-
+#experience {
+  .card {
+    &::after {
+      border: 0; // No double borders
+      border-top: 1px solid $color-lightgrey;
+      width: 100%;
+    }
+  }
 }
 
-#experience {
+#skills {
+  .card {
 
+    .container {
+      p {
+        display: inline-block;
+      }
+
+      progress {
+        width: 0;
+        display: inline-block;
+
+        &::after {
+          content: attr(value)'/'attr(max);
+        }
+      }
+
+    }
+
+    &::after {
+      border: 0; // No double borders
+      border-top: 1px solid $color-lightgrey;
+      width: 100%;
+    }
+  }
 }
 
 #contact {
@@ -102,8 +122,6 @@ a {
       }
 
       .text {
-        margin: 0 25vw;
-        width: 50vw;
 
         li {
           list-style: none;

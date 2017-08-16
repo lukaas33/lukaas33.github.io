@@ -67,6 +67,14 @@ $color-lightgrey: #bdbdbd;
   }
 }
 
+@mixin show-attr($name) {
+  // Shows data from an attribute
+  &::after {
+    content: ' ['attr(#{$name})']'; // Won't be visible in print
+    font-style: italic;
+  }
+}
+
 @mixin prefix($name, $argument) {
   // Adds prefixes to increase browser support Use prefixes for animations, flexbox and transform
   -moz-#{$name}: #{$argument};
