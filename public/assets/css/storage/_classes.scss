@@ -118,9 +118,7 @@
     @include shadow(8, 22)
   }
 
-  &  > p,
-  & > span,
-  & > i {
+  &:first-child {
     vertical-align: middle; // Centers text elements vertically
   }
 }
