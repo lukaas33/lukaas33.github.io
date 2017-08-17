@@ -142,7 +142,9 @@
 }
 
 %flex {
-  display: -webkit-flex; // Allows flexiable centering
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 
 %vertical {
@@ -179,7 +181,9 @@
 }
 
 %res-cards {
-  display: -webkit-flex; // Allows flexiable centering
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 
   @include media(phone-only) {
     -webkit-box-orient: vertical;
@@ -188,6 +192,9 @@
     flex-direction: column; // Can't extend here
   }
   @include media(tablet-portrait-up) {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: column; // Can't extend here
   }
   @include media(tablet-landscape-up) {
@@ -197,6 +204,9 @@
     flex-direction: row; // Can't extend here
   }
   @include media(desktop-up) {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row; // Can't extend here
   }
 }
