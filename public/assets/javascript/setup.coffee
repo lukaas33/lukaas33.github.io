@@ -3,8 +3,9 @@ sinceDate = (date) ->
   # Calculates time since date
   milli = 8.64e7 # Milliseconds in a day
   today = new Date Date.now() # Right now as object
-  offset = Date.UTC(today) - Date.UTC(date)  # Difference with 1970-01-01 in UTC
-
+  date = new Date date.toUTCString() # Convert to UTC
+  today = new Date today.toUTCString() # Convert to UTC
+  offset = today.getTime() - date.getTime()  # Difference with 1970-01-01 in UTC
   days = offset / milli
   years = days / 365.2425
 

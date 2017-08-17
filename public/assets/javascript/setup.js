@@ -8,7 +8,9 @@
     var days, milli, offset, today, years;
     milli = 8.64e7;
     today = new Date(Date.now());
-    offset = Date.UTC(today) - Date.UTC(date);
+    date = new Date(date.toUTCString());
+    today = new Date(today.toUTCString());
+    offset = today.getTime() - date.getTime();
     days = offset / milli;
     years = days / 365.2425;
     if (days < 2) {
