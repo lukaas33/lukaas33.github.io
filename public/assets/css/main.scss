@@ -11,11 +11,16 @@
 
 // Universal and global
 * {
+  -webkit-box-sizing: border-box;
   box-sizing: border-box; // Box model acts normal
   margin: 0;
   padding: 0;
 }
 
+::-moz-selection {
+  @include color(secondary, 'background-color', 100);
+  color: #fff;
+}
 ::selection {
   @include color(secondary, 'background-color', 100);
   color: #fff;
@@ -69,7 +74,7 @@ body {
 
 // Page style
 main {
-  @include prefix(animation, slideUp $animation-long); // On load it slides in from the bottom with normal tranistion values
+  animation: slideUp $animation-long; // On load it slides in from the bottom with normal tranistion values
   margin: 0 $base-margin; // Main gets centered horizontally
   position: relative; // Z-index doesn't work on static elements
   width: (100vw - (2 * $base-margin));

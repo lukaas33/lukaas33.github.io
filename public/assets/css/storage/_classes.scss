@@ -1,6 +1,7 @@
 %card {
   @include shadow(1, 3);
   background-color: #fff;
+  -webkit-transition: $animation;
   transition: $animation;
 
   &:hover {
@@ -64,6 +65,7 @@
   width: 100%; // Of the card
 
   &::-webkit-input-placeholder {
+    -webkit-transition: $animation;
     transition: $animation;
   }
 
@@ -74,6 +76,7 @@
     &::-webkit-input-placeholder {
       @include color(secondary, 'color', 200);
       font-size: .75rem;
+      -webkit-transform: translateY(-150%);
       transform: translateY(-150%); // Slightly above the input
     }
   }
@@ -90,6 +93,7 @@
   padding: ($base-margin / 18) ($base-margin / 12);
   position: absolute;
   top: 0;
+  -webkit-transform: translateY(-110%);
   transform: translateY(-110%); // Above the selected
   white-space: nowrap; // No two lines
 
@@ -148,21 +152,26 @@
 
 %colomn {
   @extend %flex; // Extention of flex
-  @include prefix(flex-direction, column); // Vertically above to each other
+  flex-direction: column; // Vertically above to each other
 }
 
 %grid {
   @extend %flex; // Extention of flex
-	@include prefix(flex-wrap, wrap); // Items to long for the line will overflow
+	flex-wrap: wrap; // Items to long for the line will overflow
 }
 
 %flex-fill {
   @extend %flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   overflow: hidden;
 
   img {
+    -ms-flex-negative: 0;
     flex-shrink: 0;
     min-width: 100%;
     min-height: 100%
@@ -173,15 +182,21 @@
   display: -webkit-flex; // Allows flexiable centering
 
   @include media(phone-only) {
-    @include prefix(flex-direction, column); // Can't extend here
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column; // Can't extend here
   }
   @include media(tablet-portrait-up) {
-    @include prefix(flex-direction, column); // Can't extend here
+    flex-direction: column; // Can't extend here
   }
   @include media(tablet-landscape-up) {
-    @include prefix(flex-direction, row); // Can't extend here
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row; // Can't extend here
   }
   @include media(desktop-up) {
-    @include prefix(flex-direction, row); // Can't extend here
+    flex-direction: row; // Can't extend here
   }
 }

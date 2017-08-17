@@ -8,7 +8,7 @@
     @extend %res-cards; // Displays next to each other or above
 
     .card {
-      	height: $height;
+    	height: $height;
 
       // Card 1
       &:nth-child(1) {
@@ -67,6 +67,9 @@
                     @extend %vertical; // Items vertically aligned
 
                     p {
+                      -webkit-user-select: text;
+                      -moz-user-select: text;
+                      -ms-user-select: text;
                       user-select: text; // Can be selected
                     }
                   }
@@ -95,7 +98,8 @@
 
           &:hover,
           &:focus {
-            box-shadow: none; // Overwrites default button
+            -webkit-box-shadow: none;
+                    box-shadow: none; // Overwrites default button
           }
         }
       }

@@ -40,6 +40,7 @@
 
       img {
         display: block;
+        -webkit-transition: $animation;
         transition: $animation; // Smooth resizing
 
         @include media(phone-only) {
@@ -62,6 +63,9 @@
     }
 
     .text {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
       user-select: text; // Can be selected
 
       @include media(phone-only) {

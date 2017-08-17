@@ -4,8 +4,11 @@
     $height: 5vh; // Height local to the nav
 	  $padding: 1vh; // Padding local to nav
 
-    @include prefix(animation, slideDown $animation-long); // On load it slides in from the top with normal tranistion values
     @include shadow(2, 10);
+    -webkit-animation: slideDown $animation-long; // Padding local to nav
+
+    @include shadow(2, 10);
+            animation: slideDown $animation-long; // On load it slides in from the top with normal tranistion values
     background-color: #fafafa;
 
     left: 0;
@@ -78,6 +81,7 @@
           @extend %click;
           color: $color-darkgrey;
           text-decoration: none;
+          -webkit-transition: $animation;
           transition: $animation;
         }
 
@@ -124,9 +128,10 @@
   }
 
   header {
-    @include prefix(animation, slideDown $animation-long); // On load it slides in from the top with normal tranistion values
     @include color(primary, 'background-color', 500);
     @include shadow(2, 6);
+    -webkit-animation: slideDown $animation-long;
+    animation: slideDown $animation-long; // On load it slides in from the top with normal tranistion values
     height: 60vh;
     position: absolute; // Background
     top: 0;
