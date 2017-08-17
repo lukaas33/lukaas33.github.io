@@ -44,10 +44,12 @@
 body {
   background-color: #eee;
   color: $color-darkgrey; // Default color, applies mostly to text
-  font-family: 'noto-sans', 'roboto', sans-serif; // Applies to everything
+  font-family: 'Noto-sans', 'Roboto', sans-serif; // Applies to everything
   font-size: 1rem; // Defaults to base font-size
   min-width: 400px; // Can't be resized smaller
   user-select: none; // No selecting text is standard It is overwritten in some text divs
+  -webkit-font-smoothing: antialiased; // Font rendering
+  -moz-osx-font-smoothing: grayscale;
 }
 
 // Needed to display the icon font properly
@@ -67,6 +69,11 @@ body {
   &.md-light.md-inactive {
     color: rgba(255, 255, 255, .5);
   }
+}
+
+.notransition {
+  -webkit-transition: none !important;
+  transition: none !important; // Disables transition time
 }
 
 // Top style

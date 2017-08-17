@@ -11,8 +11,9 @@ switchPage = (change) ->
 
 highLight = ->
   # Highlights items in the menu bar
-  $li = $("nav ul li").find "a"
+  $li = $("nav ul li")
   $li.removeClass "focus" # Removes the focus each time
+  $li.next().removeClass "show"
   position = $(window).scrollTop()
   calcTop = (element) ->
     # Adds margin to the scroll position
@@ -23,12 +24,16 @@ highLight = ->
   # Higlights navitem based on position in screen
   if position <= calcTop $("#about")
     $($li[0]).addClass "focus"
+    $($li[1]).addClass "show"
   else if position < calcTop $("#experience")
     $($li[1]).addClass "focus"
+    $($li[2]).addClass "show"
   else if position < calcTop $("#skills")
     $($li[2]).addClass "focus"
+    $($li[3]).addClass "show"
   else if position < calcTop $("#portfolio")
     $($li[3]).addClass "focus"
+    $($li[4]).addClass "show"
   else if position < calcTop $("#contact")
     $($li[4]).addClass "focus"
 
@@ -139,14 +144,20 @@ $ ->
 
   ### Events ###
   $(window).on "resize", ->
-    if $(@).width() == 599
-      console.log "Breakpoint: phone-only"
-    else if $(@).width() == 600
-      console.log "Breakpoint: tablet-portrait-up"
-    else if $(@).width() == 900
-      console.log "Breakpoint: tablet-landscape-up"
-    else if $(@).width() == 1200
-      console.log "Breakpoint: desktop-up"
+    $('*').addClass "notransition"
+    clearTimeout(resizeTimer)
+    resizeTimer = setTimeout -> # Resizing has stopped
+      $('*').removeClass "notransition"
+
+      if $(@).width() >= 1200
+        console.log "Breakpoint: desktop-up"
+      else if $(@).width() >= 900
+        console.log "Breakpoint: tablet-landscape-up"
+      else if $(@).width() >= 600
+        console.log "Breakpoint: tablet-portrait-up"
+      else if $(@).width() <= 599
+        console.log "Breakpoint: phone-only"
+    , 250
 
   $("nav ul li").find("a").click (event) ->
     # Go to section

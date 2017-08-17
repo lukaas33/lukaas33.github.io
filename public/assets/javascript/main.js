@@ -20,8 +20,9 @@
 
   highLight = function() {
     var $li, calcTop, position;
-    $li = $("nav ul li").find("a");
+    $li = $("nav ul li");
     $li.removeClass("focus");
+    $li.next().removeClass("show");
     position = $(window).scrollTop();
     calcTop = function(element) {
       var location, top;
@@ -30,13 +31,17 @@
       return location;
     };
     if (position <= calcTop($("#about"))) {
-      return $($li[0]).addClass("focus");
+      $($li[0]).addClass("focus");
+      return $($li[1]).addClass("show");
     } else if (position < calcTop($("#experience"))) {
-      return $($li[1]).addClass("focus");
+      $($li[1]).addClass("focus");
+      return $($li[2]).addClass("show");
     } else if (position < calcTop($("#skills"))) {
-      return $($li[2]).addClass("focus");
+      $($li[2]).addClass("focus");
+      return $($li[3]).addClass("show");
     } else if (position < calcTop($("#portfolio"))) {
-      return $($li[3]).addClass("focus");
+      $($li[3]).addClass("focus");
+      return $($li[4]).addClass("show");
     } else if (position < calcTop($("#contact"))) {
       return $($li[4]).addClass("focus");
     }
@@ -166,15 +171,21 @@
 
     /* Events */
     $(window).on("resize", function() {
-      if ($(this).width() === 599) {
-        return console.log("Breakpoint: phone-only");
-      } else if ($(this).width() === 600) {
-        return console.log("Breakpoint: tablet-portrait-up");
-      } else if ($(this).width() === 900) {
-        return console.log("Breakpoint: tablet-landscape-up");
-      } else if ($(this).width() === 1200) {
-        return console.log("Breakpoint: desktop-up");
-      }
+      var resizeTimer;
+      $('*').addClass("notransition");
+      clearTimeout(resizeTimer);
+      return resizeTimer = setTimeout(function() {
+        $('*').removeClass("notransition");
+        if ($(this).width() >= 1200) {
+          return console.log("Breakpoint: desktop-up");
+        } else if ($(this).width() >= 900) {
+          return console.log("Breakpoint: tablet-landscape-up");
+        } else if ($(this).width() >= 600) {
+          return console.log("Breakpoint: tablet-portrait-up");
+        } else if ($(this).width() <= 599) {
+          return console.log("Breakpoint: phone-only");
+        }
+      }, 250);
     });
     $("nav ul li").find("a").click(function(event) {
       var href;

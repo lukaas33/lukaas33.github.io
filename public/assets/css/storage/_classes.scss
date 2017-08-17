@@ -121,10 +121,6 @@
   &:focus {
     @include shadow(8, 22)
   }
-
-  &:first-child {
-    vertical-align: middle; // Centers text elements vertically
-  }
 }
 
 %normal {
@@ -145,6 +141,8 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  align-content: center;
+  align-items: center;
 }
 
 %vertical {
@@ -154,12 +152,15 @@
 
 %colomn {
   @extend %flex; // Extention of flex
-  flex-direction: column; // Vertically above to each other
+  flex-flow: nowrap column; // Vertically above to each other
 }
 
 %grid {
   @extend %flex; // Extention of flex
-	flex-wrap: wrap; // Items to long for the line will overflow
+	flex-flow: wrap row; // Items to long for the line will overflow
+  justify-content: center;
+  align-items: stretch;
+  align-content: stretch;
 }
 
 %flex-fill {
@@ -175,15 +176,13 @@
   img {
     -ms-flex-negative: 0;
     flex-shrink: 0;
-    min-width: 100%;
-    min-height: 100%
+    width: 100%;
+    height: 100%
   }
 }
 
 %res-cards {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+  @extend %flex;
 
   @include media(phone-only) {
     -webkit-box-orient: vertical;

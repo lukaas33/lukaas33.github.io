@@ -9,7 +9,6 @@
         .tag {
           margin-right: auto; // Remaining space
           overflow: hidden;
-          width: 35%; // Of the card
 
           h3 {
             @extend %header;
@@ -17,14 +16,10 @@
           }
         }
 
-        .box {
-          @extend %vertical; // Vertical flex
+        progress {
+          @extend %progress;
+          margin-left: auto;
           width: 60%; // Of the card
-
-          progress {
-            @extend %progress;
-            width: 100%; // Of box
-          }
         }
       }
 
@@ -32,17 +27,42 @@
         display: none; // Collapsed state
 
         .box {
-          @extend %flex; // Best way to display two elements next to each other
-          align-items: stretch;; // Elements are 100% of height
+          @extend %res-cards; // Best way to display two elements next to each other
+          align-items: stretch; // Elements are 100% of height
 
           .description {
             margin-right: auto; // Remaining space
             user-select: text; // Can be selected
-            width: 40%; // Of collapse
+
+            @include media(phone-only) {
+              width: 100%; // Of collapse
+              margin-bottom: 5%; // Of collapse width
+            }
+            @include media(tablet-portrait-up) {
+              width: 100%; // Of collapse
+              margin-bottom: 5%; // Of collapse width
+            }
+            @include media(tablet-landscape-up) {
+              width: 40%; // Of collapse
+            }
+            @include media(desktop-up) {
+              width: 40%; // Of collapse
+            }
           }
 
           .progress {
-            width: 55%; // Of collapse
+            @include media(phone-only) {
+              width: 100%; // Of collapse
+            }
+            @include media(tablet-portrait-up) {
+              width: 100%; // Of collapse
+            }
+            @include media(tablet-landscape-up) {
+              width: 55%; // Of collapse
+            }
+            @include media(desktop-up) {
+              width: 55%; // Of collapse
+            }
 
             .container {
               @extend %colomn; // Distribute divs evenly

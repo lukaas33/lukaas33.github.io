@@ -5,10 +5,9 @@
 	  $padding: 1vh; // Padding local to nav
 
     @include shadow(2, 10);
+    @extend %flex;
     -webkit-animation: slideDown $animation-long; // Padding local to nav
-
-    @include shadow(2, 10);
-            animation: slideDown $animation-long; // On load it slides in from the top with normal tranistion values
+    animation: slideDown $animation-long; // On load it slides in from the top with normal tranistion values
     background-color: #fafafa;
 
     left: 0;
@@ -19,7 +18,7 @@
     z-index: 30; // Above main
 
     @include media(phone-only) {
-      height: ($height + 3vh);
+      height: ($height + 4vh);
       padding: ($padding + 1vh) ($padding * 3 + 1vh); // More on the side than on the top
     }
     @include media(tablet-portrait-up) {
@@ -36,22 +35,20 @@
     }
 
     .logo {
-      float: left;
-
       @include media(phone-only) {
-        height: ($height + 3vh - ($padding + 1vh) * 2);
-        width: ($height + 3vh - ($padding + 1vh) * 2);
+        height: 100%;
+        width: ($height + 4vh - ($padding + 1vh) * 2);
       }
       @include media(tablet-portrait-up) {
-        height: ($height + 3vh - ($padding + 1.4vh) * 2);
+        height: 100%;
         width: ($height + 3vh - ($padding + 1.4vh) * 2);
       }
       @include media(tablet-landscape-up) {
-        height: ($height - ($padding * 2));
+        height: 100%;
         width: ($height - ($padding * 2));
       }
       @include media(desktop-up) {
-        height: ($height - ($padding * 2));
+        height: 100%;
         width: ($height - ($padding * 2));
       }
 
@@ -63,18 +60,25 @@
     }
 
     ul {
-      float: right;
-      height: ($height - ($padding * 2));
+      margin-left: auto; // Aligned right
+
+      @include media(phone-only) {
+        li {
+          &:not(.show):not(.focus) {
+            display: none; // Only the next and current will be shown on phone
+          }
+        }
+      }
+
+      .focus a { // If the corresponding section is focused
+        @include color(primary, 'color', 500);
+      }
 
       li {
         display: inline-block;
         margin-left: 2vw;
         text-transform: uppercase;
         vertical-align: middle; // Same height as button
-
-        .focus { // If the corresponding section is focused
-          @include color(primary, 'color', 500);
-        }
 
         a {
           // All links
@@ -86,41 +90,44 @@
         }
 
         &:not(:last-child) {
-          a:not(.focus) {
+          &:not(.focus) {
             // All but last, not focused
-            &:focus,
-            &:hover {
+            a:focus,
+            a:hover {
               opacity: .55;
             }
           }
         }
 
-        &:last-child a {
+        &:last-child {
           // Last
-          @extend %round; // Round button
-          @include color(secondary, 'background-color', 200);
-          display: inline-block;
-
           @include media(phone-only) {
-            height: ($height + 3vh - ($padding + 1vh) * 2);
-            width: ($height + 3vh - ($padding + 1vh) * 2);
+            height: 100%;
+            width: ($height + 4vh - ($padding + 1vh) * 2);
           }
           @include media(tablet-portrait-up) {
-            height: ($height + 3vh - ($padding + 1.4vh) * 2);
+            height: 100%;
             width: ($height + 3vh - ($padding + 1.4vh) * 2);
           }
           @include media(tablet-landscape-up) {
-            height: ($height - ($padding * 2));
+            height: 100%;
             width: ($height - ($padding * 2));
           }
           @include media(desktop-up) {
-            height: ($height - ($padding * 2));
+            height: 100%;
             width: ($height - ($padding * 2));
           }
 
-          .material-icons {
-            font-size: 2vh;
-            margin-bottom: .4vh;
+          a {
+            @extend %round; // Round button
+            @include color(secondary, 'background-color', 200);
+            width: 100%;
+            height: 100%;
+            display: inline-block;
+
+            .material-icons {
+              font-size: 2vh;
+            }
           }
         }
       }

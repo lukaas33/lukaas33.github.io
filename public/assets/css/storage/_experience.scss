@@ -7,8 +7,6 @@
         cursor: pointer; // Can be clicked
 
         .tag {
-          margin-right: 40%; // Of card
-          width:  40%; // Of card
 
           h3 {
             @extend %header;
@@ -21,23 +19,19 @@
           }
         }
 
-        .box {
-          @extend %vertical; // Vertical flex
-          width: 20%; // Of head
+        .date {
+          @extend %normal;
+          margin-left: auto; // Aligned right
+          position: relative; // Absolute tooltip will be placed with regard to this
 
-          .date {
-            @extend %normal;
-            position: relative; // Absolute tooltip will be placed with regard to this
+          span {
+            @include color(primary, 'color', 100);
+            margin: 0 ($margin / 6); // One sixth of the card margin
+          }
 
-            span {
-              @include color(primary, 'color', 100);
-              margin: 0 ($margin / 6); // One sixth of the card margin
-            }
-
-            .tooltip {
-              @extend %tooltip;
-              width: 100%;
-            }
+          .tooltip {
+            @extend %tooltip;
+            width: 100%;
           }
         }
         }
