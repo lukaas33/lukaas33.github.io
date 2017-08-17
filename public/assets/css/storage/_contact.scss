@@ -19,16 +19,16 @@
           width: 100%; // Of main
         }
         @include media(tablet-landscape-up) {
-          margin-right: 2.5%;
+          margin-right: 2.5%; // Of main width
           min-width: 30%; // Of main
         }
         @include media(desktop-up) {
-          margin-right: 2.5%;
+          margin-right: 2.5%; // Of main width
           min-width: 30%; // Of main
         }
 
         .container {
-          height: ($height * .85); // 85% of card
+          height: ($height * .85); // 85% of card height
 
           .text {
             height: 100%;
@@ -113,11 +113,11 @@
           width: 100%; // Of main
         }
         @include media(tablet-landscape-up) {
-          margin-left: 2.5%;
+          margin-left: 2.5%; // Of main width
           min-width: 65%; // Of main
         }
         @include media(desktop-up) {
-          margin-left: 2.5%;
+          margin-left: 2.5%; // Of main width
           min-width: 65%; // Of main
         }
 
@@ -163,20 +163,20 @@
               @extend %normal; // Is a normal button
 
               @include media(phone-only) {
-                margin: 0 15%;
-                width: 70%;
+                margin: 0 15%; // Of card width
+                width: 70%; //
               }
               @include media(tablet-portrait-up) {
-                margin: 0 15%;
-                width: 70%;
+                margin: 0 15%; // Of card width
+                width: 70%; // Of card
               }
               @include media(tablet-landscape-up) {
                 margin: 0;
-                width: 40%;
+                width: 40%; // Of card
               }
               @include media(desktop-up) {
                 margin: 0;
-                width: 40%;
+                width: 40%; // Of card
               }
             }
 
@@ -186,7 +186,7 @@
               .error {
                 @include color(secondary, 'color', 100);
                 display: none;
-                width: 100%;
+                width: 100%; // Of box
 
                 @include media(phone-only) {
                   margin-top: $padding;

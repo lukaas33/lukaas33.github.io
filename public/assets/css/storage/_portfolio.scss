@@ -8,7 +8,7 @@
       @extend %form; // Is a type of form
       color: $color-darkgrey;
       display: block; // Entire block is clickable
-      margin: 5%;
+      margin: 5%; // Of sort width
       position: relative; // Absolute tooltip will be placed with regard to this
       text-decoration: none;
       text-transform: uppercase;
@@ -58,7 +58,7 @@
           height: 100%; // Fill container
           position: relative; // Absolute of description works by positioned elements
           transition: $animation;
-          width: 100%;
+          width: 100%; // Of main
           z-index: 30; // Above main
 
           &:hover {
@@ -79,7 +79,7 @@
             top: 0;
             -webkit-transition: $animation;
             transition: $animation;
-            width: 100%;
+            width: 100%; // Of container
 
             &:hover {
               background-color: rgba(0, 0, 0, .25); // Darker shade to show text
