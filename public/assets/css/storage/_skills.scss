@@ -1,91 +1,86 @@
-&#skills {
+#skills {
+  .head {
+    @extend %flex; // Best way to display two elements next to each other
+    cursor: pointer; // Can be clicked
 
-  .card {
-    .text {
-      .head {
-        @extend %flex; // Best way to display two elements next to each other
-        cursor: pointer; // Can be clicked
+    .tag {
+      margin-right: auto; // Remaining space
+      overflow: hidden;
 
-        .tag {
-          margin-right: auto; // Remaining space
-          overflow: hidden;
+      h3 {
+        @extend %header;
+        font-size: 1.75rem; // Based on base font-size
+      }
+    }
 
-          h3 {
-            @extend %header;
-            font-size: 1.75rem; // Based on base font-size
-          }
+    progress {
+      @extend %progress;
+      margin-left: auto;
+      width: 60%; // Of the card
+    }
+  }
+
+  .collapse {
+    display: none; // Collapsed state
+
+    .box {
+      @extend %res-cards; // Best way to display two elements next to each other
+      align-items: stretch; // Elements are 100% of height
+
+      .description {
+        @include media(phone-only) {
+          margin-bottom: 5%; // Of collapse width
+          width: 100%; // Of collapse
+        }
+        @include media(tablet-portrait-up) {
+          margin-bottom: 5%; // Of collapse width
+          width: 100%; // Of collapse
+        }
+        @include media(tablet-landscape-up) {
+          width: 40%; // Of collapse
+        }
+        @include media(desktop-up) {
+          width: 40%; // Of collapse
         }
 
-        progress {
-          @extend %progress;
-          margin-left: auto;
-          width: 60%; // Of the card
-        }
+        margin-right: auto; // Remaining space
+        user-select: text; // Can be selected
       }
 
-      .collapse {
-        display: none; // Collapsed state
+      .progress {
+        @include media(phone-only) {
+          width: 100%; // Of collapse
+        }
+        @include media(tablet-portrait-up) {
+          width: 100%; // Of collapse
+        }
+        @include media(tablet-landscape-up) {
+          width: 55%; // Of collapse
+        }
+        @include media(desktop-up) {
+          width: 55%; // Of collapse
+        }
 
-        .box {
-          @extend %res-cards; // Best way to display two elements next to each other
-          align-items: stretch; // Elements are 100% of height
+        .container {
+          @extend %colomn; // Distribute divs evenly
+          height: 100%; // Fills progress
+          width: 100%;
 
-          .description {
-            margin-right: auto; // Remaining space
-            user-select: text; // Can be selected
+          div {
+            -ms-flex-positive: 1;
+            -webkit-box-flex: 1;
+            flex-grow: 1; // Grow to fill parent
+            width: 100%; // Of container
 
-            @include media(phone-only) {
-              width: 100%; // Of collapse
-              margin-bottom: 5%; // Of collapse width
-            }
-            @include media(tablet-portrait-up) {
-              width: 100%; // Of collapse
-              margin-bottom: 5%; // Of collapse width
-            }
-            @include media(tablet-landscape-up) {
-              width: 40%; // Of collapse
-            }
-            @include media(desktop-up) {
-              width: 40%; // Of collapse
+            p {
+              text-align: center;
             }
           }
 
-          .progress {
-            @include media(phone-only) {
-              width: 100%; // Of collapse
-            }
-            @include media(tablet-portrait-up) {
-              width: 100%; // Of collapse
-            }
-            @include media(tablet-landscape-up) {
-              width: 55%; // Of collapse
-            }
-            @include media(desktop-up) {
-              width: 55%; // Of collapse
-            }
-
-            .container {
-              @extend %colomn; // Distribute divs evenly
-              height: 100%; // Fills progress
-              width: 100%;
-
-              div {
-                -webkit-box-flex: 1;
-                -ms-flex-positive: 1;
-                flex-grow: 1; // Grow to fill parent
-                width: 100%; // Of container
-
-                p {
-                  text-align: center;
-                }
-
-                progress {
-                  @extend %progress;
-                  margin: ($margin / 8) 0; // One eight of the card margin
-                  width: 100%; // Of sub
-                }
-              }
-            }
+          progress {
+            @extend %progress;
+            margin: ($margin / 8) 0; // One eight of the card margin
+            width: 100%; // Of sub
           }
         }
       }

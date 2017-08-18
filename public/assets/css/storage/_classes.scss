@@ -1,7 +1,7 @@
 %card {
   @include shadow(1, 3);
-  background-color: #fff;
   -webkit-transition: $animation;
+  background-color: #fff;
   transition: $animation;
 
   &:hover {
@@ -58,18 +58,18 @@
 }
 
 %input {
+  @extend %form; // Part of a form
   @include color(grey, 'color', 600);
   @include color(grey, 'border-color', 400);
-  @extend %form; // Part of a form
   border-bottom-width: 1px;
-  width: 100%; // Of the card
   overflow: hidden;
   position: relative;
+  width: 100%; // Of the card
 
   &::-webkit-input-placeholder {
+    @include color(grey, 'color', 600); // Lighter than normal
     -webkit-transition: $animation;
     transition: $animation;
-    @include color(grey, 'color', 600); // Lighter than normal
   }
 
   &:focus {
@@ -78,8 +78,8 @@
     // Found the way to style this at https://codepen.io/mildrenben/pen/gbddEj
     &::-webkit-input-placeholder {
       @include color(secondary, 'color', 200);
-      font-size: .75rem;
       -webkit-transform: translateY(-150%);
+      font-size: .75rem;
       transform: translateY(-150%); // Slightly above the input
     }
   }
@@ -89,6 +89,7 @@
   @include shadow(2, 4)
   @include color(grey, 'background-color', 800);
   @include color(grey, 'border-color', 800);
+  -webkit-transform: translateY(-110%);
   border-width: 1px ;
   color: #fff;
   display: none; // Default state
@@ -97,7 +98,6 @@
   padding: ($base-margin / 18) ($base-margin / 12);
   position: absolute;
   top: 0;
-  -webkit-transform: translateY(-110%);
   transform: translateY(-110%); // Above the selected
   white-space: nowrap; // No two lines
 
@@ -142,14 +142,13 @@
 }
 
 %flex {
+  -ms-flex-align: center;
+  -webkit-box-align: center;
+  align-content: center;
+  align-items: center;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-line-pack: center;
-  align-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
 }
 
 %vertical {
@@ -164,30 +163,30 @@
 
 %grid {
   @extend %flex; // Extention of flex
+  -ms-flex-align: stretch;
+  -ms-flex-line-pack: stretch;
+  -webkit-box-align: stretch;
+  align-content: stretch;
+  align-items: stretch;
 	flex-flow: wrap row; // Items to long for the line will overflow
   justify-content: center;
-  -webkit-box-align: stretch;
-  -ms-flex-align: stretch;
-  align-items: stretch;
-  -ms-flex-line-pack: stretch;
-  align-content: stretch;
 }
 
 %flex-fill {
   @extend %flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
   -ms-flex-align: center;
+  -ms-flex-pack: center;
+  -webkit-box-align: center;
+  -webkit-box-pack: center;
   align-items: center;
+  justify-content: center;
   overflow: hidden;
 
   img {
     -ms-flex-negative: 0;
     flex-shrink: 0;
+    height: 100%;
     width: 100%;
-    height: 100%
   }
 }
 
@@ -195,27 +194,27 @@
   @extend %flex;
 
   @include media(phone-only) {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
     -ms-flex-direction: column;
+    -webkit-box-direction: normal;
+    -webkit-box-orient: vertical;
     flex-direction: column; // Can't extend here
   }
   @include media(tablet-portrait-up) {
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
     -ms-flex-direction: row;
+    -webkit-box-direction: normal;
+    -webkit-box-orient: horizontal;
     flex-direction: column; // Can't extend here
   }
   @include media(tablet-landscape-up) {
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
     -ms-flex-direction: row;
+    -webkit-box-direction: normal;
+    -webkit-box-orient: horizontal;
     flex-direction: row; // Can't extend here
   }
   @include media(desktop-up) {
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
     -ms-flex-direction: row;
+    -webkit-box-direction: normal;
+    -webkit-box-orient: horizontal;
     flex-direction: row; // Can't extend here
   }
 }

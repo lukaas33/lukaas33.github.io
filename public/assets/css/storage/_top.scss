@@ -1,182 +1,185 @@
-.top {
-  nav {
-    // Local variables
-    $height: 5vh; // Height local to the nav
-	  $padding: 1vh; // Padding local to nav
+nav {
+  // Local variables
+  $height: 5vh; // Height local to the nav
+  $padding: 1vh; // Padding local to nav
 
-    @include color(grey, 'background-color', 50);
-    @include shadow(2, 10);
-    @extend %flex;
-    -webkit-animation: slideDown $animation-long; // Padding local to nav
-    animation: slideDown $animation-long; // On load it slides in from the top with normal tranistion values
+  @extend %flex;
+  @include color(grey, 'background-color', 50);
+  @include shadow(2, 10)
 
-    left: 0;
-    overflow: hidden; // If elements are too big they are hidden
-    position: fixed; // Travels with scroll
-    padding: 0 $padding; // Links stay visible
-    top: 0;
-    width: 100vw;
-    z-index: 30; // Above main
+  @include media(phone-only) {
+    height: ($height + 4vh);
+  }
+  @include media(tablet-portrait-up) {
+    height: ($height + 3vh);
+  }
+  @include media(tablet-landscape-up) {
+    height: $height;
+  }
+  @include media(desktop-up) {
+    height: $height;
+  }
 
+  -webkit-animation: slideDown $animation-long; // Padding local to nav
+  animation: slideDown $animation-long; // On load it slides in from the top with normal tranistion values
+  left: 0;
+  overflow: hidden; // If elements are too big they are hidden
+  padding: 0 $padding; // Links stay visible
+  position: fixed; // Travels with scroll
+  top: 0;
+  width: 100vw;
+  z-index: 30; // Above main
+
+  .logo {
     @include media(phone-only) {
-      height: ($height + 4vh);
+      margin: ($padding + 1vh) (($padding + 1vh) * 2); // More on the sides
+      width: ($height + 4vh - ($padding + 1vh) * 2);
     }
     @include media(tablet-portrait-up) {
-      height: ($height + 3vh);
+      margin: ($padding + 1.4vh) (($padding + 1.4vh) * 2); // More on the sides
+      width: ($height + 3vh - ($padding + 1.4vh) * 2);
     }
     @include media(tablet-landscape-up) {
-      height: $height;
+      margin: ($padding) ($padding * 2); // More on the sides
+      width: ($height - ($padding * 2));
     }
     @include media(desktop-up) {
-      height: $height;
+      margin: ($padding) ($padding * 2); // More on the sides
+      width: ($height - ($padding * 2));
     }
 
-    .logo {
-      height: auto;
+    height: auto;
 
-      @include media(phone-only) {
-        width: ($height + 4vh - ($padding + 1vh) * 2);
-        margin: ($padding + 1vh) (($padding + 1vh) * 2); // More on the sides
-      }
-      @include media(tablet-portrait-up) {
-        width: ($height + 3vh - ($padding + 1.4vh) * 2);
-        margin: ($padding + 1.4vh) (($padding + 1.4vh) * 2); // More on the sides
-      }
-      @include media(tablet-landscape-up) {
-        width: ($height - ($padding * 2));
-        margin: ($padding) ($padding * 2) // More on the sides
-      }
-      @include media(desktop-up) {
-        width: ($height - ($padding * 2));
-        margin: ($padding) ($padding * 2) // More on the sides
-      }
-
-      img {
-        display: block;
-        height: 100%; // of logo
-        width: 100%; // Of logo
-      }
+    img {
+      display: block;
+      height: 100%; // of logo
+      width: 100%; // Of logo
     }
+  }
 
-    ul {
-      @extend %flex;
-      align-items: stretch;
-      margin-left: auto; // Aligned right
-      height: 100%;
-
-      @include media(phone-only) {
-        li {
-          &:not(.show):not(.focus) {
+  ul {
+    @extend %flex;
+    @include media(phone-only) {
+      li {
+        &:not(.show) {
+          &:not(.focus) {
             display: none; // Only the next and current will be shown on phone
           }
         }
       }
+    }
 
-      .focus a { // If the corresponding section is focused
-        @include color(primary, 'color', 500);
+    align-items: stretch;
+    height: 100%;
+    margin-left: auto; // Aligned right
+
+
+    .focus a { // If the corresponding section is focused
+      @include color(primary, 'color', 500);
+    }
+
+    li {
+      display: inline-block;
+      text-transform: uppercase;
+      vertical-align: middle; // Same height as button
+
+      a {
+        // All links
+        @extend %click;
+        @include color(grey, 'color', 600);
+        -webkit-transition: $animation;
+        text-decoration: none;
+        transition: $animation;
+        vertical-align: middle;
       }
 
-      li {
-        display: inline-block;
-        text-transform: uppercase;
-        vertical-align: middle; // Same height as button
+      &:not(:last-child) {
+        @include ripple(dark);
 
-        a {
-          // All links
-          @include color(grey, 'color', 600);
-          @extend %click;
-          text-decoration: none;
-          -webkit-transition: $animation;
-          transition: $animation;
-          vertical-align: middle;
+        @include media(phone-only) {
+          padding: ($padding + 1vh); // For ripple style
+        }
+        @include media(tablet-portrait-up) {
+          padding: ($padding + 1.4vh); // For ripple style
+        }
+        @include media(tablet-landscape-up) {
+          padding: $padding; // For ripple style
+        }
+        @include media(desktop-up) {
+          padding: $padding; // For ripple style
         }
 
-        &:not(:last-child) {
-          @include ripple(dark);
-
-          @include media(phone-only) {
-            padding: ($padding + 1vh); // For ripple style
-          }
-          @include media(tablet-portrait-up) {
-            padding: ($padding + 1.4vh); // For ripple style
-          }
-          @include media(tablet-landscape-up) {
-            padding: $padding; // For ripple style
-          }
-          @include media(desktop-up) {
-            padding: $padding; // For ripple style
-          }
-
-          &:not(.focus) {
-            // All but last, not focused
-            a:focus,
-            a:hover {
+        &:not(.focus) {
+          // All but last, not focused
+          a {
+            &:focus,
+            &:hover {
               @include color(grey, 'color', 500);
             }
           }
         }
+      }
 
-        &:last-child {
-          // Contact link
-          height: auto;
+      &:last-child {
+        // Contact link
+        @include media(phone-only) {
+          margin: ($padding + 1vh) (($padding + 1vh) * 2); // More on the sides
+          width: ($height + 4vh - ($padding + 1vh) * 2);
+        }
+        @include media(tablet-portrait-up) {
+          margin: ($padding + 1.4vh) (($padding + 1.4vh) * 2); // More on the sides
+          width: ($height + 3vh - ($padding + 1.4vh) * 2);
+        }
+        @include media(tablet-landscape-up) {
+          margin: ($padding) ($padding * 2); // More on the sides
+          width: ($height - ($padding * 2));
+        }
+        @include media(desktop-up) {
+          margin: ($padding) ($padding * 2); // More on the sides
+          width: ($height - ($padding * 2));
+        }
 
-          @include media(phone-only) {
-            width: ($height + 4vh - ($padding + 1vh) * 2);
-            margin: ($padding + 1vh) (($padding + 1vh) * 2); // More on the sides
-          }
-          @include media(tablet-portrait-up) {
-            width: ($height + 3vh - ($padding + 1.4vh) * 2);
-            margin: ($padding + 1.4vh) (($padding + 1.4vh) * 2); // More on the sides
-          }
-          @include media(tablet-landscape-up) {
-            width: ($height - ($padding * 2));
-            margin: ($padding) ($padding * 2) // More on the sides
-          }
-          @include media(desktop-up) {
-            width: ($height - ($padding * 2));
-            margin: ($padding) ($padding * 2) // More on the sides
-          }
+        height: auto;
 
-          a {
-            @extend %round; // Round button
-            @include color(secondary, 'background-color', 200);
-            width: 100%;
-            height: 100%;
-            display: inline-block;
+        a {
+          @extend %round; // Round button
+          @include color(secondary, 'background-color', 200);
+          display: inline-block;
+          height: 100%;
+          width: 100%;
 
-            .material-icons {
-              @include media(phone-only) {
-                font-size: 3vh;
-                margin-top: 1vh;
-              }
-              @include media(tablet-portrait-up) {
-                font-size: 2vh;
-                margin-top: 0;
-              }
-              @include media(tablet-landscape-up) {
-                font-size: 2vh;
-                margin-top: 0;
-              }
-              @include media(desktop-up) {
-                font-size: 2vh;
-                margin-top: 0;
-              }
+          .material-icons {
+            @include media(phone-only) {
+              font-size: 3vh;
+              margin-top: 1vh;
+            }
+            @include media(tablet-portrait-up) {
+              font-size: 2vh;
+              margin-top: 0;
+            }
+            @include media(tablet-landscape-up) {
+              font-size: 2vh;
+              margin-top: 0;
+            }
+            @include media(desktop-up) {
+              font-size: 2vh;
+              margin-top: 0;
             }
           }
         }
       }
     }
   }
+}
 
-  header {
-    @include color(primary, 'background-color', 500);
-    @include shadow(2, 6);
-    -webkit-animation: slideDown $animation-long;
-    animation: slideDown $animation-long; // On load it slides in from the top with normal tranistion values
-    height: 60vh;
-    position: absolute; // Background
-    top: 0;
-    width: 100vw;
-    z-index: 10; // Below main
-  }
+header {
+  @include color(primary, 'background-color', 500);
+  @include shadow(2, 6);
+  -webkit-animation: slideDown $animation-long;
+  animation: slideDown $animation-long; // On load it slides in from the top with normal tranistion values
+  height: 60vh;
+  position: absolute; // Background
+  top: 0;
+  width: 100vw;
+  z-index: 10; // Below main
 }

@@ -1,7 +1,6 @@
 // Main stylesheet for screen
 
 // TODO Make layout more responsive
-// TODO More shallow nesting
 
 // Global variables and functions
 @import 'storage/variables';
@@ -21,6 +20,7 @@
   @include color(secondary, 'background-color', 100);
   color: #fff;
 }
+
 ::selection {
   @include color(secondary, 'background-color', 100);
   color: #fff;
@@ -44,12 +44,12 @@
 body {
   @include color(grey, 'color', 600); // Default color, applies mostly to text
   @include color(grey, 'background-color', 200);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased; // Font rendering
   font-family: 'Noto-sans', 'Roboto', sans-serif; // Applies to everything
   font-size: 1rem; // Defaults to base font-size
   min-width: 400px; // Can't be resized smaller
   user-select: none; // No selecting text is standard It is overwritten in some text divs
-  -webkit-font-smoothing: antialiased; // Font rendering
-  -moz-osx-font-smoothing: grayscale;
 }
 
 // Needed to display the icon font properly
@@ -79,8 +79,12 @@ body {
 // Top style
 @import 'storage/top';
 
-// Page style
+// Page general styles
 main {
+  // Local variables
+  $margin: ($base-margin / 4); // The margin local to part
+  $padding: ($base-margin / 5); // Padding local to part
+
   animation: slideUp $animation-long; // On load it slides in from the bottom with normal tranistion values
   margin: 0 $base-margin; // Main gets centered horizontally
   position: relative; // Z-index doesn't work on static elements
@@ -88,10 +92,6 @@ main {
   z-index: 20; // Above the header
 
   .part {
-    // Local variables
-    $margin: ($base-margin / 4); // The margin local to part
-    $padding: ($base-margin / 5); // Padding local to part
-
     @include media(phone-only) {
       margin: ($margin * 2) $margin;
     }
@@ -112,9 +112,6 @@ main {
       z-index: 30; // Above main
 
       .text {
-        overflow-y: auto; // User can scroll if content isn't visible
-        overflow-x: hidden;
-
         @include media(phone-only) {
           padding: ($padding * 1.5); // Will be like the padding for card but allows images to fill card
           text-align: center;
@@ -132,10 +129,14 @@ main {
           text-align: left;
         }
 
+        overflow-x: hidden;
+        overflow-y: auto; // User can scroll if content isn't visible
+
+
         hr {
           @include color(grey, 'background-color', 400);
           border-top-width: 1px;
-          margin: ($margin / 1.5) 0 ($margin / 3) 0; // One third of the card margin on the bottom and double that on the top
+          margin: ($margin / 1.5) 0 ($margin / 3); // One third of the card margin on the bottom and double that on the top
           width: 100%;
         }
       }
@@ -147,20 +148,20 @@ main {
       text-align: center; // Center horizontally
       text-transform: uppercase;
     }
-
-    // About part
-    @import 'storage/about';
-
-    // Experience part
-    @import 'storage/experience';
-
-    // Skills part
-    @import 'storage/skills';
-
-    // Portfolio part
-    @import 'storage/portfolio';
-
-    // Contact part
-    @import 'storage/contact';
   }
+
+  // About part
+  @import 'storage/about';
+
+  // Experience part
+  @import 'storage/experience';
+
+  // Skills part
+  @import 'storage/skills';
+
+  // Portfolio part
+  @import 'storage/portfolio';
+
+  // Contact part
+  @import 'storage/contact';
 }

@@ -1,4 +1,4 @@
-&#portfolio {
+#portfolio {
   .sort {
     margin: 0 auto; // Centers
     text-align: center;
@@ -73,11 +73,11 @@
 
           span {
             @extend %vertical; // Align text vertically
+            -webkit-transition: $animation;
             height: 100%; // Text will be in the middle
             left: 0;
             position: absolute;
             top: 0;
-            -webkit-transition: $animation;
             transition: $animation;
             width: 100%; // Of container
 
@@ -107,24 +107,24 @@
 
   .select {
     @extend %flex;
+    height: 2vw;
+    margin: 0 40%; // Of main
     text-align: center;
     width: 20%; // Of main
-    margin: 0 40%; // Of main
-    height: 2vw;
 
     p {
       @include color(grey, 'color', 600);
       display: inline;
-      text-transform: uppercase;
       margin: auto;
+      text-transform: uppercase;
     }
 
     button {
-      @include ripple(dark);
       @extend %form; // Is a type of form
-      width: 2vw;
-      height: 2vw;
+      @include ripple(dark);
       border-radius: 100%;
+      height: 2vw;
+      width: 2vw;
     }
   }
 }

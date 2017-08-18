@@ -1,4 +1,4 @@
-&#experience {
+#experience {
 
   .card {
     .text {
@@ -40,9 +40,9 @@
         display: none; // Collapsed state
 
         p {
-          -webkit-user-select: text;
           -moz-user-select: text;
           -ms-user-select: text;
+          -webkit-user-select: text;
           user-select: text; // Can be selected
         }
 

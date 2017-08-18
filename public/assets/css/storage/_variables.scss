@@ -105,10 +105,10 @@ $base-margin: 10vw; // Base margin for site
   }
 }
 
-// From https://codepen.io/lehollandaisvolant/pen/dMQXYX
 @mixin ripple($shade) {
-  position: relative;
+  // From https://codepen.io/lehollandaisvolant/pen/dMQXYX
   overflow: hidden;
+  position: relative;
 
   // Ripple effect
   .effect {
@@ -117,7 +117,6 @@ $base-margin: 10vw; // Base margin for site
   }
 
   .ripple {
-    border-radius: 50%;
     @if $shade == dark {
       background: rgba(0, 0, 0, .1);
     }
@@ -127,19 +126,20 @@ $base-margin: 10vw; // Base margin for site
     @else {
       @error 'Invalid argument';
     }
-    height: 0;
+
     -webkit-transform: scale(0);
-    transform: scale(0);
-    position: absolute;
+    border-radius: 50%;
+    height: 0;
     opacity: 1;
+    position: absolute;
+    transform: scale(0);
     width: 0;
   }
 }
 
 @mixin shadow($x, $blur) {
   // Edited from values at https://codepen.io/sdthornton/pen/wBZdXq
-  box-shadow: 0 #{$x}px #{$blur}px rgba(0, 0, 0, .1),
-  0 #{ceil($x / 1.4)}px #{ceil($blur / 1.4)}px rgba(0, 0, 0, .2);
+  box-shadow: 0 #{$x}px #{$blur}px rgba(0, 0, 0, .1), 0 #{ceil($x / 1.4)}px #{ceil($blur / 1.4)}px rgba(0, 0, 0, .2);
 }
 
 @-webkit-keyframes slideDown {
@@ -191,14 +191,14 @@ $base-margin: 10vw; // Base margin for site
 @-webkit-keyframes ripple {
   100% {
     -webkit-transform: scale(2);
-    transform: scale(2);
     opacity: 0;
+    transform: scale(2);
   }
 }
 @keyframes ripple {
   100% {
     -webkit-transform: scale(2);
-    transform: scale(2);
     opacity: 0;
+    transform: scale(2);
   }
 }

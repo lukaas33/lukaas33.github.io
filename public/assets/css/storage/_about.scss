@@ -1,4 +1,4 @@
-&#about {
+#about {
   // Local variables
   $height: 60vh; // For the card
 
@@ -39,10 +39,6 @@
       }
 
       img {
-        display: block;
-        -webkit-transition: $animation;
-        transition: $animation; // Smooth resizing
-
         @include media(phone-only) {
           height: auto;
           width: 100%;
@@ -59,15 +55,12 @@
           height: 100%;
           width: auto;
         }
+
+        display: block;
       }
     }
 
     .text {
-      -webkit-user-select: text;
-      -moz-user-select: text;
-      -ms-user-select: text;
-      user-select: text; // Can be selected
-
       @include media(phone-only) {
         margin-top: ($margin / 2);
         width: 100%;
@@ -85,6 +78,11 @@
         width: auto; // Of card
       }
 
+      -moz-user-select: text;
+      -ms-user-select: text;
+      -webkit-user-select: text;
+      user-select: text; // Can be selected
+
       h2 {
         @extend %header;
         font-size: 2rem; // Based on base font-size
@@ -92,8 +90,8 @@
       }
 
       .tagline {
-        font-size: 1.2rem; // Based on base font-size
         @include color(grey, 'color', 700);
+        font-size: 1.2rem; // Based on base font-size
       }
 
       a {

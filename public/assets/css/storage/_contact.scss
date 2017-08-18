@@ -1,4 +1,4 @@
-&#contact {
+#contact {
   // Local variables
   $height: 45vh; // For the card
 
@@ -26,82 +26,82 @@
           margin-right: 2.5%; // Of main width
           min-width: 30%; // Of main
         }
+      }
 
-        .container {
-          height: ($height * .85); // 85% of card height
+      .container {
+        height: ($height * .85); // 85% of card height
 
-          .text {
+        .text {
+          height: 100%;
+          width: 100%; // Fills container
+
+          ul {
+            @extend %colomn; // Distributes li's evenly
             height: 100%;
-            width: 100%; // Fills container
+            margin: 0;
+            width: 100%; // Fills text
 
-            ul {
-              @extend %colomn; // Distributes li's evenly
-              height: 100%;
-              margin: 0;
-              width: 100%; // Fills text
-
-              li {
-                @extend %vertical; // Items vertically aligned
-                flex-grow: 1; // Grow to fill parent
-                list-style: none; // No bullets
-                text-align: left;
-                width: 100%;
-
-                .box {
-                  @extend %flex; // Display items next to each other
-
-                  .icon {
-                    @extend %round; // Round button appearance
-                    cursor: default; // Is not clickable so cursor shouldn't be a pointer
-                    height: 4vh;
-                    margin: 1vh 4vh 1vh 0; // Smaller on the top than on the sides None on the left
-                    width: 4vh;
-
-                    .material-icons {
-                      font-size: 2vh;
-                      margin: 1vh;
-                    }
-                  }
-
-                  div {
-                    @extend %vertical; // Items vertically aligned
-
-                    p {
-                      -webkit-user-select: text;
-                      -moz-user-select: text;
-                      -ms-user-select: text;
-                      user-select: text; // Can be selected
-                    }
-                  }
-                }
-              }
-            }
-          }
-
-          .map {
-            display: none; // Starts off
-            height: 100%;
-            width: 100%; // Fills container
-
-            iframe {
-              height: 100%;
-              width: 100%; // Fills map
+            li {
+              @extend %vertical; // Items vertically aligned
+              flex-grow: 1; // Grow to fill parent
+              list-style: none; // No bullets
+              text-align: left;
+              width: 100%;
             }
           }
         }
 
-        .show {
-          @include ripple(light);
-          @extend %normal; // Is a normal button
-          box-shadow: none; // Overwrites default button
-          height: ($height * .15); // 15% of card height
-          width: 100%; // Fills card
+        .box {
+          @extend %flex; // Display items next to each other
 
-          &:hover,
-          &:focus {
-            -webkit-box-shadow: none;
-            box-shadow: none; // Overwrites default button
+          .icon {
+            @extend %round; // Round button appearance
+            cursor: default; // Is not clickable so cursor shouldn't be a pointer
+            height: 4vh;
+            margin: 1vh 4vh 1vh 0; // Smaller on the top than on the sides None on the left
+            width: 4vh;
+
+            .material-icons {
+              font-size: 2vh;
+              margin: 1vh;
+            }
           }
+
+          div {
+            @extend %vertical; // Items vertically aligned
+
+            p {
+              -moz-user-select: text;
+              -ms-user-select: text;
+              -webkit-user-select: text;
+              user-select: text; // Can be selected
+            }
+          }
+        }
+
+        .map {
+          display: none; // Starts off
+          height: 100%;
+          width: 100%; // Fills container
+
+          iframe {
+            height: 100%;
+            width: 100%; // Fills map
+          }
+        }
+      }
+
+      .show {
+        @extend %normal; // Is a normal button
+        @include ripple(light);
+        box-shadow: none; // Overwrites default button
+        height: ($height * .15); // 15% of card height
+        width: 100%; // Fills card
+
+        &:hover,
+        &:focus {
+          -webkit-box-shadow: none;
+          box-shadow: none; // Overwrites default button
         }
       }
 
@@ -161,8 +161,8 @@
             margin-top: $line-height;
 
             button {
-              @include ripple(light);
               @extend %normal; // Is a normal button
+              @include ripple(light);
 
               @include media(phone-only) {
                 margin: 0 15%; // Of card width
@@ -181,8 +181,8 @@
                 width: 40%; // Of card
               }
 
-              input[type='submit'] {
-                @extend %form;
+              [type='submit'] {
+                @extend %form; // Will be invisible
                 color: inherit;
                 height: 100%;
                 text-transform: inherit;
@@ -192,28 +192,29 @@
 
             .error {
               @include color(secondary, 'color', 100);
-              display: none;
 
               @include media(phone-only) {
-                margin-top: $padding;
                 margin-left: 0;
+                margin-top: $padding;
                 text-align: center;
               }
               @include media(tablet-portrait-up) {
-                margin-top: $padding;
                 margin-left: 0;
+                margin-top: $padding;
                 text-align: center;
               }
               @include media(tablet-landscape-up) {
-                margin-top: 0;
                 margin-left: $padding;
+                margin-top: 0;
                 text-align: left;
               }
               @include media(desktop-up) {
-                margin-top: 0;
                 margin-left: $padding;
+                margin-top: 0;
                 text-align: left;
               }
+
+              display: none;
             }
           }
         }
