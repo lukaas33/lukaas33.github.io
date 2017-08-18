@@ -1,28 +1,34 @@
-@keyframes slideDown { from { -moz-transform: translateY(-100%);
-    -ms-transform: translateY(-100%);
-    -o-transform: translateY(-100%);
-    -webkit-transform: translateY(-100%);
+@-webkit-keyframes slideDown { from { -webkit-transform: translateY(-100%);
     transform: translateY(-100%); }
-  to { -moz-transform: translateY(0);
-    -ms-transform: translateY(0);
-    -o-transform: translateY(0);
-    -webkit-transform: translateY(0);
+  to { -webkit-transform: translateY(0);
     transform: translateY(0); } }
 
-@keyframes slideUp { from { -moz-transform: translateY(100%);
-    -ms-transform: translateY(100%);
-    -o-transform: translateY(100%);
-    -webkit-transform: translateY(100%);
-    transform: translateY(100%); }
-  to { -moz-transform: translateY(0);
-    -ms-transform: translateY(0);
-    -o-transform: translateY(0);
-    -webkit-transform: translateY(0);
+@keyframes slideDown { from { -webkit-transform: translateY(-100%);
+    transform: translateY(-100%); }
+  to { -webkit-transform: translateY(0);
     transform: translateY(0); } }
+
+@-webkit-keyframes slideUp { from { -webkit-transform: translateY(100%);
+    transform: translateY(100%); }
+  to { -webkit-transform: translateY(0);
+    transform: translateY(0); } }
+
+@keyframes slideUp { from { -webkit-transform: translateY(100%);
+    transform: translateY(100%); }
+  to { -webkit-transform: translateY(0);
+    transform: translateY(0); } }
+
+@-webkit-keyframes ripple { 100% { -webkit-transform: scale(2);
+    transform: scale(2);
+    opacity: 0; } }
+
+@keyframes ripple { 100% { -webkit-transform: scale(2);
+    transform: scale(2);
+    opacity: 0; } }
 
 .part .title, #about .text h2 { color: #00bcd4; font-weight: normal; }
 
-#contact .card:nth-child(1) .text li .box { display: -webkit-flex; }
+#contact .card:nth-child(1) .text li .box { display: -webkit-box; display: -ms-flexbox; display: flex; -ms-flex-line-pack: center; align-content: center; -webkit-box-align: center; -ms-flex-align: center; align-items: center; }
 
 #contact .card:nth-child(1) .text li .box { align-items: center; }
 
@@ -56,7 +62,7 @@ a::after { content: " [" attr(href) "]"; font-style: italic; }
 
 #about .text .tagline { font-size: 1.2rem; }
 
-#experience .card::after { border: 0; border-top: 1px solid #bdbdbd; width: 100%; }
+#experience .card::after { border-color: #bdbdbd; border: 0; border-top-width: 1px; width: 100%; }
 
 #skills .card .container p { display: inline-block; }
 
@@ -64,7 +70,7 @@ a::after { content: " [" attr(href) "]"; font-style: italic; }
 
 #skills .card .container progress::after { content: attr(value) "/" attr(max); }
 
-#skills .card::after { border: 0; border-top: 1px solid #bdbdbd; width: 100%; }
+#skills .card::after { border-color: #bdbdbd; border: 0; border-top-width: 1px; width: 100%; }
 
 #contact .card:nth-child(1) .show, #contact .card:nth-child(1) .map { display: none; }
 

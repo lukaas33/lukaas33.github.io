@@ -93,6 +93,7 @@
 
       .tagline {
         font-size: 1.2rem; // Based on base font-size
+        @include color(grey, 'color', 700);
       }
 
       a {

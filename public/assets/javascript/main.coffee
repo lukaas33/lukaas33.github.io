@@ -86,7 +86,7 @@ setMap = (change) ->
       duration: time
       easing: "swing"
       complete: -> # After complete
-        $button.text "Show map"
+        $button.find('p').text "Show map"
         $data.fadeIn duration: time, easing: "swing"
         global.cookie("map", off)
 
@@ -97,7 +97,7 @@ setMap = (change) ->
       duration: time
       easing: "swing"
       complete: -> # After complete
-        $button.text "Hide map"
+        $button.find('p').text "Hide map"
         $map.fadeIn duration: time, easing: "swing"
         global.cookie("map", on)
 
@@ -205,7 +205,35 @@ $ ->
     name = $(@).attr "name"
     global.cookie(name, $(@).val()) # Update in cookie
 
+  $("[ripple]").click (event) ->
+    # Edited from https://codepen.io/lehollandaisvolant/pen/dMQXYX
+    $("[ripple]").find(".ripple").remove()
+
+    posX = $(this).offset().left
+    posY = $(this).offset().top
+    buttonWidth = $(this).width()
+    buttonHeight =  $(this).height()
+
+    ripple = $("<span></span>").addClass "ripple"
+    $(this).prepend ripple
+
+    if buttonWidth >= buttonHeight
+      buttonHeight = buttonWidth
+    else
+      buttonWidth = buttonHeight
+
+    x = event.pageX - posX - buttonWidth / 2
+    y = event.pageY - posY - buttonHeight / 2
+
+    $("[ripple]").find(".ripple").css(
+      width: buttonWidth
+      height: buttonHeight
+      top: y + 'px'
+      left: x + 'px'
+    ).addClass "effect"
+
   $("#contact form").submit (event) ->
+    # Handles form
     event.preventDefault() # No reloading
     $(@).find(".error").hide()
 

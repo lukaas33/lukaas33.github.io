@@ -46,11 +46,10 @@
   }
 
   &::-webkit-progress-bar {
-    background-color: #f5f5f5; // The background
+    @include color(grey, 'background-color', 100); // The background
   }
 }
 
-// TODO Add ripple effect for all buttons and input fields
 %form {
   @extend %click;
   background-color: transparent; // Hides default background
@@ -59,14 +58,18 @@
 }
 
 %input {
+  @include color(grey, 'color', 600);
+  @include color(grey, 'border-color', 400);
   @extend %form; // Part of a form
-  border-bottom: 1px solid $color-lightgrey;
-  color: $color-darkgrey;
+  border-bottom-width: 1px;
   width: 100%; // Of the card
+  overflow: hidden;
+  position: relative;
 
   &::-webkit-input-placeholder {
     -webkit-transition: $animation;
     transition: $animation;
+    @include color(grey, 'color', 600); // Lighter than normal
   }
 
   &:focus {
@@ -84,8 +87,9 @@
 
 %tooltip {
   @include shadow(2, 4)
-  background-color: #424242;
-  border: 1px solid #424242;
+  @include color(grey, 'background-color', 800);
+  @include color(grey, 'border-color', 800);
+  border-width: 1px ;
   color: #fff;
   display: none; // Default state
   font-size: .8rem;
@@ -99,7 +103,7 @@
 
   // Got this from http://ilikepixels.co.uk/drop/bubbler/
   &::after {
-    border-color: #424242 transparent;
+    @include color(grey, 'border-color', 800, transparent);
     border-style: solid;
     border-width: 10px 10px 0;
     bottom: -10px;
@@ -141,7 +145,10 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -ms-flex-line-pack: center;
   align-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
 }
 
@@ -159,7 +166,10 @@
   @extend %flex; // Extention of flex
 	flex-flow: wrap row; // Items to long for the line will overflow
   justify-content: center;
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
   align-items: stretch;
+  -ms-flex-line-pack: stretch;
   align-content: stretch;
 }
 

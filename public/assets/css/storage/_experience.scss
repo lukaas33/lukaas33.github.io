@@ -15,17 +15,17 @@
           }
 
           p {
-            color: #616161;
+            @include color(grey, 'color', 700);
           }
         }
 
         .date {
           @extend %normal;
+          @include color(primary, 'background-color', 300); // Overwrite color
           margin-left: auto; // Aligned right
           position: relative; // Absolute tooltip will be placed with regard to this
 
           span {
-            @include color(primary, 'color', 100);
             margin: 0 ($margin / 6); // One sixth of the card margin
           }
 
@@ -51,7 +51,7 @@
         }
 
         .number {
-          @include color(secondary, 'color', 200);
+          @include color(secondary, 'color', 100);
         }
       }
     }

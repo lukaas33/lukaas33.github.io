@@ -1,48 +1,78 @@
 $animation: 400ms ease-in-out;
 $animation-long: 800ms ease-in-out;
+
 $base-margin: 10vw; // Base margin for site
 
-$color-darkgrey: #757575;
-$color-lightgrey: #bdbdbd;
-
-@mixin color($class, $declaration, $num) {
+@mixin color($class, $declaration, $num, $other: '') {
   // Returns colors based on arguments provided
-  @if $class ==  primary  {
+  @if $class == primary  {
     @if $num == 500 {
-      #{$declaration}: #00bcd4; // Sets the css declaration to this value
+      #{$declaration}: #00bcd4 #{$other}; // Sets the css declaration to this value
     }
     @else if $num == 400 {
-      #{$declaration}: #26c6da; // Sets the css declaration to this value
+      #{$declaration}: #26c6da #{$other}; // Sets the css declaration to this value
     }
     @else if $num == 300 {
-      #{$declaration}: #4dd0e1; // Sets the css declaration to this value
+      #{$declaration}: #4dd0e1 #{$other}; // Sets the css declaration to this value
     }
     @else if $num == 200 {
-      #{$declaration}: #80deea; // Sets the css declaration to this value
+      #{$declaration}: #80deea #{$other}; // Sets the css declaration to this value
     }
     @else if $num == 100 {
-      #{$declaration}: #b2ebf2; // Sets the css declaration to this value
+      #{$declaration}: #b2ebf2 #{$other}; // Sets the css declaration to this value
     }
     @else {
-      @error "Invalid argument";
+      @error 'Invalid argument';
     }
   }
-  @else if $class ==  secondary  {
-    @if $num == 100 {
-      #{$declaration}: #ff9e80; // Sets the css declaration to this value
-    }
-    @else if $num == 200 {
-      #{$declaration}: #ff6e40; // Sets the css declaration to this value
+  @else if $class == secondary  {
+    @if $num == 700 {
+      #{$declaration}: #dd2c00 #{$other};
     }
     @else if $num == 400 {
-      #{$declaration}: #ff3d00; // Sets the css declaration to this value
+      #{$declaration}: #ff3d00 #{$other}; // Sets the css declaration to this value
     }
-    @else if $num == 700 {
-      #{$declaration}: #dd2c00;
+    @else if $num == 200 {
+      #{$declaration}: #ff6e40 #{$other}; // Sets the css declaration to this value
+    }
+    @else if $num == 100 {
+      #{$declaration}: #ff9e80 #{$other}; // Sets the css declaration to this value
     }
     @else {
-      @error "Invalid argument";
+      @error 'Invalid argument';
     }
+  }
+  @else if $class == grey {
+    @if $num == 800 {
+      #{$declaration}: #424242 #{$other}; // Sets the css declaration to this value
+    }
+    @else if $num == 700 {
+      #{$declaration}: #616161 #{$other}; // Sets the css declaration to this value
+    }
+    @else if $num == 600 {
+      #{$declaration}: #757575 #{$other}; // Sets the css declaration to this value
+    }
+    @else if $num == 500 {
+      #{$declaration}: #9e9e9e #{$other}; // Sets the css declaration to this value
+    }
+    @else if $num == 400 {
+      #{$declaration}: #bdbdbd #{$other}; // Sets the css declaration to this value
+    }
+    @else if $num == 200 {
+      #{$declaration}: #eee #{$other}; // Sets the css declaration to this value
+    }
+    @else if $num == 100 {
+      #{$declaration}: #f5f5f5 #{$other}; // Sets the css declaration to this value
+    }
+    @else if $num == 50 {
+      #{$declaration}: #fafafa #{$other}; // Sets the css declaration to this value
+    }
+    @else {
+      @error 'Invalid argument';
+    }
+  }
+  @else {
+    @error 'Invalid class';
   }
 }
 
@@ -63,7 +93,7 @@ $color-lightgrey: #bdbdbd;
     @media only screen and (min-width: 1800px) { @content; }
   }
   @else {
-    @error "Invalid argument";
+    @error 'Invalid argument';
   }
 }
 
@@ -72,6 +102,37 @@ $color-lightgrey: #bdbdbd;
   &::after {
     content: ' ['attr(#{$name})']'; // Won't be visible in print
     font-style: italic;
+  }
+}
+
+// From https://codepen.io/lehollandaisvolant/pen/dMQXYX
+@mixin ripple($shade) {
+  position: relative;
+  overflow: hidden;
+
+  // Ripple effect
+  .effect {
+    -webkit-animation: ripple $animation-long;
+    animation: ripple $animation-long;
+  }
+
+  .ripple {
+    border-radius: 50%;
+    @if $shade == dark {
+      background: rgba(0, 0, 0, .1);
+    }
+    @else if $shade == light {
+      background: rgba(255, 255, 255, .4);
+    }
+    @else {
+      @error 'Invalid argument';
+    }
+    height: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    position: absolute;
+    opacity: 1;
+    width: 0;
   }
 }
 
@@ -92,7 +153,6 @@ $color-lightgrey: #bdbdbd;
     transform: translateY(0);
   }
 }
-
 @keyframes slideDown {
   from {
     -webkit-transform: translateY(-100%);
@@ -116,7 +176,6 @@ $color-lightgrey: #bdbdbd;
     transform: translateY(0);
   }
 }
-
 @keyframes slideUp {
   from {
     -webkit-transform: translateY(100%);
@@ -126,5 +185,20 @@ $color-lightgrey: #bdbdbd;
   to {
     -webkit-transform: translateY(0);
     transform: translateY(0);
+  }
+}
+
+@-webkit-keyframes ripple {
+  100% {
+    -webkit-transform: scale(2);
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+@keyframes ripple {
+  100% {
+    -webkit-transform: scale(2);
+    transform: scale(2);
+    opacity: 0;
   }
 }

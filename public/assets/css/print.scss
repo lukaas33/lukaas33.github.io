@@ -11,7 +11,7 @@
 }
 
 body {
-  color: $color-darkgrey; // Default color, applies mostly to text
+  @include color(grey, 'color', 600); // Default color, applies mostly to text
   font-family: 'noto-sans', 'roboto', sans-serif; // Applies to everything
   font-size: 1rem; // Defaults to base font-size
 }
@@ -22,7 +22,7 @@ body {
 
 a {
   @include show-attr(href);
-  color: $color-darkgrey;
+  @include color(grey, 'color', 600);
   text-decoration: none;
 }
 
@@ -79,8 +79,9 @@ a {
 #experience {
   .card {
     &::after {
+      @include color(grey, 'border-color', 400);
       border: 0; // No double borders
-      border-top: 1px solid $color-lightgrey;
+      border-top-width: 1px;
       width: 100%;
     }
   }
@@ -102,12 +103,12 @@ a {
           content: attr(value)'/'attr(max);
         }
       }
-
     }
 
     &::after {
+      @include color(grey, 'border-color', 400);
       border: 0; // No double borders
-      border-top: 1px solid $color-lightgrey;
+      border-top-width: 1px;
       width: 100%;
     }
   }

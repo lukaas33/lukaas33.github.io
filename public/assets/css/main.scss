@@ -42,8 +42,8 @@
 }
 
 body {
-  background-color: #eee;
-  color: $color-darkgrey; // Default color, applies mostly to text
+  @include color(grey, 'color', 600); // Default color, applies mostly to text
+  @include color(grey, 'background-color', 200);
   font-family: 'Noto-sans', 'Roboto', sans-serif; // Applies to everything
   font-size: 1rem; // Defaults to base font-size
   min-width: 400px; // Can't be resized smaller
@@ -133,9 +133,9 @@ main {
         }
 
         hr {
-          border: 0; // No double borders
-          border-top: 1px solid $color-lightgrey;
-          margin: ($margin / 1.5) 0 ($margin / 3); // One third of the card margin on the bottom and double that on the top
+          @include color(grey, 'background-color', 400);
+          border-top-width: 1px;
+          margin: ($margin / 1.5) 0 ($margin / 3) 0; // One third of the card margin on the bottom and double that on the top
           width: 100%;
         }
       }

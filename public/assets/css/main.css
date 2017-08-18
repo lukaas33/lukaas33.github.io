@@ -18,57 +18,65 @@
   to { -webkit-transform: translateY(0);
     transform: translateY(0); } }
 
+@-webkit-keyframes ripple { 100% { -webkit-transform: scale(2);
+    transform: scale(2);
+    opacity: 0; } }
+
+@keyframes ripple { 100% { -webkit-transform: scale(2);
+    transform: scale(2);
+    opacity: 0; } }
+
 main .part .card { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2); background-color: #fff; -webkit-transition: 400ms ease-in-out; transition: 400ms ease-in-out; }
 
 main .part .card:hover { box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.2); }
 
-main .part#about .card .text a, main .part#experience .card .text .collapse a, main .part#contact .content .card:nth-child(2) .text fieldset [type='text'], main .part#experience .card .text .head .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'], .top nav ul li:last-child a, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon, main .part#portfolio .sort a, main .part#portfolio .select button, .top nav ul li a { cursor: pointer; }
+main .part#about .card .text a, main .part#experience .card .text .collapse a, main .part#contact .content .card:nth-child(2) .text fieldset [type='text'], main .part#experience .card .text .head .date, main .part#contact .content .card:nth-child(1) .show, main .part#contact .content .card:nth-child(2) .text .end button, .top nav ul li:last-child a, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon, main .part#portfolio .sort a, main .part#portfolio .select button, main .part#contact .content .card:nth-child(2) .text .end button input[type='submit'], .top nav ul li a { cursor: pointer; }
 
-main .part#about .card .text a:focus, main .part#experience .card .text .collapse a:focus, main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:focus, main .part#experience .card .text .head .date:focus, main .part#contact .content .card:nth-child(1) button:focus, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:focus, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus, main .part#portfolio .sort a:focus, main .part#portfolio .select button:focus, .top nav ul li a:focus, main .part#about .card .text a:active, main .part#experience .card .text .collapse a:active, main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:active, main .part#experience .card .text .head .date:active, main .part#contact .content .card:nth-child(1) button:active, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:active, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:active, main .part#portfolio .sort a:active, main .part#portfolio .select button:active, .top nav ul li a:active { outline: none; }
+main .part#about .card .text a:focus, main .part#experience .card .text .collapse a:focus, main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:focus, main .part#experience .card .text .head .date:focus, main .part#contact .content .card:nth-child(1) .show:focus, main .part#contact .content .card:nth-child(2) .text .end button:focus, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus, main .part#portfolio .sort a:focus, main .part#portfolio .select button:focus, main .part#contact .content .card:nth-child(2) .text .end button input[type='submit']:focus, .top nav ul li a:focus, main .part#about .card .text a:active, main .part#experience .card .text .collapse a:active, main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:active, main .part#experience .card .text .head .date:active, main .part#contact .content .card:nth-child(1) .show:active, main .part#contact .content .card:nth-child(2) .text .end button:active, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:active, main .part#portfolio .sort a:active, main .part#portfolio .select button:active, main .part#contact .content .card:nth-child(2) .text .end button input[type='submit']:active, .top nav ul li a:active { outline: none; }
 
-main .part#about .card .text a, main .part#experience .card .text .collapse a { color: #ff6e40; text-decoration: none; }
+main .part#about .card .text a, main .part#experience .card .text .collapse a { color: #ff6e40 ; text-decoration: none; }
 
 main .part#about .card .text a:hover, main .part#experience .card .text .collapse a:hover, main .part#about .card .text a:focus, main .part#experience .card .text .collapse a:focus { text-decoration: underline; }
 
-main .part#about .card .text a:visited, main .part#experience .card .text .collapse a:visited { color: #dd2c00; }
+main .part#about .card .text a:visited, main .part#experience .card .text .collapse a:visited { color: #dd2c00 ; }
 
-main .part .title, main .part#about .card .text h2, main .part#experience .card .text .head .tag h3, main .part#skills .card .text .head .tag h3 { color: #00bcd4; font-weight: normal; }
+main .part .title, main .part#about .card .text h2, main .part#experience .card .text .head .tag h3, main .part#skills .card .text .head .tag h3 { color: #00bcd4 ; font-weight: normal; }
 
 main .part#skills .card .text .head progress, main .part#skills .card .text .collapse .box .progress .container div progress { border: 0 solid transparent; }
 
-main .part#skills .card .text .head progress::-webkit-progress-value, main .part#skills .card .text .collapse .box .progress .container div progress::-webkit-progress-value { background-color: #4dd0e1; }
+main .part#skills .card .text .head progress::-webkit-progress-value, main .part#skills .card .text .collapse .box .progress .container div progress::-webkit-progress-value { background-color: #4dd0e1 ; }
 
-main .part#skills .card .text .head progress::-webkit-progress-bar, main .part#skills .card .text .collapse .box .progress .container div progress::-webkit-progress-bar { background-color: #f5f5f5; }
+main .part#skills .card .text .head progress::-webkit-progress-bar, main .part#skills .card .text .collapse .box .progress .container div progress::-webkit-progress-bar { background-color: #f5f5f5 ; }
 
-main .part#contact .content .card:nth-child(2) .text fieldset [type='text'], main .part#experience .card .text .head .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'], .top nav ul li:last-child a, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon, main .part#portfolio .sort a, main .part#portfolio .select button { background-color: transparent; border: 0 solid transparent; transition: 400ms ease-in-out; }
+main .part#contact .content .card:nth-child(2) .text fieldset [type='text'], main .part#experience .card .text .head .date, main .part#contact .content .card:nth-child(1) .show, main .part#contact .content .card:nth-child(2) .text .end button, .top nav ul li:last-child a, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon, main .part#portfolio .sort a, main .part#portfolio .select button, main .part#contact .content .card:nth-child(2) .text .end button input[type='submit'] { background-color: transparent; border: 0 solid transparent; transition: 400ms ease-in-out; }
 
-main .part#contact .content .card:nth-child(2) .text fieldset [type='text'] { border-bottom: 1px solid #bdbdbd; color: #757575; width: 100%; }
+main .part#contact .content .card:nth-child(2) .text fieldset [type='text'] { color: #757575 ; border-color: #bdbdbd ; border-bottom-width: 1px; width: 100%; overflow: hidden; position: relative; }
 
-main .part#contact .content .card:nth-child(2) .text fieldset [type='text']::-webkit-input-placeholder { -webkit-transition: 400ms ease-in-out; transition: 400ms ease-in-out; }
+main .part#contact .content .card:nth-child(2) .text fieldset [type='text']::-webkit-input-placeholder { -webkit-transition: 400ms ease-in-out; transition: 400ms ease-in-out; color: #757575 ; }
 
-main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:focus { border-bottom-color: #ff6e40; }
+main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:focus { border-bottom-color: #ff6e40 ; }
 
-main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:focus::-webkit-input-placeholder { color: #ff6e40; font-size: .75rem; -webkit-transform: translateY(-150%); transform: translateY(-150%); }
+main .part#contact .content .card:nth-child(2) .text fieldset [type='text']:focus::-webkit-input-placeholder { color: #ff6e40 ; font-size: .75rem; -webkit-transform: translateY(-150%); transform: translateY(-150%); }
 
-main .part#experience .card .text .head .date .tooltip, main .part#portfolio .sort a .tooltip { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 2px 3px rgba(0, 0, 0, 0.2); background-color: #424242; border: 1px solid #424242; color: #fff; display: none; font-size: .8rem; left: 0; padding: 0.55556vw 0.83333vw; position: absolute; top: 0; -webkit-transform: translateY(-110%); transform: translateY(-110%); white-space: nowrap; }
+main .part#experience .card .text .head .date .tooltip, main .part#portfolio .sort a .tooltip { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 2px 3px rgba(0, 0, 0, 0.2); background-color: #424242 ; border-color: #424242 ; border-width: 1px; color: #fff; display: none; font-size: .8rem; left: 0; padding: 0.55556vw 0.83333vw; position: absolute; top: 0; -webkit-transform: translateY(-110%); transform: translateY(-110%); white-space: nowrap; }
 
 main .part#experience .card .text .head .date .tooltip::after, main .part#portfolio .sort a .tooltip::after { border-color: #424242 transparent; border-style: solid; border-width: 10px 10px 0; bottom: -10px; content: ''; display: block; left: 50%; margin-left: -10px; position: absolute; width: 0; }
 
-main .part#experience .card .text .head .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'], .top nav ul li:last-child a, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 2px 3px rgba(0, 0, 0, 0.2); text-align: center; }
+main .part#experience .card .text .head .date, main .part#contact .content .card:nth-child(1) .show, main .part#contact .content .card:nth-child(2) .text .end button, .top nav ul li:last-child a, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 2px 3px rgba(0, 0, 0, 0.2); text-align: center; }
 
-main .part#experience .card .text .head .date:hover, main .part#contact .content .card:nth-child(1) button:hover, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:hover, .top nav ul li:last-child a:hover, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:hover, main .part#experience .card .text .head .date:focus, main .part#contact .content .card:nth-child(1) button:focus, main .part#contact .content .card:nth-child(2) .text .end input[type='submit']:focus, .top nav ul li:last-child a:focus, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus { box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1), 0 6px 16px rgba(0, 0, 0, 0.2); }
+main .part#experience .card .text .head .date:hover, main .part#contact .content .card:nth-child(1) .show:hover, main .part#contact .content .card:nth-child(2) .text .end button:hover, .top nav ul li:last-child a:hover, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:hover, main .part#experience .card .text .head .date:focus, main .part#contact .content .card:nth-child(1) .show:focus, main .part#contact .content .card:nth-child(2) .text .end button:focus, .top nav ul li:last-child a:focus, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon:focus { box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1), 0 6px 16px rgba(0, 0, 0, 0.2); }
 
-main .part#experience .card .text .head .date, main .part#contact .content .card:nth-child(1) button, main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { background-color: #00bcd4; color: #fff; padding: 0.71429vw 1.25vw; text-transform: uppercase; }
+main .part#experience .card .text .head .date, main .part#contact .content .card:nth-child(1) .show, main .part#contact .content .card:nth-child(2) .text .end button { background-color: #00bcd4 ; color: #fff; padding: 0.71429vw 1.25vw; text-transform: uppercase; }
 
-.top nav ul li:last-child a, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { background-color: #ff6e40; border-radius: 100%; }
+.top nav ul li:last-child a, main .part#contact .content .card:nth-child(1) .container .text ul li .box .icon { background-color: #ff6e40 ; border-radius: 100%; }
 
-main .part#portfolio .content .page .container .preview span, main .part#contact .content .card:nth-child(1) .container .text ul li, main .part#contact .content .card:nth-child(1) .container .text ul li .box div, main .part#contact .content .card:nth-child(2) .text .end .box, main .part#skills .card .text .collapse .box .progress .container, main .part#contact .content .card:nth-child(1) .container .text ul, main .part#contact .content .card:nth-child(2) .text fieldset, main .part#portfolio .content .page, main .part#about .card, main .part#skills .card .text .collapse .box, main .part#contact .content, main .part#contact .content .card:nth-child(2) .text .end, .top nav, main .part#experience .card .text .head, main .part#skills .card .text .head, main .part#portfolio .content, main .part#contact .content .card:nth-child(1) .container .text ul li .box { display: -webkit-box; display: -ms-flexbox; display: flex; align-content: center; align-items: center; }
+main .part#portfolio .content .page .container .preview span, main .part#contact .content .card:nth-child(1) .container .text ul li, main .part#contact .content .card:nth-child(1) .container .text ul li .box div, main .part#skills .card .text .collapse .box .progress .container, main .part#contact .content .card:nth-child(1) .container .text ul, main .part#contact .content .card:nth-child(2) .text fieldset, main .part#portfolio .content .page, main .part#about .card, main .part#skills .card .text .collapse .box, main .part#contact .content, main .part#contact .content .card:nth-child(2) .text .end, .top nav, .top nav ul, main .part#experience .card .text .head, main .part#skills .card .text .head, main .part#portfolio .content, main .part#portfolio .select, main .part#contact .content .card:nth-child(1) .container .text ul li .box { display: -webkit-box; display: -ms-flexbox; display: flex; -ms-flex-line-pack: center; align-content: center; -webkit-box-align: center; -ms-flex-align: center; align-items: center; }
 
-main .part#portfolio .content .page .container .preview span, main .part#contact .content .card:nth-child(1) .container .text ul li, main .part#contact .content .card:nth-child(1) .container .text ul li .box div, main .part#contact .content .card:nth-child(2) .text .end .box { align-items: center; }
+main .part#portfolio .content .page .container .preview span, main .part#contact .content .card:nth-child(1) .container .text ul li, main .part#contact .content .card:nth-child(1) .container .text ul li .box div { align-items: center; }
 
 main .part#skills .card .text .collapse .box .progress .container, main .part#contact .content .card:nth-child(1) .container .text ul, main .part#contact .content .card:nth-child(2) .text fieldset { flex-flow: nowrap column; }
 
-main .part#portfolio .content .page { flex-flow: wrap row; justify-content: center; align-items: stretch; align-content: stretch; }
+main .part#portfolio .content .page { flex-flow: wrap row; justify-content: center; -webkit-box-align: stretch; -ms-flex-align: stretch; align-items: stretch; -ms-flex-line-pack: stretch; align-content: stretch; }
 
 @media only screen and (max-width: 599px) { main .part#about .card, main .part#skills .card .text .collapse .box, main .part#contact .content, main .part#contact .content .card:nth-child(2) .text .end { -webkit-box-orient: vertical; -webkit-box-direction: normal; -ms-flex-direction: column; flex-direction: column; } }
 
@@ -80,9 +88,9 @@ main .part#portfolio .content .page { flex-flow: wrap row; justify-content: cent
 
 * { -webkit-box-sizing: border-box; box-sizing: border-box; margin: 0; padding: 0; }
 
-::-moz-selection { background-color: #ff9e80; color: #fff; }
+::-moz-selection { background-color: #ff9e80 ; color: #fff; }
 
-::selection { background-color: #ff9e80; color: #fff; }
+::selection { background-color: #ff9e80 ; color: #fff; }
 
 @media only screen and (max-width: 599px) { :root { font-size: 20px; } }
 
@@ -92,7 +100,7 @@ main .part#portfolio .content .page { flex-flow: wrap row; justify-content: cent
 
 @media only screen and (min-width: 1200px) { :root { font-size: 16px; } }
 
-body { background-color: #eee; color: #757575; font-family: 'Noto-sans', 'Roboto', sans-serif; font-size: 1rem; min-width: 400px; user-select: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { color: #757575 ; background-color: #eee ; font-family: 'Noto-sans', 'Roboto', sans-serif; font-size: 1rem; min-width: 400px; user-select: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
 .material-icons.md-dark { color: rgba(0, 0, 0, 0.55); }
 
@@ -104,51 +112,75 @@ body { background-color: #eee; color: #757575; font-family: 'Noto-sans', 'Roboto
 
 .notransition { -webkit-transition: none !important; transition: none !important; }
 
-.top nav { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.2); -webkit-animation: slideDown 800ms ease-in-out; animation: slideDown 800ms ease-in-out; background-color: #fafafa; left: 0; overflow: hidden; position: fixed; top: 0; width: 100vw; z-index: 30; }
+.top nav { background-color: #fafafa ; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.2); -webkit-animation: slideDown 800ms ease-in-out; animation: slideDown 800ms ease-in-out; left: 0; overflow: hidden; position: fixed; padding: 0 1vh; top: 0; width: 100vw; z-index: 30; }
 
-@media only screen and (max-width: 599px) { .top nav { height: 9vh; padding: 2vh 4vh; } }
+@media only screen and (max-width: 599px) { .top nav { height: 9vh; } }
 
-@media only screen and (min-width: 600px) { .top nav { height: 8vh; padding: 2.4vh 4vh; } }
+@media only screen and (min-width: 600px) { .top nav { height: 8vh; } }
 
-@media only screen and (min-width: 900px) { .top nav { height: 5vh; padding: 1vh 3vh; } }
+@media only screen and (min-width: 900px) { .top nav { height: 5vh; } }
 
-@media only screen and (min-width: 1200px) { .top nav { height: 5vh; padding: 1vh 3vh; } }
+@media only screen and (min-width: 1200px) { .top nav { height: 5vh; } }
 
-@media only screen and (max-width: 599px) { .top nav .logo { height: 100%; width: 5vh; } }
+.top nav .logo { height: auto; }
 
-@media only screen and (min-width: 600px) { .top nav .logo { height: 100%; width: 3.2vh; } }
+@media only screen and (max-width: 599px) { .top nav .logo { width: 5vh; margin: 2vh 4vh; } }
 
-@media only screen and (min-width: 900px) { .top nav .logo { height: 100%; width: 3vh; } }
+@media only screen and (min-width: 600px) { .top nav .logo { width: 3.2vh; margin: 2.4vh 4.8vh; } }
 
-@media only screen and (min-width: 1200px) { .top nav .logo { height: 100%; width: 3vh; } }
+@media only screen and (min-width: 900px) { .top nav .logo { width: 3vh; margin: 1vh 2vh; } }
+
+@media only screen and (min-width: 1200px) { .top nav .logo { width: 3vh; margin: 1vh 2vh; } }
 
 .top nav .logo img { display: block; height: 100%; width: 100%; }
 
-.top nav ul { margin-left: auto; }
+.top nav ul { align-items: stretch; margin-left: auto; height: 100%; }
 
 @media only screen and (max-width: 599px) { .top nav ul li:not(.show):not(.focus) { display: none; } }
 
-.top nav ul .focus a { color: #00bcd4; }
+.top nav ul .focus a { color: #00bcd4 ; }
 
-.top nav ul li { display: inline-block; margin-left: 2vw; text-transform: uppercase; vertical-align: middle; }
+.top nav ul li { display: inline-block; text-transform: uppercase; vertical-align: middle; }
 
-.top nav ul li a { color: #757575; text-decoration: none; -webkit-transition: 400ms ease-in-out; transition: 400ms ease-in-out; }
+.top nav ul li a { color: #757575 ; text-decoration: none; -webkit-transition: 400ms ease-in-out; transition: 400ms ease-in-out; vertical-align: middle; }
 
-.top nav ul li:not(:last-child):not(.focus) a:focus, .top nav ul li:not(:last-child):not(.focus) a:hover { opacity: .55; }
+.top nav ul li:not(:last-child) { position: relative; overflow: hidden; }
 
-@media only screen and (max-width: 599px) { .top nav ul li:last-child { height: 100%; width: 5vh; } }
+.top nav ul li:not(:last-child) .effect { -webkit-animation: ripple 800ms ease-in-out; animation: ripple 800ms ease-in-out; }
 
-@media only screen and (min-width: 600px) { .top nav ul li:last-child { height: 100%; width: 3.2vh; } }
+.top nav ul li:not(:last-child) .ripple { border-radius: 50%; background: rgba(0, 0, 0, 0.1); height: 0; -webkit-transform: scale(0); transform: scale(0); position: absolute; opacity: 1; width: 0; }
 
-@media only screen and (min-width: 900px) { .top nav ul li:last-child { height: 100%; width: 3vh; } }
+@media only screen and (max-width: 599px) { .top nav ul li:not(:last-child) { padding: 2vh; } }
 
-@media only screen and (min-width: 1200px) { .top nav ul li:last-child { height: 100%; width: 3vh; } }
+@media only screen and (min-width: 600px) { .top nav ul li:not(:last-child) { padding: 2.4vh; } }
 
-.top nav ul li:last-child a { background-color: #ff6e40; width: 100%; height: 100%; display: inline-block; }
+@media only screen and (min-width: 900px) { .top nav ul li:not(:last-child) { padding: 1vh; } }
 
-.top nav ul li:last-child a .material-icons { font-size: 2vh; }
+@media only screen and (min-width: 1200px) { .top nav ul li:not(:last-child) { padding: 1vh; } }
 
-.top header { background-color: #00bcd4; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.2); -webkit-animation: slideDown 800ms ease-in-out; animation: slideDown 800ms ease-in-out; height: 60vh; position: absolute; top: 0; width: 100vw; z-index: 10; }
+.top nav ul li:not(:last-child):not(.focus) a:focus, .top nav ul li:not(:last-child):not(.focus) a:hover { color: #9e9e9e ; }
+
+.top nav ul li:last-child { height: auto; }
+
+@media only screen and (max-width: 599px) { .top nav ul li:last-child { width: 5vh; margin: 2vh 4vh; } }
+
+@media only screen and (min-width: 600px) { .top nav ul li:last-child { width: 3.2vh; margin: 2.4vh 4.8vh; } }
+
+@media only screen and (min-width: 900px) { .top nav ul li:last-child { width: 3vh; margin: 1vh 2vh; } }
+
+@media only screen and (min-width: 1200px) { .top nav ul li:last-child { width: 3vh; margin: 1vh 2vh; } }
+
+.top nav ul li:last-child a { background-color: #ff6e40 ; width: 100%; height: 100%; display: inline-block; }
+
+@media only screen and (max-width: 599px) { .top nav ul li:last-child a .material-icons { font-size: 3vh; margin-top: 1vh; } }
+
+@media only screen and (min-width: 600px) { .top nav ul li:last-child a .material-icons { font-size: 2vh; margin-top: 0; } }
+
+@media only screen and (min-width: 900px) { .top nav ul li:last-child a .material-icons { font-size: 2vh; margin-top: 0; } }
+
+@media only screen and (min-width: 1200px) { .top nav ul li:last-child a .material-icons { font-size: 2vh; margin-top: 0; } }
+
+.top header { background-color: #00bcd4 ; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.2); -webkit-animation: slideDown 800ms ease-in-out; animation: slideDown 800ms ease-in-out; height: 60vh; position: absolute; top: 0; width: 100vw; z-index: 10; }
 
 main { animation: slideUp 800ms ease-in-out; margin: 0 10vw; position: relative; width: 80vw; z-index: 20; }
 
@@ -172,7 +204,7 @@ main .part .card .text { overflow-y: auto; overflow-x: hidden; }
 
 @media only screen and (min-width: 1200px) { main .part .card .text { padding: 2vw; text-align: left; } }
 
-main .part .card .text hr { border: 0; border-top: 1px solid #bdbdbd; margin: 1.66667vw 0 0.83333vw; width: 100%; }
+main .part .card .text hr { background-color: #bdbdbd ; border-top-width: 1px; margin: 1.66667vw 0 0.83333vw 0; width: 100%; }
 
 main .part .title { font-size: 1.75rem; text-align: center; text-transform: uppercase; }
 
@@ -216,17 +248,17 @@ main .part#about .card .text { -webkit-user-select: text; -moz-user-select: text
 
 main .part#about .card .text h2 { font-size: 2rem; margin: 0.625vw 0; }
 
-main .part#about .card .text .tagline { font-size: 1.2rem; }
+main .part#about .card .text .tagline { font-size: 1.2rem; color: #616161 ; }
 
 main .part#experience .card .text .head { cursor: pointer; }
 
 main .part#experience .card .text .head .tag h3 { font-size: 1.75rem; margin-bottom: 0.625vw; }
 
-main .part#experience .card .text .head .tag p { color: #616161; }
+main .part#experience .card .text .head .tag p { color: #616161 ; }
 
-main .part#experience .card .text .head .date { margin-left: auto; position: relative; }
+main .part#experience .card .text .head .date { background-color: #4dd0e1 ; margin-left: auto; position: relative; }
 
-main .part#experience .card .text .head .date span { color: #b2ebf2; margin: 0 0.41667vw; }
+main .part#experience .card .text .head .date span { margin: 0 0.41667vw; }
 
 main .part#experience .card .text .head .date .tooltip { width: 100%; }
 
@@ -234,7 +266,7 @@ main .part#experience .card .text .collapse { display: none; }
 
 main .part#experience .card .text .collapse p { -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; }
 
-main .part#experience .card .text .collapse .number { color: #ff6e40; }
+main .part#experience .card .text .collapse .number { color: #ff9e80 ; }
 
 main .part#skills .card .text .head { cursor: pointer; }
 
@@ -245,6 +277,8 @@ main .part#skills .card .text .head .tag h3 { font-size: 1.75rem; }
 main .part#skills .card .text .head progress { margin-left: auto; width: 60%; }
 
 main .part#skills .card .text .collapse { display: none; }
+
+main .part#skills .card .text .collapse .box { align-items: stretch; }
 
 main .part#skills .card .text .collapse .box .description { margin-right: auto; user-select: text; }
 
@@ -274,7 +308,7 @@ main .part#skills .card .text .collapse .box .progress .container div progress {
 
 main .part#portfolio .sort { margin: 0 auto; text-align: center; width: 25%; }
 
-main .part#portfolio .sort a { color: #757575; display: block; margin: 5%; position: relative; text-decoration: none; text-transform: uppercase; }
+main .part#portfolio .sort a { color: #757575 ; display: block; margin: 5%; position: relative; text-decoration: none; text-transform: uppercase; }
 
 main .part#portfolio .sort a .material-icons { display: inline-block; position: absolute; transform: translateX(-150%); vertical-align: middle; }
 
@@ -300,7 +334,7 @@ main .part#portfolio .content .page .container .preview img { display: block; wi
 
 main .part#portfolio .content .page .container .preview span { height: 100%; left: 0; position: absolute; top: 0; -webkit-transition: 400ms ease-in-out; transition: 400ms ease-in-out; width: 100%; }
 
-main .part#portfolio .content .page .container .preview span:hover { background-color: rgba(0, 0, 0, 0.25); }
+main .part#portfolio .content .page .container .preview span:hover { background-color: rgba(0, 0, 0, 0.15); }
 
 main .part#portfolio .content .page .container .preview span .tags { color: #fff; margin: auto; opacity: 0; text-align: center; }
 
@@ -308,15 +342,15 @@ main .part#portfolio .content .page .container .preview span .tags h3 { font-siz
 
 main .part#portfolio .content .page .container .preview span .tags p { font-size: .85rem; }
 
-main .part#portfolio .select { margin: 0 40%; text-align: center; width: 20%; }
+main .part#portfolio .select { text-align: center; width: 20%; margin: 0 40%; height: 2vw; }
 
-main .part#portfolio .select p { color: #757575; display: inline; text-transform: uppercase; }
+main .part#portfolio .select p { color: #757575 ; display: inline; text-transform: uppercase; margin: auto; }
 
-main .part#portfolio .select button { position: relative; }
+main .part#portfolio .select button { position: relative; overflow: hidden; width: 2vw; height: 2vw; border-radius: 100%; }
 
-main .part#portfolio .select button.backward { float: left; }
+main .part#portfolio .select button .effect { -webkit-animation: ripple 800ms ease-in-out; animation: ripple 800ms ease-in-out; }
 
-main .part#portfolio .select button.forward { float: right; }
+main .part#portfolio .select button .ripple { border-radius: 50%; background: rgba(0, 0, 0, 0.1); height: 0; -webkit-transform: scale(0); transform: scale(0); position: absolute; opacity: 1; width: 0; }
 
 main .part#contact { margin-bottom: 45vh; }
 
@@ -348,9 +382,13 @@ main .part#contact .content .card:nth-child(1) .container .map { display: none; 
 
 main .part#contact .content .card:nth-child(1) .container .map iframe { height: 100%; width: 100%; }
 
-main .part#contact .content .card:nth-child(1) button { box-shadow: none; height: 6.75vh; width: 100%; }
+main .part#contact .content .card:nth-child(1) .show { position: relative; overflow: hidden; box-shadow: none; height: 6.75vh; width: 100%; }
 
-main .part#contact .content .card:nth-child(1) button:hover, main .part#contact .content .card:nth-child(1) button:focus { -webkit-box-shadow: none; box-shadow: none; }
+main .part#contact .content .card:nth-child(1) .show .effect { -webkit-animation: ripple 800ms ease-in-out; animation: ripple 800ms ease-in-out; }
+
+main .part#contact .content .card:nth-child(1) .show .ripple { border-radius: 50%; background: rgba(255, 255, 255, 0.4); height: 0; -webkit-transform: scale(0); transform: scale(0); position: absolute; opacity: 1; width: 0; }
+
+main .part#contact .content .card:nth-child(1) .show:hover, main .part#contact .content .card:nth-child(1) .show:focus { -webkit-box-shadow: none; box-shadow: none; }
 
 @media only screen and (max-width: 599px) { main .part#contact .content .card:nth-child(2) { width: 100%; } }
 
@@ -372,20 +410,28 @@ main .part#contact .content .card:nth-child(2) .text fieldset textarea { font-fa
 
 main .part#contact .content .card:nth-child(2) .text .end { margin-top: 1rem; }
 
-@media only screen and (max-width: 599px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0 15%; width: 70%; } }
+main .part#contact .content .card:nth-child(2) .text .end button { position: relative; overflow: hidden; }
 
-@media only screen and (min-width: 600px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0 15%; width: 70%; } }
+main .part#contact .content .card:nth-child(2) .text .end button .effect { -webkit-animation: ripple 800ms ease-in-out; animation: ripple 800ms ease-in-out; }
 
-@media only screen and (min-width: 900px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0; width: 40%; } }
+main .part#contact .content .card:nth-child(2) .text .end button .ripple { border-radius: 50%; background: rgba(255, 255, 255, 0.4); height: 0; -webkit-transform: scale(0); transform: scale(0); position: absolute; opacity: 1; width: 0; }
 
-@media only screen and (min-width: 1200px) { main .part#contact .content .card:nth-child(2) .text .end input[type='submit'] { margin: 0; width: 40%; } }
+@media only screen and (max-width: 599px) { main .part#contact .content .card:nth-child(2) .text .end button { margin: 0 15%; width: 70%; } }
 
-main .part#contact .content .card:nth-child(2) .text .end .box .error { color: #ff9e80; display: none; width: 100%; }
+@media only screen and (min-width: 600px) { main .part#contact .content .card:nth-child(2) .text .end button { margin: 0 15%; width: 70%; } }
 
-@media only screen and (max-width: 599px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-top: 1rem; margin-left: 0; text-align: center; } }
+@media only screen and (min-width: 900px) { main .part#contact .content .card:nth-child(2) .text .end button { margin: 0; width: 40%; } }
 
-@media only screen and (min-width: 600px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-top: 1rem; margin-left: 0; text-align: center; } }
+@media only screen and (min-width: 1200px) { main .part#contact .content .card:nth-child(2) .text .end button { margin: 0; width: 40%; } }
 
-@media only screen and (min-width: 900px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-top: 0; margin-left: 1rem; text-align: left; } }
+main .part#contact .content .card:nth-child(2) .text .end button input[type='submit'] { color: inherit; height: 100%; text-transform: inherit; width: 100%; }
 
-@media only screen and (min-width: 1200px) { main .part#contact .content .card:nth-child(2) .text .end .box .error { margin-top: 0; margin-left: 1rem; text-align: left; } }
+main .part#contact .content .card:nth-child(2) .text .end .error { color: #ff9e80 ; display: none; }
+
+@media only screen and (max-width: 599px) { main .part#contact .content .card:nth-child(2) .text .end .error { margin-top: 1rem; margin-left: 0; text-align: center; } }
+
+@media only screen and (min-width: 600px) { main .part#contact .content .card:nth-child(2) .text .end .error { margin-top: 1rem; margin-left: 0; text-align: center; } }
+
+@media only screen and (min-width: 900px) { main .part#contact .content .card:nth-child(2) .text .end .error { margin-top: 0; margin-left: 1rem; text-align: left; } }
+
+@media only screen and (min-width: 1200px) { main .part#contact .content .card:nth-child(2) .text .end .error { margin-top: 0; margin-left: 1rem; text-align: left; } }

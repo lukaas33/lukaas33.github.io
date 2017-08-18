@@ -90,7 +90,8 @@
           }
         }
 
-        button {
+        .show {
+          @include ripple(light);
           @extend %normal; // Is a normal button
           box-shadow: none; // Overwrites default button
           height: ($height * .15); // 15% of card height
@@ -99,7 +100,7 @@
           &:hover,
           &:focus {
             -webkit-box-shadow: none;
-                    box-shadow: none; // Overwrites default button
+            box-shadow: none; // Overwrites default button
           }
         }
       }
@@ -159,7 +160,8 @@
             @extend %res-cards; // Best way to display two elements next to each other
             margin-top: $line-height;
 
-            input[type='submit'] {
+            button {
+              @include ripple(light);
               @extend %normal; // Is a normal button
 
               @include media(phone-only) {
@@ -178,36 +180,39 @@
                 margin: 0;
                 width: 40%; // Of card
               }
+
+              input[type='submit'] {
+                @extend %form;
+                color: inherit;
+                height: 100%;
+                text-transform: inherit;
+                width: 100%;
+              }
             }
 
-            .box {
-              @extend %vertical; // Vertical flex
+            .error {
+              @include color(secondary, 'color', 100);
+              display: none;
 
-              .error {
-                @include color(secondary, 'color', 100);
-                display: none;
-                width: 100%; // Of box
-
-                @include media(phone-only) {
-                  margin-top: $padding;
-                  margin-left: 0;
-                  text-align: center;
-                }
-                @include media(tablet-portrait-up) {
-                  margin-top: $padding;
-                  margin-left: 0;
-                  text-align: center;
-                }
-                @include media(tablet-landscape-up) {
-                  margin-top: 0;
-                  margin-left: $padding;
-                  text-align: left;
-                }
-                @include media(desktop-up) {
-                  margin-top: 0;
-                  margin-left: $padding;
-                  text-align: left;
-                }
+              @include media(phone-only) {
+                margin-top: $padding;
+                margin-left: 0;
+                text-align: center;
+              }
+              @include media(tablet-portrait-up) {
+                margin-top: $padding;
+                margin-left: 0;
+                text-align: center;
+              }
+              @include media(tablet-landscape-up) {
+                margin-top: 0;
+                margin-left: $padding;
+                text-align: left;
+              }
+              @include media(desktop-up) {
+                margin-top: 0;
+                margin-left: $padding;
+                text-align: left;
               }
             }
           }

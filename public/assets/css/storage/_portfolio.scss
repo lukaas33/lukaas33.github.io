@@ -5,8 +5,8 @@
     width: 25%; // Of portfolio
 
     a {
+      @include color(grey, 'color', 600);
       @extend %form; // Is a type of form
-      color: $color-darkgrey;
       display: block; // Entire block is clickable
       margin: 5%; // Of sort width
       position: relative; // Absolute tooltip will be placed with regard to this
@@ -82,7 +82,7 @@
             width: 100%; // Of container
 
             &:hover {
-              background-color: rgba(0, 0, 0, .25); // Darker shade to show text
+              background-color: rgba(0, 0, 0, .15); // Darker shade to show text
             }
 
             .tags {
@@ -106,27 +106,25 @@
   }
 
   .select {
-    margin: 0 40%; // Centers
+    @extend %flex;
     text-align: center;
-    width: 20%; // Of portfolio
+    width: 20%; // Of main
+    margin: 0 40%; // Of main
+    height: 2vw;
 
     p {
-      color: $color-darkgrey;
+      @include color(grey, 'color', 600);
       display: inline;
       text-transform: uppercase;
+      margin: auto;
     }
 
     button {
+      @include ripple(dark);
       @extend %form; // Is a type of form
-      position: relative; // Absolute tooltip will be placed with regard to this
-
-      &.backward {
-        float: left;
-      }
-
-      &.forward {
-        float: right;
-      }
+      width: 2vw;
+      height: 2vw;
+      border-radius: 100%;
     }
   }
 }

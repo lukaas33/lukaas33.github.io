@@ -98,7 +98,7 @@
         duration: time,
         easing: "swing",
         complete: function() {
-          $button.text("Show map");
+          $button.find('p').text("Show map");
           $data.fadeIn({
             duration: time,
             easing: "swing"
@@ -113,7 +113,7 @@
         duration: time,
         easing: "swing",
         complete: function() {
-          $button.text("Hide map");
+          $button.find('p').text("Hide map");
           $map.fadeIn({
             duration: time,
             easing: "swing"
@@ -231,6 +231,29 @@
       var name;
       name = $(this).attr("name");
       return global.cookie(name, $(this).val());
+    });
+    $("[ripple]").click(function(event) {
+      var buttonHeight, buttonWidth, posX, posY, ripple, x, y;
+      $("[ripple]").find(".ripple").remove();
+      posX = $(this).offset().left;
+      posY = $(this).offset().top;
+      buttonWidth = $(this).width();
+      buttonHeight = $(this).height();
+      ripple = $("<span></span>").addClass("ripple");
+      $(this).prepend(ripple);
+      if (buttonWidth >= buttonHeight) {
+        buttonHeight = buttonWidth;
+      } else {
+        buttonWidth = buttonHeight;
+      }
+      x = event.pageX - posX - buttonWidth / 2;
+      y = event.pageY - posY - buttonHeight / 2;
+      return $("[ripple]").find(".ripple").css({
+        width: buttonWidth,
+        height: buttonHeight,
+        top: y + 'px',
+        left: x + 'px'
+      }).addClass("effect");
     });
     return $("#contact form").submit(function(event) {
       var error, formdata, regex;
