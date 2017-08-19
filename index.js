@@ -1,6 +1,8 @@
+'use strict'
+
 // Require
 const express = require('express')
-const csp = require('helmet-csp')
+const helmet = require('helmet')
 const nodemailer = require('nodemailer')
 const bodyParser = require('body-parser')
 const formidable = require('formidable')
@@ -48,7 +50,8 @@ const send = function (request, response) {
 }
 
 // Setup
-app.use(csp({
+app.use(helmet())
+app.use(helmet.contentSecurityPolicy({ // Allowed sources
   directives: {
     // Setup for http headers
     defaultSrc: ["'self'", '*.googleapis.com'],
@@ -63,7 +66,7 @@ app.use(csp({
 
 app.use(compression()) // Compression for site
 app.use(minify()) // Minifies code
-app.use(express.static(`${__dirname}/public`)) // Serve static files
+app.use(express.static(`${__dirname}/public`, { maxage: '7d' })) // Serve static files
 
 app.use(bodyParser.json()) // Enable json parsing
 app.use(bodyParser.urlencoded({extended: true}))

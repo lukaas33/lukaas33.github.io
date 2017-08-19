@@ -1,3 +1,5 @@
+'use strict'
+
 var global = {
   // Variables with a global scope
   timing: 400,
@@ -28,7 +30,7 @@ var global = {
       }
     } else {
       console.log('Set cookie ' + name + ' to ' + value)
-      document.cookie = name + '=' + value + '; path=/'
+      document.cookie = name + '=' + value + '; secure; path=/'
     }
   }
 

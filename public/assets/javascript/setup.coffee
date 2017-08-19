@@ -1,3 +1,5 @@
+'use strict'
+
 ### Functions ###
 sinceDate = (date) ->
   # Calculates time since date

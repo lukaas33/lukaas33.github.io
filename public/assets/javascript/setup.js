@@ -1,7 +1,7 @@
-
-/* Functions */
-
 (function() {
+  'use strict';
+
+  /* Functions */
   var setDate, setDoc, setPages, setProjects, sinceDate;
 
   sinceDate = function(date) {

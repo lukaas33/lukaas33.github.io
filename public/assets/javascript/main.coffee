@@ -1,3 +1,5 @@
+'use strict'
+
 # Main script for webste
 switchPage = (change) ->
   if global.pageNum > 1
@@ -68,16 +70,16 @@ toggle = (card, active) ->
     global.state[active] = null
 
 setForm = ->
-  $form = $("#contact form")
+  $form = $("#contact").find "form"
   $form.find("input[name='name']").val(global.cookie "name")
   $form.find("input[name='email']").val(global.cookie "email")
   $form.find("textarea").val(global.cookie "message")
 
 setMap = (change) ->
   # Toggles and initialises map
-  $map = $("#contact .card").find ".map"
-  $data = $("#contact .card:nth-child(1)").find ".text"
-  $button = $("#contact .card").find ".show"
+  $map = $("#contact").find ".map"
+  $data = $("#contact").find ".card:nth-child(1) .text"
+  $button = $("#contact").find ".show"
 
   setOff = (time) ->
     # Sets map to off

@@ -1,4 +1,5 @@
 (function() {
+  'use strict';
   var highLight, scrollToLoc, sendMail, setForm, setMap, switchPage, toggle;
 
   switchPage = function(change) {
@@ -81,7 +82,7 @@
 
   setForm = function() {
     var $form;
-    $form = $("#contact form");
+    $form = $("#contact").find("form");
     $form.find("input[name='name']").val(global.cookie("name"));
     $form.find("input[name='email']").val(global.cookie("email"));
     return $form.find("textarea").val(global.cookie("message"));
@@ -89,9 +90,9 @@
 
   setMap = function(change) {
     var $button, $data, $map, setOff, setOn;
-    $map = $("#contact .card").find(".map");
-    $data = $("#contact .card:nth-child(1)").find(".text");
-    $button = $("#contact .card").find(".show");
+    $map = $("#contact").find(".map");
+    $data = $("#contact").find(".card:nth-child(1) .text");
+    $button = $("#contact").find(".show");
     setOff = function(time) {
       console.log("Map hidden");
       return $map.fadeOut({
