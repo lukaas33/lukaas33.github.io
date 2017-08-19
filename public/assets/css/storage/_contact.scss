@@ -6,217 +6,218 @@
 
   .content {
     @extend %res-cards; // Displays next to each other or above
+  }
 
-    .card {
-    	height: $height;
+  .card {
+    height: $height;
 
-      // Card 1
-      &:nth-child(1) {
-        @include media(phone-only) {
-          width: 100%; // Of main
-        }
-        @include media(tablet-portrait-up) {
-          width: 100%; // Of main
-        }
-        @include media(tablet-landscape-up) {
-          margin-right: 2.5%; // Of main width
-          min-width: 30%; // Of main
-        }
-        @include media(desktop-up) {
-          margin-right: 2.5%; // Of main width
-          min-width: 30%; // Of main
-        }
+    // Card 1
+    &:nth-child(1) {
+      @include media(phone-only) {
+        width: 100%; // Of main
       }
+      @include media(tablet-portrait-up) {
+        width: 100%; // Of main
+      }
+      @include media(tablet-landscape-up) {
+        margin-right: 2.5%; // Of main width
+        min-width: 30%; // Of main
+      }
+      @include media(desktop-up) {
+        margin-right: 2.5%; // Of main width
+        min-width: 30%; // Of main
+      }
+    }
 
-      .container {
-        height: ($height * .85); // 85% of card height
+    .container {
+      height: ($height * .85); // 85% of card height
 
-        .text {
+      .text {
+        height: 100%;
+        width: 100%; // Fills container
+
+        ul {
+          @extend %colomn; // Distributes li's evenly
           height: 100%;
-          width: 100%; // Fills container
+          margin: 0;
+          width: 100%; // Fills text
 
-          ul {
-            @extend %colomn; // Distributes li's evenly
-            height: 100%;
-            margin: 0;
-            width: 100%; // Fills text
-
-            li {
-              @extend %vertical; // Items vertically aligned
-              flex-grow: 1; // Grow to fill parent
-              list-style: none; // No bullets
-              text-align: left;
-              width: 100%;
-            }
-          }
-        }
-
-        .box {
-          @extend %flex; // Display items next to each other
-
-          .icon {
-            @extend %round; // Round button appearance
-            cursor: default; // Is not clickable so cursor shouldn't be a pointer
-            height: 4vh;
-            margin: 1vh 4vh 1vh 0; // Smaller on the top than on the sides None on the left
-            width: 4vh;
-
-            .material-icons {
-              font-size: 2vh;
-              margin: 1vh;
-            }
-          }
-
-          div {
+          li {
             @extend %vertical; // Items vertically aligned
-
-            p {
-              -moz-user-select: text;
-              -ms-user-select: text;
-              -webkit-user-select: text;
-              user-select: text; // Can be selected
-            }
-          }
-        }
-
-        .map {
-          display: none; // Starts off
-          height: 100%;
-          width: 100%; // Fills container
-
-          iframe {
-            height: 100%;
-            width: 100%; // Fills map
+            flex-grow: 1; // Grow to fill parent
+            list-style: none; // No bullets
+            text-align: left;
+            width: 100%;
           }
         }
       }
 
-      .show {
-        @extend %normal; // Is a normal button
-        @include ripple(light);
+      .box {
+        @extend %flex; // Display items next to each other
+
+        .icon {
+          @extend %round; // Round button appearance
+          cursor: default; // Is not clickable so cursor shouldn't be a pointer
+          height: 4vh;
+          margin: 1vh 4vh 1vh 0; // Smaller on the top than on the sides None on the left
+          width: 4vh;
+
+          .material-icons {
+            font-size: 2vh;
+            margin: 1vh;
+          }
+        }
+
+        div {
+          @extend %vertical; // Items vertically aligned
+
+          p {
+            -moz-user-select: text;
+            -ms-user-select: text;
+            -webkit-user-select: text;
+            user-select: text; // Can be selected
+          }
+        }
+      }
+
+      .map {
+        display: none; // Starts off
+        height: 100%;
+        width: 100%; // Fills container
+
+        iframe {
+          height: 100%;
+          width: 100%; // Fills map
+        }
+      }
+    }
+
+    .show {
+      @extend %normal; // Is a normal button
+      @include ripple(light);
+      box-shadow: none; // Overwrites default button
+      height: ($height * .15); // 15% of card height
+      width: 100%; // Fills card
+
+      &:hover,
+      &:focus {
+        -webkit-box-shadow: none;
         box-shadow: none; // Overwrites default button
-        height: ($height * .15); // 15% of card height
+      }
+    }
+
+    // Card 2
+    &:nth-child(2) {
+      // Local variables
+      $line-height: 1rem;
+      $padding: $line-height;
+
+      @include media(phone-only) {
+        width: 100%; // Of main
+      }
+      @include media(tablet-portrait-up) {
+        width: 100%; // Of main
+      }
+      @include media(tablet-landscape-up) {
+        margin-left: 2.5%; // Of main width
+        min-width: 65%; // Of main
+      }
+      @include media(desktop-up) {
+        margin-left: 2.5%; // Of main width
+        min-width: 65%; // Of main
+      }
+
+      .text {
+        height: 100%;
+        width: 100%; // Fills container
+      }
+
+      fieldset {
+        @extend %colomn; // Distributes input fields evenly
+
+        border: 0;
+        height: 100%;
+        padding: 0;
         width: 100%; // Fills card
 
-        &:hover,
-        &:focus {
-          -webkit-box-shadow: none;
-          box-shadow: none; // Overwrites default button
+        [type='text'] {
+          @extend %input; // Input types
+          flex-grow: 1; // Grow to fill parent
+          margin-bottom: ($line-height / 2);
+          padding-bottom: ($padding); // Decorative space between the line
+          padding-top: ($padding * 1.5); // Clears space for placeholder
+        }
+
+        input[type='text'] {
+          max-height: ($line-height + $padding); // Height of one line
+        }
+
+        textarea {
+          font-family: inherit; // Overwrites default behaviour
+          resize: none; // Textarea can't be resized
         }
       }
 
-      // Card 2
-      &:nth-child(2) {
-        @include media(phone-only) {
-          width: 100%; // Of main
-        }
-        @include media(tablet-portrait-up) {
-          width: 100%; // Of main
-        }
-        @include media(tablet-landscape-up) {
-          margin-left: 2.5%; // Of main width
-          min-width: 65%; // Of main
-        }
-        @include media(desktop-up) {
-          margin-left: 2.5%; // Of main width
-          min-width: 65%; // Of main
-        }
 
-        .text {
-          // Local variables
-          $line-height: 1rem;
-          $padding: $line-height;
+      .end {
+        @extend %res-cards; // Best way to display two elements next to each other
+        margin-top: $line-height;
 
-          height: 100%;
-          width: 100%; // Fills container
+        button {
+          @extend %normal; // Is a normal button
+          @include ripple(light);
 
-          fieldset {
-            @extend %colomn; // Distributes input fields evenly
+          @include media(phone-only) {
+            margin: 0 15%; // Of card width
+            width: 70%; //
+          }
+          @include media(tablet-portrait-up) {
+            margin: 0 15%; // Of card width
+            width: 70%; // Of card
+          }
+          @include media(tablet-landscape-up) {
+            margin: 0;
+            width: 40%; // Of card
+          }
+          @include media(desktop-up) {
+            margin: 0;
+            width: 40%; // Of card
+          }
 
-            border: 0;
+          [type='submit'] {
+            @extend %form; // Will be invisible
+            color: inherit;
             height: 100%;
-            padding: 0;
-            width: 100%; // Fills card
+            text-transform: inherit;
+            width: 100%;
+          }
+        }
 
-            [type='text'] {
-              @extend %input; // Input types
-              flex-grow: 1; // Grow to fill parent
-              margin-bottom: ($line-height / 2);
-              padding-bottom: ($padding); // Decorative space between the line
-              padding-top: ($padding * 1.5); // Clears space for placeholder
-            }
+        .error {
+          @include color(secondary, 'color', 100);
 
-            input[type='text'] {
-              max-height: ($line-height + $padding); // Height of one line
-            }
-
-            textarea {
-              font-family: inherit; // Overwrites default behaviour
-              resize: none; // Textarea can't be resized
-            }
+          @include media(phone-only) {
+            margin-left: 0;
+            margin-top: $padding;
+            text-align: center;
+          }
+          @include media(tablet-portrait-up) {
+            margin-left: 0;
+            margin-top: $padding;
+            text-align: center;
+          }
+          @include media(tablet-landscape-up) {
+            margin-left: $padding;
+            margin-top: 0;
+            text-align: left;
+          }
+          @include media(desktop-up) {
+            margin-left: $padding;
+            margin-top: 0;
+            text-align: left;
           }
 
-          .end {
-            @extend %res-cards; // Best way to display two elements next to each other
-            margin-top: $line-height;
-
-            button {
-              @extend %normal; // Is a normal button
-              @include ripple(light);
-
-              @include media(phone-only) {
-                margin: 0 15%; // Of card width
-                width: 70%; //
-              }
-              @include media(tablet-portrait-up) {
-                margin: 0 15%; // Of card width
-                width: 70%; // Of card
-              }
-              @include media(tablet-landscape-up) {
-                margin: 0;
-                width: 40%; // Of card
-              }
-              @include media(desktop-up) {
-                margin: 0;
-                width: 40%; // Of card
-              }
-
-              [type='submit'] {
-                @extend %form; // Will be invisible
-                color: inherit;
-                height: 100%;
-                text-transform: inherit;
-                width: 100%;
-              }
-            }
-
-            .error {
-              @include color(secondary, 'color', 100);
-
-              @include media(phone-only) {
-                margin-left: 0;
-                margin-top: $padding;
-                text-align: center;
-              }
-              @include media(tablet-portrait-up) {
-                margin-left: 0;
-                margin-top: $padding;
-                text-align: center;
-              }
-              @include media(tablet-landscape-up) {
-                margin-left: $padding;
-                margin-top: 0;
-                text-align: left;
-              }
-              @include media(desktop-up) {
-                margin-left: $padding;
-                margin-top: 0;
-                text-align: left;
-              }
-
-              display: none;
-            }
-          }
+          display: none;
         }
       }
     }

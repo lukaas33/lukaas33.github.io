@@ -30,9 +30,9 @@ main .part .card { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0
 
 main .part .card:hover { box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.2); }
 
-main #about .card .text a, main #experience .card .text .collapse a, main #contact .content .card:nth-child(2) .text fieldset [type='text'], main #experience .card .text .head .date, main #contact .content .card .show, main #contact .content .card:nth-child(2) .text .end button, nav ul li:last-child a, main #contact .content .card .container .box .icon, main #portfolio .sort a, main #portfolio .select button, main #contact .content .card:nth-child(2) .text .end button [type='submit'], nav ul li a { cursor: pointer; }
+main #about .card .text a, main #experience .card .text .collapse a, main #contact .card:nth-child(2) fieldset [type='text'], main #experience .card .text .head .date, main #contact .card .show, main #contact .card:nth-child(2) .end button, nav ul li:last-child a, main #contact .card .container .box .icon, main #portfolio .sort a, main #portfolio .select button, main #contact .card:nth-child(2) .end button [type='submit'], nav ul li a { cursor: pointer; }
 
-main #about .card .text a:focus, main #experience .card .text .collapse a:focus, main #contact .content .card:nth-child(2) .text fieldset [type='text']:focus, main #experience .card .text .head .date:focus, main #contact .content .card .show:focus, main #contact .content .card:nth-child(2) .text .end button:focus, main #contact .content .card .container .box .icon:focus, main #portfolio .sort a:focus, main #portfolio .select button:focus, main #contact .content .card:nth-child(2) .text .end button [type='submit']:focus, nav ul li a:focus, main #about .card .text a:active, main #experience .card .text .collapse a:active, main #contact .content .card:nth-child(2) .text fieldset [type='text']:active, main #experience .card .text .head .date:active, main #contact .content .card .show:active, main #contact .content .card:nth-child(2) .text .end button:active, main #contact .content .card .container .box .icon:active, main #portfolio .sort a:active, main #portfolio .select button:active, main #contact .content .card:nth-child(2) .text .end button [type='submit']:active, nav ul li a:active { outline: none; }
+main #about .card .text a:focus, main #experience .card .text .collapse a:focus, main #contact .card:nth-child(2) fieldset [type='text']:focus, main #experience .card .text .head .date:focus, main #contact .card .show:focus, main #contact .card:nth-child(2) .end button:focus, main #contact .card .container .box .icon:focus, main #portfolio .sort a:focus, main #portfolio .select button:focus, main #contact .card:nth-child(2) .end button [type='submit']:focus, nav ul li a:focus, main #about .card .text a:active, main #experience .card .text .collapse a:active, main #contact .card:nth-child(2) fieldset [type='text']:active, main #experience .card .text .head .date:active, main #contact .card .show:active, main #contact .card:nth-child(2) .end button:active, main #contact .card .container .box .icon:active, main #portfolio .sort a:active, main #portfolio .select button:active, main #contact .card:nth-child(2) .end button [type='submit']:active, nav ul li a:active { outline: none; }
 
 main #about .card .text a, main #experience .card .text .collapse a { color: #ff6e40 ; text-decoration: none; }
 
@@ -48,43 +48,43 @@ main #skills .head progress::-webkit-progress-value, main #skills .collapse .box
 
 main #skills .head progress::-webkit-progress-bar, main #skills .collapse .box .progress .container progress::-webkit-progress-bar { background-color: #f5f5f5 ; }
 
-main #contact .content .card:nth-child(2) .text fieldset [type='text'], main #experience .card .text .head .date, main #contact .content .card .show, main #contact .content .card:nth-child(2) .text .end button, nav ul li:last-child a, main #contact .content .card .container .box .icon, main #portfolio .sort a, main #portfolio .select button, main #contact .content .card:nth-child(2) .text .end button [type='submit'] { background-color: transparent; border: 0 solid transparent; transition: 400ms ease-in-out; }
+main #contact .card:nth-child(2) fieldset [type='text'], main #experience .card .text .head .date, main #contact .card .show, main #contact .card:nth-child(2) .end button, nav ul li:last-child a, main #contact .card .container .box .icon, main #portfolio .sort a, main #portfolio .select button, main #contact .card:nth-child(2) .end button [type='submit'] { background-color: transparent; border: 0 solid transparent; transition: 400ms ease-in-out; }
 
-main #contact .content .card:nth-child(2) .text fieldset [type='text'] { color: #757575 ; border-color: #bdbdbd ; border-bottom-width: 1px; overflow: hidden; position: relative; width: 100%; }
+main #contact .card:nth-child(2) fieldset [type='text'] { color: #757575 ; border-color: #bdbdbd ; border-bottom-width: 1px; overflow: hidden; position: relative; width: 100%; }
 
-main #contact .content .card:nth-child(2) .text fieldset [type='text']::-webkit-input-placeholder { color: #757575 ; -webkit-transition: 400ms ease-in-out; transition: 400ms ease-in-out; }
+main #contact .card:nth-child(2) fieldset [type='text']::-webkit-input-placeholder { color: #757575 ; -webkit-transition: 400ms ease-in-out; transition: 400ms ease-in-out; }
 
-main #contact .content .card:nth-child(2) .text fieldset [type='text']:focus { border-bottom-color: #ff6e40 ; }
+main #contact .card:nth-child(2) fieldset [type='text']:focus { border-bottom-color: #ff6e40 ; }
 
-main #contact .content .card:nth-child(2) .text fieldset [type='text']:focus::-webkit-input-placeholder { color: #ff6e40 ; -webkit-transform: translateY(-150%); font-size: .75rem; transform: translateY(-150%); }
+main #contact .card:nth-child(2) fieldset [type='text']:focus::-webkit-input-placeholder { color: #ff6e40 ; -webkit-transform: translateY(-150%); font-size: .75rem; transform: translateY(-150%); }
 
 main #experience .card .text .head .date .tooltip, main #portfolio .sort a .tooltip { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 2px 3px rgba(0, 0, 0, 0.2); background-color: #424242 ; border-color: #424242 ; -webkit-transform: translateY(-110%); border-width: 1px; color: #fff; display: none; font-size: .8rem; left: 0; padding: 0.55556vw 0.83333vw; position: absolute; top: 0; transform: translateY(-110%); white-space: nowrap; }
 
 main #experience .card .text .head .date .tooltip::after, main #portfolio .sort a .tooltip::after { border-color: #424242 transparent; border-style: solid; border-width: 10px 10px 0; bottom: -10px; content: ''; display: block; left: 50%; margin-left: -10px; position: absolute; width: 0; }
 
-main #experience .card .text .head .date, main #contact .content .card .show, main #contact .content .card:nth-child(2) .text .end button, nav ul li:last-child a, main #contact .content .card .container .box .icon { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 2px 3px rgba(0, 0, 0, 0.2); text-align: center; }
+main #experience .card .text .head .date, main #contact .card .show, main #contact .card:nth-child(2) .end button, nav ul li:last-child a, main #contact .card .container .box .icon { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 2px 3px rgba(0, 0, 0, 0.2); text-align: center; }
 
-main #experience .card .text .head .date:hover, main #contact .content .card .show:hover, main #contact .content .card:nth-child(2) .text .end button:hover, nav ul li:last-child a:hover, main #contact .content .card .container .box .icon:hover, main #experience .card .text .head .date:focus, main #contact .content .card .show:focus, main #contact .content .card:nth-child(2) .text .end button:focus, nav ul li:last-child a:focus, main #contact .content .card .container .box .icon:focus { box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1), 0 6px 16px rgba(0, 0, 0, 0.2); }
+main #experience .card .text .head .date:hover, main #contact .card .show:hover, main #contact .card:nth-child(2) .end button:hover, nav ul li:last-child a:hover, main #contact .card .container .box .icon:hover, main #experience .card .text .head .date:focus, main #contact .card .show:focus, main #contact .card:nth-child(2) .end button:focus, nav ul li:last-child a:focus, main #contact .card .container .box .icon:focus { box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1), 0 6px 16px rgba(0, 0, 0, 0.2); }
 
-main #experience .card .text .head .date, main #contact .content .card .show, main #contact .content .card:nth-child(2) .text .end button { background-color: #00bcd4 ; color: #fff; padding: 0.71429vw 1.25vw; text-transform: uppercase; }
+main #experience .card .text .head .date, main #contact .card .show, main #contact .card:nth-child(2) .end button { background-color: #00bcd4 ; color: #fff; padding: 0.71429vw 1.25vw; text-transform: uppercase; }
 
-nav ul li:last-child a, main #contact .content .card .container .box .icon { background-color: #ff6e40 ; border-radius: 100%; }
+nav ul li:last-child a, main #contact .card .container .box .icon { background-color: #ff6e40 ; border-radius: 100%; }
 
-main #portfolio .content .page .container .preview span, main #contact .content .card .container .text ul li, main #contact .content .card .container .box div, main #skills .collapse .box .progress .container, main #contact .content .card .container .text ul, main #contact .content .card:nth-child(2) .text fieldset, main #portfolio .content .page, main #about .card, main #skills .collapse .box, main #contact .content, main #contact .content .card:nth-child(2) .text .end, nav, nav ul, main #experience .card .text .head, main #skills .head, main #portfolio .content, main #portfolio .select, main #contact .content .card .container .box { -ms-flex-align: center; -webkit-box-align: center; align-content: center; align-items: center; display: -webkit-box; display: -ms-flexbox; display: flex; }
+main #portfolio .content .page .container .preview span, main #contact .card .container .text ul li, main #contact .card .container .box div, main #skills .collapse .box .progress .container, main #contact .card .container .text ul, main #contact .card:nth-child(2) fieldset, main #portfolio .content .page, main #about .card, main #skills .collapse .box, main #contact .content, main #contact .card:nth-child(2) .end, nav, nav ul, main #experience .card .text .head, main #skills .head, main #portfolio .content, main #portfolio .select, main #contact .card .container .box { -ms-flex-align: center; -webkit-box-align: center; align-content: center; align-items: center; display: -webkit-box; display: -ms-flexbox; display: flex; }
 
-main #portfolio .content .page .container .preview span, main #contact .content .card .container .text ul li, main #contact .content .card .container .box div { align-items: center; }
+main #portfolio .content .page .container .preview span, main #contact .card .container .text ul li, main #contact .card .container .box div { align-items: center; }
 
-main #skills .collapse .box .progress .container, main #contact .content .card .container .text ul, main #contact .content .card:nth-child(2) .text fieldset { flex-flow: nowrap column; }
+main #skills .collapse .box .progress .container, main #contact .card .container .text ul, main #contact .card:nth-child(2) fieldset { flex-flow: nowrap column; }
 
 main #portfolio .content .page { -ms-flex-align: stretch; -ms-flex-line-pack: stretch; -webkit-box-align: stretch; align-content: stretch; align-items: stretch; flex-flow: wrap row; justify-content: center; }
 
-@media only screen and (max-width: 599px) { main #about .card, main #skills .collapse .box, main #contact .content, main #contact .content .card:nth-child(2) .text .end { -ms-flex-direction: column; -webkit-box-direction: normal; -webkit-box-orient: vertical; flex-direction: column; } }
+@media only screen and (max-width: 599px) { main #about .card, main #skills .collapse .box, main #contact .content, main #contact .card:nth-child(2) .end { -ms-flex-direction: column; -webkit-box-direction: normal; -webkit-box-orient: vertical; flex-direction: column; } }
 
-@media only screen and (min-width: 600px) { main #about .card, main #skills .collapse .box, main #contact .content, main #contact .content .card:nth-child(2) .text .end { -ms-flex-direction: row; -webkit-box-direction: normal; -webkit-box-orient: horizontal; flex-direction: column; } }
+@media only screen and (min-width: 600px) { main #about .card, main #skills .collapse .box, main #contact .content, main #contact .card:nth-child(2) .end { -ms-flex-direction: row; -webkit-box-direction: normal; -webkit-box-orient: horizontal; flex-direction: column; } }
 
-@media only screen and (min-width: 900px) { main #about .card, main #skills .collapse .box, main #contact .content, main #contact .content .card:nth-child(2) .text .end { -ms-flex-direction: row; -webkit-box-direction: normal; -webkit-box-orient: horizontal; flex-direction: row; } }
+@media only screen and (min-width: 900px) { main #about .card, main #skills .collapse .box, main #contact .content, main #contact .card:nth-child(2) .end { -ms-flex-direction: row; -webkit-box-direction: normal; -webkit-box-orient: horizontal; flex-direction: row; } }
 
-@media only screen and (min-width: 1200px) { main #about .card, main #skills .collapse .box, main #contact .content, main #contact .content .card:nth-child(2) .text .end { -ms-flex-direction: row; -webkit-box-direction: normal; -webkit-box-orient: horizontal; flex-direction: row; } }
+@media only screen and (min-width: 1200px) { main #about .card, main #skills .collapse .box, main #contact .content, main #contact .card:nth-child(2) .end { -ms-flex-direction: row; -webkit-box-direction: normal; -webkit-box-orient: horizontal; flex-direction: row; } }
 
 * { -webkit-box-sizing: border-box; box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -354,84 +354,84 @@ main #portfolio .select button .ripple { background: rgba(0, 0, 0, 0.1); -webkit
 
 main #contact { margin-bottom: 45vh; }
 
-main #contact .content .card { height: 45vh; }
+main #contact .card { height: 45vh; }
 
-@media only screen and (max-width: 599px) { main #contact .content .card:nth-child(1) { width: 100%; } }
+@media only screen and (max-width: 599px) { main #contact .card:nth-child(1) { width: 100%; } }
 
-@media only screen and (min-width: 600px) { main #contact .content .card:nth-child(1) { width: 100%; } }
+@media only screen and (min-width: 600px) { main #contact .card:nth-child(1) { width: 100%; } }
 
-@media only screen and (min-width: 900px) { main #contact .content .card:nth-child(1) { margin-right: 2.5%; min-width: 30%; } }
+@media only screen and (min-width: 900px) { main #contact .card:nth-child(1) { margin-right: 2.5%; min-width: 30%; } }
 
-@media only screen and (min-width: 1200px) { main #contact .content .card:nth-child(1) { margin-right: 2.5%; min-width: 30%; } }
+@media only screen and (min-width: 1200px) { main #contact .card:nth-child(1) { margin-right: 2.5%; min-width: 30%; } }
 
-main #contact .content .card .container { height: 38.25vh; }
+main #contact .card .container { height: 38.25vh; }
 
-main #contact .content .card .container .text { height: 100%; width: 100%; }
+main #contact .card .container .text { height: 100%; width: 100%; }
 
-main #contact .content .card .container .text ul { height: 100%; margin: 0; width: 100%; }
+main #contact .card .container .text ul { height: 100%; margin: 0; width: 100%; }
 
-main #contact .content .card .container .text ul li { flex-grow: 1; list-style: none; text-align: left; width: 100%; }
+main #contact .card .container .text ul li { flex-grow: 1; list-style: none; text-align: left; width: 100%; }
 
-main #contact .content .card .container .box .icon { cursor: default; height: 4vh; margin: 1vh 4vh 1vh 0; width: 4vh; }
+main #contact .card .container .box .icon { cursor: default; height: 4vh; margin: 1vh 4vh 1vh 0; width: 4vh; }
 
-main #contact .content .card .container .box .icon .material-icons { font-size: 2vh; margin: 1vh; }
+main #contact .card .container .box .icon .material-icons { font-size: 2vh; margin: 1vh; }
 
-main #contact .content .card .container .box div p { -moz-user-select: text; -ms-user-select: text; -webkit-user-select: text; user-select: text; }
+main #contact .card .container .box div p { -moz-user-select: text; -ms-user-select: text; -webkit-user-select: text; user-select: text; }
 
-main #contact .content .card .container .map { display: none; height: 100%; width: 100%; }
+main #contact .card .container .map { display: none; height: 100%; width: 100%; }
 
-main #contact .content .card .container .map iframe { height: 100%; width: 100%; }
+main #contact .card .container .map iframe { height: 100%; width: 100%; }
 
-main #contact .content .card .show { overflow: hidden; position: relative; box-shadow: none; height: 6.75vh; width: 100%; }
+main #contact .card .show { overflow: hidden; position: relative; box-shadow: none; height: 6.75vh; width: 100%; }
 
-main #contact .content .card .show .effect { -webkit-animation: ripple 800ms ease-in-out; animation: ripple 800ms ease-in-out; }
+main #contact .card .show .effect { -webkit-animation: ripple 800ms ease-in-out; animation: ripple 800ms ease-in-out; }
 
-main #contact .content .card .show .ripple { background: rgba(255, 255, 255, 0.4); -webkit-transform: scale(0); border-radius: 50%; height: 0; opacity: 1; position: absolute; transform: scale(0); width: 0; }
+main #contact .card .show .ripple { background: rgba(255, 255, 255, 0.4); -webkit-transform: scale(0); border-radius: 50%; height: 0; opacity: 1; position: absolute; transform: scale(0); width: 0; }
 
-main #contact .content .card .show:hover, main #contact .content .card .show:focus { -webkit-box-shadow: none; box-shadow: none; }
+main #contact .card .show:hover, main #contact .card .show:focus { -webkit-box-shadow: none; box-shadow: none; }
 
-@media only screen and (max-width: 599px) { main #contact .content .card:nth-child(2) { width: 100%; } }
+@media only screen and (max-width: 599px) { main #contact .card:nth-child(2) { width: 100%; } }
 
-@media only screen and (min-width: 600px) { main #contact .content .card:nth-child(2) { width: 100%; } }
+@media only screen and (min-width: 600px) { main #contact .card:nth-child(2) { width: 100%; } }
 
-@media only screen and (min-width: 900px) { main #contact .content .card:nth-child(2) { margin-left: 2.5%; min-width: 65%; } }
+@media only screen and (min-width: 900px) { main #contact .card:nth-child(2) { margin-left: 2.5%; min-width: 65%; } }
 
-@media only screen and (min-width: 1200px) { main #contact .content .card:nth-child(2) { margin-left: 2.5%; min-width: 65%; } }
+@media only screen and (min-width: 1200px) { main #contact .card:nth-child(2) { margin-left: 2.5%; min-width: 65%; } }
 
-main #contact .content .card:nth-child(2) .text { height: 100%; width: 100%; }
+main #contact .card:nth-child(2) .text { height: 100%; width: 100%; }
 
-main #contact .content .card:nth-child(2) .text fieldset { border: 0; height: 100%; padding: 0; width: 100%; }
+main #contact .card:nth-child(2) fieldset { border: 0; height: 100%; padding: 0; width: 100%; }
 
-main #contact .content .card:nth-child(2) .text fieldset [type='text'] { flex-grow: 1; margin-bottom: 0.5rem; padding-bottom: 1rem; padding-top: 1.5rem; }
+main #contact .card:nth-child(2) fieldset [type='text'] { flex-grow: 1; margin-bottom: 0.5rem; padding-bottom: 1rem; padding-top: 1.5rem; }
 
-main #contact .content .card:nth-child(2) .text fieldset input[type='text'] { max-height: 2rem; }
+main #contact .card:nth-child(2) fieldset input[type='text'] { max-height: 2rem; }
 
-main #contact .content .card:nth-child(2) .text fieldset textarea { font-family: inherit; resize: none; }
+main #contact .card:nth-child(2) fieldset textarea { font-family: inherit; resize: none; }
 
-main #contact .content .card:nth-child(2) .text .end { margin-top: 1rem; }
+main #contact .card:nth-child(2) .end { margin-top: 1rem; }
 
-main #contact .content .card:nth-child(2) .text .end button { overflow: hidden; position: relative; }
+main #contact .card:nth-child(2) .end button { overflow: hidden; position: relative; }
 
-main #contact .content .card:nth-child(2) .text .end button .effect { -webkit-animation: ripple 800ms ease-in-out; animation: ripple 800ms ease-in-out; }
+main #contact .card:nth-child(2) .end button .effect { -webkit-animation: ripple 800ms ease-in-out; animation: ripple 800ms ease-in-out; }
 
-main #contact .content .card:nth-child(2) .text .end button .ripple { background: rgba(255, 255, 255, 0.4); -webkit-transform: scale(0); border-radius: 50%; height: 0; opacity: 1; position: absolute; transform: scale(0); width: 0; }
+main #contact .card:nth-child(2) .end button .ripple { background: rgba(255, 255, 255, 0.4); -webkit-transform: scale(0); border-radius: 50%; height: 0; opacity: 1; position: absolute; transform: scale(0); width: 0; }
 
-@media only screen and (max-width: 599px) { main #contact .content .card:nth-child(2) .text .end button { margin: 0 15%; width: 70%; } }
+@media only screen and (max-width: 599px) { main #contact .card:nth-child(2) .end button { margin: 0 15%; width: 70%; } }
 
-@media only screen and (min-width: 600px) { main #contact .content .card:nth-child(2) .text .end button { margin: 0 15%; width: 70%; } }
+@media only screen and (min-width: 600px) { main #contact .card:nth-child(2) .end button { margin: 0 15%; width: 70%; } }
 
-@media only screen and (min-width: 900px) { main #contact .content .card:nth-child(2) .text .end button { margin: 0; width: 40%; } }
+@media only screen and (min-width: 900px) { main #contact .card:nth-child(2) .end button { margin: 0; width: 40%; } }
 
-@media only screen and (min-width: 1200px) { main #contact .content .card:nth-child(2) .text .end button { margin: 0; width: 40%; } }
+@media only screen and (min-width: 1200px) { main #contact .card:nth-child(2) .end button { margin: 0; width: 40%; } }
 
-main #contact .content .card:nth-child(2) .text .end button [type='submit'] { color: inherit; height: 100%; text-transform: inherit; width: 100%; }
+main #contact .card:nth-child(2) .end button [type='submit'] { color: inherit; height: 100%; text-transform: inherit; width: 100%; }
 
-main #contact .content .card:nth-child(2) .text .end .error { color: #ff9e80 ; display: none; }
+main #contact .card:nth-child(2) .end .error { color: #ff9e80 ; display: none; }
 
-@media only screen and (max-width: 599px) { main #contact .content .card:nth-child(2) .text .end .error { margin-left: 0; margin-top: 1rem; text-align: center; } }
+@media only screen and (max-width: 599px) { main #contact .card:nth-child(2) .end .error { margin-left: 0; margin-top: 1rem; text-align: center; } }
 
-@media only screen and (min-width: 600px) { main #contact .content .card:nth-child(2) .text .end .error { margin-left: 0; margin-top: 1rem; text-align: center; } }
+@media only screen and (min-width: 600px) { main #contact .card:nth-child(2) .end .error { margin-left: 0; margin-top: 1rem; text-align: center; } }
 
-@media only screen and (min-width: 900px) { main #contact .content .card:nth-child(2) .text .end .error { margin-left: 1rem; margin-top: 0; text-align: left; } }
+@media only screen and (min-width: 900px) { main #contact .card:nth-child(2) .end .error { margin-left: 1rem; margin-top: 0; text-align: left; } }
 
-@media only screen and (min-width: 1200px) { main #contact .content .card:nth-child(2) .text .end .error { margin-left: 1rem; margin-top: 0; text-align: left; } }
+@media only screen and (min-width: 1200px) { main #contact .card:nth-child(2) .end .error { margin-left: 1rem; margin-top: 0; text-align: left; } }

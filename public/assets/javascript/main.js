@@ -187,13 +187,13 @@
         }
       }, 250);
     });
-    $("nav ul li").find("a").click(function(event) {
+    $("nav ul").find("a").click(function(event) {
       var href;
       event.preventDefault();
       href = $(this).attr("href");
       return scrollToLoc($(href));
     });
-    $(".tooltip").parent().hover(function() {
+    $("[tooltip]").hover(function() {
       $(this).find(".tooltip").off();
       return global.timeout = setTimeout((function(_this) {
         return function() {
@@ -204,30 +204,30 @@
       clearTimeout(global.timeout);
       return $(this).find(".tooltip").fadeOut(global.animation);
     });
-    $("#experience .card").find(".head").click(function() {
+    $("#experience").find(".head").click(function() {
       return toggle($(this).closest(".card")[0], "experience");
     });
-    $("#skills .card").find(".head").click(function() {
+    $("#skills").find(".head").click(function() {
       return toggle($(this).closest(".card")[0], "skills");
     });
-    $("#portfolio .preview").hover(function() {
+    $("#portfolio").find(".preview").hover(function() {
       return $(this).find(".tags").fadeTo(global.timing, 1);
     }, function() {
       return $(this).find(".tags").fadeTo(global.timing, 0);
     });
-    $("#portfolio .select").find(".backward").click(function() {
+    $("#portfolio").find(".backward").click(function() {
       return switchPage(-1);
     });
-    $("#portfolio .select").find(".forward").click(function() {
+    $("#portfolio").find(".forward").click(function() {
       return switchPage(1);
     });
-    $("#portfolio .sort").find("a").click(function() {
+    $("#portfolio").find(".sort a").click(function() {
       return global.cookie("page", 1);
     });
-    $("#contact .card").find(".show").click(function() {
+    $("#contact").find(".show").click(function() {
       return setMap(true);
     });
-    $("#contact form").find("[type='text']").blur(function() {
+    $("#contact").find("form [type='text']").blur(function() {
       var name;
       name = $(this).attr("name");
       return global.cookie(name, $(this).val());
@@ -255,7 +255,7 @@
         left: x + 'px'
       }).addClass("effect");
     });
-    return $("#contact form").submit(function(event) {
+    return $("#contact").find("form").submit(function(event) {
       var error, formdata, regex;
       event.preventDefault();
       $(this).find(".error").hide();

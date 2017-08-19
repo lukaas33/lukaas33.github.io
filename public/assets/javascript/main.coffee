@@ -159,13 +159,13 @@ $ ->
         console.log "Breakpoint: phone-only"
     , 250
 
-  $("nav ul li").find("a").click (event) ->
+  $("nav ul").find("a").click (event) ->
     # Go to section
     event.preventDefault() # Default behaviour disabled
     href = $(@).attr "href"
     scrollToLoc($(href) ) # Scroll to element with id
 
-  $(".tooltip").parent().hover(
+  $("[tooltip]").hover(
     ->  # MouseIn
       $(@).find(".tooltip").off() # Doesn't respond to hover
       global.timeout = setTimeout => # After some time hovering
@@ -176,32 +176,32 @@ $ ->
       $(@).find(".tooltip").fadeOut global.animation
   )
 
-  $("#experience .card").find(".head").click -> # Only click on the top
+  $("#experience").find(".head").click -> # Only click on the top
     toggle($(@).closest(".card")[0], "experience")
 
-  $("#skills .card").find(".head").click -> # Only click on the top
+  $("#skills").find(".head").click -> # Only click on the top
     toggle($(@).closest(".card")[0], "skills")
 
-  $("#portfolio .preview").hover(
+  $("#portfolio").find(".preview").hover(
     -> # MouseIn
       $(@).find(".tags").fadeTo(global.timing, 1)
     -> # MouseOut
       $(@).find(".tags").fadeTo(global.timing, 0)
   )
 
-  $("#portfolio .select").find(".backward").click ->
+  $("#portfolio").find(".backward").click ->
     switchPage -1 # - 1
 
-  $("#portfolio .select").find(".forward").click ->
+  $("#portfolio").find(".forward").click ->
     switchPage 1 # + 1
 
-  $("#portfolio .sort").find("a").click ->
+  $("#portfolio").find(".sort a").click ->
     global.cookie("page", 1) # Back to page 1
 
-  $("#contact .card").find(".show").click ->
+  $("#contact").find(".show").click ->
     setMap(true) # Set map and change = true
 
-  $("#contact form").find("[type='text']").blur ->
+  $("#contact").find("form [type='text']").blur ->
     name = $(@).attr "name"
     global.cookie(name, $(@).val()) # Update in cookie
 
@@ -209,13 +209,13 @@ $ ->
     # Edited from https://codepen.io/lehollandaisvolant/pen/dMQXYX
     $("[ripple]").find(".ripple").remove()
 
-    posX = $(this).offset().left
-    posY = $(this).offset().top
-    buttonWidth = $(this).width()
-    buttonHeight =  $(this).height()
+    posX = $(@).offset().left
+    posY = $(@).offset().top
+    buttonWidth = $(@).width()
+    buttonHeight =  $(@).height()
 
     ripple = $("<span></span>").addClass "ripple"
-    $(this).prepend ripple
+    $(@).prepend ripple
 
     if buttonWidth >= buttonHeight
       buttonHeight = buttonWidth
@@ -232,7 +232,7 @@ $ ->
       left: x + 'px'
     ).addClass "effect"
 
-  $("#contact form").submit (event) ->
+  $("#contact").find("form").submit (event) ->
     # Handles form
     event.preventDefault() # No reloading
     $(@).find(".error").hide()

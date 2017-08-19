@@ -80,7 +80,7 @@
           duration: time,
           easing: "swing",
           complete: function() {
-            return $("#portfolio .select p").find("span").text(current);
+            return $("#portfolio .select").find("span").text(current);
           }
         });
       }
@@ -103,14 +103,7 @@
 
     /* Actions */
     console.log("// DOM setup via Js loading...");
-    setDoc();
-    if ('serviceWorker' in navigator) {
-      return navigator.serviceWorker.register("serviceworker.js").then(function(registration) {
-        return console.log("SW registration successfull");
-      }, function(error) {
-        return console.warn("SW registration failed: " + error);
-      });
-    }
+    return setDoc();
   });
 
 }).call(this);

@@ -65,7 +65,7 @@ setPages = (time) ->
         duration: time
         easing: "swing"
         complete: ->
-          $("#portfolio .select p").find("span").text current
+          $("#portfolio .select").find("span").text current
 
 setDoc = ->
   # Sets some values in the document TODO Use ejs for this
@@ -81,12 +81,3 @@ $ ->
   console.log "// DOM setup via Js loading..."
 
   setDoc() # Set values
-
-  if 'serviceWorker' of navigator
-    # Enable the service worker
-    navigator.serviceWorker.register(
-      "serviceworker.js"
-    ).then (registration) ->
-      console.log "SW registration successfull"
-    , (error) ->
-      console.warn "SW registration failed: #{error}"
