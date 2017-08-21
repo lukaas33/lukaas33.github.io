@@ -4,6 +4,7 @@
 const express = require('express')
 const helmet = require('helmet')
 const nodemailer = require('nodemailer')
+const mongoClient = require('mongodb').MongoClient
 const bodyParser = require('body-parser')
 const formidable = require('formidable')
 const compression = require('compression')
@@ -25,19 +26,19 @@ const send = function (request, response) {
   const form = new formidable.IncomingForm()
 
   form.parse(request, function (error, fields, files) {
-    const mailOptions = {
-      from: `'${fields.email}' <${fields.email}>`,
-      to: `'Personal' <${process.env.emailPersonal}>`,
-      subject: '[SITE MESSAGE]',
-      html:
-        `<em>Sent by: ${fields.name}</em><br/>` +
-        `<em>Reply at: ${fields.email}</em><br/><hr/>` +
-        `${fields.message}`
-    }
-
     if (error) {
       console.log("Form didn't parse")
     } else {
+      const mailOptions = {
+        from: `'${fields.email}' <${fields.email}>`,
+        to: `'Personal' <${process.env.emailPersonal}>`,
+        subject: '[SITE MESSAGE]',
+        html:
+          `<em>Sent by: ${fields.name}</em><br/>` +
+          `<em>Reply at: ${fields.email}</em><br/><hr/>` +
+          `${fields.message}`
+      }
+
       transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
           console.log(error)
@@ -57,7 +58,7 @@ app.use(helmet.contentSecurityPolicy({ // Allowed sources
     defaultSrc: ["'self'", '*.googleapis.com'],
     frameSrc: ['*.google.com'],
     scriptSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com', 'ajax.googleapis.com'],
-    styleSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com', '*.googleapis.com'],
+    styleSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'cdnjs.cloudflare.com', '*.googleapis.com'],
     fontSrc: ["'self'", 'fonts.gstatic.com'],
     imgSrc: ["'self'"],
     objectSrc: ["'none'"]
@@ -75,6 +76,15 @@ app.set('port', process.env.PORT || 5000) // Chooses either port
 app.set('index', `${__dirname}/index`)
 app.set('views', `${__dirname}/views`)
 app.set('view engine', 'ejs')
+
+mongoClient.connect(process.env.MONGODB_URI, function (error, database) {
+  if (error) {
+    console.log(error)
+  } else {
+    console.log('Database connection established')
+  }
+  database.close()
+})
 
 // Routes
 app.get('/', function (request, response) {
