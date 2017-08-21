@@ -51,7 +51,9 @@ setProjects = ->
 
     for card in [(last - 9)..last] # Range of 9
       $page.append $content[card]
-    $portfolio.append $page
+    $wrapper = $("<div></div>").addClass "wrapper"
+    $wrapper.append $page
+    $portfolio.append $wrapper
 
 setPages = (time) ->
   $pages = $("#portfolio").find ".page"

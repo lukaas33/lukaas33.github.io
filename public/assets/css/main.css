@@ -70,13 +70,13 @@ main #experience .card .text .head .date, main #contact .card .show, main #conta
 
 nav ul li:last-child a, main #contact .card .container .box .icon { background-color: #ff6e40 ; border-radius: 100%; }
 
-main #portfolio .content .page .container .preview span, main #contact .card .container .text ul li, main #contact .card .container .box div, main #skills .collapse .box .progress .container, main #contact .card .container .text ul, main #contact .card:nth-child(2) fieldset, main #portfolio .content .page, main #about .card, main #skills .collapse .box, main #contact .content, main #contact .card:nth-child(2) .end, nav, nav ul, main #experience .card .text .head, main #skills .head, main #portfolio .content, main #portfolio .select, main #contact .card .container .box { -ms-flex-align: center; -webkit-box-align: center; align-content: center; align-items: center; display: -webkit-box; display: -ms-flexbox; display: flex; }
+main #portfolio .page .container .preview span, main #contact .card .container .text ul li, main #contact .card .container .box div, main #skills .collapse .box .progress .container, main #contact .card .container .text ul, main #contact .card:nth-child(2) fieldset, main #portfolio .page, main #about .card, main #skills .collapse .box, main #contact .content, main #contact .card:nth-child(2) .end, nav, nav ul, main #experience .card .text .head, main #skills .head, main #portfolio .content, main #portfolio .select, main #contact .card .container .box { -ms-flex-align: center; -webkit-box-align: center; align-content: center; align-items: center; display: -webkit-box; display: -ms-flexbox; display: flex; }
 
-main #portfolio .content .page .container .preview span, main #contact .card .container .text ul li, main #contact .card .container .box div { align-items: center; }
+main #portfolio .page .container .preview span, main #contact .card .container .text ul li, main #contact .card .container .box div { align-items: center; }
 
 main #skills .collapse .box .progress .container, main #contact .card .container .text ul, main #contact .card:nth-child(2) fieldset { flex-flow: nowrap column; }
 
-main #portfolio .content .page { -ms-flex-align: stretch; -ms-flex-line-pack: stretch; -webkit-box-align: stretch; align-content: stretch; align-items: stretch; flex-flow: wrap row; justify-content: center; }
+main #portfolio .page { -ms-flex-align: stretch; -ms-flex-line-pack: stretch; -webkit-box-align: stretch; align-content: stretch; align-items: stretch; flex-flow: wrap row; justify-content: center; }
 
 @media only screen and (max-width: 599px) { main #about .card, main #skills .collapse .box, main #contact .content, main #contact .card:nth-child(2) .end { -ms-flex-direction: column; -webkit-box-direction: normal; -webkit-box-orient: vertical; flex-direction: column; } }
 
@@ -316,31 +316,35 @@ main #portfolio .sort a span { vertical-align: middle; }
 
 main #portfolio .sort a .tooltip { -webkit-transform: translate(-25%, -110%); transform: translate(-25%, -110%); }
 
-main #portfolio .content .page { margin: 2.5vw; width: 100%; }
+main #portfolio .content { padding-top: 100%; position: relative; width: 100%; }
 
-@media only screen and (max-width: 599px) { main #portfolio .content .page .container { width: 100%; } }
+main #portfolio .content .wrapper { left: 0; position: absolute; top: 0; }
 
-@media only screen and (min-width: 600px) { main #portfolio .content .page .container { width: 100%; } }
+main #portfolio .page { margin: 2.5vw; width: 100%; }
 
-@media only screen and (min-width: 900px) { main #portfolio .content .page .container { width: calc(100% / 2); } }
+@media only screen and (max-width: 599px) { main #portfolio .page .container { width: 100%; } }
 
-@media only screen and (min-width: 1200px) { main #portfolio .content .page .container { width: calc(100% / 3); } }
+@media only screen and (min-width: 600px) { main #portfolio .page .container { width: 100%; } }
 
-main #portfolio .content .page .container .preview { height: 100%; position: relative; transition: 400ms ease-in-out; width: 100%; z-index: 30; }
+@media only screen and (min-width: 900px) { main #portfolio .page .container { width: calc(100% / 2); } }
 
-main #portfolio .content .page .container .preview:hover { box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.2); z-index: 40; }
+@media only screen and (min-width: 1200px) { main #portfolio .page .container { width: calc(100% / 3); } }
 
-main #portfolio .content .page .container .preview img { display: block; width: 100%; }
+main #portfolio .page .container .preview { height: 100%; position: relative; transition: 400ms ease-in-out; width: 100%; z-index: 30; }
 
-main #portfolio .content .page .container .preview span { -webkit-transition: 400ms ease-in-out; height: 100%; left: 0; position: absolute; top: 0; transition: 400ms ease-in-out; width: 100%; }
+main #portfolio .page .container .preview:hover { box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.2); z-index: 40; }
 
-main #portfolio .content .page .container .preview span:hover { background-color: rgba(0, 0, 0, 0.15); }
+main #portfolio .page .container .preview img { display: block; width: 100%; }
 
-main #portfolio .content .page .container .preview span .tags { color: #fff; margin: auto; opacity: 0; text-align: center; }
+main #portfolio .page .container .preview span { -webkit-transition: 400ms ease-in-out; height: 100%; left: 0; position: absolute; top: 0; transition: 400ms ease-in-out; width: 100%; }
 
-main #portfolio .content .page .container .preview span .tags h3 { font-size: 1.5rem; }
+main #portfolio .page .container .preview span:hover { background-color: rgba(0, 0, 0, 0.15); }
 
-main #portfolio .content .page .container .preview span .tags p { font-size: .85rem; }
+main #portfolio .page .container .preview span .tags { color: #fff; margin: auto; opacity: 0; text-align: center; }
+
+main #portfolio .page .container .preview span .tags h3 { font-size: 1.5rem; }
+
+main #portfolio .page .container .preview span .tags p { font-size: .85rem; }
 
 main #portfolio .select { height: 2vw; margin: 0 40%; text-align: center; width: 20%; }
 

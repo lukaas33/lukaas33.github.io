@@ -47,7 +47,7 @@
   };
 
   setProjects = function() {
-    var $content, $page, $portfolio, card, i, j, last, page, ref, ref1, ref2, results;
+    var $content, $page, $portfolio, $wrapper, card, i, j, last, page, ref, ref1, ref2, results;
     $portfolio = $("#portfolio .content");
     $content = $portfolio.find(".container");
     global.pageNum = Math.ceil($content.length / 9);
@@ -59,7 +59,9 @@
       for (card = j = ref1 = last - 9, ref2 = last; ref1 <= ref2 ? j <= ref2 : j >= ref2; card = ref1 <= ref2 ? ++j : --j) {
         $page.append($content[card]);
       }
-      results.push($portfolio.append($page));
+      $wrapper = $("<div></div>").addClass("wrapper");
+      $wrapper.append($page);
+      results.push($portfolio.append($wrapper));
     }
     return results;
   };

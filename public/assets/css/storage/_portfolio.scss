@@ -5,8 +5,8 @@
     width: 25%; // Of portfolio
 
     a {
-      @include color(grey, 'color', 600);
       @extend %form; // Is a type of form
+      @include color(grey, 'color', 600);
       display: block; // Entire block is clickable
       margin: 5%; // Of sort width
       position: relative; // Absolute tooltip will be placed with regard to this
@@ -34,70 +34,79 @@
 
   .content {
     @extend %flex; // Pages next to eachother
+    padding-top: 100%; // Aspect ratio 1:1
+    position: relative; // Absolute will be relative to this
+    width: 100%; // Of portfolio
 
-    .page {
-      @extend %grid; // Grid of cards
-      margin: $margin; // Becomes the same width as cards
-      width: 100%; // Of portfolio
+    .wrapper {
+      left: 0;
+      position: absolute;
+      top: 0;
+    }
+  }
 
-      .container {
-        @include media(phone-only) {
-          width: 100%; // One per row
-        }
-        @include media(tablet-portrait-up) {
-          width: 100%; // One per row
-        }
-        @include media(tablet-landscape-up) {
-          width: calc(100% / 2); // Two next to each other
-        }
-        @include media(desktop-up) {
-          width: calc(100% / 3); // Three next to each other
+  .page {
+    @extend %grid; // Grid of cards
+    margin: $margin; // Becomes the same width as cards
+    width: 100%; // Of portfolio
+
+    .container {
+      @include media(phone-only) {
+        width: 100%; // One per row
+      }
+      @include media(tablet-portrait-up) {
+        width: 100%; // One per row
+      }
+      @include media(tablet-landscape-up) {
+        width: calc(100% / 2); // Two next to each other
+      }
+      @include media(desktop-up) {
+        width: calc(100% / 3); // Three next to each other
+      }
+
+      .preview {
+        height: 100%; // Fill container
+        position: relative; // Absolute of description works by positioned elements
+        transition: $animation;
+        width: 100%; // Of main
+        z-index: 30; // Above main
+
+        &:hover {
+          @include shadow(14, 28)
+          z-index: 40; // Above the others
         }
 
-        .preview {
-          height: 100%; // Fill container
-          position: relative; // Absolute of description works by positioned elements
+        img {
+          display: block; // No white space on the bottom
+          width: 100%; // Of preview
+        }
+
+        span {
+          @extend %vertical; // Align text vertically
+          -webkit-transition: $animation;
+          height: 100%; // Text will be in the middle
+          left: 0;
+          position: absolute;
+          top: 0;
           transition: $animation;
-          width: 100%; // Of main
-          z-index: 30; // Above main
+          width: 100%; // Of container
 
           &:hover {
-            @include shadow(14, 28)
-            z-index: 40; // Above the others
+            background-color: rgba(0, 0, 0, .15); // Darker shade to show text
           }
 
-          img {
-            display: block; // No white space on the bottom
-            width: 100%; // Of preview
-          }
+          .tags {
+            color: #fff;
+            margin: auto;
+            opacity: 0; // Displayed on hover
+            text-align: center;
 
-          span {
-            @extend %vertical; // Align text vertically
-            -webkit-transition: $animation;
-            height: 100%; // Text will be in the middle
-            left: 0;
-            position: absolute;
-            top: 0;
-            transition: $animation;
-            width: 100%; // Of container
-
-            &:hover {
-              background-color: rgba(0, 0, 0, .15); // Darker shade to show text
+            h3 {
+              font-size: 1.5rem;
             }
 
-            .tags {
-              color: #fff;
-              margin: auto;
-              opacity: 0; // Displayed on hover
-              text-align: center;
-
-              h3 {
-                font-size: 1.5rem;
-              }
-
-              p {
-                font-size: .85rem;
-              }
+            p {
+              font-size: .85rem;
             }
           }
         }
