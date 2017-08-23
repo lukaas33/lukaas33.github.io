@@ -1,5 +1,7 @@
 # My websites
 
+![My personal logo](public/assets/images/other/logo.svg)
+
 ## Intro
 
 In this repository I keep the websites that I make.  
@@ -8,8 +10,6 @@ My websites are in English but some documentation in the portfolio may be Dutch.
 
 I currently only make websites for learning or for fun.
 All my code is open source, so if I ever make something nice everyone can use it.
-
-![My personal logo](public/assets/images/other/logo.png)
 
 ## News
 
@@ -32,8 +32,8 @@ I ordered a Raspberry Pi.
 -   Latex
 -   Node.js
 -   ~~Markdown~~
--   Python
--   CoffeeScript
+-   ~~Python~~ _(Haven't found a purpose for it)_
+-   ~~CoffeeScript~~
 -   ~~Sass~~
 -   ~~PHP~~ _(Not interested anymore)_
 -   ~~SQL~~
