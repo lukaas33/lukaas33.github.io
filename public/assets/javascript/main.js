@@ -145,11 +145,15 @@
       processData: false,
       contentType: false,
       type: 'POST',
-      success: function() {
-        success(true);
-        global.cookie("name", "");
-        global.cookie("email", "");
-        return global.cookie("message", "");
+      success: function(response) {
+        if (response !== "error") {
+          success(true);
+          global.cookie("name", "");
+          global.cookie("email", "");
+          return global.cookie("message", "");
+        } else {
+          return success(false);
+        }
       },
       error: function() {
         return success(false);

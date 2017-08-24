@@ -122,14 +122,17 @@ sendMail = (data, success) ->
     processData: false
     contentType: false
     type: 'POST'
-    success: ->
-      success(true)
-      # Mail sent, cookies can be reset
-      global.cookie("name", "")
-      global.cookie("email", "")
-      global.cookie("message", "")
+    success: (response) ->
+      if response != "error"
+        success(true) # Everything worked
+        # Mail sent, cookies can be reset
+        global.cookie("name", "")
+        global.cookie("email", "")
+        global.cookie("message", "")
+      else
+        success(false) # Something didn't work
     error: ->
-      success(false)
+      success(false) # Ajax request failed
 
 $ ->
   ### Actions ###

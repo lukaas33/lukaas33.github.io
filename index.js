@@ -15,34 +15,6 @@ const app = express()
 mongoClient = mongoClient.MongoClient
 mailgun = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.DOMAIN}) // Gets mailgun data from env
 
-// Functions
-const send = function (request, response) {
-  // Handles email form
-  const form = new formidable.IncomingForm() // Object for handeling forms
-
-  form.parse(request, function (error, fields, files) {
-    if (error) {
-      console.log("Form didn't parse")
-    } else {
-      var mailOptions = {
-        from: `'${fields.name}' <${fields.email}>`,
-        to: `'Personal' <${process.env.EMAIL_CONTACT}>`,
-        subject: '[SITE MESSAGE]',
-        text: fields.message,
-        html: fields.message
-      }
-
-      mailgun.messages().send(mailOptions, function (error, body) {
-        if (error) {
-          console.log(error)
-        } else {
-          console.log('Email sent')
-        }
-      })
-    }
-  })
-}
-
 // Setup
 app.use(helmet())
 app.use(helmet.contentSecurityPolicy({ // Allowed sources
@@ -72,7 +44,7 @@ app.set('view engine', 'ejs')
 
 mongoClient.connect(process.env.MONGODB_URI, function (error, database) { // Connects to database with env info
   if (error) {
-    console.log(error)
+    console.log('Database connect', error)
   } else {
     console.log('Database connection established')
   }
@@ -85,13 +57,41 @@ app.get('/', function (request, response) {
   response.render('index')
 })
 
-// Exceptions
+// Functions
+const send = function (request, response) {
+  // Handles email form
+  const form = new formidable.IncomingForm() // Object for handeling forms
+
+  form.parse(request, function (error, fields, files) {
+    if (error) {
+      console.log('Form parse:', error)
+      response.end('error') // Info for client
+    } else {
+      var mailOptions = {
+        from: `'${fields.name}' <${fields.email}>`,
+        to: `'Personal' <${process.env.EMAIL_CONTACT}>`,
+        subject: '[SITE MESSAGE]',
+        text: fields.message,
+        html: fields.message
+      }
+
+      mailgun.messages().send(mailOptions, function (error, body) {
+        if (error) {
+          console.log('Email send', error)
+          response.end('error') // Info for client
+        } else {
+          console.log('Email was sent')
+          response.end() // No errors occured
+        }
+      })
+    }
+  })
+}
 
 // Events
 app.post('/send', function (request, response) { // Post request at send
-  console.log('POST request from client')
+  console.log('Post request from client at /send')
   send(request, response) // Email sender
-  response.end()
 })
 
 app.listen(app.get('port'), () => console.log(`Node app is running at ${app.get('port')}`))
