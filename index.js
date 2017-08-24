@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 const formidable = require('formidable')
 const compression = require('compression')
 const minify = require('express-minify')
+
 var mongoClient = require('mongodb')
 var mailgun = require('mailgun-js')
 
@@ -92,6 +93,15 @@ const send = function (request, response) {
 app.post('/send', function (request, response) { // Post request at send
   console.log('Post request from client at /send')
   send(request, response) // Email sender
+})
+
+app.post('/auth', function (request, response) {
+  console.log('Post request from client at /auth')
+  if (process.env.ADMIN_PASS === request.body.pass) {
+    response.end('success')
+  } else {
+    response.end('fail')
+  }
 })
 
 app.listen(app.get('port'), () => console.log(`Node app is running at ${app.get('port')}`))

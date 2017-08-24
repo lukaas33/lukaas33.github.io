@@ -144,21 +144,41 @@
       data: data,
       processData: false,
       contentType: false,
-      type: 'POST',
-      success: function(response) {
-        if (response !== "error") {
-          success(true);
-          global.cookie("name", "");
-          global.cookie("email", "");
-          return global.cookie("message", "");
-        } else {
-          return success(false);
-        }
-      },
-      error: function() {
+      type: 'POST'
+    }).done(function(response) {
+      if (response === "error") {
         return success(false);
+      } else {
+        success(true);
+        global.cookie("name", "");
+        global.cookie("email", "");
+        return global.cookie("message", "");
       }
+    }).fail(function() {
+      return success(false);
     });
+  };
+
+  global.admin = function(password) {
+    if (password != null) {
+      return $.ajax({
+        url: "/auth",
+        data: JSON.stringify({
+          pass: password
+        }),
+        processData: false,
+        contentType: "application/json",
+        type: 'POST'
+      }).done(function(response) {
+        if (response === "success") {
+          return console.log("You are now an admin");
+        } else if (response === "fail") {
+          return console.log("Login failed");
+        }
+      }).fail(function() {
+        return console.warn("Ajax request didn't work");
+      });
+    }
   };
 
   $(function() {

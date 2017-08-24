@@ -116,23 +116,41 @@ setMap = (change) ->
       setOff(0) # Before page is loaded
 
 sendMail = (data, success) ->
+  # Send data via ajax
   $.ajax
     url: '/send'
     data: data
     processData: false
     contentType: false
     type: 'POST'
-    success: (response) ->
-      if response != "error"
-        success(true) # Everything worked
-        # Mail sent, cookies can be reset
-        global.cookie("name", "")
-        global.cookie("email", "")
-        global.cookie("message", "")
-      else
-        success(false) # Something didn't work
-    error: ->
-      success(false) # Ajax request failed
+  .done (response) ->
+    if response == "error"
+      success(false) # Something didn't work
+    else
+      success(true) # Everything worked
+      # Mail sent, cookies can be reset
+      global.cookie("name", "")
+      global.cookie("email", "")
+      global.cookie("message", "")
+  .fail ->
+    success(false) # Ajax request failed
+
+global.admin = (password) ->
+  # Login via ajax
+  if password?
+    $.ajax
+      url: "/auth"
+      data: JSON.stringify(pass: password)
+      processData: false
+      contentType: "application/json"
+      type: 'POST'
+    .done (response) ->
+      if response == "success"
+        console.log "You are now an admin"
+      else if response == "fail"
+        console.log "Login failed"
+    .fail ->
+      console.warn "Ajax request didn't work"
 
 $ ->
   ### Actions ###
