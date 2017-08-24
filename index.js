@@ -3,47 +3,40 @@
 // Require
 const express = require('express')
 const helmet = require('helmet')
-const nodemailer = require('nodemailer')
-const mongoClient = require('mongodb').MongoClient
 const bodyParser = require('body-parser')
 const formidable = require('formidable')
 const compression = require('compression')
 const minify = require('express-minify')
+var mongoClient = require('mongodb')
+var mailgun = require('mailgun-js')
 
 // Variables
 const app = express()
-const transporter = nodemailer.createTransport({
-  service: 'Gmail',
-  auth: {
-    user: process.env.emailDefault,
-    pass: process.env.emailPassword
-  }
-})
+mongoClient = mongoClient.MongoClient
+mailgun = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.DOMAIN}) // Gets mailgun data from env
 
 // Functions
 const send = function (request, response) {
   // Handles email form
-  const form = new formidable.IncomingForm()
+  const form = new formidable.IncomingForm() // Object for handeling forms
 
   form.parse(request, function (error, fields, files) {
     if (error) {
       console.log("Form didn't parse")
     } else {
-      const mailOptions = {
-        from: `'${fields.email}' <${fields.email}>`,
-        to: `'Personal' <${process.env.emailPersonal}>`,
+      var mailOptions = {
+        from: `'${fields.name}' <${fields.email}>`,
+        to: `'Personal' <${process.env.EMAIL_CONTACT}>`,
         subject: '[SITE MESSAGE]',
-        html:
-          `<em>Sent by: ${fields.name}</em><br/>` +
-          `<em>Reply at: ${fields.email}</em><br/><hr/>` +
-          `${fields.message}`
+        text: fields.message,
+        html: fields.message
       }
 
-      transporter.sendMail(mailOptions, function (error, info) {
+      mailgun.messages().send(mailOptions, function (error, body) {
         if (error) {
           console.log(error)
         } else {
-          console.log(`Email sent: ${info.response}`)
+          console.log('Email sent')
         }
       })
     }
@@ -77,7 +70,7 @@ app.set('index', `${__dirname}/index`)
 app.set('views', `${__dirname}/views`)
 app.set('view engine', 'ejs')
 
-mongoClient.connect(process.env.MONGODB_URI, function (error, database) {
+mongoClient.connect(process.env.MONGODB_URI, function (error, database) { // Connects to database with env info
   if (error) {
     console.log(error)
   } else {
@@ -95,7 +88,7 @@ app.get('/', function (request, response) {
 // Exceptions
 
 // Events
-app.post('/send', function (request, response) {
+app.post('/send', function (request, response) { // Post request at send
   console.log('POST request from client')
   send(request, response) // Email sender
   response.end()
