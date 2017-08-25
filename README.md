@@ -1,6 +1,6 @@
 # My websites
 
-![My personal logo](public/assets/images/other/logo.svg)
+![My personal logo and profile picture](https://www.lukaas33.com/public/assets/images/other/logo.svg)
 
 ## Intro
 
@@ -23,7 +23,7 @@ I ordered a Raspberry Pi.
 
 -   [Domain](https://www.lukaas33.com)
 -   [Google+](https://plus.google.com/u/0/+LucasvanOsenbruggen)
--   [Email](mailto:lukaas9000@gmail.com)
+-   [Email](mailto:contact@lukaas33.com)
 
 ## To learn
 
