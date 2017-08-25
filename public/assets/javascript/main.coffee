@@ -160,25 +160,6 @@ sendMail = (data, success) ->
   .fail ->
     success(false) # Ajax request failed
 
-global.admin = (password) ->
-  # Login via ajax
-  if password? # If it is given
-    $.ajax
-      url: "/auth"
-      data: JSON.stringify(pass: password)
-      processData: false
-      contentType: "application/json"
-      type: 'POST'
-    .done (response) ->
-      if response == "success"
-        console.log "You are now an admin"
-      else if response == "fail"
-        console.log "Login failed"
-    .fail ->
-      console.warn "Ajax request didn't work"
-  else
-    console.log "No argument given"
-
 $ ->
   ### Actions ###
   console.log "// DOM events loading..."

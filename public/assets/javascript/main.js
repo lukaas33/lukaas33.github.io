@@ -194,30 +194,6 @@
     });
   };
 
-  global.admin = function(password) {
-    if (password != null) {
-      return $.ajax({
-        url: "/auth",
-        data: JSON.stringify({
-          pass: password
-        }),
-        processData: false,
-        contentType: "application/json",
-        type: 'POST'
-      }).done(function(response) {
-        if (response === "success") {
-          return console.log("You are now an admin");
-        } else if (response === "fail") {
-          return console.log("Login failed");
-        }
-      }).fail(function() {
-        return console.warn("Ajax request didn't work");
-      });
-    } else {
-      return console.log("No argument given");
-    }
-  };
-
   $(function() {
 
     /* Actions */

@@ -67,7 +67,7 @@ const send = function (request, response) {
       console.log('Form parse:', error)
       response.end('error') // Info for client
     } else {
-      var mailOptions = {
+      let mailOptions = {
         from: `'${fields.name}' <${fields.email}>`,
         to: `'Personal' <${process.env.EMAIL_CONTACT}>`,
         subject: '[SITE MESSAGE]',

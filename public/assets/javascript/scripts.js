@@ -1,27 +1,23 @@
-'use strict'
-
 var global = {
-  // Variables with a global scope
-  timing: 400,
-  animation: {
+  // Variable with a global scope
+  timing: 400, // Standard animation time
+  animation: { // Standard animation object
     duration: 400,
     easing: 'swing'
   },
-  state: {
+  state: { // Tracks state of cards
     'experience': null,
     'skills': null
   },
-  pageNum: 0,
-  previous: null,
-  cookie: undefined,
-  admin: undefined,
-  timeouts: {
-    resize: undefined,
-    hover: undefined
-  }
+  pageNum: 0, // Will store the number of pages in portfolio
+  previous: null, // Will track the previous page
+  cookie: undefined, // Will store cookie function
+  timeouts: {} // Will store timeouts
 };
 
 (function () {
+  'use strict'
+
   global.cookie = function (name, value) {
     // Cookie function
     var cookies = document.cookie.split(';')
