@@ -10,7 +10,11 @@
 }
 
 %click {
-  cursor: pointer;
+  cursor: pointer; // Can be clicked
+
+  &:disabled {
+    cursor: default; // Can't be clicked
+  }
 
   &:focus,
   &:active {
@@ -55,6 +59,8 @@
   background-color: transparent; // Hides default background
   border: 0 solid transparent; // Hides border
   transition: $animation;
+
+
 }
 
 %input {

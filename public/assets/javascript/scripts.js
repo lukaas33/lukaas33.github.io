@@ -13,7 +13,7 @@ var global = {
   },
   pageNum: 0,
   previous: null,
-  timeout: undefined,
+  timeouts: undefined,
   cookie: undefined,
   admin: undefined
 };

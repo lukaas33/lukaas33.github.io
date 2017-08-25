@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var highLight, scrollToLoc, sendMail, setForm, setMap, setPages, switchPage, toggle;
+  var disable, highLight, scrollToLoc, sendMail, setForm, setMap, setPages, switchPage, toggle;
 
   switchPage = function(change) {
     var newPage;
@@ -15,7 +15,7 @@
       }
       console.log("Switching to " + newPage);
       global.cookie("page", newPage);
-      return setPages(global.timing);
+      return setPages(global.timing / 2);
     }
   };
 
@@ -112,6 +112,17 @@
         });
       }
     });
+  };
+
+  disable = function() {
+    return function() {
+      $(this).prop("disabled", true);
+      return global.timeouts["switch"] = setTimeout((function(_this) {
+        return function() {
+          return $(_this).prop("disabled", false);
+        };
+      })(this), global.timing);
+    };
   };
 
   setMap = function(change) {
@@ -225,10 +236,9 @@
 
     /* Events */
     $(window).on("resize", function() {
-      var resizeTimer;
       $('*').addClass("notransition");
-      clearTimeout(resizeTimer);
-      return resizeTimer = setTimeout(function() {
+      clearTimeout(resize);
+      return global.timeouts.resize = setTimeout(function() {
         $('*').removeClass("notransition");
         if ($(this).width() >= 1200) {
           return console.log("Breakpoint: desktop-up");
@@ -260,26 +270,29 @@
     });
     $("[tooltip]").hover(function() {
       $(this).find(".tooltip").off();
-      return global.timeout = setTimeout((function(_this) {
+      return global.timeouts.hover = setTimeout((function(_this) {
         return function() {
           return $(_this).find(".tooltip").fadeIn(global.animation);
         };
       })(this), 500);
     }, function() {
-      clearTimeout(global.timeout);
+      clearTimeout(global.timeouts.hover);
       return $(this).find(".tooltip").fadeOut(global.animation);
     });
     $("#portfolio").find(".backward").click(function() {
-      return switchPage(-1);
+      switchPage(-1);
+      return disable();
     });
     $("#portfolio").find(".forward").click(function() {
-      return switchPage(1);
+      switchPage(1);
+      return disable();
     });
     $("#portfolio").find(".sort a").click(function() {
       return global.cookie("page", 1);
     });
     $("#contact").find(".show").click(function() {
-      return setMap(true);
+      setMap(true);
+      return disable();
     });
     $("#contact").find("form [type='text']").blur(function() {
       var name;
@@ -288,24 +301,26 @@
     });
     $("[ripple]").click(function(event) {
       var height, ripple, width, x, y;
-      $("[ripple]").find(".ripple").remove();
-      width = $(this).width();
-      height = $(this).height();
-      ripple = $("<span></span>").addClass("ripple");
-      $(this).prepend(ripple);
-      if (width >= height) {
-        height = width;
-      } else {
-        width = height;
+      if (!$(this).prop("disabled")) {
+        $("[ripple]").find(".ripple").remove();
+        width = $(this).width();
+        height = $(this).height();
+        ripple = $("<span></span>").addClass("ripple");
+        $(this).prepend(ripple);
+        if (width >= height) {
+          height = width;
+        } else {
+          width = height;
+        }
+        x = event.pageX - $(this).offset().left - width / 2;
+        y = event.pageY - $(this).offset().top - height / 2;
+        return $("[ripple]").find(".ripple").css({
+          width: width,
+          height: height,
+          top: y + "px",
+          left: x + "px"
+        }).addClass("effect");
       }
-      x = event.pageX - $(this).offset().left - width / 2;
-      y = event.pageY - $(this).offset().top - height / 2;
-      return $("[ripple]").find(".ripple").css({
-        width: width,
-        height: height,
-        top: y + "px",
-        left: x + "px"
-      }).addClass("effect");
     });
     return $("#contact").find("form").submit(function(event) {
       var error, formdata, regex;

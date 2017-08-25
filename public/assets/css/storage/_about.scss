@@ -83,7 +83,7 @@
       -webkit-user-select: text;
       user-select: text; // Can be selected
 
-      h2 {
+      h1 {
         @extend %header;
         font-size: 2rem; // Based on base font-size
         margin: ($margin / 4) 0; // One fourth of card margin

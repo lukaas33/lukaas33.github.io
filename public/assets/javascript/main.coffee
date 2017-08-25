@@ -9,7 +9,7 @@ switchPage = (change) ->
     newPage = 1 if newPage > global.pageNum # To the last page
     console.log "Switching to #{newPage}"
     global.cookie("page", newPage) # Update
-    setPages global.timing
+    setPages global.timing / 2
 
 highLight = ->
   # Highlights items in the menu bar
@@ -92,6 +92,15 @@ setPages = (time) ->
         complete: ->
           status = "#{current}/#{global.pageNum}"
           $("#portfolio").find(".select span").text status
+
+disable = ->
+  # Decorator for disabling buttons
+  return ->
+    $(@).prop("disabled", true)
+    # Enables after standard animation time
+    global.timeouts.switch = setTimeout =>
+      $(@).prop("disabled", false)
+    , global.timing
 
 setMap = (change) ->
   # Toggles and initialises map
@@ -191,8 +200,8 @@ $ ->
   ### Events ###
   $(window).on "resize", ->
     $('*').addClass "notransition"
-    clearTimeout(resizeTimer)
-    resizeTimer = setTimeout -> # Resizing has stopped
+    clearTimeout(resize)
+    global.timeouts.resize = setTimeout -> # Resizing has stopped
       $('*').removeClass "notransition"
 
       if $(@).width() >= 1200
@@ -227,25 +236,28 @@ $ ->
   $("[tooltip]").hover(
     ->  # MouseIn
       $(@).find(".tooltip").off() # Doesn't respond to hover
-      global.timeout = setTimeout => # After some time hovering
+      global.timeouts.hover = setTimeout => # After some time hovering
         $(@).find(".tooltip").fadeIn global.animation
       , 500
     -> # MouseOut
-      clearTimeout(global.timeout) # Cancel if leave before 500 ms
+      clearTimeout(global.timeouts.hover) # Cancel if leave before 500 ms
       $(@).find(".tooltip").fadeOut global.animation
   )
 
   $("#portfolio").find(".backward").click ->
-    switchPage -1 # - 1
+    switchPage -1
+    disable() # Temporarily disables
 
   $("#portfolio").find(".forward").click ->
-    switchPage 1 # + 1
+    switchPage 1
+    disable() # Temporarily disables
 
   $("#portfolio").find(".sort a").click ->
     global.cookie("page", 1) # Back to page 1
 
   $("#contact").find(".show").click ->
     setMap(true) # Set map and change = true
+    disable() # Temporarily disables
 
   $("#contact").find("form [type='text']").blur ->
     name = $(@).attr "name"
@@ -253,28 +265,29 @@ $ ->
 
   $("[ripple]").click (event) ->
     # Edited from https://codepen.io/lehollandaisvolant/pen/dMQXYX
-    $("[ripple]").find(".ripple").remove()
+    if not $(@).prop("disabled")
+      $("[ripple]").find(".ripple").remove() # Previous
 
-    width = $(@).width()
-    height =  $(@).height()
+      width = $(@).width()
+      height =  $(@).height()
 
-    ripple = $("<span></span>").addClass "ripple"
-    $(@).prepend ripple
+      ripple = $("<span></span>").addClass "ripple"
+      $(@).prepend ripple
 
-    if width >= height
-      height = width
-    else
-      width = height
+      if width >= height
+        height = width
+      else
+        width = height
 
-    x = event.pageX - $(@).offset().left - width / 2
-    y = event.pageY - $(@).offset().top - height / 2
+      x = event.pageX - $(@).offset().left - width / 2
+      y = event.pageY - $(@).offset().top - height / 2
 
-    $("[ripple]").find(".ripple").css(
-      width: width
-      height: height
-      top: "#{y}px"
-      left: "#{x}px"
-    ).addClass "effect"
+      $("[ripple]").find(".ripple").css(
+        width: width
+        height: height
+        top: "#{y}px"
+        left: "#{x}px"
+      ).addClass "effect"
 
   $("#contact").find("form").submit (event) ->
     # Handles form
