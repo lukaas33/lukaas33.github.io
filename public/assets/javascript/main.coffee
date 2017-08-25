@@ -263,29 +263,28 @@ $ ->
 
   $("[ripple]").click (event) ->
     # Edited from https://codepen.io/lehollandaisvolant/pen/dMQXYX
-    if not $(@).prop("disabled")
-      $("[ripple]").find(".ripple").remove() # Previous
+    $("[ripple]").find(".ripple").remove() # Previous
 
-      width = $(@).width()
-      height =  $(@).height()
+    width = $(@).width()
+    height =  $(@).height()
 
-      ripple = $("<span></span>").addClass "ripple"
-      $(@).prepend ripple
+    ripple = $("<span></span>").addClass "ripple"
+    $(@).prepend ripple
 
-      if width >= height
-        height = width
-      else
-        width = height
+    if width >= height
+      height = width
+    else
+      width = height
 
-      x = event.pageX - $(@).offset().left - width / 2
-      y = event.pageY - $(@).offset().top - height / 2
+    x = event.pageX - $(@).offset().left - width / 2
+    y = event.pageY - $(@).offset().top - height / 2
 
-      $("[ripple]").find(".ripple").css(
-        width: width
-        height: height
-        top: "#{y}px"
-        left: "#{x}px"
-      ).addClass "effect"
+    $("[ripple]").find(".ripple").css(
+      width: width
+      height: height
+      top: "#{y}px"
+      left: "#{x}px"
+    ).addClass "effect"
 
   $("#contact").find("form").submit (event) ->
     # Handles form

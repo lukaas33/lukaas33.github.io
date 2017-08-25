@@ -13,9 +13,12 @@ var global = {
   },
   pageNum: 0,
   previous: null,
-  timeouts: undefined,
   cookie: undefined,
-  admin: undefined
+  admin: undefined,
+  timeouts: {
+    resize: undefined,
+    hover: undefined
+  }
 };
 
 (function () {
