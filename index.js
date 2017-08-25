@@ -17,6 +17,8 @@ mongoClient = mongoClient.MongoClient
 mailgun = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.DOMAIN}) // Gets mailgun data from env
 
 // Setup
+app.set('port', process.env.PORT || 5000) // Chooses a port
+
 app.use(helmet())
 app.use(helmet.contentSecurityPolicy({ // Allowed sources
   directives: {
@@ -31,18 +33,6 @@ app.use(helmet.contentSecurityPolicy({ // Allowed sources
   }
 }))
 
-app.use(compression()) // Compression for site
-app.use(minify()) // Minifies code
-app.use(express.static(`${__dirname}/public`, { maxage: '7d' })) // Serve static files
-
-app.use(bodyParser.json()) // Enable json parsing
-app.use(bodyParser.urlencoded({extended: true}))
-
-app.set('port', process.env.PORT || 5000) // Chooses either port
-app.set('index', `${__dirname}/index`)
-app.set('views', `${__dirname}/views`)
-app.set('view engine', 'ejs')
-
 mongoClient.connect(process.env.MONGODB_URI, function (error, database) { // Connects to database with env info
   if (error) {
     console.log('Database connect', error)
@@ -52,9 +42,18 @@ mongoClient.connect(process.env.MONGODB_URI, function (error, database) { // Con
   database.close()
 })
 
+app.use(compression({ threshold: 0 })) // Compression for static files
+app.use(minify()) // Minifies code
+app.use(bodyParser.json()) // Enable json parsing
+app.use(bodyParser.urlencoded({extended: true}))
+
+app.use(express.static(`${__dirname}/public`, { maxage: '7d' })) // Serve static files
+app.engine('html', require('ejs').renderFile)
+app.set('views', `${__dirname}/views`)
+app.set('view engine', 'ejs')
+
 // Routes
 app.get('/', function (request, response) {
-  response.set('Content-Encoding', 'gzip')
   response.render('index')
 })
 

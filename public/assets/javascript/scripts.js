@@ -69,8 +69,5 @@ var global = {
     loadScript('assets/javascript/main.js', function () {
       console.log('// Main script loaded')
     })
-    loadScript('assets/javascript/setup.js', function () {
-      console.log('// Setup script loaded')
-    })
   })
 }).call(this)
