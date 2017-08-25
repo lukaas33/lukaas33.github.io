@@ -23,7 +23,7 @@ app.use(helmet.contentSecurityPolicy({ // Allowed sources
     // Setup for http headers
     defaultSrc: ["'self'", '*.googleapis.com'],
     frameSrc: ['*.google.com'],
-    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'cdnjs.cloudflare.com', 'ajax.googleapis.com'],
+    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'cdnjs.cloudflare.com', 'ajax.googleapis.com', 'cdn.ampproject.org'],
     styleSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com', '*.googleapis.com'],
     fontSrc: ["'self'", 'fonts.gstatic.com'],
     imgSrc: ["'self'"],
@@ -95,9 +95,9 @@ app.post('/send', function (request, response) { // Post request at send
   send(request, response) // Email sender
 })
 
-app.post('/auth', function (request, response) {
+app.post('/auth', function (request, response) { // Admin authenticate
   console.log('Post request from client at /auth')
-  if (process.env.ADMIN_PASS === request.body.pass) {
+  if (process.env.ADMIN_PASS === request.body.pass) { // Password entered is correct
     response.end('success')
   } else {
     response.end('fail')

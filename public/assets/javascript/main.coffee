@@ -137,7 +137,7 @@ sendMail = (data, success) ->
 
 global.admin = (password) ->
   # Login via ajax
-  if password?
+  if password? # If it is given
     $.ajax
       url: "/auth"
       data: JSON.stringify(pass: password)
@@ -151,6 +151,8 @@ global.admin = (password) ->
         console.log "Login failed"
     .fail ->
       console.warn "Ajax request didn't work"
+  else
+    console.log "No argument given"
 
 $ ->
   ### Actions ###
@@ -186,18 +188,7 @@ $ ->
     # Go to section
     event.preventDefault() # Default behaviour disabled
     href = $(@).attr "href"
-    scrollToLoc($(href) ) # Scroll to element with id
-
-  $("[tooltip]").hover(
-    ->  # MouseIn
-      $(@).find(".tooltip").off() # Doesn't respond to hover
-      global.timeout = setTimeout => # After some time hovering
-        $(@).find(".tooltip").fadeIn global.animation
-      , 500
-    -> # MouseOut
-      clearTimeout(global.timeout) # Cancel if leave before 500 ms
-      $(@).find(".tooltip").fadeOut global.animation
-  )
+    scrollToLoc($(href)) # Scroll to element with id
 
   $("#experience").find(".head").click -> # Only click on the top
     toggle($(@).closest(".card")[0], "experience")
@@ -210,6 +201,17 @@ $ ->
       $(@).find(".tags").fadeTo(global.timing, 1)
     -> # MouseOut
       $(@).find(".tags").fadeTo(global.timing, 0)
+  )
+
+  $("[tooltip]").hover(
+    ->  # MouseIn
+      $(@).find(".tooltip").off() # Doesn't respond to hover
+      global.timeout = setTimeout => # After some time hovering
+        $(@).find(".tooltip").fadeIn global.animation
+      , 500
+    -> # MouseOut
+      clearTimeout(global.timeout) # Cancel if leave before 500 ms
+      $(@).find(".tooltip").fadeOut global.animation
   )
 
   $("#portfolio").find(".backward").click ->
@@ -232,27 +234,25 @@ $ ->
     # Edited from https://codepen.io/lehollandaisvolant/pen/dMQXYX
     $("[ripple]").find(".ripple").remove()
 
-    posX = $(@).offset().left
-    posY = $(@).offset().top
-    buttonWidth = $(@).width()
-    buttonHeight =  $(@).height()
+    width = $(@).width()
+    height =  $(@).height()
 
     ripple = $("<span></span>").addClass "ripple"
     $(@).prepend ripple
 
-    if buttonWidth >= buttonHeight
-      buttonHeight = buttonWidth
+    if width >= height
+      height = width
     else
-      buttonWidth = buttonHeight
+      width = height
 
-    x = event.pageX - posX - buttonWidth / 2
-    y = event.pageY - posY - buttonHeight / 2
+    x = event.pageX - $(@).offset().left - width / 2
+    y = event.pageY - $(@).offset().top - height / 2
 
     $("[ripple]").find(".ripple").css(
-      width: buttonWidth
-      height: buttonHeight
-      top: y + 'px'
-      left: x + 'px'
+      width: width
+      height: height
+      top: "#{y}px"
+      left: "#{x}px"
     ).addClass "effect"
 
   $("#contact").find("form").submit (event) ->

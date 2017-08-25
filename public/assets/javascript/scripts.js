@@ -11,9 +11,11 @@ var global = {
     'experience': null,
     'skills': null
   },
-  timeout: null,
   pageNum: 0,
-  previous: null
+  previous: null,
+  timeout: undefined,
+  cookie: undefined,
+  admin: undefined
 };
 
 (function () {
@@ -30,7 +32,7 @@ var global = {
       }
     } else {
       console.log('Set cookie ' + name + ' to ' + value)
-      document.cookie = name + '=' + value + '; secure; path=/'
+      document.cookie = name + '=' + value + '; secure;'
     }
   }
 
