@@ -57,7 +57,7 @@ setProjects = ->
 
 setPages = (time) ->
   $pages = $("#portfolio").find ".page"
-  current = parseInt(global.cookie "page")
+  current = Number(global.cookie "page")
   target = $pages
   target = $($pages[global.previous - 1]) if global.previous != null
 

@@ -25,9 +25,9 @@ var global = {
     if (value === void 0) {
       for (var i = 0; i < cookies.length; i++) {
         value = cookies[i]
-        var current = value.split('=')
+        var current = value.split('=') // Name and value pair
         if (current[0].trim() === name) {
-          return current[1]
+          return current[1] // Can be undefined
         }
       }
     } else {

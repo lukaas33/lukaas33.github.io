@@ -3,7 +3,7 @@
 # Main script for webste
 switchPage = (change) ->
   if global.pageNum > 1
-    global.previous = parseInt(global.cookie "page")
+    global.previous = Number(global.cookie "page")
     newPage = global.previous + change
     newPage = global.pageNum if newPage < 1 # To the last page
     newPage = 1 if newPage > global.pageNum # To the last page
@@ -74,6 +74,24 @@ setForm = ->
   $form.find("input[name='name']").val(global.cookie "name")
   $form.find("input[name='email']").val(global.cookie "email")
   $form.find("textarea").val(global.cookie "message")
+
+setPages = (time) ->
+  global.pageNum = $("#portfolio").find(".page").length
+  $pages = $("#portfolio").find ".page"
+  current = Number(global.cookie "page")
+  target = $pages # All will be hidden
+  target = $($pages[global.previous - 1]) if global.previous != null
+
+  target.fadeOut  # Most are hidden
+    duration: time
+    easing: "swing"
+    complete: -> # When completed
+      $($pages[current - 1]).fadeIn # Show current
+        duration: time
+        easing: "swing"
+        complete: ->
+          status = "#{current}/#{global.pageNum}"
+          $("#portfolio").find(".select span").text status
 
 setMap = (change) ->
   # Toggles and initialises map
@@ -158,10 +176,13 @@ $ ->
   ### Actions ###
   console.log "// DOM events loading..."
 
+  # Sets information in the DOM
   setMap()
   setForm()
+  setPages(0)
 
-  setTimeout -> # Prevents the flashing on of the about link on load
+  # Prevents the flashing on of the about link on load
+  setTimeout ->
     highLight() # Initial highlight at start of page
     $(window).scroll -> # Sets scroll event
       highLight() # Higlight correct link

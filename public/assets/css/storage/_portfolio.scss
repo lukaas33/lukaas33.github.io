@@ -42,13 +42,13 @@
       left: 0;
       position: absolute;
       top: 0;
+      width: 100%; // Of portfolio
     }
   }
 
   .page {
     @extend %grid; // Grid of cards
     margin: $margin; // Becomes the same width as cards
-    width: 100%; // Of portfolio
 
     .container {
       @include media(phone-only) {

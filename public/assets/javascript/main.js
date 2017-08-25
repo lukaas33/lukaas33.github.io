@@ -1,11 +1,11 @@
 (function() {
   'use strict';
-  var highLight, scrollToLoc, sendMail, setForm, setMap, switchPage, toggle;
+  var highLight, scrollToLoc, sendMail, setForm, setMap, setPages, switchPage, toggle;
 
   switchPage = function(change) {
     var newPage;
     if (global.pageNum > 1) {
-      global.previous = parseInt(global.cookie("page"));
+      global.previous = Number(global.cookie("page"));
       newPage = global.previous + change;
       if (newPage < 1) {
         newPage = global.pageNum;
@@ -86,6 +86,32 @@
     $form.find("input[name='name']").val(global.cookie("name"));
     $form.find("input[name='email']").val(global.cookie("email"));
     return $form.find("textarea").val(global.cookie("message"));
+  };
+
+  setPages = function(time) {
+    var $pages, current, target;
+    global.pageNum = $("#portfolio").find(".page").length;
+    $pages = $("#portfolio").find(".page");
+    current = Number(global.cookie("page"));
+    target = $pages;
+    if (global.previous !== null) {
+      target = $($pages[global.previous - 1]);
+    }
+    return target.fadeOut({
+      duration: time,
+      easing: "swing",
+      complete: function() {
+        return $($pages[current - 1]).fadeIn({
+          duration: time,
+          easing: "swing",
+          complete: function() {
+            var status;
+            status = current + "/" + global.pageNum;
+            return $("#portfolio").find(".select span").text(status);
+          }
+        });
+      }
+    });
   };
 
   setMap = function(change) {
@@ -189,6 +215,7 @@
     console.log("// DOM events loading...");
     setMap();
     setForm();
+    setPages(0);
     setTimeout(function() {
       highLight();
       return $(window).scroll(function() {
