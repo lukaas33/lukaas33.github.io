@@ -91,16 +91,14 @@ setPages = (time) ->
         easing: "swing"
         complete: ->
           status = "#{current}/#{global.pageNum}"
-          $("#portfolio").find(".select span").text status
+          $("#portfolio").find(".select p span").text status
 
 disable = ->
-  # Decorator for disabling buttons
-  return ->
-    $(@).prop("disabled", true)
-    # Enables after standard animation time
-    global.timeouts.switch = setTimeout =>
-      $(@).prop("disabled", false)
-    , global.timing
+  $(@).prop("disabled", true)
+  # Enables after standard animation time
+  setTimeout =>
+    $(@).prop("disabled", false)
+  , global.timing
 
 setMap = (change) ->
   # Toggles and initialises map
@@ -246,18 +244,18 @@ $ ->
 
   $("#portfolio").find(".backward").click ->
     switchPage -1
-    disable() # Temporarily disables
+    disable.apply(@) # Temporarily disables
 
   $("#portfolio").find(".forward").click ->
     switchPage 1
-    disable() # Temporarily disables
+    disable.apply(@) # Temporarily disables
 
   $("#portfolio").find(".sort a").click ->
     global.cookie("page", 1) # Back to page 1
 
   $("#contact").find(".show").click ->
     setMap(true) # Set map and change = true
-    disable() # Temporarily disables
+    disable.apply(@) # Temporarily disables
 
   $("#contact").find("form [type='text']").blur ->
     name = $(@).attr "name"

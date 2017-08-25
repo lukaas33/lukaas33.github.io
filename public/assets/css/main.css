@@ -32,6 +32,8 @@ main .part .card:hover { box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 20px
 
 main #about .card .text a, main #experience .card .text .collapse a, main #contact .card:nth-child(2) fieldset [type='text'], main #experience .card .text .head .date, main #contact .card .show, main #contact .card:nth-child(2) .end button, nav ul li:last-child a, main #contact .card .container .box .icon, main #portfolio .sort a, main #portfolio .select button, main #contact .card:nth-child(2) .end button [type='submit'], nav ul li a { cursor: pointer; }
 
+main #about .card .text a:disabled, main #experience .card .text .collapse a:disabled, main #contact .card:nth-child(2) fieldset [type='text']:disabled, main #experience .card .text .head .date:disabled, main #contact .card .show:disabled, main #contact .card:nth-child(2) .end button:disabled, main #contact .card .container .box .icon:disabled, main #portfolio .sort a:disabled, main #portfolio .select button:disabled, main #contact .card:nth-child(2) .end button [type='submit']:disabled, nav ul li a:disabled { cursor: default; }
+
 main #about .card .text a:focus, main #experience .card .text .collapse a:focus, main #contact .card:nth-child(2) fieldset [type='text']:focus, main #experience .card .text .head .date:focus, main #contact .card .show:focus, main #contact .card:nth-child(2) .end button:focus, main #contact .card .container .box .icon:focus, main #portfolio .sort a:focus, main #portfolio .select button:focus, main #contact .card:nth-child(2) .end button [type='submit']:focus, nav ul li a:focus, main #about .card .text a:active, main #experience .card .text .collapse a:active, main #contact .card:nth-child(2) fieldset [type='text']:active, main #experience .card .text .head .date:active, main #contact .card .show:active, main #contact .card:nth-child(2) .end button:active, main #contact .card .container .box .icon:active, main #portfolio .sort a:active, main #portfolio .select button:active, main #contact .card:nth-child(2) .end button [type='submit']:active, nav ul li a:active { outline: none; }
 
 main #about .card .text a, main #experience .card .text .collapse a { color: #ff6e40 ; text-decoration: none; }
@@ -40,7 +42,7 @@ main #about .card .text a:hover, main #experience .card .text .collapse a:hover,
 
 main #about .card .text a:visited, main #experience .card .text .collapse a:visited { color: #dd2c00 ; }
 
-main .part .title, main #about .card .text h2, main #experience .card .text .head .tag h3, main #skills .head .tag h3 { color: #00bcd4 ; font-weight: normal; }
+main .part .title, main #about .card .text h1, main #experience .card .text .head .tag h3, main #skills .head .tag h3 { color: #00bcd4 ; font-weight: normal; }
 
 main #skills .head progress, main #skills .collapse .box .progress .container progress { border: 0 solid transparent; }
 
@@ -246,7 +248,7 @@ main #about .card .text { -moz-user-select: text; -ms-user-select: text; -webkit
 
 @media only screen and (min-width: 1200px) { main #about .card .text { margin-top: 0; width: auto; } }
 
-main #about .card .text h2 { font-size: 2rem; margin: 0.625vw 0; }
+main #about .card .text h1 { font-size: 2rem; margin: 0.625vw 0; }
 
 main #about .card .text .tagline { color: #616161 ; font-size: 1.2rem; }
 

@@ -107,7 +107,7 @@
           complete: function() {
             var status;
             status = current + "/" + global.pageNum;
-            return $("#portfolio").find(".select span").text(status);
+            return $("#portfolio").find(".select p span").text(status);
           }
         });
       }
@@ -115,14 +115,12 @@
   };
 
   disable = function() {
-    return function() {
-      $(this).prop("disabled", true);
-      return global.timeouts["switch"] = setTimeout((function(_this) {
-        return function() {
-          return $(_this).prop("disabled", false);
-        };
-      })(this), global.timing);
-    };
+    $(this).prop("disabled", true);
+    return setTimeout((function(_this) {
+      return function() {
+        return $(_this).prop("disabled", false);
+      };
+    })(this), global.timing);
   };
 
   setMap = function(change) {
@@ -281,18 +279,18 @@
     });
     $("#portfolio").find(".backward").click(function() {
       switchPage(-1);
-      return disable();
+      return disable.apply(this);
     });
     $("#portfolio").find(".forward").click(function() {
       switchPage(1);
-      return disable();
+      return disable.apply(this);
     });
     $("#portfolio").find(".sort a").click(function() {
       return global.cookie("page", 1);
     });
     $("#contact").find(".show").click(function() {
       setMap(true);
-      return disable();
+      return disable.apply(this);
     });
     $("#contact").find("form [type='text']").blur(function() {
       var name;
