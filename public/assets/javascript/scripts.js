@@ -21,7 +21,7 @@ var global = {
   global.cookie = function (name, value) {
     // Cookie function
     var cookies = document.cookie.split(';')
-    if (value === void 0) {
+    if (value === undefined) {
       for (var i = 0; i < cookies.length; i++) {
         value = cookies[i]
         var current = value.split('=') // Name and value pair
@@ -47,19 +47,19 @@ var global = {
     document.getElementsByTagName('head')[0].appendChild(script)
   }
 
-  if (global.cookie('map') === void 0) {
+  if (global.cookie('map') === undefined) {
     global.cookie('map', false)
   }
-  if (global.cookie('page') === void 0) {
+  if (global.cookie('page') === undefined) {
     global.cookie('page', 1)
   }
-  if (global.cookie('name') === void 0) {
+  if (global.cookie('name') === undefined) {
     global.cookie('name', '')
   }
-  if (global.cookie('email') === void 0) {
+  if (global.cookie('email') === undefined) {
     global.cookie('email', '')
   }
-  if (global.cookie('message') === void 0) {
+  if (global.cookie('message') === undefined) {
     global.cookie('message', '')
   }
 

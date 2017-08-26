@@ -1,0 +1,20 @@
+{
+  "content": [
+    {
+      "title": "Elementary school",
+      "place": "Wentelwiek",
+      "date_start": "2003-09-05",
+      "date_end": "2011-07-30",
+      "description": "I learned basic things like reading and writing here.",
+      "data": ["link", "http://www.dewentelwiek.nl/"]
+    },
+    {
+      "title": "VMBO",
+      "place": "Plein College Nuenen",
+      "date_start": "20011-08-19",
+      "date_end": "2012-07-29",
+      "description": "I went here because I was really too young for highschool. After a year I left and went to another school.",
+      "data": ["link", "http://www.pleincollegenuenen.nl/"]
+    }
+  ]
+}

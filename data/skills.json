@@ -1,0 +1,14 @@
+{
+  "content": [
+    {
+      "title": "English",
+      "description": "Like a lot of people, I learned a lot of English from the internet. I always liked the idea of an universal language and it is the closest we have.",
+      "skills": [["Vocabulary", 80], ["Grammar", 70], ["Speaking", 60]]
+    },
+    {
+      "title": "Dutch",
+      "description": "It is my native language. I have been speaking it since I was around four.",
+      "skills": [["Vocabulary", 85], ["Grammar", 65], ["Writing", 70]]
+    }
+  ]
+}
