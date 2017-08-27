@@ -102,7 +102,8 @@ const data = function (entering) {
     }
 
     const insert = function (document, collection, callback) {
-      database.collection(collection).update(document, document, {upsert: true}, function (error, result) {
+      let query = {title: document.title} // Title is unique
+      database.collection(collection).updateOne(query, document, {upsert: true}, function (error, result) {
         if (error) {
           console.log('Database entry')
           throw error
