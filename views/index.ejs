@@ -16,6 +16,38 @@
   <link href="assets/css/print.css" media="print" rel="stylesheet">
   <!-- Javascript -->
   <script src="assets/javascript/scripts.js" async></script>
+  <script>
+    var data = <%- JSON.stringify(appdata) %> // Bug fixing
+    console.log(data)
+  </script>
+  <%
+    // Used in the main file, must be passed to partials
+    const sinceDate = function(date) {
+      const milli = 8.64e7 // Milliseconds in a day
+
+      if (typeof date === 'string') {
+        date = new Date(date) // Convert to date type
+      }
+
+      var today = new Date(Date.now())
+      var date = new Date(date.toUTCString()) // Convert to UTC
+      var today = new Date(today.toUTCString()) // Convert to UTC
+      var offset = today.getTime() - date.getTime()
+
+      var days = offset / milli
+      var years = days / 365.2425
+
+      if (days < 2) {
+        return `${String(Math.floor(days))} day`
+      } else if (years < 1) {
+        return `${String(Math.floor(days))} days`
+      } else if (years < 2) {
+        return `${String(Math.floor(years))} year`
+      } else {
+        return `${String(Math.floor(years))} years`
+      }
+    }
+  %>
 </head>
 <body onload="console.log('// DOM completely loaded')">
   <%- include('partials/top') %>
@@ -36,14 +68,14 @@
             <hr>
             <p>
               Hello world. My name is Lucas van Osenbruggen.<br>
-              I'm <span class="since" date="2000-08-22T22:22+01:00"></span> old and live in the Netherlands.<br>
+              I'm <span class="since" date="2000-08-22"><%= sinceDate('2000-08-22T22:22+01:00') %></span> old and live in the Netherlands.<br>
               I'm currently unemployed and a student in high school.
               For details, checkout the cards in the experience section.<br>
               To see all the things that I think I'm good at, go to the skills section.<br>
               This portfolio you're looking at right now was build from scratch by me.
               You can see how smoothly it all went at <a rel="noopener" target="_blank" href="https://github.com/lukaas33/lukaas33.github.io">my repo</a>.
               It's responsive <em>(A little)</em> and printer-friendly.<br>
-              I started working on it <span class="since" date="2017-05-15T15:00+01:00"></span> ago.
+              I started working on it <span class="since" date=""><%= sinceDate('2017-05-15T15:00+01:00') %></span> ago.
               You can find more details about it in the portfolio section below.<br>
               You can contact me anytime via the contact section.<br>
             </p>
@@ -56,32 +88,10 @@
       <!-- TODO Add a way for the user to see this card can be clicked-->
       <h2 class="title">Experience</h2>
       <div class="content">
-        <!-- !TEST TODO Use ejs for this -->
-        <div class="card">
-        	<div class="text">
-        		<div class="head">
-        			<div class="tag">
-        				<h3>Elementary school</h3>
-        				<p>Wentelwiek</p>
-        			</div>
-        				<div tooltip class="date">
-      						<span class="begin" date="2003-09-05">2003</span>
-      						<span>-</span>
-      						<span class="end" date="2011-07-30">2011</span>
-      						<div class="tooltip">ended 13 years ago</div>
-        				</div>
-        		</div>
-        		<div class="collapse">
-        			<hr>
-        			<p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam elementum sollicitudin quam, quis sodales magna vulputate eu. Morbi est ipsum, sodales eget quam vel, cursus varius libero. Etiam euismod a erat at consequat. Ut venenatis ipsum quis ullamcorper tincidunt. Nam et laoreet enim, eget venenatis elit. Sed iaculis enim ac nisl venenatis, id luctus odio laoreet. Ut lacinia sit amet lacus tristique dapibus. Vestibulum id nulla et lacus vulputate tempor ut non justo. Aenean dapibus turpis eu diam dapibus, ac cursus tortor dignissim. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin et urna orci.
-              </p>
-        			<br>
-        			<a rel="noopener" target="_blank" href="https://www.example.com/">Website</a>
-            </div>
-        	</div>
-        </div>
-
+        <!-- Loop creates multiple cards -->
+        <% for (let i = 0; i < appdata.experience.length; i++) { %>
+          <%- include('partials/cards/experience', {info: appdata.experience[i], sinceDate: sinceDate}) %>
+        <% } %>
       </div>
     </section>
 

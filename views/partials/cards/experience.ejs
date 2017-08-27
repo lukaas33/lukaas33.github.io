@@ -1,24 +1,59 @@
+<%
+	// Only used in this partial
+	const dateformat = function (date, form) {
+		if (date === null) {
+			return 'now'
+		} else {
+			if (form === 'full') {
+				var year = String(date.getFullYear())
+				var month = String(date.getMonth() + 1)
+				var day = String(date.getDate())
+
+				let result = [year, month, day].join('-') // year-month-day
+				return result
+			} else if (form === 'year') {
+				let result = String(date.getFullYear()) // Only year is returned
+				return result
+			}
+		}
+	}
+%>
 <div class="card">
 	<div class="text">
 		<div class="head">
 			<div class="tag">
-				<h3></h3>
-				<p></p>
+				<h3><%= info.title %></h3>
+				<p><%= info.place %></p>
 			</div>
-			<div class="box">
-				<div class="date">
-						<span class="begin" date=""></span>
-						<span>-</span>
-						<span class="end" date=""></span>
-						<div class="tooltip"></div>
-				</div>
+			<div tooltip class="date">
+					<span class="begin" date="<%= dateformat(info.date.start, 'full') %>">
+						<%= dateformat(info.date.start, 'year') %>
+					</span>
+					<span>-</span>
+					<span class="end" date="<%= dateformat(info.date.end, 'year') %>">
+						<%= dateformat(info.date.end, 'year') %>
+					</span>
+					<div class="tooltip">
+						<% if (info.date.end === null) { %>
+							<%= `Started ${sinceDate(info.date.start)} ago` %>
+						<% } else { %>
+							<%= `Ended ${sinceDate(info.date.end)} ago` %>
+						<% } %>
+					</div>
 			</div>
 		</div>
 		<div class="collapse">
 			<hr/>
-			<p></p>
+			<p><%= info.description %></p>
 			<br/>
-			<a rel="noopener" target="_blank" href="">Website</a>
+			<% for (let j = 0; j < info.data.length; j++) { %>
+				<% if (info.data[j].type === 'link') { %>
+					<a rel="noopener" target="_blank" href="<%= info.data[j].value %>">Website</a>
+
+				<% } else if (info.data[j].type === 'number') { %>
+					<p class="number"><%= info.data[j].value %></p>
+				<% } %>
+			<% } %>
 		</div>
 	</div>
 </div>

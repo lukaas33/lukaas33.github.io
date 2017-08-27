@@ -3,26 +3,51 @@
     {
       "title": "Elementary school",
       "place": "Wentelwiek",
-      "date_start": "2003-09-05",
-      "date_end": "2011-07-30",
+      "date": {
+        "start": "2003-09-05",
+        "end": "2011-07-30"
+      },
       "description": "I learned basic things like reading and writing here.",
-      "data": ["link", "http://www.dewentelwiek.nl/"]
+      "data": [
+        {
+          "type": "link",
+          "value": "http://www.dewentelwiek.nl/"
+        }
+      ]
     },
     {
       "title": "VMBO",
       "place": "Plein College Nuenen",
-      "date_start": "2011-08-19",
-      "date_end": "2012-07-29",
+      "date": {
+        "start": "2011-08-19",
+        "end": "2012-07-29"
+      },
       "description": "I went here because I was really too young for highschool. After a year I left and went to another school.",
-      "data": ["link", "http://www.pleincollegenuenen.nl/"]
+      "data": [
+        {
+          "type": "link",
+          "value": "http://www.pleincollegenuenen.nl/"
+        }
+      ]
     },
     {
       "title": "HAVO",
       "place": "Lorentz Casimir Lyceum",
-      "date_start": "2016-09-04",
-      "date_end": null,
+      "date": {
+        "start": "2016-09-04",
+        "end": null
+      },
       "description": "When looking for different schools this one made a good expression on me.",
-      "data": ["link", "http://www.lcl.nl/"]
+      "data": [
+        {
+          "type": "link",
+          "value": "http://www.lcl.nl/"
+        },
+        {
+          "type": "number",
+          "value": "040 2909420"
+        }
+      ]
     }
   ]
 }

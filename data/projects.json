@@ -4,8 +4,10 @@
       "title": "Solaris",
       "tags": ["space", "solar system", "website", "canvas", "OOP", "animation", "planets", "informative"],
       "type": "website",
-      "date_start": "2017-03-20",
-      "date_end": "2017-04-24",
+      "date": {
+        "start": "2017-03-20",
+        "end": "2017-04-24"
+      },
       "media": "https://lukaas33.com/webpages/solaris/",
       "description": "This is a project I have been wanting to do for a while. I made an illustration of the solar system some time before and wanted to make something more interactive. I learned a lot about using the html canvas and making animations via paper.js."
     }
