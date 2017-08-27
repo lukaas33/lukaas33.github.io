@@ -11,10 +11,18 @@
     {
       "title": "VMBO",
       "place": "Plein College Nuenen",
-      "date_start": "20011-08-19",
+      "date_start": "2011-08-19",
       "date_end": "2012-07-29",
       "description": "I went here because I was really too young for highschool. After a year I left and went to another school.",
       "data": ["link", "http://www.pleincollegenuenen.nl/"]
+    },
+    {
+      "title": "HAVO",
+      "place": "Lorentz Casimir Lyceum",
+      "date_start": "2016-09-04",
+      "date_end": null,
+      "description": "When looking for different schools this one made a good expression on me.",
+      "data": ["link", "http://www.lcl.nl/"]
     }
   ]
 }
