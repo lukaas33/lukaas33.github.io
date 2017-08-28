@@ -622,16 +622,10 @@ main {
         -webkit-transform: translate(-25%, -110%);
         transform: translate(-25%, -110%); }
   main #portfolio .content {
-    padding-top: 100%;
-    position: relative;
     width: 100%; }
-    main #portfolio .content .wrapper {
-      left: 0;
-      position: absolute;
-      top: 0;
-      width: 100%; }
   main #portfolio .page {
-    margin: 2.5vw; }
+    margin: 2.5vw;
+    width: 100%; }
     @media only screen and (max-width: 599px) {
       main #portfolio .page .container {
         width: 100%; } }

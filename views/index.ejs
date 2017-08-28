@@ -102,7 +102,7 @@
     </section>
 
     <section class="part" id="skills">
-      <!-- TODO Add a way for the user to see this card can be clicked-->
+      <!-- TODO Add a way for the user to see this card can be clicked -->
       <h2 class="title">Skills</h2>
       <div class="content">
         <% for (let entry of data.skills) { %>
@@ -126,14 +126,12 @@
         </div>
       </div>
       <div class="content">
-        <div class="wrapper">
-          <!-- Loops over number of pages needed -->
-          <!-- Includes the number of the current page and the info needed for the page -->
-          <% var pageNum = Math.ceil(data.projects.length / 9) %>
-          <% for (let i = 1; i < pageNum + 1; i++) { %>
-            <%- include('partials/page', {info: data.projects.slice((i - 1) * 9, i * 9), current: i}) %>
-          <% } %>
-        </div>
+        <!-- Loops over number of pages needed -->
+        <!-- Includes the number of the current page and the info needed for the page -->
+        <% var pageNum = Math.ceil(data.projects.length / 9) %>
+        <% for (let i = 1; i < pageNum + 1; i++) { %>
+          <%- include('partials/page', {info: data.projects.slice((i - 1) * 9, i * 9), current: i}) %>
+        <% } %>
       </div>
       <div class="select">
         <button ripple class="backward">
