@@ -6,6 +6,7 @@
   <meta name="description" content="The personal resume and portfolio of Lucas van Osenbruggen.">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1">
+  <!-- Applies to multiple pages -->
   <%- include('partials/appdata') %>
   <!-- Verify ownership -->
   <meta name="google-site-verification" content="uBKBwodm244IRdbB2qDBus4wgTX706KrGGqC-SdZPFA"/>
@@ -17,7 +18,7 @@
   <!-- Javascript -->
   <script src="assets/javascript/scripts.js" async></script>
   <script>
-    var data = <%- JSON.stringify(appdata) %> // Bug fixing
+    var data = <%- JSON.stringify(data) %> // Bug fixing
     console.log(data)
   </script>
   <%
@@ -94,7 +95,7 @@
       <h2 class="title">Experience</h2>
       <div class="content">
         <!-- Loop creates multiple cards -->
-        <% for (let entry of appdata.experience) { %>
+        <% for (let entry of data.experience) { %>
           <%- include('partials/cards/experience', {info: entry, sinceDate: sinceDate}) %>
         <% } %>
       </div>
@@ -104,7 +105,7 @@
       <!-- TODO Add a way for the user to see this card can be clicked-->
       <h2 class="title">Skills</h2>
       <div class="content">
-        <% for (let entry of appdata.skills) { %>
+        <% for (let entry of data.skills) { %>
           <%- include('partials/cards/skills', {info: entry}) %>
         <% } %>
       </div>
@@ -125,246 +126,13 @@
         </div>
       </div>
       <div class="content">
-        <!-- !TEST TODO Use ejs for this -->
         <div class="wrapper">
-          <div class="page" num="1">
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="page" num="2">
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="container">
-              <div class="preview">
-                <a href="#">
-                  <img alt="Project preview" src="assets/images/thumbnails/portfolio-thumbnail.jpg">
-                  <span>
-                    <div class="tags">
-                      <h3>Portfolio</h3>
-                      <p>website</p>
-                    </div>
-                  </span>
-                </a>
-              </div>
-            </div>
-          </div>
+          <!-- Loops over number of pages needed -->
+          <!-- Includes the number of the current page and the info needed for the page -->
+          <% var pageNum = Math.ceil(data.projects.length / 9) %>
+          <% for (let i = 1; i < pageNum + 1; i++) { %>
+            <%- include('partials/page', {info: data.projects.slice((i - 1) * 9, i * 9), current: i}) %>
+          <% } %>
         </div>
       </div>
       <div class="select">

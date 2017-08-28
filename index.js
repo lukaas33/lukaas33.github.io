@@ -146,7 +146,7 @@ data.get = function (callback) {
 // Routes
 app.get('/', function (request, response) {
   data.get((variables) => {
-    response.render('index', {appdata: variables})
+    response.render('index', {data: variables})
   })
 })
 

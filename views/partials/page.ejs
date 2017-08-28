@@ -1,5 +1,6 @@
-<div class="wrapper">
-  <div class="page">
-    <%- include('cards/project.ejs') %>
-  </div>
+<div class="page" num="<%= current %>">
+  <!-- Loops through cards in this page -->
+  <% for (let card of info) { %>
+    <%- include('cards/project.ejs', {info: card}) %>
+  <% } %>
 </div>
