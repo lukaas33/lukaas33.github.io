@@ -109,13 +109,13 @@ data.set = (entering) => {
   }
 
   if (typeof entering === 'undefined') { // Will check with the local data
-    data.files.forEach((file) => { // Loops through the files
+    for (let file of data.files) {  // Loops through the files
       open(`data/${file}.json`, (objects) => { // Opens the file
-        objects.forEach((object) => { // Loops through the objects
+        for (let object of objects) { // Loops through the objects
           upsert(object, file, () => {}) // Empty callback
-        })
+        }
       })
-    })
+    }
   } else { // Will enter new data
 
   }
@@ -123,20 +123,24 @@ data.set = (entering) => {
 
 data.get = function (callback) {
   var result = {} // Will be filled
-  data.files.forEach((file, index) => {
-    let options = [{date: 1}, {date: -1}, {title: 1}] // Sort options for each file
-    data.database.collection(file).find().sort(options[index]).toArray((error, results) => {
+  for (let file of data.files) {
+    let options = { // Sort options for each file
+      'experience': {date: 1},
+      'projects': {date: -1},
+      'skills': {title: 1}
+    }
+    data.database.collection(file).find().sort(options[result]).toArray((error, results) => {
       if (error) {
         console.log('Getting data')
         throw error
       }
       result[file] = results
 
-      if (index >= data.files.length - 1) { // All calls completed
+      if (Object.keys(result).length === data.files.length) { // Data from all files is got
         callback(result)
       }
     })
-  })
+  }
 }
 
 // Routes

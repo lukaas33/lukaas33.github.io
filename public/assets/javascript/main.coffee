@@ -76,8 +76,8 @@ setForm = ->
   $form.find("textarea").val(global.cookie "message")
 
 setPages = (time) ->
-  global.pageNum = $("#portfolio").find(".page").length
   $pages = $("#portfolio").find ".page"
+  global.pageNum = $pages.length
   current = Number(global.cookie "page")
   target = $pages # All will be hidden
   target = $($pages[global.previous - 1]) if global.previous != null

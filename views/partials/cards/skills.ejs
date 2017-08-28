@@ -1,31 +1,47 @@
+<%
+	const average = function (nums) {
+		var result = 0
+		for (let num of nums) {
+			result += num
+		}
+		result /= nums.length
+		result = Math.round(result)
+		return result
+	}
+
+	const getPercentages = function (array, get) {
+		var result = []
+		for (let object of array) {
+			result.push(object[get])
+			console.log(result)
+		}
+		return result
+	}
+%>
 <div class="card">
 	<div class="text">
 		<div class="head">
 			<div class="tag">
-				<h3></h3>
+				<h3><%= info.title %></h3>
 			</div>
-			<div class="box" ><progress max="100" value="<?= $average; ?>"></progress></div>
+			<!-- Gets the average from the array of objects -->
+			<progress max="100" value="<%= average(getPercentages(info.skills, 'percentage')) %>"></progress>
 		</div>
 		<div class="collapse">
 			<hr/>
 			<div class="box">
 				<div class="description">
-					<p></p>
+					<p><%= info.description %></p>
 				</div>
 				<div class="progress">
 					<div class="container">
-						<div>
-							<p></p>
-							<progress max="100" value="<?= $percentages[0]; ?>"></progress>
-						</div>
-						<div>
-							<p></p>
-							<progress max="100" value="<?= $percentages[1]; ?>"></progress>
-						</div>
-						<div>
-							<p></p>
-							<progress max="100" value="<?= $percentages[2]; ?>"></progress>
-						</div>
+						<!-- Loops through the different skills -->
+						<% for (let skill of info.skills) { %>
+							<div>
+								<p><%= skill.name %></p>
+								<progress max="100" value="<%= skill.percentage %>"></progress>
+							</div>
+						<% } %>
 					</div>
 				</div>
 			</div>

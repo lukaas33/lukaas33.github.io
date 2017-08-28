@@ -90,8 +90,8 @@
 
   setPages = function(time) {
     var $pages, current, target;
-    global.pageNum = $("#portfolio").find(".page").length;
     $pages = $("#portfolio").find(".page");
+    global.pageNum = $pages.length;
     current = Number(global.cookie("page"));
     target = $pages;
     if (global.previous !== null) {

@@ -34,6 +34,7 @@
 						<%= dateformat(info.date.end, 'year') %>
 					</span>
 					<div class="tooltip">
+						<!-- The date in a easier to understand form -->
 						<% if (info.date.end === null) { %>
 							<%= `Started ${sinceDate(info.date.start)} ago` %>
 						<% } else { %>
@@ -46,12 +47,13 @@
 			<hr/>
 			<p><%= info.description %></p>
 			<br/>
-			<% for (let j = 0; j < info.data.length; j++) { %>
-				<% if (info.data[j].type === 'link') { %>
-					<a rel="noopener" target="_blank" href="<%= info.data[j].value %>">Website</a>
+			<!-- Loops through all extra data -->
+			<% for (let data of info.data) { %>
+				<% if (data.type === 'link') { %>
+					<a rel="noopener" target="_blank" href="<%= data.value %>">Website</a>
 
-				<% } else if (info.data[j].type === 'number') { %>
-					<p class="number"><%= info.data[j].value %></p>
+				<% } else if (data.type === 'number') { %>
+					<p class="number"><%= data.value %></p>
 				<% } %>
 			<% } %>
 		</div>
