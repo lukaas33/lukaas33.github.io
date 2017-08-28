@@ -129,12 +129,12 @@ setMap = (change) ->
         global.cookie("map", on)
 
   # Actions based on map cookie and if the cookie should be changed
-  if global.cookie("map") == "true"
+  if global.cookie("map") or global.cookie("map") == 'true'
     if change
       setOff(global.timing / 2) # When clicked
     else
       setOn(0) # Before page is loaded
-  else if global.cookie("map") == "false"
+  else
     if change
       setOn(global.timing / 2) # When clicked
     else

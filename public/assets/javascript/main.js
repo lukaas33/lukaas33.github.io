@@ -158,13 +158,13 @@
         }
       });
     };
-    if (global.cookie("map") === "true") {
+    if (global.cookie("map") || global.cookie("map") === 'true') {
       if (change) {
         return setOff(global.timing / 2);
       } else {
         return setOn(0);
       }
-    } else if (global.cookie("map") === "false") {
+    } else {
       if (change) {
         return setOn(global.timing / 2);
       } else {

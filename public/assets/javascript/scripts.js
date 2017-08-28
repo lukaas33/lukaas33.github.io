@@ -12,6 +12,7 @@ var global = {
   pageNum: 0, // Will store the number of pages in portfolio
   previous: null, // Will track the previous page
   cookie: undefined, // Will store cookie function
+  fallback: {}, // Will store variables if cookies are not enabled
   timeouts: {} // Will store timeouts
 };
 
@@ -19,19 +20,28 @@ var global = {
   'use strict'
 
   global.cookie = function (name, value) {
-    // Cookie function
-    var cookies = document.cookie.split(';')
-    if (value === undefined) {
-      for (var i = 0; i < cookies.length; i++) {
-        value = cookies[i]
-        var current = value.split('=') // Name and value pair
-        if (current[0].trim() === name) {
-          return current[1] // Can be undefined
+    if (navigator.cookieEnabled && window.location.protocol === 'https:') { // Cookies can be used safely
+      // Cookie function
+      var cookies = document.cookie.split(';')
+      if (value === undefined) {
+        for (var i = 0; i < cookies.length; i++) {
+          value = cookies[i]
+          var current = value.split('=') // Name and value pair
+          if (current[0].trim() === name) {
+            return current[1] // Can be undefined
+          }
         }
+      } else {
+        console.log('Set cookie: ' + name + ' to ' + value)
+        document.cookie = name + '=' + value + '; secure;'
       }
-    } else {
-      console.log('Set cookie ' + name + ' to ' + value)
-      document.cookie = name + '=' + value + '; secure;'
+    } else { // Use variables instead of cookies
+      if (value === undefined) {
+        return global.fallback[name]
+      } else {
+        console.log('Set fallback variable: ' + name + ' to ' + value)
+        global.fallback[name] = value
+      }
     }
   }
 
