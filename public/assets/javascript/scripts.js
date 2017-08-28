@@ -28,7 +28,15 @@ var global = {
           value = cookies[i]
           var current = value.split('=') // Name and value pair
           if (current[0].trim() === name) {
-            return current[1] // Can be undefined
+            var result = current[1].trim()
+            try {
+              result = JSON.parse(result) // Will parse strings to numbers
+              return result
+            } catch (error) {
+              if (error.name === 'SyntaxError') { // Tried to parse a string value
+                return result // Just return the string
+              }
+            }
           }
         }
       } else {
@@ -64,13 +72,13 @@ var global = {
     global.cookie('page', 1)
   }
   if (global.cookie('name') === undefined) {
-    global.cookie('name', '')
+    global.cookie('name', null)
   }
   if (global.cookie('email') === undefined) {
-    global.cookie('email', '')
+    global.cookie('email', null)
   }
   if (global.cookie('message') === undefined) {
-    global.cookie('message', '')
+    global.cookie('message', null)
   }
 
   loadScript('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js', function () {

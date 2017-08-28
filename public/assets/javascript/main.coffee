@@ -1,5 +1,5 @@
 'use strict'
-
+# TODO setup before load
 # Main script for webste
 switchPage = (change) ->
   if global.pageNum > 1
@@ -129,7 +129,7 @@ setMap = (change) ->
         global.cookie("map", on)
 
   # Actions based on map cookie and if the cookie should be changed
-  if global.cookie("map") or global.cookie("map") == 'true'
+  if global.cookie("map")
     if change
       setOff(global.timing / 2) # When clicked
     else
@@ -178,19 +178,19 @@ $ ->
 
   ### Events ###
   $(window).on "resize", ->
+    if $(@).width() >= 1200
+      console.log "Breakpoint: desktop-up"
+    else if $(@).width() >= 900
+      console.log "Breakpoint: tablet-landscape-up"
+    else if $(@).width() >= 600
+      console.log "Breakpoint: tablet-portrait-up"
+    else if $(@).width() <= 599
+      console.log "Breakpoint: phone-only"
+
     $('*').addClass "notransition"
-    clearTimeout(resize)
+    clearTimeout(global.timeouts.resize)
     global.timeouts.resize = setTimeout -> # Resizing has stopped
       $('*').removeClass "notransition"
-
-      if $(@).width() >= 1200
-        console.log "Breakpoint: desktop-up"
-      else if $(@).width() >= 900
-        console.log "Breakpoint: tablet-landscape-up"
-      else if $(@).width() >= 600
-        console.log "Breakpoint: tablet-portrait-up"
-      else if $(@).width() <= 599
-        console.log "Breakpoint: phone-only"
     , 250
 
   $("nav ul").find("a").click (event) ->
