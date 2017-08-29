@@ -2,84 +2,6 @@
   'use strict';
   var disable, highLight, scrollToLoc, sendMail, setForm, setMap, setPages, switchPage, toggle;
 
-  switchPage = function(change) {
-    var newPage;
-    if (global.pageNum > 1) {
-      global.previous = Number(global.cookie("page"));
-      newPage = global.previous + change;
-      if (newPage < 1) {
-        newPage = global.pageNum;
-      }
-      if (newPage > global.pageNum) {
-        newPage = 1;
-      }
-      console.log("Switching to " + newPage);
-      global.cookie("page", newPage);
-      return setPages(global.timing / 2);
-    }
-  };
-
-  highLight = function() {
-    var $li, calcTop, position;
-    $li = $("nav ul li");
-    $li.removeClass("focus");
-    $li.next().removeClass("show");
-    position = $(window).scrollTop();
-    calcTop = function(element) {
-      var location, top;
-      top = Math.round(element.offset().top + element.height());
-      location = top - parseInt(element.css("margin-bottom")) - $("nav").height();
-      return location;
-    };
-    if (position <= calcTop($("#about"))) {
-      $($li[0]).addClass("focus");
-      return $($li[1]).addClass("show");
-    } else if (position < calcTop($("#experience"))) {
-      $($li[1]).addClass("focus");
-      return $($li[2]).addClass("show");
-    } else if (position < calcTop($("#skills"))) {
-      $($li[2]).addClass("focus");
-      return $($li[3]).addClass("show");
-    } else if (position < calcTop($("#portfolio"))) {
-      $($li[3]).addClass("focus");
-      return $($li[4]).addClass("show");
-    } else if (position < calcTop($("#contact"))) {
-      return $($li[4]).addClass("focus");
-    }
-  };
-
-  scrollToLoc = function(section) {
-    var location, top;
-    top = Math.round(section.offset().top);
-    location = top - parseInt(section.css("margin-top")) - $("nav").height();
-    return $("html, body").animate({
-      scrollTop: location
-    }, {
-      duration: global.timing * 2,
-      easing: "swing"
-    });
-  };
-
-  toggle = function(card, active) {
-    var animate;
-    animate = function(card) {
-      var $collapse;
-      $collapse = $(card).find(".collapse");
-      return $collapse.slideToggle({
-        duration: global.timing,
-        easing: "swing"
-      });
-    };
-    if (global.state[active] !== card || global.state[active] === null) {
-      animate(global.state[active]);
-      global.state[active] = card;
-      return animate(card);
-    } else if (global.state[active] === card) {
-      animate(global.state[active]);
-      return global.state[active] = null;
-    }
-  };
-
   setForm = function() {
     var $form;
     $form = $("#contact").find("form");
@@ -93,8 +15,9 @@
     $pages = $("#portfolio").find(".page");
     global.pageNum = $pages.length;
     current = Number(global.cookie("page"));
-    target = $pages;
-    if (global.previous !== null) {
+    if (global.previous === null) {
+      target = $pages;
+    } else {
       target = $($pages[global.previous - 1]);
     }
     return target.fadeOut({
@@ -112,15 +35,6 @@
         });
       }
     });
-  };
-
-  disable = function() {
-    $(this).prop("disabled", true);
-    return setTimeout((function(_this) {
-      return function() {
-        return $(_this).prop("disabled", false);
-      };
-    })(this), global.timing);
   };
 
   setMap = function(change) {
@@ -173,6 +87,92 @@
     }
   };
 
+  disable = function() {
+    $(this).prop("disabled", true);
+    return setTimeout((function(_this) {
+      return function() {
+        return $(_this).prop("disabled", false);
+      };
+    })(this), global.timing);
+  };
+
+  switchPage = function(change) {
+    var newPage;
+    if (global.pageNum > 1) {
+      global.previous = Number(global.cookie("page"));
+      newPage = global.previous + change;
+      if (newPage < 1) {
+        newPage = global.pageNum;
+      } else if (newPage > global.pageNum) {
+        newPage = 1;
+      }
+      console.log("Switching to " + newPage);
+      global.cookie("page", newPage);
+      return setPages(global.timing / 2);
+    }
+  };
+
+  highLight = function() {
+    var $li, calcTop, position;
+    $li = $("nav ul li");
+    $li.removeClass("focus");
+    $li.next().removeClass("show");
+    position = $(window).scrollTop();
+    calcTop = function(element) {
+      var location, top;
+      top = Math.round(element.offset().top + element.height());
+      location = top - parseInt(element.css("margin-bottom")) - $("nav").height();
+      return location;
+    };
+    if (position <= calcTop($("#about"))) {
+      $($li[0]).addClass("focus");
+      return $($li[1]).addClass("show");
+    } else if (position <= calcTop($("#experience"))) {
+      $($li[1]).addClass("focus");
+      return $($li[2]).addClass("show");
+    } else if (position <= calcTop($("#skills"))) {
+      $($li[2]).addClass("focus");
+      return $($li[3]).addClass("show");
+    } else if (position <= calcTop($("#portfolio"))) {
+      $($li[3]).addClass("focus");
+      return $($li[4]).addClass("show");
+    } else if (position <= calcTop($("#contact"))) {
+      return $($li[4]).addClass("focus");
+    }
+  };
+
+  scrollToLoc = function(section) {
+    var bottom, location;
+    bottom = Math.round(section.offset().top);
+    location = bottom - parseInt(section.css("margin-top")) - $("nav").height();
+    return $("html, body").animate({
+      scrollTop: location
+    }, {
+      duration: global.timing * 2,
+      easing: "swing"
+    });
+  };
+
+  toggle = function(card, active) {
+    var animate;
+    animate = function(card) {
+      var $collapse;
+      $collapse = $(card).find(".collapse");
+      return $collapse.slideToggle({
+        duration: global.timing,
+        easing: "swing"
+      });
+    };
+    if (global.state[active] !== card || global.state[active] === null) {
+      animate(global.state[active]);
+      global.state[active] = card;
+      return animate(card);
+    } else if (global.state[active] === card) {
+      animate(global.state[active]);
+      return global.state[active] = null;
+    }
+  };
+
   sendMail = function(data, success) {
     return $.ajax({
       url: '/send',
@@ -185,9 +185,9 @@
         return success(false);
       } else {
         success(true);
-        global.cookie("name", "");
-        global.cookie("email", "");
-        return global.cookie("message", "");
+        global.cookie("name", null);
+        global.cookie("email", null);
+        return global.cookie("message", null);
       }
     }).fail(function() {
       return success(false);
@@ -197,10 +197,14 @@
   $(function() {
 
     /* Actions */
-    console.log("// DOM events loading...");
-    setMap();
+    console.log("// DOM value setup loading...");
+    setMap(false);
     setForm();
     setPages(0);
+    $("body").css({
+      visibility: 'initial'
+    });
+    console.log("// DOM events loading...");
     setTimeout(function() {
       highLight();
       return $(window).scroll(function() {
@@ -232,10 +236,10 @@
       return scrollToLoc($(href));
     });
     $("#experience").find(".head").click(function() {
-      return toggle($(this).closest(".card")[0], "experience");
+      return toggle($(this).parents(".card"), "experience");
     });
     $("#skills").find(".head").click(function() {
-      return toggle($(this).closest(".card")[0], "skills");
+      return toggle($(this).parents(".card"), "skills");
     });
     $("#portfolio").find(".preview").hover(function() {
       return $(this).find(".tags").fadeTo(global.timing, 1);
@@ -255,10 +259,12 @@
     });
     $("#portfolio").find(".backward").click(function() {
       switchPage(-1);
+      scrollToLoc($("#portfolio"));
       return disable.apply(this);
     });
     $("#portfolio").find(".forward").click(function() {
       switchPage(1);
+      scrollToLoc($("#portfolio"));
       return disable.apply(this);
     });
     $("#portfolio").find(".sort a").click(function() {
@@ -314,25 +320,20 @@
         return sendMail(formdata, (function(success) {
           if (success) {
             $(this).trigger("reset");
-            $(this).find(".error").html("Email was successfully sent");
-            return $(this).find(".error").fadeIn(global.animation);
+            return $(this).find(".error").html("Email was successfully sent").fadeIn(global.animation);
           } else {
-            $(this).find(".error").html("An error has occured while sending");
-            return $(this).find(".error").fadeIn(global.animation);
+            return $(this).find(".error").html("An error has occured while sending").fadeIn(global.animation);
           }
         }).bind(this));
       } catch (error1) {
         error = error1;
         console.warn(error);
         if (error.message === "Input empty") {
-          $(this).find(".error").html("Please fill out all fields");
-          return $(this).find(".error").fadeIn(global.animation);
+          return $(this).find(".error").html("Please fill out all fields").fadeIn(global.animation);
         } else if (error.message === "Email incorrect") {
-          $(this).find(".error").html("The email entered is invalid");
-          return $(this).find(".error").fadeIn(global.animation);
+          return $(this).find(".error").html("The email entered is invalid").fadeIn(global.animation);
         } else {
-          $(this).find(".error").html("An unknown error occured");
-          return $(this).find(".error").fadeIn(global.animation);
+          return $(this).find(".error").html("An unknown error occured").fadeIn(global.animation);
         }
       }
     });

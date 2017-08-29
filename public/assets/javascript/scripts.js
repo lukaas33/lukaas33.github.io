@@ -1,3 +1,4 @@
+// Global scope
 var global = {
   // Variable with a global scope
   timing: 400, // Standard animation time
@@ -16,6 +17,7 @@ var global = {
   timeouts: {} // Will store timeouts
 };
 
+// Local scope
 (function () {
   'use strict'
 
@@ -23,7 +25,7 @@ var global = {
     if (navigator.cookieEnabled && window.location.protocol === 'https:') { // Cookies can be used safely
       // Cookie function
       var cookies = document.cookie.split(';')
-      if (value === undefined) {
+      if (value === undefined) { // Need to get
         for (var i = 0; i < cookies.length; i++) {
           value = cookies[i]
           var current = value.split('=') // Name and value pair
@@ -39,7 +41,7 @@ var global = {
             }
           }
         }
-      } else {
+      } else { // Need to set
         console.log('Set cookie: ' + name + ' to ' + value)
         document.cookie = name + '=' + value + '; secure;'
       }
