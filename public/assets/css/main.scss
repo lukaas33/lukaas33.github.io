@@ -2,6 +2,9 @@
 
 // TODO Make layout more responsive
 // TODO fix alignment issues in [navbar, about, contact]
+// TODO fix nav hiding
+// TODO Fix touch callout
+// TODO Style project page
 
 // Global variables and functions
 @import 'storage/variables';
@@ -10,72 +13,7 @@
 @import 'storage/classes';
 
 // Universal and global
-* {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box; // Box model acts normal
-  margin: 0;
-  padding: 0;
-}
-
-::-moz-selection {
-  @include color(secondary, 'background-color', 100);
-  color: #fff;
-}
-
-::selection {
-  @include color(secondary, 'background-color', 100);
-  color: #fff;
-}
-
-:root {
-  @include media(phone-only) {
-    font-size: 20px; // Base font size, all are based on this one via the rem unit
-  }
-  @include media(tablet-portrait-up) {
-    font-size: 18px; // Base font size, all are based on this one via the rem unit
-  }
-  @include media(tablet-landscape-up) {
-    font-size: 16px; // Base font size, all are based on this one via the rem unit
-  }
-  @include media(desktop-up) {
-    font-size: 16px; // Base font size, all are based on this one via the rem unit
-  }
-}
-
-body {
-  @include color(grey, 'color', 600); // Default color, applies mostly to text
-  @include color(grey, 'background-color', 200);
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased; // Font rendering
-  font-family: 'Noto-sans', 'Roboto', sans-serif; // Applies to everything
-  font-size: 1rem; // Defaults to base font-size
-  min-width: 400px; // Can't be resized smaller
-  user-select: none; // No selecting text is standard It is overwritten in some text divs
-}
-
-// Needed to display the icon font properly
-.material-icons {
-  &.md-dark {
-    color: rgba(0, 0, 0, .55);
-  }
-
-  &.md-dark.md-inactive {
-    color: rgba(0, 0, 0, .45);
-  }
-
-  &.md-light {
-    color: rgba(255, 255, 255, 1);
-  }
-
-  &.md-light.md-inactive {
-    color: rgba(255, 255, 255, .5);
-  }
-}
-
-.notransition {
-  -webkit-transition: none !important;
-  transition: none !important; // Disables transition time
-}
+@import 'storage/global';
 
 // Top style
 @import 'storage/top';

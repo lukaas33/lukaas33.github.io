@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Project - <%= data.title %></title>
+  <meta name="description" content=" data.description.slice(0, 160) ">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1">
+  <!-- Same root as index -->
+  <base href="../"></base>
+  <!-- Applies to multiple pages -->
+  <%- include('partials/appdata') %>
+  <!-- Css -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="assets/css/main.css" media="screen" rel="stylesheet">
+  <link href="assets/css/print.css" media="print" rel="stylesheet">
+  <%
+  	// From experience partial
+  	const dateformat = function (date, form) {
+  		if (date === null) {
+  			return 'now'
+  		} else {
+  			if (form === 'full') {
+  				var year = String(date.getFullYear())
+  				var month = String(date.getMonth() + 1)
+  				var day = String(date.getDate())
+
+  				let result = [year, month, day].join('-') // year-month-day
+  				return result
+  			} else if (form === 'year') {
+  				let result = String(date.getFullYear()) // Only year is returned
+  				return result
+  			}
+  		}
+  	}
+  %>
+</head>
+<body>
+  <!-- Navbar -->
+  <%- include('partials/top') %>
+  <!-- Content -->
+  <main>
+    <div class="part">
+      <div class="card">
+        <div class="container"><img></div>
+        <div class="text">
+          <div class="top">
+            <h1><%= data.title %></h1>
+            <p class="type"><%= data.type %></p>
+            <p class="date"><%= dateformat(data.date.start, 'full') %> / <%= dateformat(data.date.end, 'full') %></p>
+            <hr>
+          </div>
+          <div class="primary">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -81,7 +81,7 @@ switchPage = (change) ->
     global.cookie("page", newPage) # Update
     setPages global.timing / 2
 
-highLight = ->
+highLight = -> # TODO fix ripple delay
   # Highlights items in the menu bar
   $li = $("nav ul li")
   $li.removeClass "focus" # Removes the focus each time
@@ -119,7 +119,7 @@ scrollToLoc = (section) ->
       easing: "swing" # Animate with swing easing
   )
 
-toggle = (card, active) ->
+toggle = (card, active) -> # TODO fix open close bug
   # Collapses and extends cards
   animate = (card) ->
     $collapse = $(card).find ".collapse"

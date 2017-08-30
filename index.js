@@ -39,9 +39,9 @@ app.use(bodyParser.json()) // Enable json parsing
 app.use(bodyParser.urlencoded({extended: true}))
 
 app.use(express.static(`${__dirname}/public`, { maxage: '7d' })) // Serve static files
-app.engine('html', require('ejs').renderFile)
+app.engine('html', require('ejs').renderFile) // No idea but it breaks without this line
 app.set('views', `${__dirname}/views`)
-app.set('view engine', 'ejs')
+app.set('view engine', 'ejs') // Use ejs for templating
 
 // Functions
 const send = function (request, response) {
@@ -55,7 +55,7 @@ const send = function (request, response) {
       throw error
     }
 
-    let mailOptions = {
+    var mailOptions = {
       from: `'${fields.name}' <${fields.email}>`,
       to: `'Personal' <${process.env.EMAIL_CONTACT}>`,
       subject: '[SITE MESSAGE]',
@@ -97,8 +97,9 @@ data.set = (entering) => {
   }
 
   const upsert = function (document, collection, callback) {
-    let query = {title: document.title} // Title is unique
-    data.database.collection(collection).updateOne(query, document, {upsert: true}, function (error, result) {
+    var query = {title: document.title} // Title is unique
+    var current = data.database.collection(collection)
+    current.updateOne(query, document, {upsert: true}, function (error, result) {
       if (error) {
         console.log('Database entry')
         throw error
@@ -121,22 +122,24 @@ data.set = (entering) => {
   }
 }
 
-data.get = function (callback) {
+data.get = function (collections, callback) {
   var result = {} // Will be filled
-  for (let file of data.files) {
+  for (let file of collections) { // Loop through collections needed
     let options = { // Sort options for each file
-      'experience': {date: 1},
-      'projects': {date: -1},
-      'skills': {title: 1}
+      'experience': {'date.start': 1, 'title': 1},
+      'projects': {'date.end': -1, 'title': 1},
+      'skills': {'title': 1}
     }
-    data.database.collection(file).find().sort(options[result]).toArray((error, results) => {
+
+    var current = data.database.collection(file)
+    current.find().sort(options[file]).toArray((error, results) => {
       if (error) {
         console.log('Getting data')
         throw error
       }
       result[file] = results
 
-      if (Object.keys(result).length === data.files.length) { // Data from all files is got
+      if (Object.keys(result).length === collections.length) { // Data from all files is got
         callback(result)
       }
     })
@@ -145,8 +148,28 @@ data.get = function (callback) {
 
 // Routes
 app.get('/', function (request, response) {
-  data.get((variables) => {
+  data.get(data.files, (variables) => {
     response.render('index', {data: variables})
+  })
+})
+
+app.get('/projects/:title', function (request, response) { // The title can be different
+  var needed = 'projects'
+  data.get([needed], (variables) => {
+    var exists = false
+
+    for (let project of variables[needed]) { // Existing projects
+      let webtitle = project.title.toLowerCase()
+      webtitle = webtitle.replace(/ /g, '-') // Whitespace will be replaced like in the url
+      if (webtitle === request.params.title) { // Check name
+        exists = true // Project exists
+        response.render('project', {data: project})
+        break
+      }
+    }
+    if (!exists) {
+      response.status(404).send('The project does not exist') // The project doesn't exist
+    }
   })
 })
 
@@ -154,15 +177,6 @@ app.get('/', function (request, response) {
 app.post('/send', function (request, response) { // Post request at send
   console.log('Post request from client at /send')
   send(request, response) // Email sender
-})
-
-app.post('/auth', function (request, response) { // Admin authenticate
-  console.log('Post request from client at /auth')
-  if (process.env.ADMIN_PASS === request.body.pass) { // Password entered is correct
-    response.end('success')
-  } else {
-    response.end('fail')
-  }
 })
 
 app.listen(app.get('port'), () => console.log(`Node app is running at ${app.get('port')}`))
