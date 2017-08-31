@@ -1,44 +1,29 @@
-#about {
+.part {
   // Local variables
   $height: 60vh; // For the card
 
-  margin-top: ($height / 2); // Card will be halfway aligned with header
+  &:first-child { // The first part
+    margin-top: ($height / 2); // Card will be halfway aligned with header
+  }
 
-  .card {
-    @extend %res-cards; // Displays next to each other or above
+  &#about {
+    .card {
+      @extend %res-cards; // Displays next to each other or above
 
-    @include media(phone-only) {
-      height: ($height * 2);
-    }
-    @include media(tablet-portrait-up) {
-      height: ($height * 2.5);
-    }
-    @include media(tablet-landscape-up) {
-      height: $height;
-    }
-    @include media(desktop-up) {
-      height: $height;
-    }
-
-    .container {
       @include media(phone-only) {
-        height: auto;
-        width: 100%;
+        height: ($height * 2);
       }
       @include media(tablet-portrait-up) {
-        height: auto;
-        width: 100%;
+        height: ($height * 2.5);
       }
       @include media(tablet-landscape-up) {
         height: $height;
-        width: auto; // Of card
       }
       @include media(desktop-up) {
         height: $height;
-        width: auto; // Of card
       }
 
-      img {
+      .container {
         @include media(phone-only) {
           height: auto;
           width: 100%;
@@ -48,54 +33,73 @@
           width: 100%;
         }
         @include media(tablet-landscape-up) {
-          height: 100%;
-          width: auto;
+          height: $height;
+          width: auto; // Of card
         }
         @include media(desktop-up) {
-          height: 100%;
-          width: auto;
+          height: $height;
+          width: auto; // Of card
         }
 
-        display: block;
-      }
-    }
+        img {
+          @include media(phone-only) {
+            height: auto;
+            width: 100%;
+          }
+          @include media(tablet-portrait-up) {
+            height: auto;
+            width: 100%;
+          }
+          @include media(tablet-landscape-up) {
+            height: 100%;
+            width: auto;
+          }
+          @include media(desktop-up) {
+            height: 100%;
+            width: auto;
+          }
 
-    .text {
-      @include media(phone-only) {
-        margin-top: ($margin / 2);
-        width: 100%;
-      }
-      @include media(tablet-portrait-up) {
-        margin-top: ($margin / 2);
-        width: 100%;
-      }
-      @include media(tablet-landscape-up) {
-        margin-top: 0;
-        width: auto; // Of card
-      }
-      @include media(desktop-up) {
-        margin-top: 0;
-        width: auto; // Of card
-      }
-
-      -moz-user-select: text;
-      -ms-user-select: text;
-      -webkit-user-select: text;
-      user-select: text; // Can be selected
-
-      h1 {
-        @extend %header;
-        font-size: 2rem; // Based on base font-size
-        margin: ($margin / 4) 0; // One fourth of card margin
+          display: block;
+        }
       }
 
-      .tagline {
-        @include color(grey, 'color', 700);
-        font-size: 1.2rem; // Based on base font-size
-      }
+      .text {
+        @include media(phone-only) {
+          margin-top: ($margin / 2);
+          width: 100%;
+        }
+        @include media(tablet-portrait-up) {
+          margin-top: ($margin / 2);
+          width: 100%;
+        }
+        @include media(tablet-landscape-up) {
+          margin-top: 0;
+          width: auto; // Of card
+        }
+        @include media(desktop-up) {
+          margin-top: 0;
+          width: auto; // Of card
+        }
 
-      a {
-        @extend %link; // Default link
+        -moz-user-select: text;
+        -ms-user-select: text;
+        -webkit-user-select: text;
+        user-select: text; // Can be selected
+
+        h1 {
+          @extend %header;
+          font-size: 2rem; // Based on base font-size
+          margin: ($margin / 4) 0; // One fourth of card margin
+        }
+
+        .tagline {
+          @include color(grey, 'color', 700);
+          font-size: 1.2rem; // Based on base font-size
+        }
+
+        a {
+          @extend %link; // Default link
+        }
       }
     }
   }

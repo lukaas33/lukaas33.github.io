@@ -15,8 +15,8 @@
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
   <link href="assets/css/main.css" media="screen" rel="stylesheet">
   <link href="assets/css/print.css" media="print" rel="stylesheet">
-  <style> body {visibility: hidden} /* Will be show when javascript completes actions */ </style>
-  <noscript><style> body {visibility: initial} /* Javascript not available */ </style></noscript>
+  <style> body {display: none;} /* Will be show when javascript completes actions */ </style>
+  <noscript><style> body {display: block;} /* Javascript not available */ </style></noscript>
   <!-- Javascript -->
   <script src="assets/javascript/scripts.js" async></script>
   <script>
@@ -120,7 +120,7 @@
       <br>
       <!-- TODO Add search here -->
       <div class="sort">
-        <!-- !TEST TODO Use ejs for this -->
+        <!-- TODO implement sort here -->
         <div tooltip class="sort">
           <a rel="tag" href="#">
             <i class="material-icons md-dark">sort</i>

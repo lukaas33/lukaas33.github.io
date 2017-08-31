@@ -163,11 +163,11 @@
         easing: "swing"
       });
     };
-    if (global.state[active] !== card || global.state[active] === null) {
+    if (global.state[active] !== card[0] || global.state[active] === null) {
       animate(global.state[active]);
-      global.state[active] = card;
+      global.state[active] = card[0];
       return animate(card);
-    } else if (global.state[active] === card) {
+    } else if (global.state[active] === card[0]) {
       animate(global.state[active]);
       return global.state[active] = null;
     }
@@ -201,9 +201,7 @@
     setMap(false);
     setForm();
     setPages(0);
-    $("body").css({
-      visibility: 'initial'
-    });
+    $("body").show();
     console.log("// DOM events loading...");
     setTimeout(function() {
       highLight();

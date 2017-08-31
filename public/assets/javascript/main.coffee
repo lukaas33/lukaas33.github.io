@@ -119,7 +119,7 @@ scrollToLoc = (section) ->
       easing: "swing" # Animate with swing easing
   )
 
-toggle = (card, active) -> # TODO fix open close bug
+toggle = (card, active) ->
   # Collapses and extends cards
   animate = (card) ->
     $collapse = $(card).find ".collapse"
@@ -128,12 +128,12 @@ toggle = (card, active) -> # TODO fix open close bug
       easing: "swing" # Animate with swing easing
 
   # If this card isn't selected
-  if global.state[active] != card or global.state[active] == null
+  if global.state[active] != card[0] or global.state[active] == null
     animate global.state[active] # Toggle previous
-    global.state[active] = card # Update
+    global.state[active] = card[0] # Update
     animate card # Toggle new
   # If already selected
-  else if global.state[active] == card
+  else if global.state[active] == card[0]
     animate global.state[active] # Toggle previous
     global.state[active] = null
 
@@ -164,7 +164,7 @@ $ ->
   setMap(false)
   setForm()
   setPages(0)
-  $("body").css(visibility: 'initial') # Shows page
+  $("body").show() # Shows page
 
   console.log "// DOM events loading..."
   # Prevents the flashing on of the about link on load

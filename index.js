@@ -83,6 +83,8 @@ data.set = (entering) => {
         console.log('File reading')
         throw error
       }
+      // TODO Enter more data
+      // TODO Make a way to enter data online
 
       let json = JSON.parse(data, function (key, value) { // Text to json
         if ((key === 'start' || key === 'end') && value !== null) {
