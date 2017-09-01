@@ -1,6 +1,6 @@
 # My websites
 
-![My personal logo and profile picture](https://www.lukaas33.com/public/assets/images/other/logo.svg)
+![My personal logo and profile picture](https://www.lukaas33.com/assets/images/other/logo.svg)
 
 ## Intro
 
