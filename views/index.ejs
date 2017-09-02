@@ -1,3 +1,36 @@
+<%
+  // Used in the main file, must be passed to partials
+  const sinceDate = function(date) {
+    const milli = 8.64e7 // Milliseconds in a day
+
+    if (typeof date === 'string') {
+      date = new Date(date) // Convert to date type
+    }
+
+    var today = new Date(Date.now())
+    var date = new Date(date.toUTCString()) // Convert to UTC
+    var today = new Date(today.toUTCString()) // Convert to UTC
+    var offset = today.getTime() - date.getTime()
+
+    if (isNaN(offset)) {
+      return date
+    }
+    else {
+      var days = offset / milli
+      var years = days / 365.2425
+
+      if (days < 2) {
+        return `${String(Math.floor(days))} day`
+      } else if (years < 1) {
+        return `${String(Math.floor(days))} days`
+      } else if (years < 2) {
+        return `${String(Math.floor(years))} year`
+      } else {
+        return `${String(Math.floor(years))} years`
+      }
+    }
+  }
+%>
 <!DOCTYPE html>
 <html lang="en"> <!-- TODO Add support for Dutch -->
 <head>
@@ -6,11 +39,14 @@
   <meta name="description" content="The personal resume and portfolio of Lucas van Osenbruggen.">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1">
+  <link rel="canonical" href="https://www.lukaas33.com">
   <!-- Social media meta tags -->
-  <meta property="og:title" content="Lucas's resume" />
-  <meta property="og:type" content="profile" />
-  <meta property="og:url" content="https://www.lukaas33.com" />
-  <meta property="og:image" content="https://www.lukaas33.com/assets/images/other/logo.svg" />
+  <meta property="og:title" content="Lucas's resume">
+  <meta property="og:image" content="https://www.lukaas33.com/assets/images/other/photo-me_900.jpg">
+  <meta property="og:type" content="profile">
+  <meta property="profile:first_name" content="Lucas">
+  <meta property="profile:last_name" content="van Osenbruggen">
+  <meta property="profile:username" content="Lukaas33">
   <!-- Applies to multiple pages -->
   <%- include('partials/appdata') %>
   <!-- Verify ownership -->
@@ -28,39 +64,6 @@
     var data = <%- JSON.stringify(data) %> // Bug fixing
     console.log(data)
   </script>
-  <%
-    // Used in the main file, must be passed to partials
-    const sinceDate = function(date) {
-      const milli = 8.64e7 // Milliseconds in a day
-
-      if (typeof date === 'string') {
-        date = new Date(date) // Convert to date type
-      }
-
-      var today = new Date(Date.now())
-      var date = new Date(date.toUTCString()) // Convert to UTC
-      var today = new Date(today.toUTCString()) // Convert to UTC
-      var offset = today.getTime() - date.getTime()
-
-      if (isNaN(offset)) {
-        return date
-      }
-      else {
-        var days = offset / milli
-        var years = days / 365.2425
-
-        if (days < 2) {
-          return `${String(Math.floor(days))} day`
-        } else if (years < 1) {
-          return `${String(Math.floor(days))} days`
-        } else if (years < 2) {
-          return `${String(Math.floor(years))} year`
-        } else {
-          return `${String(Math.floor(years))} years`
-        }
-      }
-    }
-  %>
 </head>
 <body onload="console.log('// DOM completely loaded')">
   <!-- Navbar -->

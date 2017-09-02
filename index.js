@@ -139,7 +139,9 @@ data.get = function (collections, callback) {
         console.log('Getting data')
         throw error
       }
+
       result[file] = results
+      result[file]['sort'] = options[file]
 
       if (Object.keys(result).length === collections.length) { // Data from all files is got
         callback(result)
@@ -161,9 +163,11 @@ app.get('/projects/:title', function (request, response) { // The title can be d
     var exists = false
 
     for (let project of variables[needed]) { // Existing projects
+      // Standard webname convert
       let webtitle = project.title.toLowerCase()
       webtitle = webtitle.replace(/ /g, '-') // Whitespace will be replaced like in the url
-      if (webtitle === request.params.title) { // Check name
+      // Check name
+      if (webtitle === request.params.title) {
         exists = true // Project exists
         response.render('project', {data: project})
         break

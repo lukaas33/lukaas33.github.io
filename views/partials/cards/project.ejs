@@ -1,5 +1,5 @@
 <%
-	// Local to this partial
+	// Standard webname convert
 	const webname = function (name) {
 		var result = name.toLowerCase()
 		result = result.replace(/ /g, '-') // Whitespace will be replaced
@@ -8,7 +8,7 @@
 %>
 <div class="container">
 	<div class="preview">
-		<a rel="noreferrer" href="/projects/<%= webname(info.title) %>">
+		<a target="_self" href="/projects/<%= webname(info.title) %>">
 			<img alt="Thumbnail for the <%= info.title %> project" src="assets/images/thumbnails/<%= webname(info.title) %>.jpg"/>
 			<span>
 				<div class="tags">

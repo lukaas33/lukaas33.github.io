@@ -1,10 +1,44 @@
+<%
+  // Short ISO date convert
+  const dateformat = function (date, form) {
+    if (date === null) {
+      return 'now'
+    } else {
+      if (form === 'full') {
+        var year = String(date.getFullYear())
+        var month = String(date.getMonth() + 1)
+        var day = String(date.getDate())
+
+        let result = [year, month, day].join('-') // year-month-day
+        return result
+      } else if (form === 'year') {
+        let result = String(date.getFullYear()) // Only year is returned
+        return result
+      }
+    }
+  }
+
+  // Standard webname convert
+  const webname = function (name) {
+    var result = name.toLowerCase()
+    result = result.replace(/ /g, '-') // Whitespace will be replaced
+    return result
+  }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Project - <%= data.title %></title>
-  <meta name="description" content=" data.description.slice(0, 160) ">
+  <title><%= data.title %> - Projects</title>
+  <meta name="description" content="<%= data.description.slice(0, 100) %>">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1">
+  <link rel="canonical" href="https://www.lukaas33.com/projects/<%= webname(data.title) %>"/>
+  <!-- Social media meta tags -->
+  <meta property="og:title" content="<%= data.title %>">
+  <meta property="og:image" content="https://www.lukaas33.com/assets/images/thumbnails/<%= webname(data.title) %>.jpg">
+  <meta property="og:type" content="article">
+  <meta property="article:tag" content="<%= data.tags %>">
+  <meta property="article:author" content="Lucas van Osenbruggen">
   <!-- Same root as index -->
   <base href="../"></base>
   <!-- Applies to multiple pages -->
@@ -14,33 +48,13 @@
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
   <link href="assets/css/main.css" media="screen" rel="stylesheet">
   <link href="assets/css/print.css" media="print" rel="stylesheet">
-  <%
-  	// From experience partial
-  	const dateformat = function (date, form) {
-  		if (date === null) {
-  			return 'now'
-  		} else {
-  			if (form === 'full') {
-  				var year = String(date.getFullYear())
-  				var month = String(date.getMonth() + 1)
-  				var day = String(date.getDate())
-
-  				let result = [year, month, day].join('-') // year-month-day
-  				return result
-  			} else if (form === 'year') {
-  				let result = String(date.getFullYear()) // Only year is returned
-  				return result
-  			}
-  		}
-  	}
-  %>
 </head>
 <body>
   <!-- Navbar -->
   <%- include('partials/top') %>
   <!-- Content -->
   <main>
-    <div class="part">
+    <section id="project" class="part">
       <div class="card">
         <div class="container"><img></div>
         <div class="text">
@@ -55,7 +69,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
   </main>
 </body>
 </html>
