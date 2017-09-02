@@ -40,8 +40,8 @@
   setMap = function(change) {
     var $button, $data, $map, setOff, setOn;
     $map = $("#contact").find(".map");
-    $data = $("#contact").find(".card:nth-child(1) .text");
     $button = $("#contact").find(".show");
+    $data = $("#contact").find(".card:nth-child(1) .text");
     setOff = function(time) {
       console.log("Map hidden");
       return $map.fadeOut({
@@ -97,7 +97,7 @@
   };
 
   switchPage = function(change) {
-    var newPage;
+    var $current, newPage;
     if (global.pageNum > 1) {
       global.previous = Number(global.cookie("page"));
       newPage = global.previous + change;
@@ -107,6 +107,10 @@
         newPage = 1;
       }
       console.log("Switching to " + newPage);
+      $current = $($(".page")[newPage - 1]).find(".container");
+      if ($current.length < 7) {
+        scrollToLoc($("#portfolio"));
+      }
       global.cookie("page", newPage);
       return setPages(global.timing / 2);
     }
@@ -257,12 +261,10 @@
     });
     $("#portfolio").find(".backward").click(function() {
       switchPage(-1);
-      scrollToLoc($("#portfolio"));
       return disable.apply(this);
     });
     $("#portfolio").find(".forward").click(function() {
       switchPage(1);
-      scrollToLoc($("#portfolio"));
       return disable.apply(this);
     });
     $("#portfolio").find(".sort a").click(function() {
@@ -278,12 +280,12 @@
       return global.cookie(name, $(this).val());
     });
     $("[ripple]").click(function(event) {
-      var height, ripple, width, x, y;
+      var $ripple, height, width, x, y;
       $("[ripple]").find(".ripple").remove();
       width = $(this).width();
       height = $(this).height();
-      ripple = $("<span></span>").addClass("ripple");
-      $(this).prepend(ripple);
+      $ripple = $("<span></span>").addClass("ripple");
+      $(this).prepend($ripple);
       if (width >= height) {
         height = width;
       } else {
@@ -304,7 +306,7 @@
       $(this).find(".error").hide();
       try {
         console.log("Testing input...");
-        $(this).children("fieldset").find("[type='text']").each(function() {
+        $(this).find("fieldset").find("[type='text']").each(function() {
           if ($(this).val() === '') {
             throw new Error("Input empty");
           }

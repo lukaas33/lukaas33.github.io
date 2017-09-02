@@ -56,7 +56,7 @@
   <main>
     <section id="project" class="part">
       <div class="card">
-        <div class="container"><img></div>
+        <div class="container"><img src="#"></div>
         <div class="text">
           <div class="top">
             <h1><%= data.title %></h1>
@@ -65,7 +65,8 @@
             <hr>
           </div>
           <div class="primary">
-
+            <!-- Compiled html from markdown -->
+            <%- markdown(data.description) %>
           </div>
         </div>
       </div>

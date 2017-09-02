@@ -11,6 +11,7 @@ setPages = (time) ->
   $pages = $("#portfolio").find ".page"
   global.pageNum = $pages.length
   current = Number(global.cookie "page")
+
   if global.previous == null
     target = $pages # All will be hidden
   else
@@ -24,14 +25,14 @@ setPages = (time) ->
         duration: time
         easing: "swing"
         complete: ->
-          status = "#{current}/#{global.pageNum}"
+          status = "#{current}/#{global.pageNum}" # Current page
           $("#portfolio").find(".select p span").text status
 
 setMap = (change) ->
   # Toggles and initialises map
   $map = $("#contact").find ".map"
-  $data = $("#contact").find ".card:nth-child(1) .text"
   $button = $("#contact").find ".show"
+  $data = $("#contact").find ".card:nth-child(1) .text"
 
   setOff = (time) ->
     # Sets map to off
@@ -78,6 +79,10 @@ switchPage = (change) ->
       newPage = 1  # To the first page
     console.log "Switching to #{newPage}"
 
+    $current = $($(".page")[newPage - 1]).find(".container")
+    if $current.length < 7 # Page height not full
+      scrollToLoc $("#portfolio") # Keeps selector in view
+
     global.cookie("page", newPage) # Update
     setPages global.timing / 2
 
@@ -91,7 +96,7 @@ highLight = -> # TODO fix ripple delay
     # Adds margin to the scroll position
     top = Math.round element.offset().top + element.height()
     location = top - parseInt(element.css "margin-bottom") - $("nav").height()
-    return  location # When fully visible
+    return location # When fully visible
 
   # Higlights navitem based on position in screen
   if position <= calcTop $("#about")
@@ -225,12 +230,10 @@ $ ->
 
   $("#portfolio").find(".backward").click ->
     switchPage -1
-    scrollToLoc $("#portfolio") # Scroll into view
     disable.apply(@) # Temporarily disables button
 
   $("#portfolio").find(".forward").click ->
     switchPage 1
-    scrollToLoc $("#portfolio") # Scroll into view
     disable.apply(@) # Temporarily disables button
 
   $("#portfolio").find(".sort a").click ->
@@ -251,8 +254,8 @@ $ ->
     width = $(@).width()
     height =  $(@).height()
 
-    ripple = $("<span></span>").addClass "ripple"
-    $(@).prepend ripple
+    $ripple = $("<span></span>").addClass "ripple"
+    $(@).prepend $ripple
 
     if width >= height
       height = width
@@ -276,7 +279,7 @@ $ ->
 
     try
       console.log "Testing input..."
-      $(@).children("fieldset").find("[type='text']").each ->
+      $(@).find("fieldset").find("[type='text']").each ->
         if $(@).val() == ''
           throw new Error "Input empty"
 

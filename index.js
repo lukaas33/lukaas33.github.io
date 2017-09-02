@@ -8,6 +8,7 @@ const bodyParser = require('body-parser')
 const formidable = require('formidable')
 const compression = require('compression')
 const minify = require('express-minify')
+const marked = require('marked')
 
 var mongoClient = require('mongodb')
 var mailgun = require('mailgun-js')
@@ -169,8 +170,8 @@ app.get('/projects/:title', function (request, response) { // The title can be d
       // Check name
       if (webtitle === request.params.title) {
         exists = true // Project exists
-        response.render('project', {data: project})
-        break
+        response.render('project', {data: project, markdown: marked})
+        break // Ends loop
       }
     }
     if (!exists) {

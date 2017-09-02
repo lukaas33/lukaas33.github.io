@@ -29,6 +29,7 @@
     "fs": "0.0.1-security",
     "helmet": "^3.8.1",
     "mailgun-js": "^0.13.1",
+    "marked": "^0.3.6",
     "mongodb": "^2.2.31"
   },
   "engines": {
