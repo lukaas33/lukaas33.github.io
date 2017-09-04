@@ -10,8 +10,14 @@ var global = {
     'experience': null,
     'skills': null
   },
-  pageNum: 0, // Will store the number of pages in portfolio
-  previous: null, // Will track the previous page
+  pages: {
+    pageNum: 0, // Will store the number of pages in portfolio
+    previous: null // Will track the previous page
+  },
+  sort: {
+    current: 0, // Stores the current sorting option
+    next: 1 // Stores next option
+  },
   cookie: undefined, // Will store cookie function
   fallback: {}, // Will store variables if cookies are not enabled
   timeouts: {} // Will store timeouts

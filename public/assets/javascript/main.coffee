@@ -9,13 +9,13 @@ setForm = ->
 
 setPages = (time) ->
   $pages = $("#portfolio").find ".page"
-  global.pageNum = $pages.length
+  global.pages.pageNum = $pages.length
   current = Number(global.cookie "page")
 
-  if global.previous == null
+  if global.pages.previous == null
     target = $pages # All will be hidden
   else
-    target = $($pages[global.previous - 1]) # Last one will be hidden
+    target = $($pages[global.pages.previous - 1]) # Last one will be hidden
 
   target.fadeOut  # Most are hidden
     duration: time
@@ -25,7 +25,7 @@ setPages = (time) ->
         duration: time
         easing: "swing"
         complete: ->
-          status = "#{current}/#{global.pageNum}" # Current page
+          status = "#{current}/#{global.pages.pageNum}" # Current page
           $("#portfolio").find(".select p span").text status
 
 setMap = (change) ->
@@ -63,6 +63,7 @@ setMap = (change) ->
     if change then setOn(global.timing / 2) else setOff(0)
 
 disable = ->
+  # No double clicking
   $(@).prop("disabled", true)
   # Enables after standard animation time
   setTimeout =>
@@ -70,12 +71,12 @@ disable = ->
   , global.timing
 
 switchPage = (change) ->
-  if global.pageNum > 1
-    global.previous = Number(global.cookie "page")
-    newPage = global.previous + change # Adds or subtracks one
+  if global.pages.pageNum > 1
+    global.pages.previous = Number(global.cookie "page")
+    newPage = global.pages.previous + change # Adds or subtracks one
     if newPage < 1
-      newPage = global.pageNum # To the last page
-    else if newPage > global.pageNum
+      newPage = global.pages.pageNum # To the last page
+    else if newPage > global.pages.pageNum
       newPage = 1  # To the first page
     console.log "Switching to #{newPage}"
 
@@ -228,6 +229,27 @@ $ ->
       $(@).find(".tooltip").fadeOut global.animation
   )
 
+  $("#portfolio").find(".sort a").click (event) ->
+    event.preventDefault() # Default behaviour disabled
+    # Sort options
+    options = [
+      {Newest: {"date.end": -1}},
+      {Oldest: {"date.end": 1}},
+      {Name: {"title": 1}},
+      {Type: {"type": 1}}
+    ]
+
+    # Set variables to correct values
+    for variable in ["current", "next"]
+      global.sort[variable] += 1
+      if global.sort[variable] < 0
+        global.sort[variable] = options.length
+      else if global.sort[variable] > (options.length - 1)
+        global.sort[variable] = 0
+
+    $(@).find("span").text Object.keys(options[global.sort.current])
+    $(@).find(".tooltip").text Object.keys(options[global.sort.next])
+
   $("#portfolio").find(".backward").click ->
     switchPage -1
     disable.apply(@) # Temporarily disables button
@@ -235,9 +257,6 @@ $ ->
   $("#portfolio").find(".forward").click ->
     switchPage 1
     disable.apply(@) # Temporarily disables button
-
-  $("#portfolio").find(".sort a").click ->
-    global.cookie("page", 1) # Back to page 1
 
   $("#contact").find(".show").click ->
     setMap(true) # Set map and change = true

@@ -13,12 +13,12 @@
   setPages = function(time) {
     var $pages, current, target;
     $pages = $("#portfolio").find(".page");
-    global.pageNum = $pages.length;
+    global.pages.pageNum = $pages.length;
     current = Number(global.cookie("page"));
-    if (global.previous === null) {
+    if (global.pages.previous === null) {
       target = $pages;
     } else {
-      target = $($pages[global.previous - 1]);
+      target = $($pages[global.pages.previous - 1]);
     }
     return target.fadeOut({
       duration: time,
@@ -29,7 +29,7 @@
           easing: "swing",
           complete: function() {
             var status;
-            status = current + "/" + global.pageNum;
+            status = current + "/" + global.pages.pageNum;
             return $("#portfolio").find(".select p span").text(status);
           }
         });
@@ -98,12 +98,12 @@
 
   switchPage = function(change) {
     var $current, newPage;
-    if (global.pageNum > 1) {
-      global.previous = Number(global.cookie("page"));
-      newPage = global.previous + change;
+    if (global.pages.pageNum > 1) {
+      global.pages.previous = Number(global.cookie("page"));
+      newPage = global.pages.previous + change;
       if (newPage < 1) {
-        newPage = global.pageNum;
-      } else if (newPage > global.pageNum) {
+        newPage = global.pages.pageNum;
+      } else if (newPage > global.pages.pageNum) {
         newPage = 1;
       }
       console.log("Switching to " + newPage);
@@ -259,6 +259,41 @@
       clearTimeout(global.timeouts.hover);
       return $(this).find(".tooltip").fadeOut(global.animation);
     });
+    $("#portfolio").find(".sort a").click(function(event) {
+      var i, len, options, ref, variable;
+      event.preventDefault();
+      options = [
+        {
+          Newest: {
+            "date.end": -1
+          }
+        }, {
+          Oldest: {
+            "date.end": 1
+          }
+        }, {
+          Name: {
+            "title": 1
+          }
+        }, {
+          Type: {
+            "type": 1
+          }
+        }
+      ];
+      ref = ["current", "next"];
+      for (i = 0, len = ref.length; i < len; i++) {
+        variable = ref[i];
+        global.sort[variable] += 1;
+        if (global.sort[variable] < 0) {
+          global.sort[variable] = options.length;
+        } else if (global.sort[variable] > (options.length - 1)) {
+          global.sort[variable] = 0;
+        }
+      }
+      $(this).find("span").text(Object.keys(options[global.sort.current]));
+      return $(this).find(".tooltip").text(Object.keys(options[global.sort.next]));
+    });
     $("#portfolio").find(".backward").click(function() {
       switchPage(-1);
       return disable.apply(this);
@@ -266,9 +301,6 @@
     $("#portfolio").find(".forward").click(function() {
       switchPage(1);
       return disable.apply(this);
-    });
-    $("#portfolio").find(".sort a").click(function() {
-      return global.cookie("page", 1);
     });
     $("#contact").find(".show").click(function() {
       setMap(true);
