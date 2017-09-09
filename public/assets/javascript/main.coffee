@@ -165,14 +165,14 @@ sendMail = (data, success) ->
 
 $ ->
   ### Actions ###
-  console.log "// DOM value setup loading..."
+  console.log "# DOM value setup loading..."
   # Sets information in the DOM
   setMap(false)
   setForm()
   setPages(0)
   $("body").show() # Shows page
 
-  console.log "// DOM events loading..."
+  console.log "# DOM events loading..."
   # Prevents the flashing on of the about link on load
   setTimeout ->
     highLight() # Initial highlight at start of page
@@ -199,7 +199,7 @@ $ ->
       $('*').removeClass "notransition"
     , 250 # Takes some time
 
-  $("nav ul").find("a").click (event) ->
+  $("nav ul").find('a').click (event) ->
     # Go to section
     event.preventDefault() # Default behaviour disabled
     href = $(@).attr "href"
@@ -287,8 +287,8 @@ $ ->
     $("[ripple]").find(".ripple").css(
       width: width
       height: height
-      top: "#{y}px"
-      left: "#{x}px"
+      top: '#{y}px'
+      left: '#{x}px'
     ).addClass "effect"
 
   $("#contact").find("form").submit (event) ->
@@ -303,8 +303,7 @@ $ ->
           throw new Error "Input empty"
 
       # Regex for email checking
-      regex = /// ^ (
-        (
+      regex = /// ^ ((
           [^<>()[\]\\.,;:\s@\"]+
           (\.[^<>()[\]\\.,;:\s@\"]+)*
         )
@@ -317,8 +316,7 @@ $ ->
             [0-9]{1,3}\.
             [0-9]{1,3}\
           ]
-        )
-        | (
+        ) | (
           ([a-zA-Z\-0-9]+\.)+
           [a-zA-Z]{2,}
         )

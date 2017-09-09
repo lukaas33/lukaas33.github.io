@@ -52,7 +52,7 @@ const send = function (request, response) {
   form.parse(request, function (error, fields, files) {
     if (error) {
       response.end('error') // Info for client
-      console.log('Form parse')
+      console.log('# Form parse')
       throw error
     }
 
@@ -67,7 +67,7 @@ const send = function (request, response) {
     mailgun.messages().send(mailOptions, function (error, body) {
       if (error) {
         response.end('error') // Info for client
-        console.log('Email send')
+        console.log('# Email send')
         throw error
       }
       console.log('Email was sent')
@@ -81,13 +81,13 @@ data.set = (entering) => {
   const open = function (name, callback) {
     filesystem.readFile(name, 'utf8', function (error, data) { // Open the files and store the content
       if (error) {
-        console.log('File reading')
+        console.log('# File reading')
         throw error
       }
       // TODO Enter more data
       // TODO Make a way to enter data online
 
-      let json = JSON.parse(data, function (key, value) { // Text to json
+      var json = JSON.parse(data, function (key, value) { // Text to json
         if ((key === 'start' || key === 'end') && value !== null) {
           return new Date(value) // Date strings will be converted to dates
         } else {
@@ -104,7 +104,7 @@ data.set = (entering) => {
     var current = data.database.collection(collection)
     current.updateOne(query, document, {upsert: true}, function (error, result) {
       if (error) {
-        console.log('Database entry')
+        console.log('# Database entry')
         throw error
       }
 
@@ -134,10 +134,10 @@ data.get = function (collections, callback) {
       'skills': {'title': 1}
     }
 
-    var current = data.database.collection(file)
+    let current = data.database.collection(file)
     current.find().sort(options[file]).toArray((error, results) => {
       if (error) {
-        console.log('Getting data')
+        console.log('# Getting data')
         throw error
       }
 
@@ -191,7 +191,7 @@ app.listen(app.get('port'), () => console.log(`Node app is running at ${app.get(
 // Actions
 mongoClient.connect(process.env.MONGODB_URI, function (error, database) { // Connects to database using env info
   if (error) {
-    console.log('Database connect')
+    console.log('# Database connect')
     throw error
   }
   data.database = database

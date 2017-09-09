@@ -18,8 +18,6 @@ My website now works with Node.
 
 I've learned some Python and am not sure what I can do with it.
 
-I ordered a Raspberry Pi.
-
 ## Links
 
 -   [Domain](https://www.lukaas33.com)
@@ -31,16 +29,15 @@ I ordered a Raspberry Pi.
 -   C _(Perhaps some)_
 -   Regex
 -   Latex
--   SQL
--   ~~Mongo DB~~
+-   Mongo DB
 -   ~~EJS~~
 -   Node.js
 -   ~~Markdown~~ _(Duh)_
--   ~~Python~~ _(Haven't found a purpose for it though)_
+-   ~~Python~~ _(Haven't found a purpose for it)_
 -   ~~CoffeeScript~~
 -   ~~Sass~~
 -   ~~PHP~~ _(Not interested anymore)_
--   ~~SQL~~
+-   SQL
 -   ~~Git~~ _(A little)_
 -   ~~jQuery~~
 -   ~~JavaScript~~

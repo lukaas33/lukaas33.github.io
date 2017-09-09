@@ -201,12 +201,12 @@
   $(function() {
 
     /* Actions */
-    console.log("// DOM value setup loading...");
+    console.log("# DOM value setup loading...");
     setMap(false);
     setForm();
     setPages(0);
     $("body").show();
-    console.log("// DOM events loading...");
+    console.log("# DOM events loading...");
     setTimeout(function() {
       highLight();
       return $(window).scroll(function() {
@@ -231,7 +231,7 @@
         return $('*').removeClass("notransition");
       }, 250);
     });
-    $("nav ul").find("a").click(function(event) {
+    $("nav ul").find('a').click(function(event) {
       var href;
       event.preventDefault();
       href = $(this).attr("href");
@@ -328,8 +328,8 @@
       return $("[ripple]").find(".ripple").css({
         width: width,
         height: height,
-        top: y + "px",
-        left: x + "px"
+        top: '#{y}px',
+        left: '#{x}px'
       }).addClass("effect");
     });
     return $("#contact").find("form").submit(function(event) {

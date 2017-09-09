@@ -31,14 +31,14 @@ var global = {
     if (navigator.cookieEnabled && window.location.protocol === 'https:') { // Cookies can be used safely
       // Cookie function
       var cookies = document.cookie.split(';')
-      if (value === undefined) { // Need to get
+      if (typeof value === 'undefined') { // Need to get
         for (var i = 0; i < cookies.length; i++) {
           value = cookies[i]
           var current = value.split('=') // Name and value pair
           if (current[0].trim() === name) {
             var result = current[1].trim()
             try {
-              result = JSON.parse(result) // Will parse strings to numbers
+              result = JSON.parse(result) // Will parse strings to numbers, booleans, etc.
               return result
             } catch (error) {
               if (error.name === 'SyntaxError') { // Tried to parse a string value
@@ -49,14 +49,14 @@ var global = {
         }
       } else { // Need to set
         console.log('Set cookie: ' + name + ' to ' + value)
-        document.cookie = name + '=' + value + '; secure;'
+        document.cookie = name + '=' + value + '; secure;' // Set value
       }
     } else { // Use variables instead of cookies
-      if (value === undefined) {
-        return global.fallback[name]
+      if (typeof value === 'undefined') {
+        return global.fallback[name] // Get value
       } else {
         console.log('Set fallback variable: ' + name + ' to ' + value)
-        global.fallback[name] = value
+        global.fallback[name] = value // Set value
       }
     }
   }
@@ -73,26 +73,26 @@ var global = {
     document.getElementsByTagName('head')[0].appendChild(script)
   }
 
-  if (global.cookie('map') === undefined) {
+  if (typeof global.cookie('map') === 'undefined') {
     global.cookie('map', false)
   }
-  if (global.cookie('page') === undefined) {
+  if (typeof global.cookie('page') === 'undefined') {
     global.cookie('page', 1)
   }
-  if (global.cookie('name') === undefined) {
+  if (typeof global.cookie('name') === 'undefined') {
     global.cookie('name', null)
   }
-  if (global.cookie('email') === undefined) {
+  if (typeof global.cookie('email') === 'undefined') {
     global.cookie('email', null)
   }
-  if (global.cookie('message') === undefined) {
+  if (typeof global.cookie('message') === 'undefined') {
     global.cookie('message', null)
   }
 
   loadScript('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js', function () {
-    console.log('// Jquery loaded')
+    console.log('# Jquery loaded')
     loadScript('assets/javascript/main.js', function () {
-      console.log('// Main script loaded')
+      console.log('# Main script loaded')
     })
   })
-}).call(this)
+}).call(this) // Has own scope
