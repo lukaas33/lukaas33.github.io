@@ -1,28 +1,9 @@
-$(function() {
 
-  /*Variables */
-  var $date, $main, $more, Clock, birthday, getAge, set, units;
-  $more = $(".more");
-  $main = $(".main");
-  $date = $(".date");
-  birthday = "1967-05-18";
-  units = {
-    ms: 1,
-    s: 1000,
-    m: 60000,
-    h: 3600000,
-    d: 86400000,
-    w: 604800000,
-    y: 31557600000
-  };
+/*constructors */
 
-  /*Functions */
-  getAge = function(format) {
-    var age, birthdate;
-    birthdate = new Date(birthday);
-    age = Date.now() - birthdate.getTime();
-    return Math.round(age / units[format]);
-  };
+(function() {
+  var Clock, birthday, getAge, set, setBirth, units;
+
   Clock = (function() {
     function Clock(element) {
       this.element = element;
@@ -47,8 +28,29 @@ $(function() {
     return Clock;
 
   })();
+
+
+  /*Functions */
+
+  setBirth = function() {
+    var input, result;
+    input = prompt("Enter your birthday: \n (jjjj-mm-dd)");
+    if ((input != null) && input !== '') {
+      result = input;
+    }
+    return result;
+  };
+
+  getAge = function(format) {
+    var age, birthdate;
+    birthdate = new Date(birthday);
+    age = Date.now() - birthdate.getTime();
+    return Math.round(age / units[format]);
+  };
+
   set = function() {
-    var setAccordion, setClock;
+    var $more, setAccordion, setClock;
+    $more = $(".more");
     setClock = function() {
       var $clocks, clock, i, index, len, results;
       $clocks = $(".timer");
@@ -95,16 +97,31 @@ $(function() {
     return setAccordion();
   };
 
-  /*Events */
-  $date.click(function() {
-    var input;
-    input = prompt("Voer je geboortedatum in: \n (jjjjj-mm-dd)");
-    if (input != null) {
-      return birthday = input;
-    }
+
+  /*Variables */
+
+  birthday = setBirth();
+
+  units = {
+    ms: 1,
+    s: 1000,
+    m: 60000,
+    h: 3600000,
+    d: 86400000,
+    w: 604800000,
+    y: 31557600000
+  };
+
+  $(function() {
+
+    /*Events */
+    $(".date").click(function() {
+      return birthday = setBirth();
+    });
+
+    /*Actions */
+    set();
+    return $("body").fadeIn("slow");
   });
 
-  /*Actions */
-  set();
-  return $("body").fadeIn("slow");
-});
+}).call(this);
