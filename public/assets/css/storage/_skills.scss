@@ -45,6 +45,10 @@
 
         margin-right: auto; // Remaining space
         user-select: text; // Can be selected
+
+        a {
+          @extend %link; // Default link
+        }
       }
 
       .progress {
