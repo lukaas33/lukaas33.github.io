@@ -1,53 +1,45 @@
 {
-  "content": [
-    {
-      "title": "Elementary school",
-      "place": "Wentelwiek",
-      "date": {
-        "start": "2003-09-05",
-        "end": "2011-07-30"
-      },
-      "description": "I learned basic things like reading and writing here.",
-      "data": [
-        {
-          "type": "link",
-          "value": "http://www.dewentelwiek.nl/"
-        }
-      ]
+  "content": [{
+    "title": "Elementary school",
+    "place": "Wentelwiek",
+    "date": {
+      "start": "2003-09-05",
+      "end": "2011-07-30"
     },
-    {
-      "title": "VMBO",
-      "place": "Plein College Nuenen",
-      "date": {
-        "start": "2011-08-19",
-        "end": "2012-07-29"
-      },
-      "description": "I went here because I was really too young for highschool. After a year I left and went to another school.",
-      "data": [
-        {
-          "type": "link",
-          "value": "http://www.pleincollegenuenen.nl/"
-        }
-      ]
+    "description": "I learned basic things like reading and writing here.",
+    "data": [{
+        "type": "link",
+        "value": "http://www.dewentelwiek.nl/"
+      }
+    ]
+  },  {
+    "title": "VMBO",
+    "place": "Plein College Nuenen",
+    "date": {
+      "start": "2011-08-19",
+      "end": "2012-07-29"
     },
-    {
-      "title": "HAVO",
-      "place": "Lorentz Casimir Lyceum",
-      "date": {
-        "start": "2016-09-04",
-        "end": null
-      },
-      "description": "When looking for different schools this one made a good expression on me.",
-      "data": [
-        {
-          "type": "link",
-          "value": "http://www.lcl.nl/"
-        },
-        {
-          "type": "number",
-          "value": "040 2909420"
-        }
-      ]
-    }
-  ]
+    "description": "I went here because I was really too young for high school. After a year I left and went to another school.",
+    "data": [{
+        "type": "link",
+        "value": "http://www.pleincollegenuenen.nl/"
+      }
+    ]
+  },  {
+    "title": "HAVO",
+    "place": "Lorentz Casimir Lyceum",
+    "date": {
+      "start": "2016-09-04",
+      "end": null
+    },
+    "description": "When looking for different schools this one made a good expression on me.",
+    "data": [{
+        "type": "link",
+        "value": "http://www.lcl.nl/"
+      },  {
+        "type": "number",
+        "value": "+31 040 2909420"
+      }
+    ]
+  }]
 }

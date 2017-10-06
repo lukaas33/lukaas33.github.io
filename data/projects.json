@@ -1,114 +1,103 @@
 {
-  "content": [
-    {
-      "title": "Solaris",
-      "tags": ["space", "solar system", "website", "canvas", "OOP", "animation", "planets", "informative", "Javascript", "jQuery", "Paper.js"],
-      "type": "website",
-      "date": {
-        "start": "2017-03-20",
-        "end": "2017-04-24"
-      },
-      "media": "/webpages/solaris/",
-      "description": "This is a project I have been wanting to do for a while. I made an illustration of the solar system some time before and wanted to make something more interactive. I learned a lot about using the html canvas and making animations via paper.js."
+  "content": [{
+    "title": "Solaris",
+    "tags": ["space", "solar system", "website", "canvas", "OOP", "animation", "planets", "informative", "Javascript", "jQuery", "Paper.js"],
+    "type": "website",
+    "date": {
+      "start": "2017-03-20",
+      "end": "2017-04-24"
     },
-    {
-      "title": "Profile picture",
-      "tags": ["profile picture", "personal", "Lucas", "illustration", "flat", "shadow", "logo", "vector graphics"],
-      "type": "illustration",
-      "date" : {
-        "start": "2016-08-28",
-        "end": "2016-09-04"
-      },
-      "media": null,
-      "description": "I have seen this style some times with other people on the internet and decided I wanted it too. I started with an image of my face and drew the outlines. Then I filled the shapes with different colors. I used darker shades for depth and added shadows. I first made it in PNG but later converted to SVG."
+    "media": "/webpages/solaris/",
+    "description": "This is a project I have been wanting to do for a while. I made an illustration of the solar system some time before and wanted to make something more interactive. I learned a lot about using the html canvas and making animations via paper.js."
+  },  {
+    "title": "Profile picture",
+    "tags": ["profile picture", "personal", "Lucas", "illustration", "flat", "shadow", "logo", "vector graphics"],
+    "type": "illustration",
+    "date" : {
+      "start": "2016-08-28",
+      "end": "2016-09-04"
     },
-    {
-      "title": "Picturer",
-      "tags": ["profile picture", "create", "canvas", "website", "flat", "shadow", "illustrations", "combinations"],
-      "type": "website",
-      "date": {
-        "start": "2017-03-01",
-        "end": "2017-03-07"
-      },
-      "media": "/webpages/picturer/",
-      "description": "I wanted to learn to work with canvas and thought it would be fun to make a profile picture creator."
+    "media": null,
+    "description": "I have seen this style some times with other people on the internet and decided I wanted it too. I started with an image of my face and drew the outlines. Then I filled the shapes with different colors. I used darker shades for depth and added shadows. I first made it in PNG but later converted to SVG."
+  },  {
+    "title": "Picturer",
+    "tags": ["profile picture", "create", "canvas", "website", "flat", "shadow", "illustrations", "combinations"],
+    "type": "website",
+    "date": {
+      "start": "2017-03-01",
+      "end": "2017-03-07"
     },
-    {
-      "title": "Presentation genes",
-      "tags": ["genes", "talk", "Kurzgesagt", "biology", "illustrations", "text", "pictures", "discussion", "arguments"],
-      "type": "presentation",
-      "date": {
-        "start": "2017-01-23",
-        "end": "2017-03-10"
-      },
-      "media": "https://docs.google.com/presentation/d/e/2PACX-1vQ9UCJhLNnt0UvN9gvF0KESDb4FCyYbpRc-XFbcs-9yBaEAA3DDmZ0hhsejAAgRWMhsRvdzPm10Dtih/pub?start=false&loop=false&delayms=3000",
-      "description": "I gave a presentation about the editing of genes. We had an discussion about the topic with the class."
+    "media": "/webpages/picturer/",
+    "description": "I wanted to learn to work with canvas and thought it would be fun to make a profile picture creator."
+  },  {
+    "title": "Presentation genes",
+    "tags": ["genes", "talk", "Kurzgesagt", "biology", "illustrations", "text", "pictures", "discussion", "arguments"],
+    "type": "presentation",
+    "date": {
+      "start": "2017-01-23",
+      "end": "2017-03-10"
     },
-    {
-      "title": "Boarding screen",
-      "tags": ["concept", "Android", "challenge", "HTML", "jQuery", "Javascript", "CSS", "Material Design"],
-      "type": "website",
-      "date": {
-        "start": "2017-02-13",
-        "end": "2017-03-09"
-      },
-      "media": "/webpages/boarding/",
-      "description": "This was my concept for a boarding screen."
+    "media": "https://docs.google.com/presentation/d/e/2PACX-1vQ9UCJhLNnt0UvN9gvF0KESDb4FCyYbpRc-XFbcs-9yBaEAA3DDmZ0hhsejAAgRWMhsRvdzPm10Dtih/pub?start=false&loop=false&delayms=3000",
+    "description": "I gave a presentation about the editing of genes. We had an discussion about the topic with the class."
+  },  {
+    "title": "Boarding screen",
+    "tags": ["concept", "Android", "challenge", "HTML", "jQuery", "Javascript", "CSS", "Material Design"],
+    "type": "website",
+    "date": {
+      "start": "2017-02-13",
+      "end": "2017-03-09"
     },
-    {
-      "title": "Invisible",
-      "tags": ["photoshop", "invisible", "artwork", "assignment"],
-      "type": "illustration",
-      "date": {
-        "start": "2017-01-07",
-        "end": "2017-01-23"
-      },
-      "media": null,
-      "description": "I had to make an illustration with the theme invisible."
+    "media": "/webpages/boarding/",
+    "description": "This was my concept for a boarding screen."
+  },  {
+    "title": "Invisible",
+    "tags": ["photoshop", "invisible", "artwork", "assignment"],
+    "type": "illustration",
+    "date": {
+      "start": "2017-01-07",
+      "end": "2017-01-23"
     },
-    {
-      "title": "Photography lesson",
-      "tags": ["photos", "camera", "assignment", "stucture", "nature", "abstract", "pictures"],
-      "type": "collection",
-      "date": {
-        "start": "2017-04-05",
-        "end": "2017-04-19"
-      },
-      "media": ["plants", "river", "tree-stump", "roof", "bridge"],
-      "description": "I had a lesson about photography. I learned about things like exposure."
+    "media": null,
+    "description": "I had to make an illustration with the theme invisible."
+  },  {
+    "title": "Photography lesson",
+    "tags": ["photos", "camera", "assignment", "stucture", "nature", "abstract", "pictures"],
+    "type": "collection",
+    "date": {
+      "start": "2017-04-05",
+      "end": "2017-04-19"
     },
-    {
-      "title": "T-Shirt",
-      "tags": ["photo", "shirt", "Bo Burnham", "Deep", "comedian", "design", "black", "white"],
-      "type": "illustration",
-      "date": {
-        "start": "2016-09-01",
-        "end": "2016-09-07"
-      },
-      "media": null,
-      "description": "I made a t-shirt for a song by Bo Burnham. The song is called [#deep](https://youtu.be/RUBjHPYH8Rs)."
+    "media": ["plants", "river", "tree-stump", "roof", "bridge"],
+    "description": "I had a lesson about photography. I learned about things like exposure."
+  },  {
+    "title": "T-Shirt",
+    "tags": ["photo", "shirt", "Bo Burnham", "Deep", "comedian", "design", "black", "white"],
+    "type": "illustration",
+    "date": {
+      "start": "2016-09-01",
+      "end": "2016-09-07"
     },
-    {
-      "title": "Portfolio",
-      "tags": ["portfolio", "assignment", "CSS", "PHP", "Node.js", "Javascript", "Coffeescript", "jQuery", "Sass", "resume", "Material Design"],
-      "type": "website",
-      "date": {
-        "start": "2017-05-15",
-        "end": "2017-06-23"
-      },
-      "media": "/",
-      "description": "This portfolio you're viewing is a project too. I made this as my final project for the school year using PHP. I later converted it to Node myself."
+    "media": null,
+    "description": "I made a t-shirt for a song by Bo Burnham. The song is called [#deep](https://youtu.be/RUBjHPYH8Rs)."
+  },  {
+    "title": "Portfolio",
+    "tags": ["portfolio", "assignment", "CSS", "PHP", "Node.js", "Javascript", "Coffeescript", "jQuery", "Sass", "resume", "Material Design"],
+    "type": "website",
+    "date": {
+      "start": "2017-05-15",
+      "end": "2017-06-23"
     },
-    {
-      "title": "Vacation photos",
-      "tags": ["photos", "phone", "structure", "nature", "vacation", "pictures"],
-      "type": "collection",
-      "date": {
-        "start": "2016-07-30",
-        "end": "2017-05-20"
-      },
-      "media": ["plant-row", "forest-path", "sunset", "forest"],
-      "description": "I like taking pictures of nature of vacation."
-    }
-  ]
+    "media": "/",
+    "description": "This portfolio you're viewing is a project too. I made this as my final project for the school year using PHP. I later converted it to Node myself."
+  },  {
+    "title": "Vacation photos",
+    "tags": ["photos", "phone", "structure", "nature", "vacation", "pictures"],
+    "type": "collection",
+    "date": {
+      "start": "2016-07-30",
+      "end": "2017-05-20"
+    },
+    "media": ["plant-row", "forest-path", "sunset", "forest"],
+    "description": "I like taking pictures of nature of vacation."
+  }]
 }

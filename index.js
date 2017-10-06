@@ -73,8 +73,7 @@ const send = function (request, response) {
       console.log('Email was sent')
       response.end() // No errors occured
     })
-  }
-  )
+  })
 }
 
 data.set = (entering) => {
