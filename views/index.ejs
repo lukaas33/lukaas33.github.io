@@ -118,7 +118,7 @@
       <h2 class="title">Skills</h2>
       <div class="content">
         <% for (let entry of data.skills) { %>
-          <%- include('partials/cards/skills', {info: entry}) %>
+          <%- include('partials/cards/skills', {info: entry, markdown: markdown}) %>
         <% } %>
       </div>
     </section>

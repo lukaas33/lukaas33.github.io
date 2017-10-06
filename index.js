@@ -153,7 +153,7 @@ data.get = function (collections, callback) {
 // Routes
 app.get('/', function (request, response) {
   data.get(data.files, (variables) => {
-    response.render('index', {data: variables})
+    response.render('index', {data: variables, markdown: marked})
   })
 })
 
