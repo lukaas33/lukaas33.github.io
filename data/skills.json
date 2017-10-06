@@ -1,7 +1,7 @@
 {
   "content": [{
     "title": "English",
-    "description": "I learned a lot of English from the internet. I always liked the idea of an universal language and it is the closest we have.\n Most of my grammar I learned from school and most of my vocabulary comes from books and TV-programs.",
+    "description": "I learned a lot of English from the internet. I always liked the idea of an universal language and it is the closest we have.\n\n\n Most of my grammar I learned from school and most of my vocabulary comes from books and TV-programs.",
     "skills": [{
         "name": "Vocabulary",
         "percentage": 70
@@ -29,7 +29,7 @@
     ]
   },  {
     "title": "Project management",
-    "description": "I learned how to handle projects by handling projects. The first big project I worked on was this resume and I made a lot of mistakes. But I have improved with every project.\n I learned good practices at school, like documenting what you want to make.",
+    "description": "I learned how to handle projects by handling projects. The first big project I worked on was this resume and I made a lot of mistakes. But I have improved with every project.\n\n\n I learned good practices at school, like documenting what you want to make.",
     "skills": [{
         "name": "Git",
         "percentage": 75
@@ -43,7 +43,7 @@
     ]
   },  {
     "title": "Front-end web",
-    "description": "It started for me with the design of websites. I know a lot of people hate this side of web development, but I like working out my ideas. Through design I discovered the programming which I like even more. Making an idea work in real life is really fun for me.",
+    "description": "It started for me with the design of websites. I know a lot of people hate this side of web development, but I like working out my ideas.\n\n\n Through design I discovered the programming which I like even more. Making an idea work in real life is really fun for me.",
     "skills": [{
         "name": "Javascript",
         "percentage": 65
@@ -57,7 +57,7 @@
     ]
   },  {
     "title": "Back-end web",
-    "description": "I'm quite new at back-end programming. I first used PHP to setup dynamic content for this website. Later, when choosing a webhost, I decided to rebuild the dynamic content system with Node. While doing this I did a lot of other programming to get everything working properly.",
+    "description": "I'm quite new at back-end programming. I first used _PHP_ to setup dynamic content for this website. Later, when choosing a webhost, I decided to rebuild the dynamic content system with Node. While doing this I did a lot of other programming to get everything working properly.",
     "skills": [{
         "name": "Node.js",
         "percentage": 25
@@ -71,7 +71,7 @@
     ]
   },  {
     "title": "Databases",
-    "description": "I first used a database for this project. When working with Node I decided to use _MongoDB_, as it works easier with Javascript.\n In school I learned all about _SQL_ and some database normalization.",
+    "description": "I first used a database for this project. When working with _Node_ I decided to use _MongoDB_, as it works easier with _Javascript_.\n In school I learned all about _SQL_ and some database normalization.",
     "skills": [{
         "name": "MongoDB",
         "percentage": 40
@@ -85,7 +85,7 @@
     ]
   },  {
     "title": "Design",
-    "description": "As a kid I was more into creative things. The problem was that I couldn't really paint, or draw. I later picked up a hobby of making illustrations in _Paint.net_, which I posted to [Google+](https://plus.google.com/+LucasvanOsenbruggen).\n When I found Adobe Illustrator I liked it more because of the exact placements and preserving of resolution. I ended up with some stuff I still actually like.\n I abandoned the hobby when I started with the design of websites. The interactiveness with which I could create was more interesting to me.",
+    "description": "As a kid I was more into creative things. The problem was that I couldn't really paint, or draw. I later picked up a hobby of making illustrations in _Paint.net_, which I posted to [Google+](https://plus.google.com/+LucasvanOsenbruggen).\n\n\n When I found Adobe Illustrator I liked it more because of the exact placements and preserving of resolution. I ended up with some stuff I still actually like.\n\n\n I abandoned the hobby when I started with the design of websites. The interactiveness with which I could create was more interesting to me.",
     "skills": [{
         "name": "Illustrator",
         "percentage": 45
@@ -99,7 +99,7 @@
     ]
   },  {
     "title": "Programming",
-    "description": "I started programming in websites with _Javascript_. When I had learned that, it was easier to learn other languages. A lot of practices are shared between languages. I later spent some time learning _Python_. Although I didn't really have a purpose for it, I learned a lot about programming in general _(for example 1.1 + 2.2 != 3.3)_.\n I also took a [typing course](https://www.typing.com/student/verify#45709563-59376030) online for more efficiency.",
+    "description": "I started programming in websites with _Javascript_. When I had learned that, it was easier to learn other languages. A lot of practices are shared between languages. I later spent some time learning _Python_. Although I didn't really have a purpose for it, I learned a lot about programming in general _(for example 1.1 + 2.2 != 3.3)_.\n\n\n I also took a [typing course](https://www.typing.com/student/verify#45709563-59376030) online for more efficiency.",
     "skills": [{
         "name": "Object oriënted programming",
         "percentage": 50

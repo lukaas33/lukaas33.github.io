@@ -16,6 +16,17 @@ const app = express()
 const data = {files: ['experience', 'projects', 'skills']}
 mongoClient = mongoClient.MongoClient
 mailgun = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.DOMAIN}) // Gets mailgun data from env
+var renderer = new marked.Renderer()
+renderer.link = (href, title, text) => {
+  // Adds target to external links, from https://github.com/chjj/marked/pull/451
+  let external = /^https?:\/\/.+$/.test(href) // Is external
+  var add = null
+  if (external) {
+    add = 'rel="noopener" target="_blank"' // To add
+  }
+  return `<a ${add} href="${href}">${text}</a>` // Edited url
+}
+marked.setOptions({renderer: renderer})
 
 // Setup
 app.set('port', process.env.PORT || 5000) // Chooses a port
