@@ -14,7 +14,7 @@ All my code is open source, so if I ever make something nice everyone can use it
 
 ## News
 
-My website now works with Node.
+I am working on three projects now: Faunadex, resume and Simulare.
 
 I've learned some Python and am not sure what I can do with it.
 
@@ -37,7 +37,7 @@ I've learned some Python and am not sure what I can do with it.
 -   ~~CoffeeScript~~
 -   ~~Sass~~
 -   ~~PHP~~ _(Not interested anymore)_
--   SQL
+-   ~~SQL~~
 -   ~~Git~~ _(A little)_
 -   ~~jQuery~~
 -   ~~JavaScript~~
