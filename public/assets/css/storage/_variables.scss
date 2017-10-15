@@ -140,9 +140,10 @@ $base-margin: 10vw; // Base margin for site
   }
 }
 
-@mixin shadow($x, $blur) {
+@mixin shadow($x, $blur, $option: '') {
   // Edited from values at https://codepen.io/sdthornton/pen/wBZdXq
-  box-shadow: 0 #{$x}px #{$blur}px rgba(0, 0, 0, .1), 0 #{ceil($x / 1.4)}px #{ceil($blur / 1.4)}px rgba(0, 0, 0, .2);
+  box-shadow: 0 #{$x}px #{$blur}px rgba(0, 0, 0, .1) #{$option},
+  0 #{ceil($x / 1.4)}px #{ceil($blur / 1.4)}px rgba(0, 0, 0, .2) #{$option};
 }
 
 @-webkit-keyframes slideDown {

@@ -37,9 +37,11 @@
           width: 100%; // Of collapse
         }
         @include media(tablet-landscape-up) {
+          margin-bottom: 0; // None
           width: 40%; // Of collapse
         }
         @include media(desktop-up) {
+          margin-bottom: 0; // None
           width: 40%; // Of collapse
         }
 
