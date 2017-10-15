@@ -1,0 +1,57 @@
+#project {
+  .container {
+    position: relative; // Absolute will be relative to this
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block; // No empty space at the end
+    }
+
+    .fab {
+      @extend %round; // Round button
+      @include color(secondary, 'background-color', 200);
+      height: 3rem;
+      position: absolute; // Won't take up actual space
+      right: 1.5rem; // Aligned right
+      transform: translateY(-50%); // Halfway over the image
+      width: 3rem;
+
+      a {
+        width: 100%; // Of fab
+
+        .material-icons {
+          margin: .75rem .5rem;
+          width: 2rem;
+        }
+      }
+    }
+  }
+
+  .top {
+    h1 {
+      @extend %header;
+      font-size: 2rem;
+    }
+
+    .type {
+      @include color(grey, 'color', 700);
+      font-size: 1.2rem
+    }
+
+    .date {
+      @include color(grey, 'color', 600);
+    }
+  }
+
+  .primary {
+    -moz-user-select: text;
+    -ms-user-select: text;
+    -webkit-user-select: text;
+    user-select: text; // Can be selected
+
+    a {
+      @extend %link;
+    }
+  }
+}
