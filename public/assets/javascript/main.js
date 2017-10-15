@@ -292,7 +292,7 @@
         }
       }
       $(this).find("span").text(Object.keys(options[global.sort.current]));
-      return $(this).find(".tooltip").text(Object.keys(options[global.sort.next]));
+      return $(this).find(".tooltip").text("Sort by " + Object.keys(options[global.sort.next]));
     });
     $("#portfolio").find(".backward").click(function() {
       switchPage(-1);

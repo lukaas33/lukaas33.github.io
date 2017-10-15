@@ -86,13 +86,14 @@
             <hr>
             <p>
               Hello world. My name is Lucas van Osenbruggen.<br>
-              I'm <span class="since" date="2000-08-22"><%= sinceDate('2000-08-22T22:22+01:00') %></span> old and live in the Netherlands.<br>
+              I'm <span class="since" date="2000-08-22"><%= sinceDate('2000-08-22T22:22+01:00') %></span> old and live in the Netherlands. I play baseball as a sport.<br>
+              <br>
               I'm currently unemployed and a student in high school.
               For details, checkout the cards in the experience section.<br>
               To see all the things that I think I'm good at, go to the skills section.<br>
               This portfolio you're looking at right now was build from scratch by me.
               You can see how <s>smoothly and without mistakes</s> it all went at <a rel="noopener" target="_blank" href="https://github.com/lukaas33/lukaas33.github.io">my repo</a>.
-              It's responsive <em>(A little)</em> and printer-friendly.<br>
+              It's responsive (A little at least) and printer-friendly.<br>
               I started working on it <span class="since" date="2017-05-15"><%= sinceDate('2017-05-15T15:00+01:00') %></span> ago.
               You can find more details about it in the portfolio section below.<br>
               You can contact me anytime via the contact section.<br>
@@ -108,7 +109,7 @@
       <div class="content">
         <!-- Loop creates multiple cards -->
         <% for (let entry of data.experience) { %>
-          <%- include('partials/cards/experience', {info: entry, sinceDate: sinceDate}) %>
+          <%- include('partials/cards/experience', {info: entry, sinceDate: sinceDate, markdown: markdown}) %>
         <% } %>
       </div>
     </section>

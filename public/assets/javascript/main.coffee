@@ -248,7 +248,8 @@ $ ->
         global.sort[variable] = 0
 
     $(@).find("span").text Object.keys(options[global.sort.current])
-    $(@).find(".tooltip").text Object.keys(options[global.sort.next])
+    $(@).find(".tooltip").text "Sort by " +
+    Object.keys(options[global.sort.next])
 
   $("#portfolio").find(".backward").click ->
     switchPage -1

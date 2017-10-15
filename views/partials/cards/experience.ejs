@@ -45,7 +45,7 @@
 		</div>
 		<div class="collapse">
 			<hr/>
-			<p><%= info.description %></p>
+			<%- markdown(info.description) %>
 			<br/>
 			<!-- Loops through all extra data -->
 			<% for (let data of info.data) { %>
