@@ -19,7 +19,7 @@
       "start": "2011-08-19",
       "end": "2012-07-29"
     },
-    "description": "I went here because I was really too young for high school. After a year I left and went to another school.",
+    "description": "I went here because I was really too young for high school. I messed up the final test at elementary school.\n\n\n I didn't really like it here and after a year I went to another school.",
     "data": [{
         "type": "link",
         "value": "http://www.pleincollegenuenen.nl/"
@@ -27,12 +27,41 @@
     ]
   },  {
     "title": "HAVO",
+    "place": "Pleinschool Helder",
+  "date": {
+      "start": "2012-08-18",
+      "end": "2016-07-23"
+    },
+    "description": "I went to this school because it offered extra help with learning.",
+    "data": [{
+        "type": "link",
+        "value": "http://pcsintjoris.mwp.nl/pleinschoolhelder/home/tabid/217/default.aspx"
+      }
+    ]
+  },  {
+    "title": "Filling stocks",
+    "place": "Albert Heijn",
+    "date": {
+      "start": "2015-12-30",
+      "end": "2016-08-30"
+    },
+    "description": "I worked here for some time when I had spare time and wanted some money. I quit when it got busier for me.",
+    "data": [{
+        "type": "link",
+        "value": "https://www.ah.nl/winkel/1380"
+      },  {
+        "type": "number",
+        "value": "+31 040 2840999"
+      }
+    ]
+  },  {
+    "title": "HAVO/VWO",
     "place": "Lorentz Casimir Lyceum",
     "date": {
       "start": "2016-09-04",
       "end": null
     },
-    "description": "When looking for different schools this one made a good expression on me.",
+    "description": "When looking for different schools this one made a good expression on me.\n\n\n Here I found out that I liked programming. I decided to go to a higher level of education when at this school.",
     "data": [{
         "type": "link",
         "value": "http://www.lcl.nl/"

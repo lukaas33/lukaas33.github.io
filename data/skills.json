@@ -85,7 +85,7 @@
     ]
   },  {
     "title": "Design",
-    "description": "As a kid I was more into creative things. The problem was that I couldn't really paint, or draw. I later picked up a hobby of making illustrations in _Paint.net_, which I posted to [Google+](https://plus.google.com/+LucasvanOsenbruggen).\n\n\n When I found Adobe Illustrator I liked it more because of the exact placements and preserving of resolution. I ended up with some stuff I still actually like.\n\n\n I abandoned the hobby when I started with the design of websites. The interactiveness with which I could create was more interesting to me.",
+    "description": "As a kid I was more into creative things. The problem was that I couldn't really paint, or draw. I later picked up a hobby of making illustrations in _Paint.net_, which I posted to [Google+](https://plus.google.com/+LucasvanOsenbruggen).\n\n\n When I found _Adobe Illustrator_ I liked it more because of the exact placements and preserving of resolution. I ended up with some stuff I still actually like.\n\n\n I abandoned the hobby when I started with the design of websites. The interactiveness with which I could create was more interesting to me.",
     "skills": [{
         "name": "Illustrator",
         "percentage": 45
@@ -99,7 +99,7 @@
     ]
   },  {
     "title": "Programming",
-    "description": "I started programming in websites with _Javascript_. When I had learned that, it was easier to learn other languages. A lot of practices are shared between languages. I later spent some time learning _Python_. Although I didn't really have a purpose for it, I learned a lot about programming in general _(for example 1.1 + 2.2 != 3.3)_.\n\n\n I also took a [typing course](https://www.typing.com/student/verify#45709563-59376030) online for more efficiency.",
+    "description": "I started programming in websites with _Javascript_. When I had learned that, it was easier to learn other languages. A lot of practices are shared between languages. I later spent some time learning _Python_. Although I didn't really have a purpose for it, I learned a lot about programming in general (for example 1.1 + 2.2 != 3.3).\n\n\n I also took a [typing course](https://www.typing.com/student/verify#45709563-59376030) online for more efficiency.",
     "skills": [{
         "name": "Object oriënted programming",
         "percentage": 50
