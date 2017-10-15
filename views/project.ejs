@@ -29,7 +29,7 @@
 <html lang="en">
 <head>
   <title><%= data.title %> - Projects</title>
-  <meta name="description" content="<%= data.description.slice(0, 100) %>">
+  <meta name="description" content="<%= data.description.slice(0, 160) %>">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1">
   <link rel="canonical" href="https://www.lukaas33.com/projects/<%= webname(data.title) %>"/>
@@ -56,12 +56,22 @@
   <main>
     <section id="project" class="part">
       <div class="card">
-        <div class="container"><img src="#"></div>
+        <div class="container">
+            <!-- Image must be uploaded as jpeg at a 1:3 size ratio -->
+            <img src="/assets/images/banners/<%= webname(data.title) %>.jpg">
+            <div class="fab">
+                <% if (data.type === 'website') { %>
+                    <a target="_blank" rel="noopener" href="<%= data.media %>">
+                        <i class="material-icons md-light">link</i>
+                    </a>
+                <% } %>
+            </div>
+        </div>
         <div class="text">
           <div class="top">
             <h1><%= data.title %></h1>
             <p class="type"><%= data.type %></p>
-            <p class="date"><%= dateformat(data.date.start, 'full') %> / <%= dateformat(data.date.end, 'full') %></p>
+            <p class="date"><em><%= dateformat(data.date.start, 'full') %> / <%= dateformat(data.date.end, 'full') %></em></p>
             <hr>
           </div>
           <div class="primary">

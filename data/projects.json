@@ -8,7 +8,7 @@
       "end": "2017-04-24"
     },
     "media": "/webpages/solaris/",
-    "description": "This is a project I have been wanting to do for a while. I made an illustration of the solar system some time before and wanted to make something more interactive. I learned a lot about using the html canvas and making animations via paper.js."
+    "description": "This is a project I have been wanting to do for a while. I made an [illustration](https://plus.google.com/+LucasvanOsenbruggen/posts/DVXyfR85kPQ) of the solar system some time before and wanted to make something more interactive.\n\n\n I learned a lot about using the _html canvas_ and making animations via _paper.js_."
   },  {
     "title": "Profile picture",
     "tags": ["profile picture", "personal", "Lucas", "illustration", "flat", "shadow", "logo", "vector graphics"],
@@ -18,7 +18,7 @@
       "end": "2016-09-04"
     },
     "media": null,
-    "description": "I have seen this style some times with other people on the internet and decided I wanted it too. I started with an image of my face and drew the outlines. Then I filled the shapes with different colors. I used darker shades for depth and added shadows. I first made it in PNG but later converted to SVG."
+    "description": "I have seen this style some times with other people on the internet and decided I wanted it too. I started with an image of my face and drew the outlines. Then I filled the shapes with different colors. I used darker shades for depth and added shadows. I first made it in PNG but later converted to SVG.\n\n\n This image is my personal logo and I use it in a lot of places."
   },  {
     "title": "Picturer",
     "tags": ["profile picture", "create", "canvas", "website", "flat", "shadow", "illustrations", "combinations"],
@@ -28,37 +28,37 @@
       "end": "2017-03-07"
     },
     "media": "/webpages/picturer/",
-    "description": "I wanted to learn to work with canvas and thought it would be fun to make a profile picture creator."
+    "description": "I wanted to learn to work with canvas and thought it would be fun to make a profile picture creator. The idea came from my [collection](https://plus.google.com/collection/8jO2fB)."
   },  {
     "title": "Presentation genes",
-    "tags": ["genes", "talk", "Kurzgesagt", "biology", "illustrations", "text", "pictures", "discussion", "arguments"],
+    "tags": ["genes", "talk", "Kurzgesagt", "biology", "illustrations", "text", "pictures", "discussion", "arguments", "Dutch"],
     "type": "presentation",
     "date": {
       "start": "2017-01-23",
       "end": "2017-03-10"
     },
     "media": "https://docs.google.com/presentation/d/e/2PACX-1vQ9UCJhLNnt0UvN9gvF0KESDb4FCyYbpRc-XFbcs-9yBaEAA3DDmZ0hhsejAAgRWMhsRvdzPm10Dtih/pub?start=false&loop=false&delayms=3000",
-    "description": "I gave a presentation about the editing of genes. We had an discussion about the topic with the class."
+    "description": "I gave a presentation about the editing of genes. We had an discussion about the topic with the class. \n\n\n I got the idea (and many illustrations) from a [Kurzgesagt video](https://youtu.be/jAhjPd4uNFY)."
   },  {
     "title": "Boarding screen",
-    "tags": ["concept", "Android", "challenge", "HTML", "jQuery", "Javascript", "CSS", "Material Design"],
+    "tags": ["concept", "Android", "challenge", "HTML", "jQuery", "Javascript", "CSS", "Material Design", "material design", "competition"],
     "type": "website",
     "date": {
       "start": "2017-02-13",
-      "end": "2017-03-09"
+      "end": "2017-02-26"
     },
     "media": "/webpages/boarding/",
-    "description": "This was my concept for a boarding screen."
+    "description": "This was my concept for a boarding screen for Android. It was my first project with a clear deadline and one where I used HTML for a design instead of an image.\n\n\n It was part of a design challenge on [MaterialUp](https://www.uplabs.com/challenges/the-materialup-challenge). Although I didn't win it, I did learn a lot."
   },  {
     "title": "Invisible",
-    "tags": ["photoshop", "invisible", "artwork", "assignment"],
+    "tags": ["photoshop", "invisible", "artwork", "assignment", "design", "competition"],
     "type": "illustration",
     "date": {
       "start": "2017-01-07",
       "end": "2017-01-23"
     },
     "media": null,
-    "description": "I had to make an illustration with the theme invisible."
+    "description": "I had to make an illustration with the theme invisible. My image is a man with an invisible forehead. The idea is that you can see into his mind. I tried several images in his head, including gears, space and nature. I liked the literal interpretation of the brain at molecular level best."
   },  {
     "title": "Photography lesson",
     "tags": ["photos", "camera", "assignment", "stucture", "nature", "abstract", "pictures"],
@@ -68,7 +68,7 @@
       "end": "2017-04-19"
     },
     "media": ["plants", "river", "tree-stump", "roof", "bridge"],
-    "description": "I had a lesson about photography. I learned about things like exposure."
+    "description": "I had a lesson in photography.\n\n\n I learned about things like exposure and perspective. We took pictures from different angles of patterns and nature."
   },  {
     "title": "T-Shirt",
     "tags": ["photo", "shirt", "Bo Burnham", "Deep", "comedian", "design", "black", "white"],
@@ -78,7 +78,7 @@
       "end": "2016-09-07"
     },
     "media": null,
-    "description": "I made a t-shirt for a song by Bo Burnham. The song is called [#deep](https://youtu.be/RUBjHPYH8Rs)."
+    "description": "I made a t-shirt for a song by _Bo Burnham_. The song is called [#deep](https://youtu.be/RUBjHPYH8Rs). The design was made by myself and ironed onto a shirt. The quality of the shirt itself was not that great but I still rather like the design."
   },  {
     "title": "Portfolio",
     "tags": ["portfolio", "assignment", "CSS", "PHP", "Node.js", "Javascript", "Coffeescript", "jQuery", "Sass", "resume", "Material Design"],
@@ -88,7 +88,7 @@
       "end": "2017-06-23"
     },
     "media": "/",
-    "description": "This portfolio you're viewing is a project too. I made this as my final project for the school year using PHP. I later converted it to Node myself."
+    "description": "This portfolio you're viewing is a project too. I made this as my final project for the school year using _PHP_. This was my first project where I documented everything and planned ahead.\n\n\n I later converted it to _Node.js_ myself when moving from _Github Pages_ to the webhost _Heroku_."
   },  {
     "title": "Vacation photos",
     "tags": ["photos", "phone", "structure", "nature", "vacation", "pictures"],
@@ -98,6 +98,6 @@
       "end": "2017-05-20"
     },
     "media": ["plant-row", "forest-path", "sunset", "forest"],
-    "description": "I like taking pictures of nature of vacation."
+    "description": "I like taking pictures of nature when on vacation. These are my favorites at this time."
   }]
 }
