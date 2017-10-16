@@ -1,5 +1,5 @@
 // This file uses [Js standard](https://standardjs.com/) as code style
-// Comments explaining blocks are inside the block
+// Comments explaining blocks are above the block
 
 // Has global scope
 var global = {
@@ -62,10 +62,18 @@ var global = {
     $.getJSON('storage/theory.json', function (data) {
       global.theory = data.content
       loaded('theory')
+      // Load the main javascript
+      load('assets/js/main.js', 'paper', function () {
+        loaded('js')
+      })
     })
     // Load html into page
     $('#home').load('storage/page.html', function () {
       console.log('Loaded html')
+      // Load the main css
+      load('assets/css/main.css', 'css', function () {
+        loaded('css')
+      })
     })
   })
   // Load the Paper.js library
@@ -79,13 +87,5 @@ var global = {
   // Load the Showdown library
   load('https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.6/showdown.min.js', 'js', function () {
     loaded('showdown')
-  })
-  // Load the main javascript
-  load('assets/js/main.js', 'paper', function () {
-    loaded('paper')
-  })
-  // Load the main css
-  load('assets/css/main.css', 'css', function () {
-    loaded('css')
   })
 }).call(this)
