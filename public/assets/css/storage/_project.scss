@@ -12,13 +12,18 @@
       transform: translateY(-50%); // Halfway over the image
       width: 3rem;
 
-      a {
+      a,
+      button {
         width: 100%; // Of fab
 
         .material-icons {
           margin: .75rem .5rem;
           width: 2rem;
         }
+      }
+
+      button {
+        @extend %form; // Is a type of form
       }
     }
   }
@@ -34,6 +39,11 @@
       width: 100%;
     }
 
+    iframe {
+      height: 100%;
+      width: 100%;
+    }
+
     .shadow {
       height: 100%;
       overflow: hidden; // Will hide side shadow
@@ -44,8 +54,8 @@
       div {
         @include shadow(-25, 35, inset); // Inner shadow for better distinction
         height: 100%;
-        width: 200%; // Sides outside of parent
         transform: translateX(-25%); // Both sides hidden
+        width: 200%; // Sides outside of parent
       }
     }
   }

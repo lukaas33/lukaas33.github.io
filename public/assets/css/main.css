@@ -50,11 +50,11 @@ main .part .card {
   main .part .card:hover {
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1) , 0 10px 20px rgba(0, 0, 0, 0.2) ; }
 
-main .part#about .card .text a, main #experience .card .text .collapse a, main #skills .collapse .box .description a, main #project .primary a, main #contact .card:nth-child(2) fieldset [type='text'], main #experience .card .text .head .date, main #contact .card .show, main #contact .card:nth-child(2) .end button, nav ul li:last-child a, main #contact .card .container .box .icon, main #project .box .fab, main #portfolio .sort a, main #portfolio .select button, main #contact .card:nth-child(2) .end button [type='submit'], nav ul li a {
+main .part#about .card .text a, main #experience .card .text .collapse a, main #skills .collapse .box .description a, main #project .primary a, main #contact .card:nth-child(2) fieldset [type='text'], main #experience .card .text .head .date, main #contact .card .show, main #contact .card:nth-child(2) .end button, nav ul li:last-child a, main #contact .card .container .box .icon, main #project .box .fab, main #portfolio .sort a, main #portfolio .select button, main #contact .card:nth-child(2) .end button [type='submit'], main #project .box .fab button, nav ul li a {
   cursor: pointer; }
-  main .part#about .card .text a:disabled, main #experience .card .text .collapse a:disabled, main #skills .collapse .box .description a:disabled, main #project .primary a:disabled, main #contact .card:nth-child(2) fieldset [type='text']:disabled, main #experience .card .text .head .date:disabled, main #contact .card .show:disabled, main #contact .card:nth-child(2) .end button:disabled, main #contact .card .container .box .icon:disabled, main #project .box .fab:disabled, main #portfolio .sort a:disabled, main #portfolio .select button:disabled, main #contact .card:nth-child(2) .end button [type='submit']:disabled, nav ul li a:disabled {
+  main .part#about .card .text a:disabled, main #experience .card .text .collapse a:disabled, main #skills .collapse .box .description a:disabled, main #project .primary a:disabled, main #contact .card:nth-child(2) fieldset [type='text']:disabled, main #experience .card .text .head .date:disabled, main #contact .card .show:disabled, main #contact .card:nth-child(2) .end button:disabled, main #contact .card .container .box .icon:disabled, main #project .box .fab:disabled, main #portfolio .sort a:disabled, main #portfolio .select button:disabled, main #contact .card:nth-child(2) .end button [type='submit']:disabled, main #project .box .fab button:disabled, nav ul li a:disabled {
     cursor: default; }
-  main .part#about .card .text a:focus, main #experience .card .text .collapse a:focus, main #skills .collapse .box .description a:focus, main #project .primary a:focus, main #contact .card:nth-child(2) fieldset [type='text']:focus, main #experience .card .text .head .date:focus, main #contact .card .show:focus, main #contact .card:nth-child(2) .end button:focus, main #contact .card .container .box .icon:focus, main #project .box .fab:focus, main #portfolio .sort a:focus, main #portfolio .select button:focus, main #contact .card:nth-child(2) .end button [type='submit']:focus, nav ul li a:focus, main .part#about .card .text a:active, main #experience .card .text .collapse a:active, main #skills .collapse .box .description a:active, main #project .primary a:active, main #contact .card:nth-child(2) fieldset [type='text']:active, main #experience .card .text .head .date:active, main #contact .card .show:active, main #contact .card:nth-child(2) .end button:active, main #contact .card .container .box .icon:active, main #project .box .fab:active, main #portfolio .sort a:active, main #portfolio .select button:active, main #contact .card:nth-child(2) .end button [type='submit']:active, nav ul li a:active {
+  main .part#about .card .text a:focus, main #experience .card .text .collapse a:focus, main #skills .collapse .box .description a:focus, main #project .primary a:focus, main #contact .card:nth-child(2) fieldset [type='text']:focus, main #experience .card .text .head .date:focus, main #contact .card .show:focus, main #contact .card:nth-child(2) .end button:focus, main #contact .card .container .box .icon:focus, main #project .box .fab:focus, main #portfolio .sort a:focus, main #portfolio .select button:focus, main #contact .card:nth-child(2) .end button [type='submit']:focus, main #project .box .fab button:focus, nav ul li a:focus, main .part#about .card .text a:active, main #experience .card .text .collapse a:active, main #skills .collapse .box .description a:active, main #project .primary a:active, main #contact .card:nth-child(2) fieldset [type='text']:active, main #experience .card .text .head .date:active, main #contact .card .show:active, main #contact .card:nth-child(2) .end button:active, main #contact .card .container .box .icon:active, main #project .box .fab:active, main #portfolio .sort a:active, main #portfolio .select button:active, main #contact .card:nth-child(2) .end button [type='submit']:active, main #project .box .fab button:active, nav ul li a:active {
     outline: none; }
 
 main .part#about .card .text a, main #experience .card .text .collapse a, main #skills .collapse .box .description a, main #project .primary a {
@@ -76,7 +76,7 @@ main #skills .head progress, main #skills .collapse .box .progress .container pr
   main #skills .head progress::-webkit-progress-bar, main #skills .collapse .box .progress .container progress::-webkit-progress-bar {
     background-color: #f5f5f5 ; }
 
-main #contact .card:nth-child(2) fieldset [type='text'], main #experience .card .text .head .date, main #contact .card .show, main #contact .card:nth-child(2) .end button, nav ul li:last-child a, main #contact .card .container .box .icon, main #project .box .fab, main #portfolio .sort a, main #portfolio .select button, main #contact .card:nth-child(2) .end button [type='submit'] {
+main #contact .card:nth-child(2) fieldset [type='text'], main #experience .card .text .head .date, main #contact .card .show, main #contact .card:nth-child(2) .end button, nav ul li:last-child a, main #contact .card .container .box .icon, main #project .box .fab, main #portfolio .sort a, main #portfolio .select button, main #contact .card:nth-child(2) .end button [type='submit'], main #project .box .fab button {
   background-color: transparent;
   border: 0 solid transparent;
   transition: 400ms ease-in-out; }
@@ -877,9 +877,11 @@ main {
       right: 1.5rem;
       transform: translateY(-50%);
       width: 3rem; }
-      main #project .box .fab a {
+      main #project .box .fab a,
+      main #project .box .fab button {
         width: 100%; }
-        main #project .box .fab a .material-icons {
+        main #project .box .fab a .material-icons,
+        main #project .box .fab button .material-icons {
           margin: .75rem .5rem;
           width: 2rem; }
   main #project .container {
@@ -890,6 +892,9 @@ main {
       display: block;
       margin: auto;
       width: 100%; }
+    main #project .container iframe {
+      height: 100%;
+      width: 100%; }
     main #project .container .shadow {
       height: 100%;
       overflow: hidden;
@@ -899,8 +904,8 @@ main {
       main #project .container .shadow div {
         box-shadow: 0 -25px 35px rgba(0, 0, 0, 0.1) inset, 0 -17px 25px rgba(0, 0, 0, 0.2) inset;
         height: 100%;
-        width: 200%;
-        transform: translateX(-25%); }
+        transform: translateX(-25%);
+        width: 200%; }
   main #project .top h1 {
     font-size: 2rem; }
   main #project .top .type {
