@@ -13,10 +13,20 @@
       }
     }
 
-    progress {
-      @extend %progress;
+    .container {
       margin-left: auto;
+      position: relative; // Absolute tooltip will be placed with regard to this
       width: 60%; // Of the card
+
+      progress {
+        @extend %progress;
+        width: 100%; // Of container
+      }
+
+      .tooltip {
+        @extend %tooltip;
+        margin-left: 40%; // Of container
+      }
     }
   }
 
