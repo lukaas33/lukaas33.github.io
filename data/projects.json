@@ -37,7 +37,7 @@
       "start": "2017-01-23",
       "end": "2017-03-10"
     },
-    "media": "https://docs.google.com/presentation/d/e/2PACX-1vQ9UCJhLNnt0UvN9gvF0KESDb4FCyYbpRc-XFbcs-9yBaEAA3DDmZ0hhsejAAgRWMhsRvdzPm10Dtih/pub?start=false&loop=false&delayms=3000",
+    "media": "https://docs.google.com/presentation/d/e/2PACX-1vQ9UCJhLNnt0UvN9gvF0KESDb4FCyYbpRc-XFbcs-9yBaEAA3DDmZ0hhsejAAgRWMhsRvdzPm10Dtih/embed?start=false&loop=false&delayms=3000",
     "description": "I gave a presentation about the editing of genes. We had an discussion about the topic with the class. \n\n\n I got the idea (and many illustrations) from a [Kurzgesagt video](https://youtu.be/jAhjPd4uNFY)."
   },  {
     "title": "Boarding screen",
@@ -67,7 +67,7 @@
       "start": "2017-04-05",
       "end": "2017-04-19"
     },
-    "media": ["plants", "river", "tree-stump", "roof", "bridge"],
+    "media": ["Plants", "River", "Tree stump", "Roof", "Bridge"],
     "description": "I had a lesson in photography.\n\n\n I learned about things like exposure and perspective. We took pictures from different angles of patterns and nature."
   },  {
     "title": "T-Shirt",
@@ -97,7 +97,7 @@
       "start": "2016-07-30",
       "end": "2017-05-20"
     },
-    "media": ["plant-row", "forest-path", "sunset", "forest"],
+    "media": ["Plant arch", "Forest path", "Sunset", "Forest"],
     "description": "I like taking pictures of nature when on vacation. These are my favorites at this time."
   }]
 }
