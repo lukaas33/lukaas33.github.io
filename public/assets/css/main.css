@@ -558,7 +558,10 @@ main {
       main #skills .head .container progress {
         width: 100%; }
       main #skills .head .container .tooltip {
-        margin-left: 40%; }
+        margin-left: 40%;
+        text-align: center;
+        text-transform: uppercase;
+        width: 20%; }
   main #skills .collapse {
     display: none; }
     main #skills .collapse .box {

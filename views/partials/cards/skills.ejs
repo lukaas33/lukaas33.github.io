@@ -27,7 +27,7 @@
 			<div class="container" tooltip>
 				<% var value = average(getPercentages(info.skills, 'percentage')) %>
 				<progress max="100" value="<%= value %>"></progress>
-				<div class="tooltip"><%= Math.round(value / 10) %> / 10</div>
+				<div class="tooltip">Score  <%= Math.round(value / 10) %> / 10</div>
 			</div>
 		</div>
 		<div class="collapse">

@@ -26,6 +26,9 @@
       .tooltip {
         @extend %tooltip;
         margin-left: 40%; // Of container
+        text-align: center;
+        text-transform: uppercase;
+        width: 20%; // Of container
       }
     }
   }
