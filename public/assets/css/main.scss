@@ -69,10 +69,6 @@ main {
           text-align: left;
         }
 
-        overflow-x: hidden;
-        overflow-y: auto; // User can scroll if content isn't visible
-
-
         hr {
           @include color(grey, 'background-color', 400);
           border-top-width: 1px;

@@ -21,6 +21,18 @@
 <div class="card">
 	<div class="text">
 		<div class="head">
+			<div tooltip class="type">
+				<i class="material-icons md-light md-active">
+					<% if (info.type === 'school') { %>
+						school
+					<% } else if (info.type === 'job') { %>
+						work
+					<% } else if (info.type == 'course') { %>
+						class
+					<% } %>
+				</i>
+				<div class="tooltip"><%= info.type %></div>
+			</div>
 			<div class="tag">
 				<h3><%= info.title %></h3>
 				<p><%= info.place %></p>

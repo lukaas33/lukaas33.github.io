@@ -7,6 +7,7 @@
         cursor: pointer; // Can be clicked
 
         .tag {
+          margin-left: 5%; // Room between type
 
           h3 {
             @extend %header;
@@ -28,11 +29,21 @@
           span {
             margin: 0 ($margin / 6); // One sixth of the card margin
           }
+        }
 
-          .tooltip {
-            @extend %tooltip;
-            width: 100%;
+        .type {
+          position: relative;
+
+          .material-icons {
+            @include color(primary, 'color', 300);
+            font-size: 4rem;
           }
+        }
+
+        .tooltip {
+          @extend %tooltip;
+          text-align: center;
+          text-transform: uppercase;
         }
       }
 

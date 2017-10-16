@@ -84,6 +84,8 @@
         -moz-user-select: text;
         -ms-user-select: text;
         -webkit-user-select: text;
+        overflow-x: hidden;
+        overflow-y: auto; // User can scroll if content isn't visible
         user-select: text; // Can be selected
 
         h1 {

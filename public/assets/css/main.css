@@ -100,7 +100,7 @@ main #contact .card:nth-child(2) fieldset [type='text'] {
       font-size: .75rem;
       transform: translateY(-150%); }
 
-main #experience .card .text .head .date .tooltip, main #skills .head .container .tooltip, main #portfolio .sort a .tooltip {
+main #experience .card .text .head .tooltip, main #skills .head .container .tooltip, main #portfolio .sort a .tooltip {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) , 0 2px 3px rgba(0, 0, 0, 0.2) ;
   background-color: #424242 ;
   border-color: #424242 ;
@@ -115,7 +115,7 @@ main #experience .card .text .head .date .tooltip, main #skills .head .container
   top: 0;
   transform: translateY(-110%);
   white-space: nowrap; }
-  main #experience .card .text .head .date .tooltip::after, main #skills .head .container .tooltip::after, main #portfolio .sort a .tooltip::after {
+  main #experience .card .text .head .tooltip::after, main #skills .head .container .tooltip::after, main #portfolio .sort a .tooltip::after {
     border-color: #424242 transparent;
     border-style: solid;
     border-width: 10px 10px 0;
@@ -417,30 +417,27 @@ main {
   main .part .card {
     margin: 2.5vw;
     z-index: 30; }
-    main .part .card .text {
-      overflow-x: hidden;
-      overflow-y: auto; }
-      @media only screen and (max-width: 599px) {
-        main .part .card .text {
-          padding: 3vw;
-          text-align: center; } }
-      @media only screen and (min-width: 600px) {
-        main .part .card .text {
-          padding: 3vw;
-          text-align: center; } }
-      @media only screen and (min-width: 900px) {
-        main .part .card .text {
-          padding: 2vw;
-          text-align: left; } }
-      @media only screen and (min-width: 1200px) {
-        main .part .card .text {
-          padding: 2vw;
-          text-align: left; } }
-      main .part .card .text hr {
-        background-color: #bdbdbd ;
-        border-top-width: 1px;
-        margin: 1.66667vw 0 0.83333vw;
-        width: 100%; }
+    @media only screen and (max-width: 599px) {
+      main .part .card .text {
+        padding: 3vw;
+        text-align: center; } }
+    @media only screen and (min-width: 600px) {
+      main .part .card .text {
+        padding: 3vw;
+        text-align: center; } }
+    @media only screen and (min-width: 900px) {
+      main .part .card .text {
+        padding: 2vw;
+        text-align: left; } }
+    @media only screen and (min-width: 1200px) {
+      main .part .card .text {
+        padding: 2vw;
+        text-align: left; } }
+    main .part .card .text hr {
+      background-color: #bdbdbd ;
+      border-top-width: 1px;
+      margin: 1.66667vw 0 0.83333vw;
+      width: 100%; }
   main .part .title {
     font-size: 1.75rem;
     text-align: center;
@@ -497,6 +494,8 @@ main {
     -moz-user-select: text;
     -ms-user-select: text;
     -webkit-user-select: text;
+    overflow-x: hidden;
+    overflow-y: auto;
     user-select: text; }
     @media only screen and (max-width: 599px) {
       main .part#about .card .text {
@@ -522,19 +521,27 @@ main {
       font-size: 1.2rem; }
   main #experience .card .text .head {
     cursor: pointer; }
-    main #experience .card .text .head .tag h3 {
-      font-size: 1.75rem;
-      margin-bottom: 0.625vw; }
-    main #experience .card .text .head .tag p {
-      color: #616161 ; }
+    main #experience .card .text .head .tag {
+      margin-left: 5%; }
+      main #experience .card .text .head .tag h3 {
+        font-size: 1.75rem;
+        margin-bottom: 0.625vw; }
+      main #experience .card .text .head .tag p {
+        color: #616161 ; }
     main #experience .card .text .head .date {
       background-color: #4dd0e1 ;
       margin-left: auto;
       position: relative; }
       main #experience .card .text .head .date span {
         margin: 0 0.41667vw; }
-      main #experience .card .text .head .date .tooltip {
-        width: 100%; }
+    main #experience .card .text .head .type {
+      position: relative; }
+      main #experience .card .text .head .type .material-icons {
+        color: #4dd0e1 ;
+        font-size: 4rem; }
+    main #experience .card .text .head .tooltip {
+      text-align: center;
+      text-transform: uppercase; }
   main #experience .card .text .collapse {
     display: none; }
     main #experience .card .text .collapse p {

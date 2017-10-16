@@ -2,6 +2,7 @@
   "content": [{
     "title": "Elementary school",
     "place": "Wentelwiek",
+    "type": "school",
     "date": {
       "start": "2003-09-05",
       "end": "2011-07-30"
@@ -15,6 +16,7 @@
   },  {
     "title": "VMBO",
     "place": "Plein College Nuenen",
+    "type": "school",
     "date": {
       "start": "2011-08-19",
       "end": "2012-07-29"
@@ -28,7 +30,8 @@
   },  {
     "title": "HAVO",
     "place": "Pleinschool Helder",
-  "date": {
+    "type": "school",
+    "date": {
       "start": "2012-08-18",
       "end": "2016-07-23"
     },
@@ -41,6 +44,7 @@
   },  {
     "title": "Filling stocks",
     "place": "Albert Heijn",
+    "type": "job",
     "date": {
       "start": "2015-12-30",
       "end": "2016-08-30"
@@ -55,8 +59,9 @@
       }
     ]
   },  {
-    "title": "HAVO/VWO",
+    "title": "HAVO / VWO",
     "place": "Lorentz Casimir Lyceum",
+    "type": "school",
     "date": {
       "start": "2016-09-04",
       "end": null
