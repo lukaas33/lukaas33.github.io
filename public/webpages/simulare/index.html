@@ -13,8 +13,19 @@
 <body>
   <!-- Main will be replaced when everything loads -->
   <main id="loading">
-    <h1>Loading screen</h1>
-    <progress value="0" max="8"></progress>
+    <div class="circle">
+      <img alt="The colored logo of the 'Vita Simulare' simulation" src="assets/images/logo/logo.svg"/>
+      <div class="text">
+        <h1>Vita Simulare</h1>
+        <h4>To simulate life</h4>
+      </div>
+    </div>
+    <!-- From: https://css-tricks.com/how-to-make-charts-with-svg/ -->
+    <div class="progress">
+      <svg class="chart">
+        <circle class="pie"/>
+      </svg>
+    </div>
   </main>
   <main id="start">
     <div class="intro">

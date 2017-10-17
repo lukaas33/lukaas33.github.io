@@ -24,68 +24,84 @@ var global = {
       document.getElementsByTagName('head')[0].appendChild(link)
     } else {
       var script = document.createElement('script')
-      script.onload = function () {
-        callback()
-      }
       script.async = true // Will load asynchronously
       script.src = url
       // Add additional attributes to it
       if (type === 'paper') {
         script.type = 'text/paperscript'
-        script.canvas = 'screen'
+        script.setAttribute('canvas', 'screen')
+        callback() // Can't check this loading
+      } else {
+        script.onload = function () {
+          callback()
+        }
       }
 
-      document.getElementsByTagName('head')[0].appendChild(script)
       document.getElementsByTagName('script')[0].insertAdjacentElement('afterend', script)
     }
   }
 
-  // Tracks loaded files and starts app
+  // Tracks loaded files
   var toLoad = 8
   var loaded = function (file) {
     toLoad -= 1
-    console.log('Loaded', file)
 
+    var percentage = Math.round((8 - toLoad) / 8 * 100) // Total loaded files
+    progressBar(percentage)
+
+    console.log('Loaded:', file)
     if (toLoad === 0) {
       start()
     }
   }
 
+  // Changes progressbar on screen
+  var progressBar = function (percentage) {
+    var pie = document.getElementById('loading').getElementsByClassName('pie')[0]
+    var total = Math.round(Math.PI * 100) // Circumference of circle
+    var number = (percentage * total) / 100
+    pie.style.strokeDasharray = number + '%, ' + total + '%'
+  }
+
+  // Starts the program
   var start = function () {
     console.log('Fully loaded')
   }
 
-  // Load the jquery library
-  load('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', 'js', function () {
-    loaded('jquery')
-    // Load data into global variable
-    $.getJSON('storage/theory.json', function (data) {
-      global.theory = data.content
-      loaded('theory')
+  // When current page loads
+  window.onload = function () {
+    // Load the jquery library
+    load('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', 'js', function () {
+      loaded('jquery')
+      // Load data into global variable
+      $.getJSON('storage/theory.json', function (data) {
+        global.theory = data.content
+        loaded('theory')
+      })
+      // Load html into page
+      $('#home').load('storage/page.html', function () {
+        loaded('html')
+        // Load the main css
+        load('assets/css/main.css', 'css', function () {
+          loaded('css')
+        })
+      })
+    })
+    // Load the Paper.js library
+    load('https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.22/paper.min.js', 'js', function () {
+      loaded('paper.js')
       // Load the main javascript
       load('assets/js/main.js', 'paper', function () {
         loaded('js')
       })
     })
-    // Load html into page
-    $('#home').load('storage/page.html', function () {
-      console.log('Loaded html')
-      // Load the main css
-      load('assets/css/main.css', 'css', function () {
-        loaded('css')
-      })
+    // Load the MathJax library
+    load('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js', 'js', function () {
+      loaded('mathjax')
     })
-  })
-  // Load the Paper.js library
-  load('https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.22/paper.min.js', 'js', function () {
-    loaded('paper.js')
-  })
-  // Load the MathJax library
-  load('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js', 'js', function () {
-    loaded('mathjax')
-  })
-  // Load the Showdown library
-  load('https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.6/showdown.min.js', 'js', function () {
-    loaded('showdown')
-  })
+    // Load the Showdown library
+    load('https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.6/showdown.min.js', 'js', function () {
+      loaded('showdown')
+    })
+  }
 }).call(this)
