@@ -19,8 +19,8 @@ body {
     background-color: white;
     border-radius: 100%;
     height: 30vw;
-    text-align: center;
     position: relative;
+    text-align: center;
     width: 30vw;
     z-index: 100; }
     #loading .circle img {
@@ -35,19 +35,19 @@ body {
     width: 40vw;
     z-index: 90; }
     #loading .progress .chart {
-      width: 100%;
+      border-radius: 50%;
+      fill: green;
       height: 100%;
       transform: rotate(-90deg);
-      fill: green;
-      border-radius: 50%; }
+      width: 100%; }
     #loading .progress .pie {
-      transition: 0.4s;
       cx: 50%;
       cy: 50%;
+      r: 50%;
       stroke: blue;
-      stroke-width: 100%;
       stroke-dasharray: 0, 314%;
-      r: 50%; }
+      stroke-width: 50%;
+      transition: 400ms; }
 
 #start {
   display: none; }

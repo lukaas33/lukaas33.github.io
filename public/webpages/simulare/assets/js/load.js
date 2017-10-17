@@ -3,7 +3,10 @@
 
 // Has global scope
 var global = {
-  theory: undefined
+  theory: undefined,
+  interaction: {
+    time: 400 // Standard time
+  }
 };
 
 // Has local scope
@@ -29,8 +32,8 @@ var global = {
       // Add additional attributes to it
       if (type === 'paper') {
         script.type = 'text/paperscript'
-        script.setAttribute('canvas', 'screen')
-        callback() // Can't check this loading
+        script.setAttribute('canvas', 'screen') // Paper.js requirement
+        callback() // Can't check  the loading of this
       } else {
         script.onload = function () {
           callback()
@@ -51,7 +54,7 @@ var global = {
 
     console.log('Loaded:', file)
     if (toLoad === 0) {
-      start()
+      setTimeout(start, 400) // Let's animation end
     }
   }
 
@@ -59,7 +62,7 @@ var global = {
   var progressBar = function (percentage) {
     var pie = document.getElementById('loading').getElementsByClassName('pie')[0]
     var total = Math.round(Math.PI * 100) // Circumference of circle
-    var number = (percentage * total) / 100
+    var number = (percentage * total) / 100 // Part of the circle
     pie.style.strokeDasharray = number + '%, ' + total + '%'
   }
 
@@ -68,7 +71,7 @@ var global = {
     console.log('Fully loaded')
   }
 
-  // When current page loads
+  // When the loading page loads
   window.onload = function () {
     // Load the jquery library
     load('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', 'js', function () {
@@ -78,13 +81,14 @@ var global = {
         global.theory = data.content
         loaded('theory')
       })
-      // Load html into page
+      // Load html into an element, will be hidden
       $('#home').load('storage/page.html', function () {
         loaded('html')
-        // Load the main css
-        load('assets/css/main.css', 'css', function () {
-          loaded('css')
-        })
+      })
+
+      // Load the main css
+      load('assets/css/main.css', 'css', function () {
+        loaded('css')
       })
     })
     // Load the Paper.js library
