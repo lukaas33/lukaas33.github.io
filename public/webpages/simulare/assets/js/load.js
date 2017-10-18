@@ -48,7 +48,7 @@ var global = {
   }
 
   // Tracks loaded files
-  var total = 9
+  var total = 10
   var toLoad = total // Initial value
   // Updates loaded files
   var loaded = function (file) {
@@ -108,6 +108,10 @@ var global = {
     // Load the Showdown library
     load('https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.6/showdown.min.js', 'js', function () {
       loaded('showdown')
+    })
+    // Load the css normaliser
+    load('https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css', 'css', function () {
+      loaded('normalize css')
     })
     // Load the main css
     load('assets/css/main.css', 'css', function () {
