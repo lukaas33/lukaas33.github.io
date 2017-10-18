@@ -1,0 +1,44 @@
+// The main stylesheet for the site
+
+// Import shared code
+@import 'partials/global';
+@import 'partials/variables';
+
+.intro {
+  height: 40vw;
+  width: 40vw;
+  position: relative; // Absolute will be relative to this parent
+
+  .screen {
+    background-color: white;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+
+    &:first-child {
+      z-index: 70;
+    }
+
+    &:last-child {
+      z-index: 60;
+
+      .value {
+
+        .slider {
+
+
+        }
+      }
+    }
+
+    .continue {
+      border-radius: 100%;
+      border: 0;
+      bottom: 10%;
+      background-color: orange;
+      position: absolute;
+      right: 0; // Right side of card
+      transform: translateX(50%); // Half of itself over the edge
+    }
+  }
+}

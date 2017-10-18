@@ -1,0 +1,31 @@
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0; }
+
+body {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem; }
+
+.intro {
+  height: 40vw;
+  width: 40vw;
+  position: relative; }
+  .intro .screen {
+    background-color: white;
+    height: 100%;
+    position: absolute;
+    width: 100%; }
+    .intro .screen:first-child {
+      z-index: 70; }
+    .intro .screen:last-child {
+      z-index: 60; }
+    .intro .screen .continue {
+      border-radius: 100%;
+      border: 0;
+      bottom: 10%;
+      background-color: orange;
+      position: absolute;
+      right: 0;
+      transform: translateX(50%); }

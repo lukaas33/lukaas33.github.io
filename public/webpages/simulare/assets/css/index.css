@@ -58,27 +58,7 @@ body {
 #start {
   background-color: purple;
   z-index: 50; }
-  #start .intro {
-    height: 40vw;
-    width: 40vw;
-    position: relative; }
-    #start .intro .screen {
-      background-color: white;
-      height: 100%;
-      position: absolute;
-      width: 100%; }
-      #start .intro .screen:first-child {
-        z-index: 70; }
-      #start .intro .screen:last-child {
-        z-index: 60; }
-      #start .intro .screen .continue {
-        border-radius: 100%;
-        border: 0;
-        bottom: 10%;
-        background-color: orange;
-        position: absolute;
-        right: 0;
-        transform: translateX(50%); }
 
 #home {
+  background-color: red;
   z-index: 0; }
