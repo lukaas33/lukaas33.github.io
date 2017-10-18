@@ -52,27 +52,27 @@
           <form>
             <div class="value">
               <p>Temperature</p>
-              <span class="unit">0 &deg;C</span>
-              <input type="range" name="temperature" min="0" max="40" value="20" class="slider">
-              <span class="unit">40 &deg;C</span>
+              <span class="limit">0 <span class="unit">&deg;C</span></span>
+              <input type="range" name="temperature" data-unit="celcius" min="0" max="40" value="20" class="slider">
+              <span class="limit">40 <span class="unit">&deg;C</span></span>
             </div>
             <div class="value">
               <p>Acidity</p>
-              <span class="unit">5.5</span>
-              <input type="range" name="acidity" min="5.5" max="8.5" value="7" class="slider">
-              <span class="unit">8.5</span>
+              <span class="limit">5.5</span>
+              <input type="range" name="acidity" data-unit="" min="5.5" max="8.5" value="7" class="slider">
+              <span class="limit">8.5</span>
             </div>
             <div class="value">
               <p>Toxicity</p>
-              <span class="unit">0 M</span>
-              <input type="range" name="toxicity" min="0" max="12" value="0" class="slider">
-              <span class="unit">12 M</span>
+              <span class="limit">0 <span class="unit">M</span></span>
+              <input type="range" name="toxicity" data-unit="molar" min="0" max="12" value="0" class="slider">
+              <span class="limit">12 <span class="unit">M</span></span>
             </div>
             <div class="value">
               <p>Energy</p>
-              <span class="unit">2e10 ATP/s</span>
-              <input type="range" name="energy" min="2e10" max="6e11" value="6e11" class="slider">
-              <span class="unit">6e11 ATP/s</span>
+              <span class="limit">2e10 <span class="unit">ATP/s</span></span>
+              <input type="range" name="energy" data-unit="joule" min="2e10" max="6e11" value="6e11" class="slider">
+              <span class="limit">6e11 <span class="unit">ATP/s</span></span>
             </div>
           </form>
         </div>

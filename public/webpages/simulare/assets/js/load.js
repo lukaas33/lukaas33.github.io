@@ -1,11 +1,13 @@
 // This file uses [Js standard](https://standardjs.com/) as code style
 // Comments explaining blocks are above the block
+// This file is optimised for speed, as it initialises the loading screen. That's why I only use the JS DOM here
 
 // Has global scope
 var global = {
   theory: undefined,
   interaction: {
-    time: 400 // Standard time
+    time: 400, // Standard time
+    loaded: false
   },
   enviroment: {
     temperature: null,
@@ -36,15 +38,8 @@ var global = {
       var script = document.createElement('script')
       script.async = true // Will load asynchronously
       script.src = url
-      // Add additional attributes to it
-      if (type === 'paper') {
-        script.type = 'text/paperscript'
-        script.setAttribute('canvas', 'screen') // Paper.js requirement
-        callback() // Can't check  the loading of this
-      } else {
-        script.onload = function () {
-          callback()
-        }
+      script.onload = function () {
+        callback()
       }
 
       // Insert into dom at correct place
@@ -53,16 +48,20 @@ var global = {
   }
 
   // Tracks loaded files
-  var toLoad = 8
+  var total = 9
+  var toLoad = total // Initial value
+  // Updates loaded files
   var loaded = function (file) {
     toLoad -= 1
 
-    var percentage = Math.round((8 - toLoad) / 8 * 100) // Total loaded files
+    var percentage = Math.round((total - toLoad) / total * 100) // Total loaded files
     progressBar(percentage)
 
     console.log('Loaded:', file)
     if (toLoad === 0) {
-      setTimeout(start, 400) // Let's animation end when done
+      setTimeout(function () {
+        global.interaction.loaded = true
+      }, 400) // Let's animation end when done
     }
   }
 
@@ -74,38 +73,9 @@ var global = {
     $pie.style.strokeDasharray = number + '%, ' + total + '%'
   }
 
-  // Starts the program
-  var start = function () {
-    console.log('Fully loaded')
-
-    var $start = document.getElementById('start')
-    var buttons = $start.getElementsByClassName('continue') // Get both buttons
-    // Add event listeners to the buttons
-    buttons[0].addEventListener('click', function () {
-      $start.getElementsByClassName('screen')[0].style.display = 'none' // Hide the first start screen
-    })
-    buttons[1].addEventListener('click', function () {
-      $start.style.display = 'none' // Hide the complete start screen
-    })
-
-    var input = $start.getElementsByClassName('slider') // Get all sliders
-    // Add event listeners to the input
-    for (var index = 0; index < input.length; index++) {
-      var field = input[index]
-      if (field !== undefined) {
-        global.enviroment[field.name] = field.value // Save initial value
-        // Save value on change
-        field.addEventListener('change', function () {
-          global.enviroment[field.name] = field.value
-        })
-      }
-    }
-
-    document.getElementById('loading').style.display = 'none' // Hide loading screen
-  }
-
   // When the loading page loads
   window.onload = function () {
+    loaded('self')
     // Load the jquery library
     load('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', 'js', function () {
       loaded('jquery')
@@ -118,19 +88,18 @@ var global = {
       $('#home').load('storage/page.html', function () {
         loaded('html')
       })
-
-      // Load the main css
-      load('assets/css/main.css', 'css', function () {
-        loaded('css')
+      // Load the main javascript
+      $.getScript('assets/js/main.js', function () {
+        loaded('js')
       })
     })
     // Load the Paper.js library
     load('https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.22/paper.min.js', 'js', function () {
       loaded('paper.js')
-      // Load the main javascript
-      load('assets/js/main.js', 'paper', function () {
-        loaded('js')
-      })
+      // Sets attribute of the script tag
+      var js = document.getElementsByTagName('script')[0]
+      js.setAttribute('canvas', 'screen')
+      js.setAttribute('type', 'text/paperscript')
     })
     // Load the MathJax library
     load('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML-full', 'js', function () {
@@ -139,6 +108,10 @@ var global = {
     // Load the Showdown library
     load('https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.6/showdown.min.js', 'js', function () {
       loaded('showdown')
+    })
+    // Load the main css
+    load('assets/css/main.css', 'css', function () {
+      loaded('css')
     })
   }
 }).call(this)
