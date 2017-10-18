@@ -6,6 +6,12 @@ var global = {
   theory: undefined,
   interaction: {
     time: 400 // Standard time
+  },
+  enviroment: {
+    temperature: null,
+    acidity: null,
+    toxicity: null,
+    energy: null
   }
 };
 
@@ -24,7 +30,8 @@ var global = {
       link.media = 'screen'
       link.rel = 'stylesheet'
 
-      document.getElementsByTagName('head')[0].appendChild(link)
+      // Insert into dom at correct placc
+      document.getElementsByTagName('link')[0].insertAdjacentElement('afterend', link)
     } else {
       var script = document.createElement('script')
       script.async = true // Will load asynchronously
@@ -40,6 +47,7 @@ var global = {
         }
       }
 
+      // Insert into dom at correct place
       document.getElementsByTagName('script')[0].insertAdjacentElement('afterend', script)
     }
   }
@@ -54,21 +62,46 @@ var global = {
 
     console.log('Loaded:', file)
     if (toLoad === 0) {
-      setTimeout(start, 400) // Let's animation end
+      setTimeout(start, 400) // Let's animation end when done
     }
   }
 
   // Changes progressbar on screen
   var progressBar = function (percentage) {
-    var pie = document.getElementById('loading').getElementsByClassName('pie')[0]
+    var $pie = document.getElementById('loading').getElementsByClassName('pie')[0]
     var total = Math.round(Math.PI * 100) // Circumference of circle
     var number = (percentage * total) / 100 // Part of the circle
-    pie.style.strokeDasharray = number + '%, ' + total + '%'
+    $pie.style.strokeDasharray = number + '%, ' + total + '%'
   }
 
   // Starts the program
   var start = function () {
     console.log('Fully loaded')
+
+    var $start = document.getElementById('start')
+    var buttons = $start.getElementsByClassName('continue') // Get both buttons
+    // Add event listeners to the buttons
+    buttons[0].addEventListener('click', function () {
+      $start.getElementsByClassName('screen')[0].style.display = 'none' // Hide the first start screen
+    })
+    buttons[1].addEventListener('click', function () {
+      $start.style.display = 'none' // Hide the complete start screen
+    })
+
+    var input = $start.getElementsByClassName('slider') // Get all sliders
+    // Add event listeners to the input
+    for (var index = 0; index < input.length; index++) {
+      var field = input[index]
+      if (field !== undefined) {
+        global.enviroment[field.name] = field.value // Save initial value
+        // Save value on change
+        field.addEventListener('change', function () {
+          global.enviroment[field.name] = field.value
+        })
+      }
+    }
+
+    document.getElementById('loading').style.display = 'none' // Hide loading screen
   }
 
   // When the loading page loads
@@ -100,7 +133,7 @@ var global = {
       })
     })
     // Load the MathJax library
-    load('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js', 'js', function () {
+    load('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML-full', 'js', function () {
       loaded('mathjax')
     })
     // Load the Showdown library
