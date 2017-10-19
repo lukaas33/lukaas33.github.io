@@ -5,6 +5,10 @@
 
 # << Variables >>
 
+# << Return functions >>
+generateId = ->
+  return "id"
+
 # << Constructors >>
 # Constructor for scientific numbers
 class SciNum
@@ -20,13 +24,17 @@ class Lucarium
   @id: generateId()
   @family: "Lucarium"
 
+# Constructors that inherit code
 class Viridis extends Lucarium
+  # Values that are initialised
   @species: "Viridis"
 
 class Rubrum extends Lucarium
+  # Values that are initialised
   @species: "Rubrum"
 
 class Caeruleus extends Lucarium
+  # Values that are initialised
   @species: "Caeruleus"
 
 # << Methods >>
@@ -38,10 +46,6 @@ Lucarium::display = ->
 Lucarium::move = ->
 
 Lucarium::eat = ->
-
-# << Return functions >>
-generateId = ->
-  return "id"
 
 # << Document functions >>
 # Starts simulation

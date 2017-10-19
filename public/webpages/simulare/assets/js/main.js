@@ -3,6 +3,10 @@
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
+  generateId = function() {
+    return "id";
+  };
+
   SciNum = (function() {
     function SciNum(value, quantity, unit) {
       this.value = value;
@@ -74,10 +78,6 @@
   Lucarium.prototype.move = function() {};
 
   Lucarium.prototype.eat = function() {};
-
-  generateId = function() {
-    return "id";
-  };
 
   start = function() {
     var $input, $start;
