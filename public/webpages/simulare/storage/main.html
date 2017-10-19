@@ -1,0 +1,121 @@
+<!-- Content of the main page -->
+<div id="overlay">
+  <div class="info"></div>
+  <div class="cards"></div>
+</div>
+<div class="field">
+  <div id="menu">
+    <div class="indicator">
+      <button name="menu"><img class="icon" alt="A menu indicator icon" src="assets/images/icons/ic_menu_white_24px.svg"/></button>
+    </div>
+    <div class="items">
+      <div class="item">
+        <button name="volume"><img class="icon" alt="A volume icon striked through" src="assets/images/icons/ic_volume_up_black_24px.svg"/></button>
+      </div>
+      <div class="item">
+        <button name="pause"><img class="icon" alt="A pause icon" src="assets/images/icons/ic_pause_black_24px.svg"/></button>
+      </div>
+      <div class="item">
+        <button name="card"><img class="icon" alt="An empty speach bubble" src="assets/images/icons/ic_chat_bubble_outline_black_24px.svg"/></button>
+      </div>
+      <div class="item">
+        <button name="view"><img class="icon" alt="An icon of a stack of cards with a bookmark" src="assets/images/icons/ic_collections_bookmark_black_24px.svg"/></button>
+      </div>
+      <div class="item">
+        <button name="info"><img class="icon" alt="An info icon" src="assets/images/icons/ic_info_outline_black_24px.svg"/></button>
+      </div>
+    </div>
+  </div>
+  <div id="cards">
+    <div class="card">example</div>
+    <div class="card">example 2</div>
+  </div>
+  <canvas resize id="screen"></canvas>
+</div>
+<div id="sidebar">
+  <header>
+    <img class="logo" alt="The white logo of the 'Vita Simulare' simulation" src="assets/images/logo/logo-white.svg"/>
+    <h1>Vita Simulare</h1>
+  </header>
+  <div class="info">
+    <div id="priority">
+      <div class="status">
+        <div class="clock">
+          <p>5 : 1 : 4</p>
+        </div>
+        <svg class="chart">
+
+        </svg>
+      </div>
+      <p>Scale: 100 : 12</p>
+    </div>
+    <hr/>
+    <section id="enviroment">
+      <div class="text">
+        <h4>Enviroment</h4>
+        <br/>
+      </div>
+      <div class="content">
+        <progress>Temperature</progress>
+        <progress>Acidity</progress>
+        <progress>Toxicity</progress>
+        <progress>Energy</progress>
+      </div>
+    </section>
+    <hr/>
+    <section id="bacteria">
+      <div class="text">
+        <h4>Bacteria</h4>
+        <br/>
+      </div>
+      <div class="empty">
+        <p>No bacteria selected</p>
+      </div>
+      <div class="content">
+        <table class="data">
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
+        <table class="values">
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+    </section>
+  </div>
+  <div class="restart">
+    <button name="restart"><img alt="A reset icon" src="assets/images/icons/ic_refresh_white_24px.svg"/></button>
+  </div>
+</div>

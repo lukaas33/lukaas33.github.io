@@ -11,14 +11,13 @@
   <link href="assets/css/index.css" media="screen" rel="stylesheet">
 </head>
 <body>
-  <!-- Main will be replaced when everything loads -->
   <main id="loading">
     <div class="circle">
-      <img alt="The colored logo of the 'Vita Simulare' simulation" src="assets/images/logo/logo.svg"/>
-      <div class="text">
+      <img class="logo" alt="The colored logo of the 'Vita Simulare' simulation" src="assets/images/logo/logo.svg"/>
+      <section class="text">
         <h1>Vita Simulare</h1>
         <h4>To simulate life</h4>
-      </div>
+      </section>
     </div>
     <!-- From: https://css-tricks.com/how-to-make-charts-with-svg/ -->
     <div class="progress">
@@ -30,7 +29,7 @@
   <main id="start">
     <div class="intro">
       <div class="screen">
-        <div class="text">
+        <section class="text">
           <h1>Start screen 1</h1>
           <br/>
           <p>
@@ -40,13 +39,13 @@
 
             Aliquam tempor nisi ac sapien aliquet mattis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent faucibus odio nibh, sit amet malesuada nisi sodales sed. Curabitur imperdiet mauris diam, in pulvinar libero feugiat ac. Quisque imperdiet lobortis blandit. Aenean sed varius neque. Aliquam vitae ultricies nulla. Ut hendrerit eu nulla nec semper. In luctus, est ultricies bibendum varius, diam sem eleifend arcu, ut consectetur lacus risus vitae quam.
           </p>
+        </section>
+        <div class="continue">
+          <button name="continue"><img class="icon" alt="An arrow to the right" src="assets/images/icons/ic_arrow_forward_white_24px.svg"/></button>
         </div>
-        <button class="continue" name="continue">
-          <img alt="An arrow to the right" src="assets/images/icons/ic_arrow_forward_white_24px.svg"/>
-        </button>
       </div>
       <div class="screen">
-        <div class="text">
+        <section class="text">
           <h1>Start screen 2</h1>
           <br/>
           <form>
@@ -75,10 +74,10 @@
               <span class="limit">6e11 <span class="unit">ATP/s</span></span>
             </div>
           </form>
+        </section>
+        <div class="continue">
+          <button name="start"><img class="icon" alt="A play icon" src="assets/images/icons/ic_play_arrow_white_24px.svg"/></button>
         </div>
-        <button class="continue" name="start">
-          <img alt="A play button" src="assets/images/icons/ic_play_arrow_white_24px.svg"/>
-        </button>
       </div>
     </div>
   </main>
