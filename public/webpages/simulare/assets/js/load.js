@@ -14,7 +14,8 @@ var global = {
     acidity: null,
     toxicity: null,
     energy: null
-  }
+  },
+  bacteria: []
 };
 
 // Has local scope
@@ -85,7 +86,7 @@ var global = {
         loaded('theory')
       })
       // Load html into an element, will be hidden
-      $('#home').load('storage/page.html', function () {
+      $('#home').load('storage/main.html', function () {
         loaded('html')
       })
       // Load the main javascript

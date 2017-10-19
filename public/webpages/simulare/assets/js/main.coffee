@@ -1,20 +1,58 @@
 # The Js for the main page is made for readibility
-# Comments explaining a block are above the code block
+# Comments explaining a codeblock are above the block
 # Comments explaining lines are next to the expression
+# Code groups are distinguised by << >>
 
+# << Variables >>
+
+# << Constructors >>
 # Constructor for scientific numbers
 class SciNum
+  # Values that need to be entered
   constructor: (@value, @quantity, @unit) ->
 
+# Bacteria constructors
+class Lucarium
+  # Values that need to be entered
+  constructor: (@mass, @position) ->
+
+  # Values that are initialised
+  @id: generateId()
+  @family: "Lucarium"
+
+class Viridis extends Lucarium
+  @species: "Viridis"
+
+class Rubrum extends Lucarium
+  @species: "Rubrum"
+
+class Caeruleus extends Lucarium
+  @species: "Caeruleus"
+
+# << Methods >>
+# Constructor methods
+Lucarium::divide = ->
+
+Lucarium::display = ->
+
+Lucarium::move = ->
+
+Lucarium::eat = ->
+
+# << Return functions >>
+generateId = ->
+  return "id"
+
+# << Document functions >>
 # Starts simulation
 start = ->
   console.log "Loaded completely"
 
   $start = $("#start")
   # Add events to elements
-  $start.find(".continue:first").click ->
+  $start.find(".continue button[name=continue]").click ->
     $start.find(".screen:first").hide() # Hide first screen
-  $start.find(".continue:last").click ->
+  $start.find(".continue button[name=start]").click ->
     $start.hide() # Hide complete screen
 
   $input = $start.find(".slider")
@@ -28,9 +66,9 @@ start = ->
 
   $("#loading").hide() # Hide loading screen
 
+# << Simulation functions >>
 
-
-
+# << Actions >>
 # Checks if loading is done
 isLoaded = setInterval ->
   if global.interaction.loaded

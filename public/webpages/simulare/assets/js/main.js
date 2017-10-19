@@ -1,5 +1,7 @@
 (function() {
-  var SciNum, isLoaded, start;
+  var Caeruleus, Lucarium, Rubrum, SciNum, Viridis, generateId, isLoaded, start,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
   SciNum = (function() {
     function SciNum(value, quantity, unit) {
@@ -12,14 +14,79 @@
 
   })();
 
+  Lucarium = (function() {
+    function Lucarium(mass, position) {
+      this.mass = mass;
+      this.position = position;
+    }
+
+    Lucarium.id = generateId();
+
+    Lucarium.family = "Lucarium";
+
+    return Lucarium;
+
+  })();
+
+  Viridis = (function(superClass) {
+    extend(Viridis, superClass);
+
+    function Viridis() {
+      return Viridis.__super__.constructor.apply(this, arguments);
+    }
+
+    Viridis.species = "Viridis";
+
+    return Viridis;
+
+  })(Lucarium);
+
+  Rubrum = (function(superClass) {
+    extend(Rubrum, superClass);
+
+    function Rubrum() {
+      return Rubrum.__super__.constructor.apply(this, arguments);
+    }
+
+    Rubrum.species = "Rubrum";
+
+    return Rubrum;
+
+  })(Lucarium);
+
+  Caeruleus = (function(superClass) {
+    extend(Caeruleus, superClass);
+
+    function Caeruleus() {
+      return Caeruleus.__super__.constructor.apply(this, arguments);
+    }
+
+    Caeruleus.species = "Caeruleus";
+
+    return Caeruleus;
+
+  })(Lucarium);
+
+  Lucarium.prototype.divide = function() {};
+
+  Lucarium.prototype.display = function() {};
+
+  Lucarium.prototype.move = function() {};
+
+  Lucarium.prototype.eat = function() {};
+
+  generateId = function() {
+    return "id";
+  };
+
   start = function() {
     var $input, $start;
     console.log("Loaded completely");
     $start = $("#start");
-    $start.find(".continue:first").click(function() {
+    $start.find(".continue button[name=continue]").click(function() {
       return $start.find(".screen:first").hide();
     });
-    $start.find(".continue:last").click(function() {
+    $start.find(".continue button[name=start]").click(function() {
       return $start.hide();
     });
     $input = $start.find(".slider");
