@@ -1,7 +1,43 @@
 #project {
   .box {
-    height: 45vh;
-    position: relative; // Absolute will be relative to this
+    &.normal {
+      height: 45vh;
+      position: relative; // Absolute will be relative to this
+
+      img {
+        height: auto;
+        width: 100%;
+      }
+
+      .fab {
+        transform: translateY(-50%); // Halfway over the image
+      }
+
+      .shadow {
+        display: block; // Visible
+      }
+    }
+
+    &.fill {
+      height: 100vh;
+      left: 0;
+      position: fixed;
+      bottom: 0;
+      width: 100vw;
+
+      img {
+        height: 100%;
+        width: auto;
+      }
+
+      .fab {
+        transform: translateY(-150%); // Bottom right corner
+      }
+
+      .shadow {
+        display: none; // Invisible
+      }
+    }
 
     .fab {
       @extend %round; // Round button
@@ -9,7 +45,6 @@
       height: 3rem;
       position: absolute; // Won't take up actual space
       right: 1.5rem; // Aligned right
-      transform: translateY(-50%); // Halfway over the image
       width: 3rem;
 
       a,
@@ -36,7 +71,6 @@
     img {
       display: block; // No empty space at the end
       margin: auto;
-      width: 100%;
     }
 
     iframe {

@@ -43,14 +43,16 @@
   <base href="../"></base>
   <!-- Applies to multiple pages -->
   <%- include('partials/appdata') %>
+  <!-- Js -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="assets/javascript/project.js"></script>
   <!-- Css -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
   <link href="assets/css/main.css" media="screen" rel="stylesheet">
   <link href="assets/css/print.css" media="print" rel="stylesheet">
-  <!-- Js -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="assets/javascript/project.js"></script>
+  <style> body {display: none;} /* Will be show when javascript completes actions */ </style>
+  <noscript><style> body {display: block;} /* Javascript not available */ </style></noscript>
 </head>
 <body>
   <!-- Navbar -->
@@ -59,7 +61,7 @@
   <main>
     <section id="project" class="part">
       <div class="card">
-        <div class="box">
+        <div class="box normal">
           <div class="container">
 
             <% if (data.type === 'collection') { %>
@@ -69,6 +71,7 @@
             <% } else if (data.type === 'presentation') { %>
                 <iframe src="<%= data.media %>" frameborder="0" allowfullscreen="true"></iframe>
             <% } else { %>
+              <!-- Alt text is dependend on type -->
               <% let alt = '' %>
               <% if (data.type === 'website') { alt = `A screenshot of the '${data.title}' website` } %>
               <% if (data.type === 'document') { alt = `The cover for '${data.title}'` } %>

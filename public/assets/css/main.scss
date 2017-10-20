@@ -26,7 +26,7 @@ main {
 
   animation: slideUp $animation-long; // On load it slides in from the bottom with normal tranistion values
   margin: 0 $base-margin; // Main gets centered horizontally
-  position: relative; // Z-index doesn't work on static elements
+  position: absolute; // Z-index doesn't work on static elements
   width: (100vw - (2 * $base-margin));
   z-index: 20; // Above the header
 
