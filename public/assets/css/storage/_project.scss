@@ -85,5 +85,11 @@
     a {
       @extend %link;
     }
+
+    embed {
+      // The pdf file
+      min-height: 150vh;
+      width: 100%;
+    }
   }
 }

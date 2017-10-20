@@ -41,7 +41,7 @@ app.use(helmet.contentSecurityPolicy({ // Allowed sources
     styleSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com', '*.googleapis.com'],
     fontSrc: ["'self'", 'fonts.gstatic.com'],
     imgSrc: ["'self'"],
-    objectSrc: ["'none'"]
+    objectSrc: ["'self'"]
   }
 }))
 

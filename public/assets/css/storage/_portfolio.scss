@@ -37,7 +37,7 @@
     width: 100%; // Of portfolio
   }
 
-  .page { // TODO content stays in view when switching pages
+  .page {
     @extend %grid; // Grid of cards
     margin: $margin; // Becomes the same width as cards
     width: 100%;

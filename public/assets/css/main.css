@@ -933,3 +933,6 @@ main {
     -ms-user-select: text;
     -webkit-user-select: text;
     user-select: text; }
+    main #project .primary embed {
+      min-height: 150vh;
+      width: 100%; }
