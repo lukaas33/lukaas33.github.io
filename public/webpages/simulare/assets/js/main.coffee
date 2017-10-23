@@ -2,8 +2,10 @@
 # Comments explaining a codeblock are above the block
 # Comments explaining lines are next to the expression
 # Code groups are distinguised by << >>
+'use strict'
 
 # << Variables >>
+$canvas = $("#screen")
 
 # << Return functions >>
 generateId = ->
@@ -48,9 +50,16 @@ Lucarium::move = ->
 Lucarium::eat = ->
 
 # << Document functions >>
+# Sets up the document
+setup = ->
+  paper.install(window) # Don't have to acces objects via paper object
+  paper.setup($canvas[0]) # Make use of the paperscript library
+
 # Starts simulation
 start = ->
   console.log "Loaded completely"
+  setup()
+  events()
 
   $start = $("#start")
   # Add events to elements
@@ -79,3 +88,13 @@ isLoaded = setInterval ->
     start()
     clearInterval(isLoaded)
 , 1
+
+# << Events >>
+events = ->
+  # When canvas is resized
+  view.onResize = (event) ->
+    console.log "resize canvas"
+
+  # Every frame of the canvas
+  view.onFrame = (event) ->
+    console.log "frame"

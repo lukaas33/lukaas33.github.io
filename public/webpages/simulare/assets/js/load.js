@@ -99,7 +99,7 @@ var global = {
       loaded('paper.js')
       // Sets attribute of the script tag
       var js = document.getElementsByTagName('script')[0]
-      js.setAttribute('canvas', 'screen')
+      js.setAttribute('data-paper-canvas', 'screen')
       js.setAttribute('type', 'text/paperscript')
     })
     // Load the MathJax library

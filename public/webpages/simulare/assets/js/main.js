@@ -1,7 +1,10 @@
 (function() {
-  var Caeruleus, Lucarium, Rubrum, SciNum, Viridis, generateId, isLoaded, start,
+  'use strict';
+  var $canvas, Caeruleus, Lucarium, Rubrum, SciNum, Viridis, events, generateId, isLoaded, setup, start,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
+
+  $canvas = $("#screen");
 
   generateId = function() {
     return "id";
@@ -79,9 +82,16 @@
 
   Lucarium.prototype.eat = function() {};
 
+  setup = function() {
+    paper.install(window);
+    return paper.setup($canvas[0]);
+  };
+
   start = function() {
     var $input, $start;
     console.log("Loaded completely");
+    setup();
+    events();
     $start = $("#start");
     $start.find(".continue button[name=continue]").click(function() {
       return $start.find(".screen:first").hide();
@@ -105,5 +115,14 @@
       return clearInterval(isLoaded);
     }
   }, 1);
+
+  events = function() {
+    view.onResize = function(event) {
+      return console.log("resize canvas");
+    };
+    return view.onFrame = function(event) {
+      return console.log("frame");
+    };
+  };
 
 }).call(this);
