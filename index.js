@@ -14,6 +14,7 @@ var mongoClient = require('mongodb')
 var mailgun = require('mailgun-js')
 const app = express()
 const data = {files: ['experience', 'projects', 'skills']}
+
 mongoClient = mongoClient.MongoClient
 mailgun = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.DOMAIN}) // Gets mailgun data from env
 var renderer = new marked.Renderer()
@@ -87,8 +88,8 @@ const send = function (request, response) {
   })
 }
 
-data.set = (entering) => {
-  const open = function (name, callback) {
+data.set = function (entering, complete = () => {}) {
+  const open = function (name, callback = () => {}) {
     filesystem.readFile(name, 'utf8', function (error, data) { // Open the files and store the content
       if (error) {
         console.log('# File reading')
@@ -109,7 +110,7 @@ data.set = (entering) => {
     })
   }
 
-  const upsert = function (document, collection, callback) {
+  const upsert = function (document, collection, callback = () => {}) {
     var query = {title: document.title} // Title is unique
     var current = data.database.collection(collection)
     current.updateOne(query, document, {upsert: true}, function (error, result) {
@@ -126,7 +127,9 @@ data.set = (entering) => {
     for (let file of data.files) {  // Loops through the files
       open(`data/${file}.json`, (objects) => { // Opens the file
         for (let object of objects) { // Loops through the objects
-          upsert(object, file, () => {}) // Empty callback
+          upsert(object, file, () => {
+            complete()
+          }) // Empty callback
         }
       })
     }
@@ -135,7 +138,7 @@ data.set = (entering) => {
   }
 }
 
-data.get = function (collections, callback) {
+data.get = function (collections, callback = () => {}) {
   var result = {} // Will be filled
   for (let file of collections) { // Loop through collections needed
     let options = { // Sort options for each file
@@ -194,6 +197,17 @@ app.get('/projects/:title', function (request, response) { // The title can be d
 app.post('/send', function (request, response) { // Post request at send
   console.log('Post request from client at /send')
   send(request, response) // Email sender
+})
+
+app.post('/enter', function (request, response) {
+  console.log('Post request for data entry')
+  data.set(request, (succes) => {
+    if (succes) {
+      response.end('error') // Info for clientside
+    } else {
+      response.end() // No errors
+    }
+  })
 })
 
 app.listen(app.get('port'), () => console.log(`Node app is running at ${app.get('port')}`))
