@@ -59,7 +59,6 @@ setup = ->
 start = ->
   console.log "Loaded completely"
   setup()
-  events()
 
   $start = $("#start")
   # Add events to elements
@@ -81,20 +80,19 @@ start = ->
 
 # << Simulation functions >>
 
-# << Actions >>
 # Checks if loading is done
-isLoaded = setInterval ->
+isLoaded = setInterval( ->
   if global.interaction.loaded
+    # << Actions >>
     start()
     clearInterval(isLoaded)
-, 1
 
-# << Events >>
-events = ->
-  # When canvas is resized
-  view.onResize = (event) ->
-    console.log "resize canvas"
+    # << Events >>
+    # When canvas is resized
+    view.onResize = (event) ->
+      console.log "resize canvas"
 
-  # Every frame of the canvas
-  view.onFrame = (event) ->
-    console.log "frame"
+    # Every frame of the canvas
+    view.onFrame = (event) ->
+      console.log "frame"
+, 1)

@@ -7,7 +7,9 @@ var global = {
   theory: undefined,
   interaction: {
     time: 400, // Standard time
-    loaded: false
+    loaded: false,
+    pauzed: false,
+    music: true
   },
   enviroment: {
     temperature: null,
