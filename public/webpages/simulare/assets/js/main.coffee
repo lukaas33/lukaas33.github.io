@@ -25,7 +25,8 @@ Calc.scale = (value, needed = 'scaled') ->
   DPC = 72 / 2.54 # From px/inch to px/cm, asuming 72 dpi
   if needed == "scaled"
     size = value * global.constants.scaleFactor # Get the scaled value in cm
-    return size * DPC # Total size
+    size = size * DPC # Total size
+    return size
   else if needed == "real"
     size = value / DPC # Scaled value in cm
     size = size / global.constants.scaleFactor # Real value
@@ -45,6 +46,11 @@ class SciNum
   # Values that need to be entered
   constructor: (@value, @quantity, @unit) ->
 
+# Constructor for food
+class Food
+  # Values that need to be entered
+  constructor: (@energy, @quantity) ->
+
 # Bacteria constructors
 class Lucarium
   # Values that need to be entered
@@ -58,8 +64,8 @@ class Lucarium
 
   display: =>
     # Body at instance's location
-    @body = new Path.Circle(@position, Calc.scale(@diameter / 2))
-    console.log(@position, Calc.scale(@diameter / 2))
+    @body = new Path.Circle(@position, Calc.scale(@diameter.value / 2))
+    console.log(@position, Calc.scale(@diameter.value / 2))
     @body.fillColor = @color
 
   update: =>
@@ -97,7 +103,10 @@ simulation = {}
 # Creates instances of bacteria
 simulation.createLife = ->
   console.log("Creating life")
-  global.bacteria[0] = new Viridis(1.0e-6, 3.9e9, new Point(view.center), 1)
+  size = new SciNum(1.0e-6, 'length', 'metre')
+  energy = new SciNum(3.9e9, 'energy', 'joule')
+
+  global.bacteria[0] = new Viridis(size, energy, new Point(view.center), 1)
 
 # Sets up the document
 simulation.setup = ->

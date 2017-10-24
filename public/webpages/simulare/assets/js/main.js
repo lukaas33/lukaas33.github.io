@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var Caeruleus, Calc, Lucarium, Rubrum, SciNum, Viridis, doc, draw, generate, isLoaded, local, simulation, time,
+  var Caeruleus, Calc, Food, Lucarium, Rubrum, SciNum, Viridis, doc, draw, generate, isLoaded, local, simulation, time,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
@@ -25,7 +25,8 @@
     DPC = 72 / 2.54;
     if (needed === "scaled") {
       size = value * global.constants.scaleFactor;
-      return size * DPC;
+      size = size * DPC;
+      return size;
     } else if (needed === "real") {
       size = value / DPC;
       size = size / global.constants.scaleFactor;
@@ -52,10 +53,20 @@
 
   })();
 
+  Food = (function() {
+    function Food(energy1, quantity) {
+      this.energy = energy1;
+      this.quantity = quantity;
+    }
+
+    return Food;
+
+  })();
+
   Lucarium = (function() {
-    function Lucarium(diameter, energy, position, generation) {
+    function Lucarium(diameter, energy1, position, generation) {
       this.diameter = diameter;
-      this.energy = energy;
+      this.energy = energy1;
       this.position = position;
       this.generation = generation;
       this.move = bind(this.move, this);
@@ -70,8 +81,8 @@
     Lucarium.prototype.divide = function() {};
 
     Lucarium.prototype.display = function() {
-      this.body = new Path.Circle(this.position, Calc.scale(this.diameter / 2));
-      console.log(this.position, Calc.scale(this.diameter / 2));
+      this.body = new Path.Circle(this.position, Calc.scale(this.diameter.value / 2));
+      console.log(this.position, Calc.scale(this.diameter.value / 2));
       return this.body.fillColor = this.color;
     };
 
@@ -127,8 +138,11 @@
   simulation = {};
 
   simulation.createLife = function() {
+    var energy, size;
     console.log("Creating life");
-    return global.bacteria[0] = new Viridis(1.0e-6, 3.9e9, new Point(view.center), 1);
+    size = new SciNum(1.0e-6, 'length', 'metre');
+    energy = new SciNum(3.9e9, 'energy', 'joule');
+    return global.bacteria[0] = new Viridis(size, energy, new Point(view.center), 1);
   };
 
   simulation.setup = function() {
