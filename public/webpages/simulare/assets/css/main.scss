@@ -3,42 +3,66 @@
 // Import shared code
 @import 'partials/global';
 @import 'partials/variables';
+@import 'partials/classes';
+@import 'partials/mixins';
 
-.intro {
-  height: 40vw;
-  width: 40vw;
-  position: relative; // Absolute will be relative to this parent
+#start {
+  .intro {
+    height: 40vw;
+    width: 40vw;
+    position: relative; // Absolute will be relative to this parent
 
-  .screen {
-    background-color: white;
-    height: 100%;
-    position: absolute;
-    width: 100%;
+    .screen {
+      background-color: white;
+      height: 100%;
+      position: absolute;
+      width: 100%;
 
-    &:first-child {
-      z-index: 70;
-    }
+      &:first-child {
+        z-index: 70;
+      }
 
-    &:last-child {
-      z-index: 60;
+      &:last-child {
+        z-index: 60;
 
-      .value {
+        .value {
 
-        .slider {
+          .slider {
 
 
+          }
         }
       }
-    }
 
-    .continue {
-      border-radius: 100%;
-      border: 0;
-      bottom: 10%;
-      background-color: orange;
-      position: absolute;
-      right: 0; // Right side of card
-      transform: translateX(50%); // Half of itself over the edge
+      .continue {
+        border-radius: 100%;
+        border: 0;
+        bottom: 10%;
+        background-color: orange;
+        position: absolute;
+        right: 0; // Right side of card
+        transform: translateX(50%); // Half of itself over the edge
+      }
     }
   }
+}
+
+#overlay {
+  background-color: rgba(0, 0, 0, .50);
+  display: none;
+  height: 100vh;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100vw;
+}
+
+#field {
+  height: 100vh;
+  width: 80vw;
+}
+
+#sidebar {
+  height: 100vh;
+  width: 20vw;
 }

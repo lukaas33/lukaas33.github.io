@@ -3,6 +3,8 @@
 // Import shared code
 @import 'partials/global';
 @import 'partials/variables';
+@import 'partials/classes';
+@import 'partials/mixins';
 
 // TODO use colors and standard padding
 // TODO create classes for shared values
@@ -16,7 +18,6 @@
   justify-content: center; // Vertical center of children
   position: absolute; // Will have content below
   width: 100vw;
-
 }
 
 #loading {
