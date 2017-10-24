@@ -5,7 +5,7 @@
 # Objects are used to group functions
 'use strict'
 
-# TODO use css styling rules here, like colors
+# TODO The styling of the bacteria here
 
 # << Variables >>
 # Group
@@ -23,6 +23,7 @@ time = {}
 # Returns the value according to a scale
 Calc.scale = (value, needed = 'scaled') ->
   DPC = 72 / 2.54 # From px/inch to px/cm, asuming 72 dpi
+
   if needed == "scaled"
     size = value * global.constants.scaleFactor # Get the scaled value in cm
     size = size * DPC # Total size
@@ -49,7 +50,7 @@ class SciNum
 # Constructor for food
 class Food
   # Values that need to be entered
-  constructor: (@energy, @quantity) ->
+  constructor: (@energy, @position) ->
 
 # Bacteria constructors
 class Lucarium
@@ -60,18 +61,22 @@ class Lucarium
     @family = "Lucarium"
 
   # << Methods >>
+  # Divide itself
   divide: =>
 
+  # Creates a body
   display: =>
     # Body at instance's location
     @body = new Path.Circle(@position, Calc.scale(@diameter.value / 2))
-    console.log(@position, Calc.scale(@diameter.value / 2))
     @body.fillColor = @color
 
+  # Updates it's body
   update: =>
 
+  # Gets energy
   eat: =>
 
+  # Changes the location
   move: =>
 
 # Constructors that inherit code
@@ -123,9 +128,9 @@ simulation.start = ->
   simulation.setup()
 
   # Add events to elements
-  doc['$start'].find(".continue button[name=continue]").click ->
+  doc['$start'].find("button[name=continue]").click ->
     doc['$start'].find(".screen:first").hide() # Hide first screen
-  doc['$start'].find(".continue button[name=start]").click ->
+  doc['$start'].find("button[name=start]").click ->
     doc['$start'].hide() # Hide complete screen
 
   $input = doc['$start'].find(".slider")
@@ -138,6 +143,9 @@ simulation.start = ->
   )
 
   $("#loading").hide() # Hide loading screen
+
+# Runs simulation
+simulation.run = ->
 
 # << Simulation functions >>
 # Groups

@@ -54,9 +54,9 @@
   })();
 
   Food = (function() {
-    function Food(energy1, quantity) {
+    function Food(energy1, position) {
       this.energy = energy1;
-      this.quantity = quantity;
+      this.position = position;
     }
 
     return Food;
@@ -82,7 +82,6 @@
 
     Lucarium.prototype.display = function() {
       this.body = new Path.Circle(this.position, Calc.scale(this.diameter.value / 2));
-      console.log(this.position, Calc.scale(this.diameter.value / 2));
       return this.body.fillColor = this.color;
     };
 
@@ -157,10 +156,10 @@
     var $input;
     console.log("Loaded completely");
     simulation.setup();
-    doc['$start'].find(".continue button[name=continue]").click(function() {
+    doc['$start'].find("button[name=continue]").click(function() {
       return doc['$start'].find(".screen:first").hide();
     });
-    doc['$start'].find(".continue button[name=start]").click(function() {
+    doc['$start'].find("button[name=start]").click(function() {
       return doc['$start'].hide();
     });
     $input = doc['$start'].find(".slider");
@@ -172,6 +171,8 @@
     });
     return $("#loading").hide();
   };
+
+  simulation.run = function() {};
 
   draw = {};
 
