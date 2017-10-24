@@ -1,14 +1,28 @@
 (function() {
   'use strict';
-  var $canvas, Caeruleus, Lucarium, Rubrum, SciNum, Viridis, generateId, isLoaded, setup, start,
+  var Caeruleus, Calc, Lucarium, Rubrum, SciNum, Viridis, doc, draw, generate, isLoaded, local, simulation, time,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  $canvas = $("#screen");
+  doc = {};
 
-  generateId = function() {
+  local = {};
+
+  doc['$canvas'] = $("#screen");
+
+  doc['$start'] = $("#start");
+
+  Calc = {};
+
+  generate = {};
+
+  time = {};
+
+  generate.id = function() {
     return "id";
   };
+
+  time.now = function() {};
 
   SciNum = (function() {
     function SciNum(value, quantity, unit) {
@@ -22,12 +36,14 @@
   })();
 
   Lucarium = (function() {
-    function Lucarium(mass, position) {
-      this.mass = mass;
+    function Lucarium(diameter, position, generation, birthTime) {
+      this.diameter = diameter;
       this.position = position;
+      this.generation = generation;
+      this.birthTime = birthTime;
     }
 
-    Lucarium.id = generateId();
+    Lucarium.id = generate.id();
 
     Lucarium.family = "Lucarium";
 
@@ -82,23 +98,30 @@
 
   Lucarium.prototype.eat = function() {};
 
-  setup = function() {
-    paper.install(window);
-    return paper.setup($canvas[0]);
+  simulation = {};
+
+  simulation.createLife = function() {
+    return global.bacteria[0] = new Viridis(1.0e-9, new Point(), 1, time.now());
   };
 
-  start = function() {
-    var $input, $start;
+  simulation.setup = function() {
+    paper.install(window);
+    paper.setup(doc['$canvas'][0]);
+    draw.background();
+    return simulation.createLife();
+  };
+
+  simulation.start = function() {
+    var $input;
     console.log("Loaded completely");
-    setup();
-    $start = $("#start");
-    $start.find(".continue button[name=continue]").click(function() {
-      return $start.find(".screen:first").hide();
+    simulation.setup();
+    doc['$start'].find(".continue button[name=continue]").click(function() {
+      return doc['$start'].find(".screen:first").hide();
     });
-    $start.find(".continue button[name=start]").click(function() {
-      return $start.hide();
+    doc['$start'].find(".continue button[name=start]").click(function() {
+      return doc['$start'].hide();
     });
-    $input = $start.find(".slider");
+    $input = doc['$start'].find(".slider");
     $input.each(function() {
       global.enviroment[this.name] = new SciNum(this.value, this.name, this.dataset.unit);
       return $(this).change(function() {
@@ -108,16 +131,22 @@
     return $("#loading").hide();
   };
 
+  draw = {};
+
+  draw.background = function() {
+    var bottomLayer;
+    bottomLayer = new Path.Rectangle(new Point(0, 0), view.size);
+    return bottomLayer.fillColor = 'grey';
+  };
+
   isLoaded = setInterval(function() {
     if (global.interaction.loaded) {
-      start();
+      simulation.start();
       clearInterval(isLoaded);
       view.onResize = function(event) {
-        return console.log("resize canvas");
+        return console.log("Resized canvas");
       };
-      return view.onFrame = function(event) {
-        return console.log("frame");
-      };
+      return view.onFrame = function(event) {};
     }
   }, 1);
 

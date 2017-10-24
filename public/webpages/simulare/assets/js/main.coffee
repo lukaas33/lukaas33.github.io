@@ -2,14 +2,30 @@
 # Comments explaining a codeblock are above the block
 # Comments explaining lines are next to the expression
 # Code groups are distinguised by << >>
+# Objects are used to group functions
 'use strict'
 
+# TODO use css styling rules here, like colors
+
 # << Variables >>
-$canvas = $("#screen")
+# Group
+doc = {}
+local = {}
+
+doc['$canvas'] = $("#screen")
+doc['$start'] = $("#start")
 
 # << Return functions >>
-generateId = ->
+# Groups
+Calc = {}
+generate = {}
+time = {}
+
+# Creates unique id
+generate.id = ->
   return "id"
+
+time.now = ->
 
 # << Constructors >>
 # Constructor for scientific numbers
@@ -20,10 +36,10 @@ class SciNum
 # Bacteria constructors
 class Lucarium
   # Values that need to be entered
-  constructor: (@mass, @position) ->
+  constructor: (@diameter, @position, @generation, @birthTime) ->
 
   # Values that are initialised
-  @id: generateId()
+  @id: generate.id()
   @family: "Lucarium"
 
 # Constructors that inherit code
@@ -50,24 +66,33 @@ Lucarium::move = ->
 Lucarium::eat = ->
 
 # << Document functions >>
+# Groups
+simulation = {}
+
+# Creates instances of bacteria
+simulation.createLife = ->
+  global.bacteria[0] = new Viridis(1.0e-9, new Point(), 1, time.now())
+
 # Sets up the document
-setup = ->
+simulation.setup = ->
   paper.install(window) # Don't have to acces objects via paper object
-  paper.setup($canvas[0]) # Make use of the paperscript library
+  paper.setup(doc['$canvas'][0]) # Make use of the paperscript library
+
+  draw.background()
+  simulation.createLife()
 
 # Starts simulation
-start = ->
+simulation.start = ->
   console.log "Loaded completely"
-  setup()
+  simulation.setup()
 
-  $start = $("#start")
   # Add events to elements
-  $start.find(".continue button[name=continue]").click ->
-    $start.find(".screen:first").hide() # Hide first screen
-  $start.find(".continue button[name=start]").click ->
-    $start.hide() # Hide complete screen
+  doc['$start'].find(".continue button[name=continue]").click ->
+    doc['$start'].find(".screen:first").hide() # Hide first screen
+  doc['$start'].find(".continue button[name=start]").click ->
+    doc['$start'].hide() # Hide complete screen
 
-  $input = $start.find(".slider")
+  $input = doc['$start'].find(".slider")
   $input.each( ->
     # Initial value
     global.enviroment[@name] = new SciNum(@value, @name, @dataset.unit)
@@ -79,20 +104,27 @@ start = ->
   $("#loading").hide() # Hide loading screen
 
 # << Simulation functions >>
+# Groups
+draw = {}
+
+# Draws the background
+draw.background = ->
+  bottomLayer = new Path.Rectangle(new Point(0, 0), view.size)
+  bottomLayer.fillColor = 'grey'
 
 # Checks if loading is done
 isLoaded = setInterval( ->
   if global.interaction.loaded
     # << Actions >>
-    start()
+    simulation.start()
     clearInterval(isLoaded)
 
     # << Events >>
     # When canvas is resized
     view.onResize = (event) ->
-      console.log "resize canvas"
+      console.log "Resized canvas"
 
     # Every frame of the canvas
     view.onFrame = (event) ->
-      console.log "frame"
+
 , 1)
