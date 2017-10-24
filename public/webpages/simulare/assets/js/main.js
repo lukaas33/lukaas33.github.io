@@ -8,8 +8,6 @@
 
   local = {};
 
-  doc['$canvas'] = $("#screen");
-
   doc['$start'] = $("#start");
 
   Calc = {};
@@ -18,15 +16,32 @@
 
   time = {};
 
+  Calc.scale = function(value, needed) {
+    var size;
+    if (needed == null) {
+      needed = 'scaled';
+    }
+    if (needed === "scaled") {
+      size = value * global.constants.scaleFactor;
+      return size + "cm";
+    } else if (needed === "real") {
+      value = parseInt(value);
+      size = value / global.constants.scaleFactor;
+      return size;
+    }
+  };
+
   generate.id = function() {
     return "id";
   };
 
-  time.now = function() {};
+  time.now = function() {
+    return 'time';
+  };
 
   SciNum = (function() {
-    function SciNum(value, quantity, unit) {
-      this.value = value;
+    function SciNum(value1, quantity, unit) {
+      this.value = value1;
       this.quantity = quantity;
       this.unit = unit;
     }
@@ -36,11 +51,10 @@
   })();
 
   Lucarium = (function() {
-    function Lucarium(diameter, position, generation, birthTime) {
+    function Lucarium(diameter, position, generation) {
       this.diameter = diameter;
       this.position = position;
       this.generation = generation;
-      this.birthTime = birthTime;
     }
 
     Lucarium.id = generate.id();
@@ -60,6 +74,8 @@
 
     Viridis.species = "Viridis";
 
+    Viridis.color = '#4caf50';
+
     return Viridis;
 
   })(Lucarium);
@@ -72,6 +88,8 @@
     }
 
     Rubrum.species = "Rubrum";
+
+    Rubrum.color = '#f44336';
 
     return Rubrum;
 
@@ -86,13 +104,20 @@
 
     Caeruleus.species = "Caeruleus";
 
+    Caeruleus.color = '#2196f3';
+
     return Caeruleus;
 
   })(Lucarium);
 
   Lucarium.prototype.divide = function() {};
 
-  Lucarium.prototype.display = function() {};
+  Lucarium.prototype.display = function() {
+    this.body = new Path.Circle(this.position, Calc.scale(this.diameter / 2));
+    return this.body.fillColor = this.color;
+  };
+
+  Lucarium.prototype.update = function() {};
 
   Lucarium.prototype.move = function() {};
 
@@ -101,12 +126,13 @@
   simulation = {};
 
   simulation.createLife = function() {
-    return global.bacteria[0] = new Viridis(1.0e-9, new Point(), 1, time.now());
+    console.log("Creating life");
+    return global.bacteria[0] = new Viridis(1.0e-6, view.center, 1);
   };
 
   simulation.setup = function() {
     paper.install(window);
-    paper.setup(doc['$canvas'][0]);
+    paper.setup($('#screen')[0]);
     draw.background();
     return simulation.createLife();
   };
@@ -135,8 +161,19 @@
 
   draw.background = function() {
     var bottomLayer;
-    bottomLayer = new Path.Rectangle(new Point(0, 0), view.size);
+    bottomLayer = new Path.Rectangle(new Point(0, 0), view.viewSize);
     return bottomLayer.fillColor = 'grey';
+  };
+
+  draw.bacteria = function() {
+    var bacterium, i, len, ref, results;
+    ref = global.bacteria;
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      bacterium = ref[i];
+      results.push(bacterium.display());
+    }
+    return results;
   };
 
   isLoaded = setInterval(function() {
@@ -146,7 +183,16 @@
       view.onResize = function(event) {
         return console.log("Resized canvas");
       };
-      return view.onFrame = function(event) {};
+      return view.onFrame = function(event) {
+        var bacterium, i, len, ref, results;
+        ref = global.bacteria;
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          bacterium = ref[i];
+          results.push(bacterium.update());
+        }
+        return results;
+      };
     }
   }, 1);
 

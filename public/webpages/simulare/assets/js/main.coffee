@@ -12,7 +12,6 @@
 doc = {}
 local = {}
 
-doc['$canvas'] = $("#screen")
 doc['$start'] = $("#start")
 
 # << Return functions >>
@@ -21,11 +20,23 @@ Calc = {}
 generate = {}
 time = {}
 
+# Returns the value according to a scale
+Calc.scale = (value, needed = 'scaled') ->
+  if needed == "scaled"
+    size = value * global.constants.scaleFactor # Get the scaled value
+    return "#{size}cm" # Return the value in cm
+  else if needed == "real"
+    value = parseInt(value) # Get value in cm without unit
+    size = value / global.constants.scaleFactor # Real value
+    return size
+
 # Creates unique id
 generate.id = ->
   return "id"
 
+# Returns the time that the animation has been running
 time.now = ->
+  return 'time'
 
 # << Constructors >>
 # Constructor for scientific numbers
@@ -36,7 +47,7 @@ class SciNum
 # Bacteria constructors
 class Lucarium
   # Values that need to be entered
-  constructor: (@diameter, @position, @generation, @birthTime) ->
+  constructor: (@diameter, @position, @generation) ->
 
   # Values that are initialised
   @id: generate.id()
@@ -46,20 +57,29 @@ class Lucarium
 class Viridis extends Lucarium
   # Values that are initialised
   @species: "Viridis"
+  @color: '#4caf50'
 
 class Rubrum extends Lucarium
   # Values that are initialised
   @species: "Rubrum"
+  @color: '#f44336'
 
 class Caeruleus extends Lucarium
   # Values that are initialised
   @species: "Caeruleus"
+  @color: '#2196f3'
 
 # << Methods >>
 # Constructor methods
 Lucarium::divide = ->
 
 Lucarium::display = ->
+  # Body at instance's location
+  @body = new Path.Circle(@position, Calc.scale(@diameter / 2))
+  @body.fillColor = @color
+
+Lucarium::update = ->
+
 
 Lucarium::move = ->
 
@@ -71,12 +91,13 @@ simulation = {}
 
 # Creates instances of bacteria
 simulation.createLife = ->
-  global.bacteria[0] = new Viridis(1.0e-9, new Point(), 1, time.now())
+  console.log("Creating life")
+  global.bacteria[0] = new Viridis(1.0e-6, view.center, 1)
 
 # Sets up the document
 simulation.setup = ->
   paper.install(window) # Don't have to acces objects via paper object
-  paper.setup(doc['$canvas'][0]) # Make use of the paperscript library
+  paper.setup($('#screen')[0]) # Make use of the paperscript library
 
   draw.background()
   simulation.createLife()
@@ -109,8 +130,12 @@ draw = {}
 
 # Draws the background
 draw.background = ->
-  bottomLayer = new Path.Rectangle(new Point(0, 0), view.size)
+  bottomLayer = new Path.Rectangle(new Point(0, 0), view.viewSize)
   bottomLayer.fillColor = 'grey'
+
+draw.bacteria = ->
+  for bacterium in global.bacteria
+    bacterium.display()
 
 # Checks if loading is done
 isLoaded = setInterval( ->
@@ -126,5 +151,7 @@ isLoaded = setInterval( ->
 
     # Every frame of the canvas
     view.onFrame = (event) ->
-
+      # Loop through the bacteria
+      for bacterium in global.bacteria
+        bacterium.update() # Call display method
 , 1)
