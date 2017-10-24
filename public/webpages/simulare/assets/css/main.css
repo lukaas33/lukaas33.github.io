@@ -8,20 +8,20 @@ body {
   font-family: 'Orbitron', sans-serif;
   font-size: 1rem; }
 
-.intro {
+#start .intro {
   height: 40vw;
   width: 40vw;
   position: relative; }
-  .intro .screen {
+  #start .intro .screen {
     background-color: white;
     height: 100%;
     position: absolute;
     width: 100%; }
-    .intro .screen:first-child {
+    #start .intro .screen:first-child {
       z-index: 70; }
-    .intro .screen:last-child {
+    #start .intro .screen:last-child {
       z-index: 60; }
-    .intro .screen .continue {
+    #start .intro .screen .continue {
       border-radius: 100%;
       border: 0;
       bottom: 10%;
@@ -29,3 +29,20 @@ body {
       position: absolute;
       right: 0;
       transform: translateX(50%); }
+
+#overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  height: 100vh;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100vw; }
+
+#field {
+  height: 100vh;
+  width: 80vw; }
+
+#sidebar {
+  height: 100vh;
+  width: 20vw; }
