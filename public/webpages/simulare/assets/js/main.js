@@ -1,6 +1,7 @@
 (function() {
   'use strict';
   var Caeruleus, Calc, Lucarium, Rubrum, SciNum, Viridis, doc, draw, generate, isLoaded, local, simulation, time,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
@@ -17,16 +18,17 @@
   time = {};
 
   Calc.scale = function(value, needed) {
-    var size;
+    var DPC, size;
     if (needed == null) {
       needed = 'scaled';
     }
+    DPC = 72 / 2.54;
     if (needed === "scaled") {
       size = value * global.constants.scaleFactor;
-      return size + "cm";
+      return size * DPC;
     } else if (needed === "real") {
-      value = parseInt(value);
-      size = value / global.constants.scaleFactor;
+      size = value / DPC;
+      size = size / global.constants.scaleFactor;
       return size;
     }
   };
@@ -51,15 +53,33 @@
   })();
 
   Lucarium = (function() {
-    function Lucarium(diameter, position, generation) {
+    function Lucarium(diameter, energy, position, generation) {
       this.diameter = diameter;
+      this.energy = energy;
       this.position = position;
       this.generation = generation;
+      this.move = bind(this.move, this);
+      this.eat = bind(this.eat, this);
+      this.update = bind(this.update, this);
+      this.display = bind(this.display, this);
+      this.divide = bind(this.divide, this);
+      this.id = generate.id();
+      this.family = "Lucarium";
     }
 
-    Lucarium.id = generate.id();
+    Lucarium.prototype.divide = function() {};
 
-    Lucarium.family = "Lucarium";
+    Lucarium.prototype.display = function() {
+      this.body = new Path.Circle(this.position, Calc.scale(this.diameter / 2));
+      console.log(this.position, Calc.scale(this.diameter / 2));
+      return this.body.fillColor = this.color;
+    };
+
+    Lucarium.prototype.update = function() {};
+
+    Lucarium.prototype.eat = function() {};
+
+    Lucarium.prototype.move = function() {};
 
     return Lucarium;
 
@@ -69,12 +89,10 @@
     extend(Viridis, superClass);
 
     function Viridis() {
-      return Viridis.__super__.constructor.apply(this, arguments);
+      this.species = "Viridis";
+      this.color = '#4caf50';
+      Viridis.__super__.constructor.apply(this, arguments);
     }
-
-    Viridis.species = "Viridis";
-
-    Viridis.color = '#4caf50';
 
     return Viridis;
 
@@ -84,12 +102,10 @@
     extend(Rubrum, superClass);
 
     function Rubrum() {
-      return Rubrum.__super__.constructor.apply(this, arguments);
+      this.species = "Rubrum";
+      this.color = '#f44336';
+      Rubrum.__super__.constructor.apply(this, arguments);
     }
-
-    Rubrum.species = "Rubrum";
-
-    Rubrum.color = '#f44336';
 
     return Rubrum;
 
@@ -99,42 +115,28 @@
     extend(Caeruleus, superClass);
 
     function Caeruleus() {
-      return Caeruleus.__super__.constructor.apply(this, arguments);
+      this.species = "Caeruleus";
+      this.color = '#2196f3';
+      Caeruleus.__super__.constructor.apply(this, arguments);
     }
-
-    Caeruleus.species = "Caeruleus";
-
-    Caeruleus.color = '#2196f3';
 
     return Caeruleus;
 
   })(Lucarium);
 
-  Lucarium.prototype.divide = function() {};
-
-  Lucarium.prototype.display = function() {
-    this.body = new Path.Circle(this.position, Calc.scale(this.diameter / 2));
-    return this.body.fillColor = this.color;
-  };
-
-  Lucarium.prototype.update = function() {};
-
-  Lucarium.prototype.move = function() {};
-
-  Lucarium.prototype.eat = function() {};
-
   simulation = {};
 
   simulation.createLife = function() {
     console.log("Creating life");
-    return global.bacteria[0] = new Viridis(1.0e-6, view.center, 1);
+    return global.bacteria[0] = new Viridis(1.0e-6, 3.9e9, new Point(view.center), 1);
   };
 
   simulation.setup = function() {
     paper.install(window);
     paper.setup($('#screen')[0]);
     draw.background();
-    return simulation.createLife();
+    simulation.createLife();
+    return draw.bacteria();
   };
 
   simulation.start = function() {

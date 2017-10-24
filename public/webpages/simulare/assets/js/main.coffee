@@ -22,12 +22,13 @@ time = {}
 
 # Returns the value according to a scale
 Calc.scale = (value, needed = 'scaled') ->
+  DPC = 72 / 2.54 # From px/inch to px/cm, asuming 72 dpi
   if needed == "scaled"
-    size = value * global.constants.scaleFactor # Get the scaled value
-    return "#{size}cm" # Return the value in cm
+    size = value * global.constants.scaleFactor # Get the scaled value in cm
+    return size * DPC # Total size
   else if needed == "real"
-    value = parseInt(value) # Get value in cm without unit
-    size = value / global.constants.scaleFactor # Real value
+    size = value / DPC # Scaled value in cm
+    size = size / global.constants.scaleFactor # Real value
     return size
 
 # Creates unique id
@@ -47,43 +48,47 @@ class SciNum
 # Bacteria constructors
 class Lucarium
   # Values that need to be entered
-  constructor: (@diameter, @position, @generation) ->
+  constructor: (@diameter, @energy, @position, @generation) ->
+    # Values that are initialised
+    @id = generate.id()
+    @family = "Lucarium"
 
-  # Values that are initialised
-  @id: generate.id()
-  @family: "Lucarium"
+  # << Methods >>
+  divide: =>
+
+  display: =>
+    # Body at instance's location
+    @body = new Path.Circle(@position, Calc.scale(@diameter / 2))
+    console.log(@position, Calc.scale(@diameter / 2))
+    @body.fillColor = @color
+
+  update: =>
+
+  eat: =>
+
+  move: =>
 
 # Constructors that inherit code
 class Viridis extends Lucarium
-  # Values that are initialised
-  @species: "Viridis"
-  @color: '#4caf50'
+  constructor: ->
+    # Values that are initialised
+    @species = "Viridis"
+    @color = '#4caf50'
+    super # Call parent constructor
 
 class Rubrum extends Lucarium
-  # Values that are initialised
-  @species: "Rubrum"
-  @color: '#f44336'
+  constructor: ->
+    # Values that are initialised
+    @species = "Rubrum"
+    @color = '#f44336'
+    super # Call parent constructor
 
 class Caeruleus extends Lucarium
-  # Values that are initialised
-  @species: "Caeruleus"
-  @color: '#2196f3'
-
-# << Methods >>
-# Constructor methods
-Lucarium::divide = ->
-
-Lucarium::display = ->
-  # Body at instance's location
-  @body = new Path.Circle(@position, Calc.scale(@diameter / 2))
-  @body.fillColor = @color
-
-Lucarium::update = ->
-
-
-Lucarium::move = ->
-
-Lucarium::eat = ->
+  constructor: ->
+    # Values that are initialised
+    @species = "Caeruleus"
+    @color = '#2196f3'
+    super # Call parent constructor
 
 # << Document functions >>
 # Groups
@@ -92,7 +97,7 @@ simulation = {}
 # Creates instances of bacteria
 simulation.createLife = ->
   console.log("Creating life")
-  global.bacteria[0] = new Viridis(1.0e-6, view.center, 1)
+  global.bacteria[0] = new Viridis(1.0e-6, 3.9e9, new Point(view.center), 1)
 
 # Sets up the document
 simulation.setup = ->
@@ -101,6 +106,7 @@ simulation.setup = ->
 
   draw.background()
   simulation.createLife()
+  draw.bacteria()
 
 # Starts simulation
 simulation.start = ->
@@ -153,5 +159,5 @@ isLoaded = setInterval( ->
     view.onFrame = (event) ->
       # Loop through the bacteria
       for bacterium in global.bacteria
-        bacterium.update() # Call display method
+        bacterium.update() # Call method
 , 1)
