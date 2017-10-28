@@ -89,7 +89,9 @@
       return this.body.fillColor = this.color;
     };
 
-    Lucarium.prototype.update = function() {};
+    Lucarium.prototype.update = function() {
+      return this.body.position = this.position;
+    };
 
     Lucarium.prototype.eat = function() {};
 

@@ -74,6 +74,7 @@ class Lucarium
 
   # Updates it's body
   update: =>
+    @body.position = @position
 
   # Gets energy
   eat: =>
