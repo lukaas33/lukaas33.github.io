@@ -12,7 +12,9 @@
 doc = {}
 local = {}
 
-doc['$start'] = $("#start")
+# Get elements with these id's
+for id in ['start', 'screen', 'field']
+  doc[id] = $("##{id}")
 
 # << Return functions >>
 # Groups
@@ -104,6 +106,20 @@ class Caeruleus extends Lucarium
 # << Document functions >>
 # Groups
 simulation = {}
+html = {}
+
+# Sets the size variables
+html.setSize = ->
+  width = doc.field.width()
+  height = doc.field.height()
+  # Local variables
+  local.width = width
+  local.height = height
+  local.center = new Point(width / 2, height / 2)
+  local.size = new Size(width, height)
+  # Paper.js variables
+  view.viewSize.width = width
+  view.viewSize.height = height
 
 # Creates instances of bacteria
 simulation.createLife = ->
@@ -111,12 +127,13 @@ simulation.createLife = ->
   size = new SciNum(1.0e-6, 'length', 'metre')
   energy = new SciNum(3.9e9, 'energy', 'joule')
 
-  global.bacteria[0] = new Viridis(size, energy, new Point(view.center), 1)
+  global.bacteria[0] = new Viridis(size, energy, local.center, 1)
 
 # Sets up the document
 simulation.setup = ->
   paper.install(window) # Don't have to acces objects via paper object
-  paper.setup($('#screen')[0]) # Make use of the paperscript library
+  paper.setup(doc.screen[0]) # Make use of the paperscript library
+  html.setSize() # Initial value
 
   draw.background()
   simulation.createLife()
@@ -128,13 +145,13 @@ simulation.start = ->
   simulation.setup()
 
   # Add events to elements
-  doc['$start'].find("button[name=continue]").click ->
-    doc['$start'].find(".screen:first").hide() # Hide first screen
-  doc['$start'].find("button[name=start]").click ->
-    doc['$start'].hide() # Hide complete screen
+  doc.start.find("button[name=continue]").click ->
+    doc.start.find(".screen:first").hide() # Hide first screen
+  doc.start.find("button[name=start]").click ->
+    doc.start.hide() # Hide complete screen
 
-  $input = doc['$start'].find(".slider")
-  $input.each( ->
+  input = doc.start.find(".slider")
+  input.each( ->
     # Initial value
     global.enviroment[@name] = new SciNum(@value, @name, @dataset.unit)
     # Update the variables on change
@@ -153,8 +170,9 @@ draw = {}
 
 # Draws the background
 draw.background = ->
-  bottomLayer = new Path.Rectangle(new Point(0, 0), view.viewSize)
+  bottomLayer = new Path.Rectangle(new Point(0, 0), local.size)
   bottomLayer.fillColor = 'grey'
+  console.log bottomLayer.bounds.width
 
 draw.bacteria = ->
   for bacterium in global.bacteria
@@ -168,13 +186,22 @@ isLoaded = setInterval( ->
     clearInterval(isLoaded)
 
     # << Events >>
-    # When canvas is resized
-    view.onResize = (event) ->
-      console.log "Resized canvas"
-
     # Every frame of the canvas
     view.onFrame = (event) ->
       # Loop through the bacteria
       for bacterium in global.bacteria
         bacterium.update() # Call method
+
+    $(window).resize ->
+      html.setSize()
 , 1)
+
+# For testing
+local.functions =
+  draw: draw
+  simulation: simulation
+  html: html
+  Calc: Calc
+  generate: generate
+  time: time
+global.local = local

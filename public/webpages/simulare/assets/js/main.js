@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var Caeruleus, Calc, Food, Lucarium, Rubrum, SciNum, Viridis, doc, draw, generate, isLoaded, local, simulation, time,
+  var Caeruleus, Calc, Food, Lucarium, Rubrum, SciNum, Viridis, doc, draw, generate, html, i, id, isLoaded, len, local, ref, simulation, time,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
@@ -9,7 +9,11 @@
 
   local = {};
 
-  doc['$start'] = $("#start");
+  ref = ['start', 'screen', 'field'];
+  for (i = 0, len = ref.length; i < len; i++) {
+    id = ref[i];
+    doc[id] = $("#" + id);
+  }
 
   Calc = {};
 
@@ -136,34 +140,49 @@
 
   simulation = {};
 
+  html = {};
+
+  html.setSize = function() {
+    var height, width;
+    width = doc.field.width();
+    height = doc.field.height();
+    local.width = width;
+    local.height = height;
+    local.center = new Point(width / 2, height / 2);
+    local.size = new Size(width, height);
+    view.viewSize.width = width;
+    return view.viewSize.height = height;
+  };
+
   simulation.createLife = function() {
     var energy, size;
     console.log("Creating life");
     size = new SciNum(1.0e-6, 'length', 'metre');
     energy = new SciNum(3.9e9, 'energy', 'joule');
-    return global.bacteria[0] = new Viridis(size, energy, new Point(view.center), 1);
+    return global.bacteria[0] = new Viridis(size, energy, local.center, 1);
   };
 
   simulation.setup = function() {
     paper.install(window);
-    paper.setup($('#screen')[0]);
+    paper.setup(doc.screen[0]);
+    html.setSize();
     draw.background();
     simulation.createLife();
     return draw.bacteria();
   };
 
   simulation.start = function() {
-    var $input;
+    var input;
     console.log("Loaded completely");
     simulation.setup();
-    doc['$start'].find("button[name=continue]").click(function() {
-      return doc['$start'].find(".screen:first").hide();
+    doc.start.find("button[name=continue]").click(function() {
+      return doc.start.find(".screen:first").hide();
     });
-    doc['$start'].find("button[name=start]").click(function() {
-      return doc['$start'].hide();
+    doc.start.find("button[name=start]").click(function() {
+      return doc.start.hide();
     });
-    $input = doc['$start'].find(".slider");
-    $input.each(function() {
+    input = doc.start.find(".slider");
+    input.each(function() {
       global.enviroment[this.name] = new SciNum(this.value, this.name, this.dataset.unit);
       return $(this).change(function() {
         return global.enviroment[this.name] = new SciNum(this.value, this.name, this.dataset.unit);
@@ -178,16 +197,17 @@
 
   draw.background = function() {
     var bottomLayer;
-    bottomLayer = new Path.Rectangle(new Point(0, 0), view.viewSize);
-    return bottomLayer.fillColor = 'grey';
+    bottomLayer = new Path.Rectangle(new Point(0, 0), local.size);
+    bottomLayer.fillColor = 'grey';
+    return console.log(bottomLayer.bounds.width);
   };
 
   draw.bacteria = function() {
-    var bacterium, i, len, ref, results;
-    ref = global.bacteria;
+    var bacterium, j, len1, ref1, results;
+    ref1 = global.bacteria;
     results = [];
-    for (i = 0, len = ref.length; i < len; i++) {
-      bacterium = ref[i];
+    for (j = 0, len1 = ref1.length; j < len1; j++) {
+      bacterium = ref1[j];
       results.push(bacterium.display());
     }
     return results;
@@ -197,20 +217,31 @@
     if (global.interaction.loaded) {
       simulation.start();
       clearInterval(isLoaded);
-      view.onResize = function(event) {
-        return console.log("Resized canvas");
-      };
-      return view.onFrame = function(event) {
-        var bacterium, i, len, ref, results;
-        ref = global.bacteria;
+      view.onFrame = function(event) {
+        var bacterium, j, len1, ref1, results;
+        ref1 = global.bacteria;
         results = [];
-        for (i = 0, len = ref.length; i < len; i++) {
-          bacterium = ref[i];
+        for (j = 0, len1 = ref1.length; j < len1; j++) {
+          bacterium = ref1[j];
           results.push(bacterium.update());
         }
         return results;
       };
+      return $(window).resize(function() {
+        return html.setSize();
+      });
     }
   }, 1);
+
+  local.functions = {
+    draw: draw,
+    simulation: simulation,
+    html: html,
+    Calc: Calc,
+    generate: generate,
+    time: time
+  };
+
+  global.local = local;
 
 }).call(this);

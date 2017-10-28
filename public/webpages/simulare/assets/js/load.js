@@ -54,7 +54,7 @@ var global = {
   }
 
   // Tracks loaded files
-  var total = 10
+  var total = 9
   var toLoad = total // Initial value
   // Updates loaded files
   var loaded = function (file) {
@@ -106,10 +106,6 @@ var global = {
       var js = document.getElementsByTagName('script')[0]
       js.setAttribute('data-paper-canvas', 'screen')
       js.setAttribute('type', 'text/paperscript')
-    })
-    // Load the MathJax library
-    load('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML-full', 'js', function () {
-      loaded('mathjax')
     })
     // Load the Showdown library
     load('https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.6/showdown.min.js', 'js', function () {

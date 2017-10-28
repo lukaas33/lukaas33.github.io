@@ -50,9 +50,6 @@ body {
   height: 100vh;
   position: relative;
   width: 80vw; }
-  #field #screen {
-    height: 100%;
-    width: 100%; }
 
 #menu {
   display: flex;
