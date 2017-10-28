@@ -1,10 +1,10 @@
 <!-- Content of the main page -->
 <div id="overlay">
-  <div class="info"></div>
+  <div class="information"></div>
   <div class="cards"></div>
 </div>
 <div id="field">
-  <div id="menu">
+  <div data-state="collapse" id="menu">
     <div class="indicator">
       <button name="menu"><img class="icon" alt="A menu indicator icon" src="assets/images/icons/ic_menu_white_24px.svg"/></button>
     </div>
@@ -30,7 +30,7 @@
     <div class="card">example</div>
     <div class="card">example 2</div>
   </div>
-  <canvas data-paper-resize data-paper-keepalive id="screen"></canvas>
+  <canvas data-paper-keepalive id="screen"></canvas>
 </div>
 <div id="sidebar">
   <header>
@@ -38,7 +38,7 @@
     <h1>Vita Simulare</h1>
   </header>
   <div class="info">
-    <div id="priority">
+    <div class="part" id="priority">
       <div class="status">
         <div class="clock">
           <p>5 : 1 : 4</p>
@@ -49,8 +49,7 @@
       </div>
       <p>Scale: 100 : 12</p>
     </div>
-    <hr/>
-    <section id="enviroment">
+    <section class="part" id="enviroment">
       <div class="text">
         <h4>Enviroment</h4>
         <br/>
@@ -59,11 +58,11 @@
         <progress>Temperature</progress>
         <progress>Acidity</progress>
         <progress>Toxicity</progress>
+        <br/>
         <progress>Energy</progress>
       </div>
     </section>
-    <hr/>
-    <section id="bacteria">
+    <section class="part" data-content="true" id="bacteria">
       <div class="text">
         <h4>Bacteria</h4>
         <br/>
@@ -72,50 +71,54 @@
         <p>No bacteria selected</p>
       </div>
       <div class="content">
-        <table class="data">
-          <tr>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-          </tr>
-        </table>
-        <table class="values">
-          <tr>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-          </tr>
-        </table>
+        <div>
+          <table class="data">
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+        <div>
+          <table class="values">
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
       </div>
     </section>
-  </div>
-  <div class="restart">
-    <button name="restart"><img alt="A reset icon" src="assets/images/icons/ic_refresh_white_24px.svg"/></button>
+    <div class="restart">
+      <button name="restart"><img alt="A reset icon" src="assets/images/icons/ic_refresh_white_24px.svg"/></button>
+    </div>
   </div>
 </div>

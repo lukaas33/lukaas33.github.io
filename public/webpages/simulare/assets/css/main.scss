@@ -9,8 +9,8 @@
 #start {
   .intro {
     height: 40vw;
-    width: 40vw;
     position: relative; // Absolute will be relative to this parent
+    width: 40vw;
 
     .screen {
       background-color: white;
@@ -35,34 +35,233 @@
       }
 
       .continue {
-        border-radius: 100%;
-        border: 0;
-        bottom: 10%;
-        background-color: orange;
-        position: absolute;
-        right: 0; // Right side of card
-        transform: translateX(50%); // Half of itself over the edge
+        button {
+          background-color: orange;
+          border: 0;
+          border-radius: 100%;
+          bottom: 10%;
+          position: absolute;
+          right: 0; // Right side of card
+          transform: translateX(50%); // Half of itself over the edge
+        }
       }
     }
   }
 }
 
 #overlay {
-  background-color: rgba(0, 0, 0, .50);
+  background-color: rgba(0, 0, 0, .5);
   display: none;
   height: 100vh;
   left: 0;
   position: absolute;
   top: 0;
   width: 100vw;
+  z-index: 100; // Above everything
 }
 
 #field {
   height: 100vh;
+  position: relative; // Absolute children relative to this
   width: 80vw;
+
+  #screen {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+#menu {
+  display: flex; // Children are next to each other
+  left: 0;
+  position: absolute;
+  top: 0;
+
+  &[data-state='collapse'] { // Menu state is set to collapse
+
+  }
+
+  &[data-state='expand'] { // Menu state is set to expand
+
+  }
+
+  .indicator {
+  }
+
+  .items {
+    .item {
+      display: inline-block; // Next to each other
+    }
+  }
+}
+
+#cards {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 20%; // Of field
+
+  .card {
+    background-color: white;
+    height: auto;
+    position: relative; // Z-index will apply
+    width: 100%; // Of cards
+
+    &:nth-child(1) { // First card
+
+    }
+
+    &:nth-child(2) { // Second card
+
+    }
+
+    &:nth-child(3) { // Third card
+
+    }
+
+    &:nth-child(n + 3) { // Other children
+
+    }
+  }
 }
 
 #sidebar {
   height: 100vh;
   width: 20vw;
+
+  header {
+    @extend %center-complete; // Center children on both axis
+    background-color: green;
+    height: 10%; // Of sidebar height
+    width: 100%;
+
+    h1 {
+      color: white;
+    }
+
+    img {
+      height: 60%; // Of header height
+      width: auto;
+    }
+  }
+
+  .info {
+    height: 90%; // Of sidebar
+    position: relative; // Absolute children relative to this
+    text-align: center;
+
+    .part {
+
+    }
+
+    #priority {
+      height: 15%; // Of sidebar
+      width: 100%;
+
+      .status {
+        @extend %center-complete; // Center children on both axis
+        height: 8vh;
+        width: 100%;
+
+        .clock {
+          p {
+            font-size: 1.5rem; // Based on base fontsize
+          }
+        }
+
+        .chart {
+          height: 5vh;
+          width: 5vh;
+        }
+      }
+
+    }
+
+    #enviroment {
+      height: 30%; // Of sidebar
+
+      .text {
+        height: 20%; // Of enviroment
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column; // Elements displayed beneath each other
+        height: 80%; // Of enviroment
+        justify-content: space-between; // How children are displayed
+
+        progress {
+          display: block; // Fill line
+          width: 100%; // Of enviroment
+        }
+      }
+    }
+
+    #bacteria {
+      height: 55%; // Of sidebar
+
+      &[data-content='true'] { // There is content
+        .empty {
+          display: none;
+        }
+
+        .content {
+          display: flex;
+        }
+      }
+
+      &[data-content='false'] { // No content
+        .empty {
+          display: block;
+        }
+
+        .content {
+          display: none;
+        }
+      }
+
+      .text {
+        height: 10%; // Of enviroment
+      }
+
+      .empty,
+      .content {
+        height: 90%; // Of enviroment
+      }
+
+      .content {
+        flex-wrap: wrap; // Items are displayed beneath each other in row flex
+
+        div {
+          width: 100%;
+
+          // TODO fix this
+          // &:first-child {
+          //   flex-grow: 1; // Stretch ratio with other element is 2:3
+          // }
+          //
+          // &:last-child {
+          //   flex-grow: 1.5; // Stretch ratio with other element is 2:3
+          // }
+
+          table {
+            height: 100%; // Of container div
+            width: 100%; // Of content
+
+            &.data {
+            }
+
+            &.values {
+            }
+          }
+        }
+      }
+    }
+
+    .restart {
+      left: 0;
+      position: absolute;
+      top: 0;
+    }
+  }
 }

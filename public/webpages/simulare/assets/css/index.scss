@@ -12,16 +12,18 @@
 #loading,
 #start,
 #home {
-  align-items: center; // Horizontal center
-  display: flex; // Easier aligning of child elements
+  @extend %center-complete; // Center children on both axis
   height: 100vh;
-  justify-content: center; // Vertical center of children
-  position: absolute; // Will have content below
+  position: absolute; // Z-index will apply
   width: 100vw;
 }
 
+#loading,
+#start {
+  background-color: green;
+}
+
 #loading {
-  background-color: grey;
   z-index: 80; // Highest page
 
   .circle {
@@ -72,11 +74,10 @@
 }
 
 #start {
-  background-color: purple;
   z-index: 50; // Middle page
 }
 
 #home {
-  background-color: red;
+  background-color: white;
   z-index: 0; // Lowest page
 }

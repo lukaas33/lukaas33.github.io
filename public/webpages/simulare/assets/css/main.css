@@ -2,16 +2,22 @@
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  border: 1px dotted blue; }
 
 body {
   font-family: 'Orbitron', sans-serif;
   font-size: 1rem; }
 
+#sidebar header, #sidebar .info #priority .status {
+  align-items: center;
+  display: flex;
+  justify-content: center; }
+
 #start .intro {
   height: 40vw;
-  width: 40vw;
-  position: relative; }
+  position: relative;
+  width: 40vw; }
   #start .intro .screen {
     background-color: white;
     height: 100%;
@@ -21,11 +27,11 @@ body {
       z-index: 70; }
     #start .intro .screen:last-child {
       z-index: 60; }
-    #start .intro .screen .continue {
-      border-radius: 100%;
-      border: 0;
-      bottom: 10%;
+    #start .intro .screen .continue button {
       background-color: orange;
+      border: 0;
+      border-radius: 100%;
+      bottom: 10%;
       position: absolute;
       right: 0;
       transform: translateX(50%); }
@@ -37,12 +43,98 @@ body {
   left: 0;
   position: absolute;
   top: 0;
-  width: 100vw; }
+  width: 100vw;
+  z-index: 100; }
 
 #field {
   height: 100vh;
+  position: relative;
   width: 80vw; }
+  #field #screen {
+    height: 100%;
+    width: 100%; }
+
+#menu {
+  display: flex;
+  left: 0;
+  position: absolute;
+  top: 0; }
+  #menu .items .item {
+    display: inline-block; }
+
+#cards {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 20%; }
+  #cards .card {
+    background-color: white;
+    height: auto;
+    position: relative;
+    width: 100%; }
 
 #sidebar {
   height: 100vh;
   width: 20vw; }
+  #sidebar header {
+    background-color: green;
+    height: 10%;
+    width: 100%; }
+    #sidebar header h1 {
+      color: white; }
+    #sidebar header img {
+      height: 60%;
+      width: auto; }
+  #sidebar .info {
+    height: 90%;
+    position: relative;
+    text-align: center; }
+    #sidebar .info #priority {
+      height: 15%;
+      width: 100%; }
+      #sidebar .info #priority .status {
+        height: 8vh;
+        width: 100%; }
+        #sidebar .info #priority .status .clock p {
+          font-size: 1.5rem; }
+        #sidebar .info #priority .status .chart {
+          height: 5vh;
+          width: 5vh; }
+    #sidebar .info #enviroment {
+      height: 30%; }
+      #sidebar .info #enviroment .text {
+        height: 20%; }
+      #sidebar .info #enviroment .content {
+        display: flex;
+        flex-direction: column;
+        height: 80%;
+        justify-content: space-between; }
+        #sidebar .info #enviroment .content progress {
+          display: block;
+          width: 100%; }
+    #sidebar .info #bacteria {
+      height: 55%; }
+      #sidebar .info #bacteria[data-content='true'] .empty {
+        display: none; }
+      #sidebar .info #bacteria[data-content='true'] .content {
+        display: flex; }
+      #sidebar .info #bacteria[data-content='false'] .empty {
+        display: block; }
+      #sidebar .info #bacteria[data-content='false'] .content {
+        display: none; }
+      #sidebar .info #bacteria .text {
+        height: 10%; }
+      #sidebar .info #bacteria .empty,
+      #sidebar .info #bacteria .content {
+        height: 90%; }
+      #sidebar .info #bacteria .content {
+        flex-wrap: wrap; }
+        #sidebar .info #bacteria .content div {
+          width: 100%; }
+          #sidebar .info #bacteria .content div table {
+            height: 100%;
+            width: 100%; }
+    #sidebar .info .restart {
+      left: 0;
+      position: absolute;
+      top: 0; }
