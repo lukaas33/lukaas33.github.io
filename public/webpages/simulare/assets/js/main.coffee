@@ -61,26 +61,36 @@ class Lucarium
     # Values that are initialised
     @id = generate.id()
     @family = "Lucarium"
+    @maxSpeed = 0
+    @acceleration = 0
 
   # << Methods >>
-  # Divide itself
-  divide: =>
-
   # Creates a body
   display: =>
     # Body at instance's location
-    @body = new Path.Circle(@position, Calc.scale(@diameter.value / 2))
+    @body = new Path.Circle(@position.round(), Calc.scale(@diameter.value / 2))
     @body.fillColor = @color
 
-  # Updates it's body
+  # Updates its body
   update: =>
-    @body.position = @position
+    @body.position = @position.round()
 
-  # Gets energy
-  eat: =>
+  # Starts moving
+  # move: =>
+  #   # Pseudocode:
+  #   # speedvector + accelerationvector
+  #   # location + speedvector
+  #   # accelerationvector = 0 if speedvector = maxSpeed
 
-  # Changes the location
-  move: =>
+  # # Divide itself
+  # divide: =>
+
+  # # Dies
+  # die: =>
+
+  # # Gets energy
+  # eat: =>
+
 
 # Constructors that inherit code
 class Viridis extends Lucarium
@@ -118,9 +128,7 @@ html.setSize = ->
   local.height = height
   local.center = new Point(width / 2, height / 2)
   local.size = new Size(width, height)
-  # Paper.js variables
-  view.viewSize.width = width
-  view.viewSize.height = height
+  local.origin = new Point(0, 0)
 
 # Creates instances of bacteria
 simulation.createLife = ->
@@ -171,9 +179,17 @@ draw = {}
 
 # Draws the background
 draw.background = ->
-  bottomLayer = new Path.Rectangle(new Point(0, 0), local.size)
-  bottomLayer.fillColor = 'grey'
-  console.log bottomLayer.bounds.width
+  draw.bottom = new Path.Rectangle(local.origin, local.size)
+  draw.bottom.fillColor = 'grey'
+  draw.bubbles = []
+  bubbleValues = [ # Stores info for the bubbles
+    {position: [350, 200], size: 30}
+    {position: [100, 300], size: 50}
+  ]
+
+  for value, index in bubbleValues # Every value
+    draw.bubbles[index] = new Path.Circle(value.position, value.size / 2)
+    draw.bubbles[index].fillColor = 'darkgrey'
 
 draw.bacteria = ->
   for bacterium in global.bacteria
@@ -193,16 +209,22 @@ isLoaded = setInterval( ->
       for bacterium in global.bacteria
         bacterium.update() # Call method
 
-    $(window).resize ->
-      html.setSize()
-, 1)
+    # Paper.js canvas resize event
+    view.onResize = (event) ->
+      previous = local.size # Before resizing
+      html.setSize() # Update size variables
 
-# For testing
-local.functions =
-  draw: draw
-  simulation: simulation
-  html: html
-  Calc: Calc
-  generate: generate
-  time: time
-global.local = local
+      # Scale by a factor of intended width / real width
+      draw.bottom.scale( # Don't know why times 2 but it works don't touch it
+        (local.width / draw.bottom.bounds.width) * 2,
+        (local.height / draw.bottom.bounds.height) * 2
+      )
+      draw.bottom.position = local.origin # Rectangle is updated
+
+      for bubble in draw.bubbles
+        scaledPosition = new Point( # Scale the position of the bubbles
+          x: (bubble.position.x / previous.width) * local.size.width
+          y: (bubble.position.y / previous.height) * local.size.height
+        )
+        bubble.position = scaledPosition # Update position
+, 1)

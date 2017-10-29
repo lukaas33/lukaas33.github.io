@@ -73,29 +73,22 @@
       this.energy = energy1;
       this.position = position;
       this.generation = generation;
-      this.move = bind(this.move, this);
-      this.eat = bind(this.eat, this);
       this.update = bind(this.update, this);
       this.display = bind(this.display, this);
-      this.divide = bind(this.divide, this);
       this.id = generate.id();
       this.family = "Lucarium";
+      this.maxSpeed = 0;
+      this.acceleration = 0;
     }
 
-    Lucarium.prototype.divide = function() {};
-
     Lucarium.prototype.display = function() {
-      this.body = new Path.Circle(this.position, Calc.scale(this.diameter.value / 2));
+      this.body = new Path.Circle(this.position.round(), Calc.scale(this.diameter.value / 2));
       return this.body.fillColor = this.color;
     };
 
     Lucarium.prototype.update = function() {
-      return this.body.position = this.position;
+      return this.body.position = this.position.round();
     };
-
-    Lucarium.prototype.eat = function() {};
-
-    Lucarium.prototype.move = function() {};
 
     return Lucarium;
 
@@ -152,8 +145,7 @@
     local.height = height;
     local.center = new Point(width / 2, height / 2);
     local.size = new Size(width, height);
-    view.viewSize.width = width;
-    return view.viewSize.height = height;
+    return local.origin = new Point(0, 0);
   };
 
   simulation.createLife = function() {
@@ -198,10 +190,26 @@
   draw = {};
 
   draw.background = function() {
-    var bottomLayer;
-    bottomLayer = new Path.Rectangle(new Point(0, 0), local.size);
-    bottomLayer.fillColor = 'grey';
-    return console.log(bottomLayer.bounds.width);
+    var bubbleValues, index, j, len1, results, value;
+    draw.bottom = new Path.Rectangle(local.origin, local.size);
+    draw.bottom.fillColor = 'grey';
+    draw.bubbles = [];
+    bubbleValues = [
+      {
+        position: [350, 200],
+        size: 30
+      }, {
+        position: [100, 300],
+        size: 50
+      }
+    ];
+    results = [];
+    for (index = j = 0, len1 = bubbleValues.length; j < len1; index = ++j) {
+      value = bubbleValues[index];
+      draw.bubbles[index] = new Path.Circle(value.position, value.size / 2);
+      results.push(draw.bubbles[index].fillColor = 'darkgrey');
+    }
+    return results;
   };
 
   draw.bacteria = function() {
@@ -229,21 +237,25 @@
         }
         return results;
       };
-      return $(window).resize(function() {
-        return html.setSize();
-      });
+      return view.onResize = function(event) {
+        var bubble, j, len1, previous, ref1, results, scaledPosition;
+        previous = local.size;
+        html.setSize();
+        draw.bottom.scale((local.width / draw.bottom.bounds.width) * 2, (local.height / draw.bottom.bounds.height) * 2);
+        draw.bottom.position = local.origin;
+        ref1 = draw.bubbles;
+        results = [];
+        for (j = 0, len1 = ref1.length; j < len1; j++) {
+          bubble = ref1[j];
+          scaledPosition = new Point({
+            x: (bubble.position.x / previous.width) * local.size.width,
+            y: (bubble.position.y / previous.height) * local.size.height
+          });
+          results.push(bubble.position = scaledPosition);
+        }
+        return results;
+      };
     }
   }, 1);
-
-  local.functions = {
-    draw: draw,
-    simulation: simulation,
-    html: html,
-    Calc: Calc,
-    generate: generate,
-    time: time
-  };
-
-  global.local = local;
 
 }).call(this);
