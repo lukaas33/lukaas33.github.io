@@ -22,6 +22,7 @@ doc.clock = doc.priority.find('.clock p')
 # << Return functions >>
 # Groups
 Calc = {}
+Random = {}
 generate = {}
 time = {
   time: 0
@@ -40,6 +41,12 @@ Calc.scale = (value, needed = 'scaled') ->
     size = size / global.constants.scaleFactor # Real value
     return size
 
+# Returns value in range
+Random.value = (bottom, top) ->
+  middle = top - bottom
+  value = (Math.random() * middle) + bottom
+  return value
+
 # Creates unique id
 generate.id = ->
   return "id"
@@ -54,6 +61,15 @@ class SciNum
 class Food
   # Values that need to be entered
   constructor: (@energy, @position) ->
+    @diameter = Random.value(0.3e-6, 0.5e-6)
+
+  # Creates the particle
+  display: =>
+    @particle = new Path.Circle(@position, Calc.Scale(@diameter / 2))
+    @particle.fillColor = 'yellow'
+
+  # # Gets eaten
+  # eaten: =>
 
 # Bacteria constructors
 class Lucarium
@@ -65,7 +81,7 @@ class Lucarium
     @maxSpeed = 0
     @acceleration = 0
 
-  # << Methods >>
+  # Methods
   # Creates a body
   display: =>
     # Body at instance's location
@@ -250,15 +266,15 @@ isLoaded = setInterval( ->
     time.clock = setInterval( ->
       if not global.pauzed # Time is not pauzed
         time.time += 1 # Update time
-        # Loop through the bacteria
-        for bacterium in global.bacteria
-          bacterium.ages() # Call method
     , 1)
 
     # Every full second
     time.second = setInterval( ->
       if not global.pauzed # Time is not pauzed
         html.clock()
+        # Loop through the bacteria
+        for bacterium in global.bacteria
+          bacterium.ages() # Call method
     , 1000)
 
     # Every frame of the canvas
@@ -273,7 +289,7 @@ isLoaded = setInterval( ->
       html.setSize() # Update size variables
 
       # Scale by a factor of intended width / real width
-      draw.bottom.scale( # Don't know why times 2 but it works don't touch it
+      draw.bottom.scale( # Don't know why times 2 but it works, don't touch it
         (local.width / draw.bottom.bounds.width) * 2,
         (local.height / draw.bottom.bounds.height) * 2
       )
