@@ -13,14 +13,19 @@ doc = {}
 local = {}
 
 # Get elements with these id's
-for id in ['start', 'screen', 'field']
+for id in ['start', 'screen', 'field', 'menu', 'priority']
   doc[id] = $("##{id}")
+# Store these selections
+doc.menuItems = doc.menu.find('.item button')
+doc.clock = doc.priority.find('.clock p')
 
 # << Return functions >>
 # Groups
 Calc = {}
 generate = {}
-time = {}
+time = {
+  time: 0
+}
 
 # Returns the value according to a scale
 Calc.scale = (value, needed = 'scaled') ->
@@ -39,10 +44,6 @@ Calc.scale = (value, needed = 'scaled') ->
 generate.id = ->
   return "id"
 
-# Returns the time that the animation has been running
-time.now = ->
-  return 'time'
-
 # << Constructors >>
 # Constructor for scientific numbers
 class SciNum
@@ -57,7 +58,7 @@ class Food
 # Bacteria constructors
 class Lucarium
   # Values that need to be entered
-  constructor: (@diameter, @energy, @position, @generation) ->
+  constructor: (@diameter, @energy, @position, @generation, @birth) ->
     # Values that are initialised
     @id = generate.id()
     @family = "Lucarium"
@@ -74,6 +75,10 @@ class Lucarium
   # Updates its body
   update: =>
     @body.position = @position.round()
+
+  # Gets older
+  ages: =>
+    @age = new SciNum((time.time - @birth) / 1000, 'time', 's')
 
   # Starts moving
   # move: =>
@@ -130,13 +135,48 @@ html.setSize = ->
   local.size = new Size(width, height)
   local.origin = new Point(0, 0)
 
+# Updates the screen clock
+html.clock = ->
+  # Set values, from https://goo.gl/P14JkU
+  total = time.time / 1000
+  hours = Math.floor(total / 3600)
+  minutes = Math.floor(total % 3600 / 60)
+  seconds = Math.floor(total % 3600 % 60)
+
+  # Format a timestring
+  form = (number) ->
+    string = String(number)
+    if string.length == 1
+      string = "0#{string}"
+    return string
+
+  # Loop through the parts of the clock
+  doc.clock.find('span').each( ->
+    if $(@).hasClass('hour')
+      @.textContent = form(hours)
+    else if $(@).hasClass('minute')
+      @.textContent = form(minutes)
+    else if $(@).hasClass('second')
+      @.textContent = form(seconds)
+  )
+
+# Pauses the simulation
+html.pause = ->
+  icon = $("button[name=pause] img")
+  if global.pauzed # Unpauze
+    global.pauzed = false
+    icon.attr('src', 'assets/images/icons/ic_pause_black_24px.svg')
+  else # Pauze
+    global.pauzed = true
+    icon.attr('src', 'assets/images/icons/ic_play_arrow_black_24px.svg')
+
 # Creates instances of bacteria
 simulation.createLife = ->
   console.log("Creating life")
   size = new SciNum(1.0e-6, 'length', 'metre')
   energy = new SciNum(3.9e9, 'energy', 'joule')
 
-  global.bacteria[0] = new Viridis(size, energy, local.center, 1)
+  global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0)
 
 # Sets up the document
 simulation.setup = ->
@@ -158,6 +198,7 @@ simulation.start = ->
     doc.start.find(".screen:first").hide() # Hide first screen
   doc.start.find("button[name=start]").click ->
     doc.start.hide() # Hide complete screen
+    simulation.run()
 
   input = doc.start.find(".slider")
   input.each( ->
@@ -172,6 +213,7 @@ simulation.start = ->
 
 # Runs simulation
 simulation.run = ->
+  global.pauzed = false # Unpauze time
 
 # << Simulation functions >>
 # Groups
@@ -179,10 +221,11 @@ draw = {}
 
 # Draws the background
 draw.background = ->
+  # Background objects
   draw.bottom = new Path.Rectangle(local.origin, local.size)
   draw.bottom.fillColor = 'grey'
   draw.bubbles = []
-  bubbleValues = [ # Stores info for the bubbles
+  bubbleValues = [ # Th info for the bubbles
     {position: [350, 200], size: 30}
     {position: [100, 300], size: 50}
   ]
@@ -200,9 +243,24 @@ isLoaded = setInterval( ->
   if global.interaction.loaded
     # << Actions >>
     simulation.start()
-    clearInterval(isLoaded)
+    clearInterval(isLoaded) # End itself from rechecking
 
     # << Events >>
+    # Update simulated time
+    time.clock = setInterval( ->
+      if not global.pauzed # Time is not pauzed
+        time.time += 1 # Update time
+        # Loop through the bacteria
+        for bacterium in global.bacteria
+          bacterium.ages() # Call method
+    , 1)
+
+    # Every full second
+    time.second = setInterval( ->
+      if not global.pauzed # Time is not pauzed
+        html.clock()
+    , 1000)
+
     # Every frame of the canvas
     view.onFrame = (event) ->
       # Loop through the bacteria
@@ -221,10 +279,30 @@ isLoaded = setInterval( ->
       )
       draw.bottom.position = local.origin # Rectangle is updated
 
+      # Scale the position of the bacteria
+      for bacterium in global.bacteria
+        scaledPosition = new Point( # Scale the position of the bubbles
+          x: (bacterium.position.x / previous.width) * local.size.width
+          y: (bacterium.position.y / previous.height) * local.size.height
+        )
+        bacterium.position = scaledPosition.round() # Update position
+
       for bubble in draw.bubbles
         scaledPosition = new Point( # Scale the position of the bubbles
           x: (bubble.position.x / previous.width) * local.size.width
           y: (bubble.position.y / previous.height) * local.size.height
         )
-        bubble.position = scaledPosition # Update position
+        bubble.position = scaledPosition.round() # Update position
+
+    # The menu events
+    doc.menuItems.each( ->
+      $(@).click ->
+        switch @.name # Different name attributes
+          when "volume" then null
+          when "pause"
+            html.pause()
+          when "card" then null
+          when "view" then null
+          when "info" then null
+    )
 , 1)

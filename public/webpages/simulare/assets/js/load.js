@@ -8,7 +8,7 @@ var global = {
   interaction: {
     time: 400, // Standard time
     loaded: false,
-    pauzed: false,
+    pauzed: true,
     music: true
   },
   enviroment: {

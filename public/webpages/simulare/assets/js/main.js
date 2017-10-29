@@ -9,17 +9,23 @@
 
   local = {};
 
-  ref = ['start', 'screen', 'field'];
+  ref = ['start', 'screen', 'field', 'menu', 'priority'];
   for (i = 0, len = ref.length; i < len; i++) {
     id = ref[i];
     doc[id] = $("#" + id);
   }
 
+  doc.menuItems = doc.menu.find('.item button');
+
+  doc.clock = doc.priority.find('.clock p');
+
   Calc = {};
 
   generate = {};
 
-  time = {};
+  time = {
+    time: 0
+  };
 
   Calc.scale = function(value, needed) {
     var DPC, size;
@@ -40,10 +46,6 @@
 
   generate.id = function() {
     return "id";
-  };
-
-  time.now = function() {
-    return 'time';
   };
 
   SciNum = (function() {
@@ -68,11 +70,13 @@
   })();
 
   Lucarium = (function() {
-    function Lucarium(diameter, energy1, position, generation) {
+    function Lucarium(diameter, energy1, position, generation, birth) {
       this.diameter = diameter;
       this.energy = energy1;
       this.position = position;
       this.generation = generation;
+      this.birth = birth;
+      this.ages = bind(this.ages, this);
       this.update = bind(this.update, this);
       this.display = bind(this.display, this);
       this.id = generate.id();
@@ -88,6 +92,10 @@
 
     Lucarium.prototype.update = function() {
       return this.body.position = this.position.round();
+    };
+
+    Lucarium.prototype.ages = function() {
+      return this.age = new SciNum((time.time - this.birth) / 1000, 'time', 's');
     };
 
     return Lucarium;
@@ -148,12 +156,49 @@
     return local.origin = new Point(0, 0);
   };
 
+  html.clock = function() {
+    var form, hours, minutes, seconds, total;
+    total = time.time / 1000;
+    hours = Math.floor(total / 3600);
+    minutes = Math.floor(total % 3600 / 60);
+    seconds = Math.floor(total % 3600 % 60);
+    form = function(number) {
+      var string;
+      string = String(number);
+      if (string.length === 1) {
+        string = "0" + string;
+      }
+      return string;
+    };
+    return doc.clock.find('span').each(function() {
+      if ($(this).hasClass('hour')) {
+        return this.textContent = form(hours);
+      } else if ($(this).hasClass('minute')) {
+        return this.textContent = form(minutes);
+      } else if ($(this).hasClass('second')) {
+        return this.textContent = form(seconds);
+      }
+    });
+  };
+
+  html.pause = function() {
+    var icon;
+    icon = $("button[name=pause] img");
+    if (global.pauzed) {
+      global.pauzed = false;
+      return icon.attr('src', 'assets/images/icons/ic_pause_black_24px.svg');
+    } else {
+      global.pauzed = true;
+      return icon.attr('src', 'assets/images/icons/ic_play_arrow_black_24px.svg');
+    }
+  };
+
   simulation.createLife = function() {
     var energy, size;
     console.log("Creating life");
     size = new SciNum(1.0e-6, 'length', 'metre');
     energy = new SciNum(3.9e9, 'energy', 'joule');
-    return global.bacteria[0] = new Viridis(size, energy, local.center, 1);
+    return global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0);
   };
 
   simulation.setup = function() {
@@ -173,7 +218,8 @@
       return doc.start.find(".screen:first").hide();
     });
     doc.start.find("button[name=start]").click(function() {
-      return doc.start.hide();
+      doc.start.hide();
+      return simulation.run();
     });
     input = doc.start.find(".slider");
     input.each(function() {
@@ -185,7 +231,9 @@
     return $("#loading").hide();
   };
 
-  simulation.run = function() {};
+  simulation.run = function() {
+    return global.pauzed = false;
+  };
 
   draw = {};
 
@@ -227,6 +275,24 @@
     if (global.interaction.loaded) {
       simulation.start();
       clearInterval(isLoaded);
+      time.clock = setInterval(function() {
+        var bacterium, j, len1, ref1, results;
+        if (!global.pauzed) {
+          time.time += 1;
+          ref1 = global.bacteria;
+          results = [];
+          for (j = 0, len1 = ref1.length; j < len1; j++) {
+            bacterium = ref1[j];
+            results.push(bacterium.ages());
+          }
+          return results;
+        }
+      }, 1);
+      time.second = setInterval(function() {
+        if (!global.pauzed) {
+          return html.clock();
+        }
+      }, 1000);
       view.onFrame = function(event) {
         var bacterium, j, len1, ref1, results;
         ref1 = global.bacteria;
@@ -237,24 +303,49 @@
         }
         return results;
       };
-      return view.onResize = function(event) {
-        var bubble, j, len1, previous, ref1, results, scaledPosition;
+      view.onResize = function(event) {
+        var bacterium, bubble, j, k, len1, len2, previous, ref1, ref2, results, scaledPosition;
         previous = local.size;
         html.setSize();
         draw.bottom.scale((local.width / draw.bottom.bounds.width) * 2, (local.height / draw.bottom.bounds.height) * 2);
         draw.bottom.position = local.origin;
-        ref1 = draw.bubbles;
-        results = [];
+        ref1 = global.bacteria;
         for (j = 0, len1 = ref1.length; j < len1; j++) {
-          bubble = ref1[j];
+          bacterium = ref1[j];
+          scaledPosition = new Point({
+            x: (bacterium.position.x / previous.width) * local.size.width,
+            y: (bacterium.position.y / previous.height) * local.size.height
+          });
+          bacterium.position = scaledPosition.round();
+        }
+        ref2 = draw.bubbles;
+        results = [];
+        for (k = 0, len2 = ref2.length; k < len2; k++) {
+          bubble = ref2[k];
           scaledPosition = new Point({
             x: (bubble.position.x / previous.width) * local.size.width,
             y: (bubble.position.y / previous.height) * local.size.height
           });
-          results.push(bubble.position = scaledPosition);
+          results.push(bubble.position = scaledPosition.round());
         }
         return results;
       };
+      return doc.menuItems.each(function() {
+        return $(this).click(function() {
+          switch (this.name) {
+            case "volume":
+              return null;
+            case "pause":
+              return html.pause();
+            case "card":
+              return null;
+            case "view":
+              return null;
+            case "info":
+              return null;
+          }
+        });
+      });
     }
   }, 1);
 
