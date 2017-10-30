@@ -50,8 +50,8 @@ Calc.combine = (vector) ->
 # Returns value in range
 Random.value = (bottom, top) ->
   middle = top - bottom
-  value = Math.floor(Math.random() * middle) + bottom
-  return value + 1 # Inclusive
+  value = (Math.random() * middle) + bottom
+  return value
 
 # Return true with a certain chance
 Random.chance = (chance) ->
@@ -102,6 +102,18 @@ class Lucarium
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
 
   # Methods
+  # Starts living
+  born: =>
+    @display()
+    @ages()
+    @chooseDirection()
+
+  # Continues living
+  live: =>
+    @foodNearby()
+    @move()
+    @update()
+
   # Creates a body
   display: =>
     # Body at instance's location
@@ -110,27 +122,8 @@ class Lucarium
 
   # Updates its body
   update: =>
-    bodyRadius = (@body.bounds.width / 2)
-    # Check if in field
-    if @position.x + bodyRadius >= local.width
-      @speed.value = new Point(0, 0) # Stop moving
-      @chooseDirection(180) # New direction
-    else if @position.x - bodyRadius <= 0
-      @speed.value = new Point(0, 0) # Stop moving
-      @chooseDirection(0) # New direction
-    if @position.y + bodyRadius >= local.height
-      @speed.value = new Point(0, 0) # Stop moving
-      @chooseDirection(270) # New direction
-    else if @position.y - bodyRadius <= 0
-      @speed.value = new Point(0, 0) # Stop moving
-      @chooseDirection(90) # New direction
-
+    @checkCollision()
     @body.position = @position.round() # Change position
-
-  # Starts living
-  live: =>
-    @ages()
-    @chooseDirection()
 
   # Gets older
   ages: =>
@@ -156,12 +149,35 @@ class Lucarium
     # Change position
     @position = @position.add(speed)
 
-    # With a chance of 1/x, change direction
-    if Random.chance(50)
-      @chooseDirection()
+  # Checks if there is food nearby
+  foodNearby: =>
+    if false # Food is near
+      @goToPoint()
+    else
+      # With a chance of 1/x, change direction
+      if Random.chance(50)
+        @chooseDirection()
+
+  # Checks if there is a collision
+  checkCollision: =>
+    bodyRadius = (@body.bounds.width / 2)
+    # Check if in field
+    if @position.x + bodyRadius >= local.width
+      @speed.value = new Point(0, 0) # Stop moving
+      @chooseDirection(180) # New direction
+    else if @position.x - bodyRadius <= 0
+      @speed.value = new Point(0, 0) # Stop moving
+      @chooseDirection(0) # New direction
+    if @position.y + bodyRadius >= local.height
+      @speed.value = new Point(0, 0) # Stop moving
+      @chooseDirection(270) # New direction
+    else if @position.y - bodyRadius <= 0
+      @speed.value = new Point(0, 0) # Stop moving
+      @chooseDirection(90) # New direction
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) =>
+    Math.floor(angle + 1) # Inclusive of range
     angle = angle * (Math.PI / 180) # In radians
     # Direction as point relative to self (origin)
     @direction = new Point(Math.cos(angle), Math.sin(angle))
@@ -169,19 +185,19 @@ class Lucarium
      # Will change length of vector to be the max speed
     targetSpeed = @direction.normalize(@maxSpeed.value)
     # Set the acceleration, it will take x seconds to accelerate
-    @acceleration.value = targetSpeed.divide(5 * local.fps)
+    @acceleration.value = targetSpeed.divide(1.5 * local.fps)
 
   # Go to a point
-  # goToPoint: (point) =>
+  goToPoint: (point) =>
 
-  # # Divide itself
-  # divide: =>
+  # Divide itself
+  divide: =>
 
-  # # Dies
-  # die: =>
+  # Dies
+  die: =>
 
-  # # Gets energy
-  # eat: =>
+  # Gets energy
+  eat: =>
 
 
 # Constructors that inherit code
@@ -263,7 +279,27 @@ simulation.createLife = ->
   size = new SciNum(1.0e-6, 'length', 'm')
   energy = new SciNum(3.9e9, 'energy', 'j')
 
-  global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0)
+  global.bacteria[0] = new Viridis(
+    size,
+    energy,
+    local.center,
+    1,
+    0
+  )
+  global.bacteria[1] = new Rubrum(
+    size,
+    energy,
+    local.center.subtract(100, 0),
+    1,
+    0
+  )
+  global.bacteria[2] = new Caeruleus(
+    size,
+    energy,
+    local.center.add(100, 0),
+    1,
+    0
+  )
 
 # Sets up the document
 simulation.setup = ->
@@ -273,7 +309,6 @@ simulation.setup = ->
 
   draw.background()
   simulation.createLife()
-  draw.bacteria()
 
 # Starts simulation
 simulation.start = ->
@@ -302,7 +337,7 @@ simulation.start = ->
 simulation.run = ->
   global.interaction.pauzed = false # Unpauze time
   for bacterium in global.bacteria
-    bacterium.live() # Starts the bacteria
+    bacterium.born() # Starts the bacteria
 
 # << Simulation functions >>
 # Groups
@@ -315,17 +350,13 @@ draw.background = ->
   draw.bottom.fillColor = 'grey'
   draw.bubbles = []
   bubbleValues = [ # Th info for the bubbles
-    {position: [350, 200], size: 30}
-    {position: [100, 300], size: 50}
+    {position: [350, 200], size: 200}
+    {position: [600, 700], size: 100}
   ]
 
   for value, index in bubbleValues # Every value
     draw.bubbles[index] = new Path.Circle(value.position, value.size / 2)
     draw.bubbles[index].fillColor = 'darkgrey'
-
-draw.bacteria = ->
-  for bacterium in global.bacteria
-    bacterium.display()
 
 # Checks if loading is done
 isLoaded = setInterval( ->
@@ -352,8 +383,7 @@ isLoaded = setInterval( ->
       # Loop through the bacteria
       for bacterium in global.bacteria
         if not global.interaction.pauzed # Time is not pauzed
-          bacterium.move() # Change data
-        bacterium.update() # Update position
+          bacterium.live() # Bacteria does actions
 
     # Paper.js canvas resize event
     view.onResize = (event) ->

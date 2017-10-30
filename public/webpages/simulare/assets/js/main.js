@@ -56,8 +56,8 @@
   Random.value = function(bottom, top) {
     var middle, value;
     middle = top - bottom;
-    value = Math.floor(Math.random() * middle) + bottom;
-    return value + 1;
+    value = (Math.random() * middle) + bottom;
+    return value;
   };
 
   Random.chance = function(chance) {
@@ -110,12 +110,19 @@
       this.position = position;
       this.generation = generation;
       this.birth = birth;
+      this.eat = bind(this.eat, this);
+      this.die = bind(this.die, this);
+      this.divide = bind(this.divide, this);
+      this.goToPoint = bind(this.goToPoint, this);
       this.chooseDirection = bind(this.chooseDirection, this);
+      this.checkCollision = bind(this.checkCollision, this);
+      this.foodNearby = bind(this.foodNearby, this);
       this.move = bind(this.move, this);
       this.ages = bind(this.ages, this);
-      this.live = bind(this.live, this);
       this.update = bind(this.update, this);
       this.display = bind(this.display, this);
+      this.live = bind(this.live, this);
+      this.born = bind(this.born, this);
       this.id = generate.id();
       this.family = "Lucarium";
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
@@ -124,34 +131,26 @@
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
     }
 
+    Lucarium.prototype.born = function() {
+      this.display();
+      this.ages();
+      return this.chooseDirection();
+    };
+
+    Lucarium.prototype.live = function() {
+      this.foodNearby();
+      this.move();
+      return this.update();
+    };
+
     Lucarium.prototype.display = function() {
       this.body = new Path.Circle(this.position.round(), Calc.scale(this.radius.value));
       return this.body.fillColor = this.color;
     };
 
     Lucarium.prototype.update = function() {
-      var bodyRadius;
-      bodyRadius = this.body.bounds.width / 2;
-      if (this.position.x + bodyRadius >= local.width) {
-        this.speed.value = new Point(0, 0);
-        this.chooseDirection(180);
-      } else if (this.position.x - bodyRadius <= 0) {
-        this.speed.value = new Point(0, 0);
-        this.chooseDirection(0);
-      }
-      if (this.position.y + bodyRadius >= local.height) {
-        this.speed.value = new Point(0, 0);
-        this.chooseDirection(270);
-      } else if (this.position.y - bodyRadius <= 0) {
-        this.speed.value = new Point(0, 0);
-        this.chooseDirection(90);
-      }
+      this.checkCollision();
       return this.body.position = this.position.round();
-    };
-
-    Lucarium.prototype.live = function() {
-      this.ages();
-      return this.chooseDirection();
     };
 
     Lucarium.prototype.ages = function() {
@@ -174,9 +173,35 @@
         y: Calc.scale(this.speed.value.y)
       });
       speed = speed.divide(local.fps);
-      this.position = this.position.add(speed);
-      if (Random.chance(50)) {
-        return this.chooseDirection();
+      return this.position = this.position.add(speed);
+    };
+
+    Lucarium.prototype.foodNearby = function() {
+      if (false) {
+        return this.goToPoint();
+      } else {
+        if (Random.chance(50)) {
+          return this.chooseDirection();
+        }
+      }
+    };
+
+    Lucarium.prototype.checkCollision = function() {
+      var bodyRadius;
+      bodyRadius = this.body.bounds.width / 2;
+      if (this.position.x + bodyRadius >= local.width) {
+        this.speed.value = new Point(0, 0);
+        this.chooseDirection(180);
+      } else if (this.position.x - bodyRadius <= 0) {
+        this.speed.value = new Point(0, 0);
+        this.chooseDirection(0);
+      }
+      if (this.position.y + bodyRadius >= local.height) {
+        this.speed.value = new Point(0, 0);
+        return this.chooseDirection(270);
+      } else if (this.position.y - bodyRadius <= 0) {
+        this.speed.value = new Point(0, 0);
+        return this.chooseDirection(90);
       }
     };
 
@@ -185,11 +210,20 @@
       if (angle == null) {
         angle = Random.value(0, 360);
       }
+      Math.floor(angle + 1);
       angle = angle * (Math.PI / 180);
       this.direction = new Point(Math.cos(angle), Math.sin(angle));
       targetSpeed = this.direction.normalize(this.maxSpeed.value);
-      return this.acceleration.value = targetSpeed.divide(5 * local.fps);
+      return this.acceleration.value = targetSpeed.divide(1.5 * local.fps);
     };
+
+    Lucarium.prototype.goToPoint = function(point) {};
+
+    Lucarium.prototype.divide = function() {};
+
+    Lucarium.prototype.die = function() {};
+
+    Lucarium.prototype.eat = function() {};
 
     return Lucarium;
 
@@ -291,7 +325,9 @@
     console.log("Creating life");
     size = new SciNum(1.0e-6, 'length', 'm');
     energy = new SciNum(3.9e9, 'energy', 'j');
-    return global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0);
+    global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0);
+    global.bacteria[1] = new Rubrum(size, energy, local.center.subtract(100, 0), 1, 0);
+    return global.bacteria[2] = new Caeruleus(size, energy, local.center.add(100, 0), 1, 0);
   };
 
   simulation.setup = function() {
@@ -299,8 +335,7 @@
     paper.setup(doc.screen[0]);
     html.setSize();
     draw.background();
-    simulation.createLife();
-    return draw.bacteria();
+    return simulation.createLife();
   };
 
   simulation.start = function() {
@@ -331,7 +366,7 @@
     results = [];
     for (j = 0, len1 = ref1.length; j < len1; j++) {
       bacterium = ref1[j];
-      results.push(bacterium.live());
+      results.push(bacterium.born());
     }
     return results;
   };
@@ -346,10 +381,10 @@
     bubbleValues = [
       {
         position: [350, 200],
-        size: 30
+        size: 200
       }, {
-        position: [100, 300],
-        size: 50
+        position: [600, 700],
+        size: 100
       }
     ];
     results = [];
@@ -357,17 +392,6 @@
       value = bubbleValues[index];
       draw.bubbles[index] = new Path.Circle(value.position, value.size / 2);
       results.push(draw.bubbles[index].fillColor = 'darkgrey');
-    }
-    return results;
-  };
-
-  draw.bacteria = function() {
-    var bacterium, j, len1, ref1, results;
-    ref1 = global.bacteria;
-    results = [];
-    for (j = 0, len1 = ref1.length; j < len1; j++) {
-      bacterium = ref1[j];
-      results.push(bacterium.display());
     }
     return results;
   };
@@ -393,9 +417,10 @@
         for (j = 0, len1 = ref1.length; j < len1; j++) {
           bacterium = ref1[j];
           if (!global.interaction.pauzed) {
-            bacterium.move();
+            results.push(bacterium.live());
+          } else {
+            results.push(void 0);
           }
-          results.push(bacterium.update());
         }
         return results;
       };

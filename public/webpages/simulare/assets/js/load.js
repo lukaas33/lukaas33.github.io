@@ -20,7 +20,8 @@ var global = {
   constants: {
     scaleFactor: 1.5e6 // Scale of the animation, 1 cm : this cm
   },
-  bacteria: []
+  bacteria: [],
+  food: []
 };
 
 // Has local scope
