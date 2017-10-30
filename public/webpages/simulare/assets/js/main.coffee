@@ -1,6 +1,7 @@
 # The Js for the main page is made for readibility
 # Comments explaining a codeblock are above the block
 # Comments explaining lines are next to the expression
+# Lines have a max length to avoid readibility problems
 # Code groups are distinguised by << >>
 # Objects are used to group functions
 
@@ -137,13 +138,14 @@ class Lucarium
     @speed.value = @speed.value.add(@acceleration.value)
     # Check if xSpeed and ySpeed together are higher than maxSpeed
     if Calc.combine(@speed.value) > @maxSpeed.value
-      @acceleration.value = new Point(0, 0)
-      @speed.value.normalize(@maxSpeed.value) # Reduce
+      @acceleration.value = new Point(0, 0) # No acceleration
+      @speed.value.normalize(@maxSpeed.value) # Reduce speed
     # Scaled speed
     speed = new Point(
       x: Calc.scale(@speed.value.x)
       y: Calc.scale(@speed.value.y)
     )
+
     # Per second instead of frame
     speed = speed.divide(local.fps)
     # Change position
@@ -325,10 +327,11 @@ simulation.start = ->
   input = doc.start.find(".slider")
   input.each( ->
     # Initial value
-    global.enviroment[@name] = new SciNum(@value, @name, @dataset.unit)
+    global.enviroment[@name] = new SciNum(Number(@value), @name, @dataset.unit)
     # Update the variables on change
     $(@).change ->
-      global.enviroment[@name] = new SciNum(@value, @name, @dataset.unit)
+      value = Number(@value)
+      global.enviroment[@name] = new SciNum(value, @name, @dataset.unit)
   )
 
   $("#loading").hide() # Hide loading screen

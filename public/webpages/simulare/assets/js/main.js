@@ -351,9 +351,11 @@
     });
     input = doc.start.find(".slider");
     input.each(function() {
-      global.enviroment[this.name] = new SciNum(this.value, this.name, this.dataset.unit);
+      global.enviroment[this.name] = new SciNum(Number(this.value), this.name, this.dataset.unit);
       return $(this).change(function() {
-        return global.enviroment[this.name] = new SciNum(this.value, this.name, this.dataset.unit);
+        var value;
+        value = Number(this.value);
+        return global.enviroment[this.name] = new SciNum(value, this.name, this.dataset.unit);
       });
     });
     return $("#loading").hide();
