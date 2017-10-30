@@ -62,10 +62,11 @@ class Food
   # Values that need to be entered
   constructor: (@energy, @position) ->
     @diameter = Random.value(0.3e-6, 0.5e-6)
+    @radius = @diameter / 2
 
   # Creates the particle
   display: =>
-    @particle = new Path.Circle(@position, Calc.Scale(@diameter / 2))
+    @particle = new Path.Circle(@position, Calc.Scale(@radius))
     @particle.fillColor = 'yellow'
 
   # # Gets eaten
@@ -78,30 +79,44 @@ class Lucarium
     # Values that are initialised
     @id = generate.id()
     @family = "Lucarium"
-    @maxSpeed = 0
+    @maxSpeed = new SciNum(@diameter.value * 2, 'speed', 'm/s')
+    @radius = new SciNum(@diameter.value / 2, 'length', 'm')
     @acceleration = 0
+    @speed = 0
 
   # Methods
   # Creates a body
   display: =>
     # Body at instance's location
-    @body = new Path.Circle(@position.round(), Calc.scale(@diameter.value / 2))
+    @body = new Path.Circle(@position.round(), Calc.scale(@radius.value))
     @body.fillColor = @color
 
   # Updates its body
   update: =>
-    @body.position = @position.round()
+    bodyRadius = (@body.bounds.width / 2)
+    # Check if in field TODO, change direction
+    if @position.x + bodyRadius > local.width
+      @position.x = local.width - bodyRadius # Stay inside field
+    else if @position.x - bodyRadius < 0
+      @position.x = bodyRadius # Stay inside field
+    if @position.y + bodyRadius > local.height
+      @position.y = local.height - bodyRadius # Stay inside field
+    else if @position.y - bodyRadius < 0
+      @position.y = bodyRadius # Stay inside field
+
+    @body.position = @position.round() # Change position
 
   # Gets older
   ages: =>
     @age = new SciNum((time.time - @birth) / 1000, 'time', 's')
 
   # Starts moving
-  # move: =>
-  #   # Pseudocode:
-  #   # speedvector + accelerationvector
-  #   # location + speedvector
-  #   # accelerationvector = 0 if speedvector = maxSpeed
+  move: =>
+    @speed.value += @acceleration.value if @acceleration.value != null
+    @acceleration.value = null if @speed.value >= @maxSpeed.value
+    @location += Calc.scale(@speed.value) # Change position with scaled value
+
+  chooseDirection: =>
 
   # # Divide itself
   # divide: =>
@@ -189,8 +204,8 @@ html.pause = ->
 # Creates instances of bacteria
 simulation.createLife = ->
   console.log("Creating life")
-  size = new SciNum(1.0e-6, 'length', 'metre')
-  energy = new SciNum(3.9e9, 'energy', 'joule')
+  size = new SciNum(1.0e-6, 'length', 'm')
+  energy = new SciNum(3.9e9, 'energy', 'j')
 
   global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0)
 
@@ -281,7 +296,8 @@ isLoaded = setInterval( ->
     view.onFrame = (event) ->
       # Loop through the bacteria
       for bacterium in global.bacteria
-        bacterium.update() # Call method
+        bacterium.move() # Change
+        bacterium.update() # Update position
 
     # Paper.js canvas resize event
     view.onResize = (event) ->
