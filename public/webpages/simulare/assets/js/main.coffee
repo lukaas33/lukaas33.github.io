@@ -3,14 +3,15 @@
 # Comments explaining lines are next to the expression
 # Code groups are distinguised by << >>
 # Objects are used to group functions
-'use strict'
 
 # TODO The styling of the bacteria here
 
 # << Variables >>
 # Group
 doc = {}
-local = {}
+local =
+  resolution: 72 # No way to get this
+  fps: 30 # Standard for canvas
 
 # Get elements with these id's
 for id in ['start', 'screen', 'field', 'menu', 'priority']
@@ -30,7 +31,7 @@ time = {
 
 # Returns the value according to a scale
 Calc.scale = (value, needed = 'scaled') ->
-  DPC = 72 / 2.54 # From px/inch to px/cm, asuming 72 dpi
+  DPC = local.resolution / 2.54 # From px/inch to px/cm
 
   if needed == "scaled"
     size = value * global.constants.scaleFactor # Get the scaled value in cm
@@ -41,11 +42,24 @@ Calc.scale = (value, needed = 'scaled') ->
     size = size / global.constants.scaleFactor # Real value
     return size
 
+# Combines the vectors in both axis
+Calc.combine = (vector) ->
+  # Uses a^2 + b^2 = c^2
+  result = Math.sqrt(vector.x**2 + vector.y**2)
+
 # Returns value in range
 Random.value = (bottom, top) ->
   middle = top - bottom
-  value = (Math.random() * middle) + bottom
-  return value
+  value = Math.floor(Math.random() * middle) + bottom
+  return value + 1 # Inclusive
+
+# Return true with a certain chance
+Random.chance = (chance) ->
+  result = Math.ceil(Math.random() * chance) # Number 1 until chance
+  if result == 1 # Chance of one in chance
+    return true
+  else
+    return false
 
 # Creates unique id
 generate.id = ->
@@ -79,10 +93,13 @@ class Lucarium
     # Values that are initialised
     @id = generate.id()
     @family = "Lucarium"
-    @maxSpeed = new SciNum(@diameter.value * 2, 'speed', 'm/s')
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
-    @acceleration = 0
-    @speed = 0
+    # Starts as 0
+    @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2')
+    # Its bodylength per second
+    @maxSpeed = new SciNum(@diameter.value, 'speed', 'm/s')
+    # Starts as 0
+    @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
 
   # Methods
   # Creates a body
@@ -94,29 +111,68 @@ class Lucarium
   # Updates its body
   update: =>
     bodyRadius = (@body.bounds.width / 2)
-    # Check if in field TODO, change direction
-    if @position.x + bodyRadius > local.width
-      @position.x = local.width - bodyRadius # Stay inside field
-    else if @position.x - bodyRadius < 0
-      @position.x = bodyRadius # Stay inside field
-    if @position.y + bodyRadius > local.height
-      @position.y = local.height - bodyRadius # Stay inside field
-    else if @position.y - bodyRadius < 0
-      @position.y = bodyRadius # Stay inside field
+    # Check if in field
+    if @position.x + bodyRadius >= local.width
+      @speed.value = new Point(0, 0) # Stop moving
+      @chooseDirection(180) # New direction
+    else if @position.x - bodyRadius <= 0
+      @speed.value = new Point(0, 0) # Stop moving
+      @chooseDirection(0) # New direction
+    if @position.y + bodyRadius >= local.height
+      @speed.value = new Point(0, 0) # Stop moving
+      @chooseDirection(270) # New direction
+    else if @position.y - bodyRadius <= 0
+      @speed.value = new Point(0, 0) # Stop moving
+      @chooseDirection(90) # New direction
 
     @body.position = @position.round() # Change position
 
+  # Starts living
+  live: =>
+    @ages()
+    @chooseDirection()
+
   # Gets older
   ages: =>
-    @age = new SciNum((time.time - @birth) / 1000, 'time', 's')
+    setInterval( =>
+      @age = new SciNum((time.time - @birth) / 1000, 'time', 's')
+    , 1000)
 
   # Starts moving
   move: =>
-    @speed.value += @acceleration.value if @acceleration.value != null
-    @acceleration.value = null if @speed.value >= @maxSpeed.value
-    @location += Calc.scale(@speed.value) # Change position with scaled value
+    # Will accelerate to maxSpeed
+    @speed.value = @speed.value.add(@acceleration.value)
+    # Check if xSpeed and ySpeed together are higher than maxSpeed
+    if Calc.combine(@speed.value) > @maxSpeed.value
+      @acceleration.value = new Point(0, 0)
+      @speed.value.normalize(@maxSpeed.value) # Reduce
+    # Scaled speed
+    speed = new Point(
+      x: Calc.scale(@speed.value.x)
+      y: Calc.scale(@speed.value.y)
+    )
+    # Per second instead of frame
+    speed = speed.divide(local.fps)
+    # Change position
+    @position = @position.add(speed)
 
-  chooseDirection: =>
+    # With a chance of 1/x, change direction
+    if Random.chance(50)
+      @chooseDirection()
+
+  # Choose a new direction default is random
+  chooseDirection: (angle = Random.value(0, 360)) =>
+    angle = angle * (Math.PI / 180) # In radians
+    # Direction as point relative to self (origin)
+    @direction = new Point(Math.cos(angle), Math.sin(angle))
+
+     # Will change length of vector to be the max speed
+    targetSpeed = @direction.normalize(@maxSpeed.value)
+    # Set the acceleration, it will take x seconds to accelerate
+    @acceleration.value = targetSpeed.divide(5 * local.fps)
+
+  # Go to a point
+  # goToPoint: (point) =>
 
   # # Divide itself
   # divide: =>
@@ -194,11 +250,11 @@ html.clock = ->
 # Pauses the simulation
 html.pause = ->
   icon = $("button[name=pause] img")
-  if global.pauzed # Unpauze
-    global.pauzed = false
+  if global.interaction.pauzed # Unpauze
+    global.interaction.pauzed = false
     icon.attr('src', 'assets/images/icons/ic_pause_black_24px.svg')
   else # Pauze
-    global.pauzed = true
+    global.interaction.pauzed = true
     icon.attr('src', 'assets/images/icons/ic_play_arrow_black_24px.svg')
 
 # Creates instances of bacteria
@@ -244,7 +300,9 @@ simulation.start = ->
 
 # Runs simulation
 simulation.run = ->
-  global.pauzed = false # Unpauze time
+  global.interaction.pauzed = false # Unpauze time
+  for bacterium in global.bacteria
+    bacterium.live() # Starts the bacteria
 
 # << Simulation functions >>
 # Groups
@@ -279,24 +337,22 @@ isLoaded = setInterval( ->
     # << Events >>
     # Update simulated time
     time.clock = setInterval( ->
-      if not global.pauzed # Time is not pauzed
-        time.time += 1 # Update time
+      if not global.interaction.pauzed # Time is not pauzed
+        time.time += 2 # Update time Is two to account for code running time
     , 1)
 
     # Every full second
     time.second = setInterval( ->
-      if not global.pauzed # Time is not pauzed
+      if not global.interaction.pauzed # Time is not pauzed
         html.clock()
-        # Loop through the bacteria
-        for bacterium in global.bacteria
-          bacterium.ages() # Call method
     , 1000)
 
     # Every frame of the canvas
     view.onFrame = (event) ->
       # Loop through the bacteria
       for bacterium in global.bacteria
-        bacterium.move() # Change
+        if not global.interaction.pauzed # Time is not pauzed
+          bacterium.move() # Change data
         bacterium.update() # Update position
 
     # Paper.js canvas resize event

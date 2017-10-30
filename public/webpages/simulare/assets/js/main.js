@@ -1,5 +1,4 @@
 (function() {
-  'use strict';
   var Caeruleus, Calc, Food, Lucarium, Random, Rubrum, SciNum, Viridis, doc, draw, generate, html, i, id, isLoaded, len, local, ref, simulation, time,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -7,7 +6,10 @@
 
   doc = {};
 
-  local = {};
+  local = {
+    resolution: 72,
+    fps: 30
+  };
 
   ref = ['start', 'screen', 'field', 'menu', 'priority'];
   for (i = 0, len = ref.length; i < len; i++) {
@@ -34,7 +36,7 @@
     if (needed == null) {
       needed = 'scaled';
     }
-    DPC = 72 / 2.54;
+    DPC = local.resolution / 2.54;
     if (needed === "scaled") {
       size = value * global.constants.scaleFactor;
       size = size * DPC;
@@ -46,11 +48,26 @@
     }
   };
 
+  Calc.combine = function(vector) {
+    var result;
+    return result = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
+  };
+
   Random.value = function(bottom, top) {
     var middle, value;
     middle = top - bottom;
-    value = (Math.random() * middle) + bottom;
-    return value;
+    value = Math.floor(Math.random() * middle) + bottom;
+    return value + 1;
+  };
+
+  Random.chance = function(chance) {
+    var result;
+    result = Math.ceil(Math.random() * chance);
+    if (result === 1) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   generate.id = function() {
@@ -96,14 +113,15 @@
       this.chooseDirection = bind(this.chooseDirection, this);
       this.move = bind(this.move, this);
       this.ages = bind(this.ages, this);
+      this.live = bind(this.live, this);
       this.update = bind(this.update, this);
       this.display = bind(this.display, this);
       this.id = generate.id();
       this.family = "Lucarium";
-      this.maxSpeed = new SciNum(this.diameter.value * 2, 'speed', 'm/s');
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
-      this.acceleration = 0;
-      this.speed = 0;
+      this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2');
+      this.maxSpeed = new SciNum(this.diameter.value, 'speed', 'm/s');
+      this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
     }
 
     Lucarium.prototype.display = function() {
@@ -114,34 +132,64 @@
     Lucarium.prototype.update = function() {
       var bodyRadius;
       bodyRadius = this.body.bounds.width / 2;
-      if (this.position.x + bodyRadius > local.width) {
-        this.position.x = local.width - bodyRadius;
-      } else if (this.position.x - bodyRadius < 0) {
-        this.position.x = bodyRadius;
+      if (this.position.x + bodyRadius >= local.width) {
+        this.speed.value = new Point(0, 0);
+        this.chooseDirection(180);
+      } else if (this.position.x - bodyRadius <= 0) {
+        this.speed.value = new Point(0, 0);
+        this.chooseDirection(0);
       }
-      if (this.position.y + bodyRadius > local.height) {
-        this.position.y = local.height - bodyRadius;
-      } else if (this.position.y - bodyRadius < 0) {
-        this.position.y = bodyRadius;
+      if (this.position.y + bodyRadius >= local.height) {
+        this.speed.value = new Point(0, 0);
+        this.chooseDirection(270);
+      } else if (this.position.y - bodyRadius <= 0) {
+        this.speed.value = new Point(0, 0);
+        this.chooseDirection(90);
       }
       return this.body.position = this.position.round();
     };
 
+    Lucarium.prototype.live = function() {
+      this.ages();
+      return this.chooseDirection();
+    };
+
     Lucarium.prototype.ages = function() {
-      return this.age = new SciNum((time.time - this.birth) / 1000, 'time', 's');
+      return setInterval((function(_this) {
+        return function() {
+          return _this.age = new SciNum((time.time - _this.birth) / 1000, 'time', 's');
+        };
+      })(this), 1000);
     };
 
     Lucarium.prototype.move = function() {
-      if (this.acceleration.value !== null) {
-        this.speed.value += this.acceleration.value;
+      var speed;
+      this.speed.value = this.speed.value.add(this.acceleration.value);
+      if (Calc.combine(this.speed.value) > this.maxSpeed.value) {
+        this.acceleration.value = new Point(0, 0);
+        this.speed.value.normalize(this.maxSpeed.value);
       }
-      if (this.speed.value >= this.maxSpeed.value) {
-        this.acceleration.value = null;
+      speed = new Point({
+        x: Calc.scale(this.speed.value.x),
+        y: Calc.scale(this.speed.value.y)
+      });
+      speed = speed.divide(local.fps);
+      this.position = this.position.add(speed);
+      if (Random.chance(50)) {
+        return this.chooseDirection();
       }
-      return this.location += Calc.scale(this.speed.value);
     };
 
-    Lucarium.prototype.chooseDirection = function() {};
+    Lucarium.prototype.chooseDirection = function(angle) {
+      var targetSpeed;
+      if (angle == null) {
+        angle = Random.value(0, 360);
+      }
+      angle = angle * (Math.PI / 180);
+      this.direction = new Point(Math.cos(angle), Math.sin(angle));
+      targetSpeed = this.direction.normalize(this.maxSpeed.value);
+      return this.acceleration.value = targetSpeed.divide(5 * local.fps);
+    };
 
     return Lucarium;
 
@@ -229,11 +277,11 @@
   html.pause = function() {
     var icon;
     icon = $("button[name=pause] img");
-    if (global.pauzed) {
-      global.pauzed = false;
+    if (global.interaction.pauzed) {
+      global.interaction.pauzed = false;
       return icon.attr('src', 'assets/images/icons/ic_pause_black_24px.svg');
     } else {
-      global.pauzed = true;
+      global.interaction.pauzed = true;
       return icon.attr('src', 'assets/images/icons/ic_play_arrow_black_24px.svg');
     }
   };
@@ -277,7 +325,15 @@
   };
 
   simulation.run = function() {
-    return global.pauzed = false;
+    var bacterium, j, len1, ref1, results;
+    global.interaction.pauzed = false;
+    ref1 = global.bacteria;
+    results = [];
+    for (j = 0, len1 = ref1.length; j < len1; j++) {
+      bacterium = ref1[j];
+      results.push(bacterium.live());
+    }
+    return results;
   };
 
   draw = {};
@@ -321,21 +377,13 @@
       simulation.start();
       clearInterval(isLoaded);
       time.clock = setInterval(function() {
-        if (!global.pauzed) {
-          return time.time += 1;
+        if (!global.interaction.pauzed) {
+          return time.time += 2;
         }
       }, 1);
       time.second = setInterval(function() {
-        var bacterium, j, len1, ref1, results;
-        if (!global.pauzed) {
-          html.clock();
-          ref1 = global.bacteria;
-          results = [];
-          for (j = 0, len1 = ref1.length; j < len1; j++) {
-            bacterium = ref1[j];
-            results.push(bacterium.ages());
-          }
-          return results;
+        if (!global.interaction.pauzed) {
+          return html.clock();
         }
       }, 1000);
       view.onFrame = function(event) {
@@ -344,7 +392,9 @@
         results = [];
         for (j = 0, len1 = ref1.length; j < len1; j++) {
           bacterium = ref1[j];
-          bacterium.move();
+          if (!global.interaction.pauzed) {
+            bacterium.move();
+          }
           results.push(bacterium.update());
         }
         return results;

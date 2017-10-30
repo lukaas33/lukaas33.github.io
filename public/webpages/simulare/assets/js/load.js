@@ -6,7 +6,7 @@
 var global = {
   theory: undefined,
   interaction: {
-    time: 400, // Standard time
+    time: 400, // Standard animation time
     loaded: false,
     pauzed: true,
     music: true
@@ -25,8 +25,6 @@ var global = {
 
 // Has local scope
 (function () {
-  'use strict'
-
   // Loads files asynchronously
   var load = function (url, type, callback) {
     if (type === 'css') {
@@ -102,10 +100,6 @@ var global = {
     // Load the Paper.js library
     load('https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.22/paper.min.js', 'js', function () {
       loaded('paper.js')
-      // Sets attribute of the script tag
-      var js = document.getElementsByTagName('script')[0]
-      js.setAttribute('data-paper-canvas', 'screen')
-      js.setAttribute('type', 'text/paperscript')
     })
     // Load the Showdown library
     load('https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.6/showdown.min.js', 'js', function () {
