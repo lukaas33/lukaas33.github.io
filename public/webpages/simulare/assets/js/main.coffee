@@ -1,11 +1,8 @@
 # The Js for the main page is made for readibility
-# Comments explaining a codeblock are above the block
-# Comments explaining lines are next to the expression
-# Lines have a max length to avoid readibility problems
+# Lines have a max length
+# Sometimes the comment for an expression will be above the line
 # Code groups are distinguised by << >>
-# Objects are used to group functions
-
-# TODO The styling of the bacteria here
+# Objects are used to group functions and variables
 
 # << Variables >>
 # Group
@@ -26,9 +23,9 @@ doc.clock = doc.priority.find('.clock p')
 Calc = {}
 Random = {}
 generate = {}
-time = {
+time =
   time: 0
-}
+
 
 # Returns the value according to a scale
 Calc.scale = (value, needed = 'scaled') ->
@@ -43,10 +40,11 @@ Calc.scale = (value, needed = 'scaled') ->
     size = size / global.constants.scaleFactor # Real value
     return size
 
-# Combines the vectors in both axis
+# Combines the vectors into one value
 Calc.combine = (vector) ->
   # Uses a^2 + b^2 = c^2
   result = Math.sqrt(vector.x**2 + vector.y**2)
+  return result
 
 # Returns value in range
 Random.value = (bottom, top) ->
@@ -54,7 +52,7 @@ Random.value = (bottom, top) ->
   value = (Math.random() * middle) + bottom
   return value
 
-# Return true with a certain chance
+# Return true with a certain chance TODO seed random function
 Random.chance = (chance) ->
   result = Math.ceil(Math.random() * chance) # Number 1 until chance
   if result == 1 # Chance of one in chance
@@ -62,9 +60,33 @@ Random.chance = (chance) ->
   else
     return false
 
+# TODO add a normal distribution function
+Random.normal = () ->
+  null
+
 # Creates unique id
 generate.id = ->
-  return "id"
+  unique = false
+  string = null
+
+  while not unique
+    result = []
+    for i in [0..8] # Length of 8
+      charcode = Random.value(65, 91) # A-Z
+      result.push(String.fromCharCode(charcode)) # Add the string
+    string = result.join('') # As string
+
+    if global.bacteria.length < 1 # No bacteria
+      unique = true
+      break # End the while loop
+    else
+      occurs = false # Until proven
+      for bacterium in global.bacteria
+        if bacterium.id == string
+          occurs = true # Loop will run again
+          break # End the for loop
+      unique = not occurs
+  return string
 
 # << Constructors >>
 # Constructor for scientific numbers
@@ -84,7 +106,7 @@ class Food
     @particle = new Path.Circle(@position, Calc.Scale(@radius))
     @particle.fillColor = 'yellow'
 
-  # # Gets eaten
+  # Gets eaten TODO work out method
   # eaten: =>
 
 # Bacteria constructors
@@ -109,13 +131,13 @@ class Lucarium
     @ages()
     @chooseDirection()
 
-  # Continues living
+  # Continues living TODO work out energy system with traits
   live: =>
     @foodNearby()
     @move()
     @update()
 
-  # Creates a body
+  # Creates a body TODO the colors and style of the bacteria
   display: =>
     # Body at instance's location
     @body = new Path.Circle(@position.round(), Calc.scale(@radius.value))
@@ -132,7 +154,7 @@ class Lucarium
       @age = new SciNum((time.time - @birth) / 1000, 'time', 's')
     , 1000)
 
-  # Starts moving
+  # Starts moving TODO method uses energy
   move: =>
     # Will accelerate to maxSpeed
     @speed.value = @speed.value.add(@acceleration.value)
@@ -151,7 +173,7 @@ class Lucarium
     # Change position
     @position = @position.add(speed)
 
-  # Checks if there is food nearby
+  # Checks if there is food nearby TODO actually test it
   foodNearby: =>
     if false # Food is near
       @goToPoint()
@@ -166,20 +188,20 @@ class Lucarium
     # Check if in field
     if @position.x + bodyRadius >= local.width
       @speed.value = new Point(0, 0) # Stop moving
-      @chooseDirection(180) # New direction
+      @chooseDirection(180)
     else if @position.x - bodyRadius <= 0
       @speed.value = new Point(0, 0) # Stop moving
-      @chooseDirection(0) # New direction
+      @chooseDirection(0)
     if @position.y + bodyRadius >= local.height
       @speed.value = new Point(0, 0) # Stop moving
-      @chooseDirection(270) # New direction
+      @chooseDirection(270)
     else if @position.y - bodyRadius <= 0
       @speed.value = new Point(0, 0) # Stop moving
-      @chooseDirection(90) # New direction
+      @chooseDirection(90)
 
   # Choose a new direction default is random
-  chooseDirection: (angle = Random.value(0, 360)) =>
-    Math.floor(angle + 1) # Inclusive of range
+  chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
+    Math.floor(angle)
     angle = angle * (Math.PI / 180) # In radians
     # Direction as point relative to self (origin)
     @direction = new Point(Math.cos(angle), Math.sin(angle))
@@ -189,21 +211,21 @@ class Lucarium
     # Set the acceleration, it will take x seconds to accelerate
     @acceleration.value = targetSpeed.divide(1.5 * local.fps)
 
-  # Go to a point
+  # Go to a point TODO work out method
   goToPoint: (point) =>
 
-  # Divide itself
+  # Divide itself TODO work out this functionality
   divide: =>
 
-  # Dies
+  # Dies TODO work out method
   die: =>
 
-  # Gets energy
+  # Gets energy TODO work out method
   eat: =>
 
 
 # Constructors that inherit code
-class Viridis extends Lucarium
+class Viridis extends Lucarium # TODO make different traits for the species
   constructor: ->
     # Values that are initialised
     @species = "Viridis"
@@ -265,6 +287,14 @@ html.clock = ->
       @.textContent = form(seconds)
   )
 
+# TODO add function that sets up the values of the elements
+html.setup = ->
+  null
+
+# TODO add function that updates info panel
+html.selected = ->
+  null
+
 # Pauses the simulation
 html.pause = ->
   icon = $("button[name=pause] img")
@@ -278,6 +308,7 @@ html.pause = ->
 # Creates instances of bacteria
 simulation.createLife = ->
   console.log("Creating life")
+  # Starter values
   size = new SciNum(1.0e-6, 'length', 'm')
   energy = new SciNum(3.9e9, 'energy', 'j')
 
@@ -302,6 +333,10 @@ simulation.createLife = ->
     1,
     0
   )
+
+# TODO add function that generates food
+simulation.feed = ->
+  null
 
 # Sets up the document
 simulation.setup = ->
@@ -330,7 +365,7 @@ simulation.start = ->
     global.enviroment[@name] = new SciNum(Number(@value), @name, @dataset.unit)
     # Update the variables on change
     $(@).change ->
-      value = Number(@value)
+      value = Number(@value) # Is recieved as string
       global.enviroment[@name] = new SciNum(value, @name, @dataset.unit)
   )
 
@@ -348,7 +383,7 @@ draw = {}
 
 # Draws the background
 draw.background = ->
-  # Background objects
+  # Background objects TODO add more and style them
   draw.bottom = new Path.Rectangle(local.origin, local.size)
   draw.bottom.fillColor = 'grey'
   draw.bubbles = []
@@ -415,7 +450,7 @@ isLoaded = setInterval( ->
         )
         bubble.position = scaledPosition.round() # Update position
 
-    # The menu events
+    # The menu events TODO work out these events
     doc.menuItems.each( ->
       $(@).click ->
         switch @.name # Different name attributes

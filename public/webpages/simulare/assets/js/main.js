@@ -1,5 +1,5 @@
 (function() {
-  var Caeruleus, Calc, Food, Lucarium, Random, Rubrum, SciNum, Viridis, doc, draw, generate, html, i, id, isLoaded, len, local, ref, simulation, time,
+  var Caeruleus, Calc, Food, Lucarium, Random, Rubrum, SciNum, Viridis, doc, draw, generate, html, id, isLoaded, j, len, local, ref, simulation, time,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
@@ -12,8 +12,8 @@
   };
 
   ref = ['start', 'screen', 'field', 'menu', 'priority'];
-  for (i = 0, len = ref.length; i < len; i++) {
-    id = ref[i];
+  for (j = 0, len = ref.length; j < len; j++) {
+    id = ref[j];
     doc[id] = $("#" + id);
   }
 
@@ -50,7 +50,8 @@
 
   Calc.combine = function(vector) {
     var result;
-    return result = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
+    result = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
+    return result;
   };
 
   Random.value = function(bottom, top) {
@@ -70,8 +71,38 @@
     }
   };
 
+  Random.normal = function() {
+    return null;
+  };
+
   generate.id = function() {
-    return "id";
+    var bacterium, charcode, i, k, l, len1, occurs, ref1, result, string, unique;
+    unique = false;
+    string = null;
+    while (!unique) {
+      result = [];
+      for (i = k = 0; k <= 8; i = ++k) {
+        charcode = Random.value(65, 91);
+        result.push(String.fromCharCode(charcode));
+      }
+      string = result.join('');
+      if (global.bacteria.length < 1) {
+        unique = true;
+        break;
+      } else {
+        occurs = false;
+        ref1 = global.bacteria;
+        for (l = 0, len1 = ref1.length; l < len1; l++) {
+          bacterium = ref1[l];
+          if (bacterium.id === string) {
+            occurs = true;
+            break;
+          }
+        }
+        unique = !occurs;
+      }
+    }
+    return string;
   };
 
   SciNum = (function() {
@@ -210,7 +241,7 @@
       if (angle == null) {
         angle = Random.value(0, 360);
       }
-      Math.floor(angle + 1);
+      Math.floor(angle);
       angle = angle * (Math.PI / 180);
       this.direction = new Point(Math.cos(angle), Math.sin(angle));
       targetSpeed = this.direction.normalize(this.maxSpeed.value);
@@ -308,6 +339,14 @@
     });
   };
 
+  html.setup = function() {
+    return null;
+  };
+
+  html.selected = function() {
+    return null;
+  };
+
   html.pause = function() {
     var icon;
     icon = $("button[name=pause] img");
@@ -328,6 +367,10 @@
     global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0);
     global.bacteria[1] = new Rubrum(size, energy, local.center.subtract(100, 0), 1, 0);
     return global.bacteria[2] = new Caeruleus(size, energy, local.center.add(100, 0), 1, 0);
+  };
+
+  simulation.feed = function() {
+    return null;
   };
 
   simulation.setup = function() {
@@ -362,12 +405,12 @@
   };
 
   simulation.run = function() {
-    var bacterium, j, len1, ref1, results;
+    var bacterium, k, len1, ref1, results;
     global.interaction.pauzed = false;
     ref1 = global.bacteria;
     results = [];
-    for (j = 0, len1 = ref1.length; j < len1; j++) {
-      bacterium = ref1[j];
+    for (k = 0, len1 = ref1.length; k < len1; k++) {
+      bacterium = ref1[k];
       results.push(bacterium.born());
     }
     return results;
@@ -376,7 +419,7 @@
   draw = {};
 
   draw.background = function() {
-    var bubbleValues, index, j, len1, results, value;
+    var bubbleValues, index, k, len1, results, value;
     draw.bottom = new Path.Rectangle(local.origin, local.size);
     draw.bottom.fillColor = 'grey';
     draw.bubbles = [];
@@ -390,7 +433,7 @@
       }
     ];
     results = [];
-    for (index = j = 0, len1 = bubbleValues.length; j < len1; index = ++j) {
+    for (index = k = 0, len1 = bubbleValues.length; k < len1; index = ++k) {
       value = bubbleValues[index];
       draw.bubbles[index] = new Path.Circle(value.position, value.size / 2);
       results.push(draw.bubbles[index].fillColor = 'darkgrey');
@@ -413,11 +456,11 @@
         }
       }, 1000);
       view.onFrame = function(event) {
-        var bacterium, j, len1, ref1, results;
+        var bacterium, k, len1, ref1, results;
         ref1 = global.bacteria;
         results = [];
-        for (j = 0, len1 = ref1.length; j < len1; j++) {
-          bacterium = ref1[j];
+        for (k = 0, len1 = ref1.length; k < len1; k++) {
+          bacterium = ref1[k];
           if (!global.interaction.pauzed) {
             results.push(bacterium.live());
           } else {
@@ -427,14 +470,14 @@
         return results;
       };
       view.onResize = function(event) {
-        var bacterium, bubble, j, k, len1, len2, previous, ref1, ref2, results, scaledPosition;
+        var bacterium, bubble, k, l, len1, len2, previous, ref1, ref2, results, scaledPosition;
         previous = local.size;
         html.setSize();
         draw.bottom.scale((local.width / draw.bottom.bounds.width) * 2, (local.height / draw.bottom.bounds.height) * 2);
         draw.bottom.position = local.origin;
         ref1 = global.bacteria;
-        for (j = 0, len1 = ref1.length; j < len1; j++) {
-          bacterium = ref1[j];
+        for (k = 0, len1 = ref1.length; k < len1; k++) {
+          bacterium = ref1[k];
           scaledPosition = new Point({
             x: (bacterium.position.x / previous.width) * local.size.width,
             y: (bacterium.position.y / previous.height) * local.size.height
@@ -443,8 +486,8 @@
         }
         ref2 = draw.bubbles;
         results = [];
-        for (k = 0, len2 = ref2.length; k < len2; k++) {
-          bubble = ref2[k];
+        for (l = 0, len2 = ref2.length; l < len2; l++) {
+          bubble = ref2[l];
           scaledPosition = new Point({
             x: (bubble.position.x / previous.width) * local.size.width,
             y: (bubble.position.y / previous.height) * local.size.height

@@ -17,7 +17,7 @@ var global = {
     toxicity: null,
     energy: null
   },
-  constants: {
+  constants: { // TODO add more values
     scaleFactor: 1.5e6 // Scale of the animation, 1 cm : this cm
   },
   bacteria: [],
