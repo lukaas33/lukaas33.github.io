@@ -54,6 +54,10 @@
     return result;
   };
 
+  Calc.prefixSI = function(scinum) {
+    return null;
+  };
+
   Random.value = function(bottom, top) {
     var middle, value;
     middle = top - bottom;
@@ -314,6 +318,10 @@
     return local.origin = new Point(0, 0);
   };
 
+  html.card = function(data) {
+    return null;
+  };
+
   html.clock = function() {
     var form, hours, minutes, seconds, total;
     total = time.time / 1000;
@@ -344,6 +352,10 @@
   };
 
   html.selected = function() {
+    return null;
+  };
+
+  html.pie = function() {
     return null;
   };
 

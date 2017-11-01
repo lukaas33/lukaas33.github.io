@@ -26,7 +26,6 @@ generate = {}
 time =
   time: 0
 
-
 # Returns the value according to a scale
 Calc.scale = (value, needed = 'scaled') ->
   DPC = local.resolution / 2.54 # From px/inch to px/cm
@@ -45,6 +44,10 @@ Calc.combine = (vector) ->
   # Uses a^2 + b^2 = c^2
   result = Math.sqrt(vector.x**2 + vector.y**2)
   return result
+
+# TODO add function that converts between base and si prefixes
+Calc.prefixSI = (scinum) ->
+  null
 
 # Returns value in range
 Random.value = (bottom, top) ->
@@ -262,6 +265,10 @@ html.setSize = ->
   local.size = new Size(width, height)
   local.origin = new Point(0, 0)
 
+# TODO add function that adds cards from data
+html.card = (data) ->
+  null
+
 # Updates the screen clock
 html.clock = ->
   # Set values, from https://goo.gl/P14JkU
@@ -293,6 +300,10 @@ html.setup = ->
 
 # TODO add function that updates info panel
 html.selected = ->
+  null
+
+# TODO add function that displays the
+html.pie = ->
   null
 
 # Pauses the simulation
@@ -449,6 +460,8 @@ isLoaded = setInterval( ->
           y: (bubble.position.y / previous.height) * local.size.height
         )
         bubble.position = scaledPosition.round() # Update position
+
+    # TODO add restart button event
 
     # The menu events TODO work out these events
     doc.menuItems.each( ->
