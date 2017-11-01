@@ -162,7 +162,7 @@
       this.family = "Lucarium";
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
       this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2');
-      this.maxSpeed = new SciNum(this.diameter.value, 'speed', 'm/s');
+      this.maxSpeed = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
     }
 
@@ -215,7 +215,7 @@
       if (false) {
         return this.goToPoint();
       } else {
-        if (Random.chance(50)) {
+        if (Random.chance(25)) {
           return this.chooseDirection();
         }
       }
@@ -225,17 +225,17 @@
       var bodyRadius;
       bodyRadius = this.body.bounds.width / 2;
       if (this.position.x + bodyRadius >= local.width) {
-        this.speed.value = new Point(0, 0);
+        this.speed.value.x = 0;
         this.chooseDirection(180);
       } else if (this.position.x - bodyRadius <= 0) {
-        this.speed.value = new Point(0, 0);
+        this.speed.value.x = 0;
         this.chooseDirection(0);
       }
       if (this.position.y + bodyRadius >= local.height) {
-        this.speed.value = new Point(0, 0);
+        this.speed.value.y = 0;
         return this.chooseDirection(270);
       } else if (this.position.y - bodyRadius <= 0) {
-        this.speed.value = new Point(0, 0);
+        this.speed.value.y = 0;
         return this.chooseDirection(90);
       }
     };
@@ -249,7 +249,7 @@
       angle = angle * (Math.PI / 180);
       this.direction = new Point(Math.cos(angle), Math.sin(angle));
       targetSpeed = this.direction.normalize(this.maxSpeed.value);
-      return this.acceleration.value = targetSpeed.divide(1.5 * local.fps);
+      return this.acceleration.value = targetSpeed.divide(3 * local.fps);
     };
 
     Lucarium.prototype.goToPoint = function(point) {};

@@ -122,8 +122,8 @@ class Lucarium
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
     # Starts as 0
     @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2')
-    # Its bodylength per second
-    @maxSpeed = new SciNum(@diameter.value, 'speed', 'm/s')
+    # x times its bodylength per second
+    @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s')
     # Starts as 0
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
 
@@ -182,7 +182,7 @@ class Lucarium
       @goToPoint()
     else
       # With a chance of 1/x, change direction
-      if Random.chance(50)
+      if Random.chance(25)
         @chooseDirection()
 
   # Checks if there is a collision
@@ -190,16 +190,16 @@ class Lucarium
     bodyRadius = (@body.bounds.width / 2)
     # Check if in field
     if @position.x + bodyRadius >= local.width
-      @speed.value = new Point(0, 0) # Stop moving
+      @speed.value.x = 0 # Stop moving in x
       @chooseDirection(180)
     else if @position.x - bodyRadius <= 0
-      @speed.value = new Point(0, 0) # Stop moving
+      @speed.value.x = 0 # Stop moving in x
       @chooseDirection(0)
     if @position.y + bodyRadius >= local.height
-      @speed.value = new Point(0, 0) # Stop moving
+      @speed.value.y = 0 # Stop moving in y
       @chooseDirection(270)
     else if @position.y - bodyRadius <= 0
-      @speed.value = new Point(0, 0) # Stop moving
+      @speed.value.y = 0 # Stop moving in y
       @chooseDirection(90)
 
   # Choose a new direction default is random
@@ -212,7 +212,7 @@ class Lucarium
      # Will change length of vector to be the max speed
     targetSpeed = @direction.normalize(@maxSpeed.value)
     # Set the acceleration, it will take x seconds to accelerate
-    @acceleration.value = targetSpeed.divide(1.5 * local.fps)
+    @acceleration.value = targetSpeed.divide(3 * local.fps)
 
   # Go to a point TODO work out method
   goToPoint: (point) =>
@@ -302,7 +302,7 @@ html.setup = ->
 html.selected = ->
   null
 
-# TODO add function that displays the
+# TODO add function that displays the ratio
 html.pie = ->
   null
 
