@@ -120,11 +120,9 @@ class Lucarium
     @id = generate.id()
     @family = "Lucarium"
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
-    # Starts as 0
     @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2')
     # x times its bodylength per second
     @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s')
-    # Starts as 0
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
 
   # Methods
@@ -186,6 +184,7 @@ class Lucarium
         @chooseDirection()
 
   # Checks if there is a collision
+  # TODO check collisions with other bacteria
   checkCollision: =>
     bodyRadius = (@body.bounds.width / 2)
     # Check if in field
