@@ -93,14 +93,14 @@ var global = {
       $('#home').load('storage/main.html', function () {
         loaded('html')
       })
-      // Load the main javascript
-      $.getScript('assets/js/main.js', function () {
-        loaded('js')
+      // Load the Paper.js library
+      load('https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.22/paper.min.js', 'js', function () {
+        loaded('paper.js')
+        // Load the main javascript
+        $.getScript('assets/js/main.js', function () {
+          loaded('js')
+        })
       })
-    })
-    // Load the Paper.js library
-    load('https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.22/paper.min.js', 'js', function () {
-      loaded('paper.js')
     })
     // Load the Showdown library
     load('https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.6/showdown.min.js', 'js', function () {
