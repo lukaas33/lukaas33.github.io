@@ -146,7 +146,6 @@ class Lucarium
 
   # Updates its body
   update: =>
-    @checkCollision()
     @body.position = @position.round() # Change position
 
   # Gets older
@@ -157,8 +156,11 @@ class Lucarium
 
   # Starts moving TODO method uses energy
   move: =>
+    @checkCollision() # Test if it can move
+
     # Will accelerate to maxSpeed
     @speed.value = @speed.value.add(@acceleration.value)
+
     # Check if xSpeed and ySpeed together are higher than maxSpeed
     if Calc.combine(@speed.value) > @maxSpeed.value
       @acceleration.value = new Point(0, 0) # No acceleration
@@ -184,26 +186,43 @@ class Lucarium
         @chooseDirection()
 
   # Checks if there is a collision
-  # TODO check collisions with other bacteria
   checkCollision: =>
     bodyRadius = (@body.bounds.width / 2)
     # Check if in field
     if @position.x + bodyRadius >= local.width
       @speed.value.x = 0 # Stop moving in x
-      @chooseDirection(180)
+      @chooseDirection(180) # Start moving away
     else if @position.x - bodyRadius <= 0
       @speed.value.x = 0 # Stop moving in x
-      @chooseDirection(0)
+      @chooseDirection(0) # Start moving away
     if @position.y + bodyRadius >= local.height
       @speed.value.y = 0 # Stop moving in y
-      @chooseDirection(270)
+      @chooseDirection(270) # Start moving away
     else if @position.y - bodyRadius <= 0
       @speed.value.y = 0 # Stop moving in y
-      @chooseDirection(90)
+      @chooseDirection(90) # Start moving away
+    # TODO check collisions with other bacteria
+    for bacterium in global.bacteria
+      if @id != bacterium.id # Not itself
+        # How far away the bacteria is
+        distance = @position.subtract(bacterium.position)
+        # How close the points can be
+        minPointDistance = Calc.scale(@radius.value + bacterium.radius.value)
+        # If the paths are too close
+        if Calc.combine(distance) <= minPointDistance
+          if @position.x > bacterium.position.x # From the right
+            @speed.value.x = 0 # Stop moving
+          else if @position.x < bacterium.position.x # From the left
+            @speed.value.x = 0 # Stop moving
+          if @position.y > bacterium.position.y # From the bottom
+            @speed.value.y = 0 # Stop moving
+          else if @position.y < bacterium.position.y # From the top
+            @speed.value.y = 0 # Stop moving
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
-    Math.floor(angle)
+    angle = Math.floor(angle)
+    # console.log(@id, angle)
     angle = angle * (Math.PI / 180) # In radians
     # Direction as point relative to self (origin)
     @direction = new Point(Math.cos(angle), Math.sin(angle))
@@ -417,7 +436,7 @@ isLoaded = setInterval( ->
     # Update simulated time
     time.clock = setInterval( ->
       if not global.interaction.pauzed # Time is not pauzed
-        time.time += 2 # Update time Is two to account for code running time
+        time.time += 4 # Update time, Is higher to account for code running time
     , 1)
 
     # Every full second

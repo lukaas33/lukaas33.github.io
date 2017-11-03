@@ -184,7 +184,6 @@
     };
 
     Lucarium.prototype.update = function() {
-      this.checkCollision();
       return this.body.position = this.position.round();
     };
 
@@ -198,6 +197,7 @@
 
     Lucarium.prototype.move = function() {
       var speed;
+      this.checkCollision();
       this.speed.value = this.speed.value.add(this.acceleration.value);
       if (Calc.combine(this.speed.value) > this.maxSpeed.value) {
         this.acceleration.value = new Point(0, 0);
@@ -222,7 +222,7 @@
     };
 
     Lucarium.prototype.checkCollision = function() {
-      var bodyRadius;
+      var bacterium, bodyRadius, distance, k, len1, minPointDistance, ref1, results;
       bodyRadius = this.body.bounds.width / 2;
       if (this.position.x + bodyRadius >= local.width) {
         this.speed.value.x = 0;
@@ -233,11 +233,39 @@
       }
       if (this.position.y + bodyRadius >= local.height) {
         this.speed.value.y = 0;
-        return this.chooseDirection(270);
+        this.chooseDirection(270);
       } else if (this.position.y - bodyRadius <= 0) {
         this.speed.value.y = 0;
-        return this.chooseDirection(90);
+        this.chooseDirection(90);
       }
+      ref1 = global.bacteria;
+      results = [];
+      for (k = 0, len1 = ref1.length; k < len1; k++) {
+        bacterium = ref1[k];
+        if (this.id !== bacterium.id) {
+          distance = this.position.subtract(bacterium.position);
+          minPointDistance = Calc.scale(this.radius.value + bacterium.radius.value);
+          if (Calc.combine(distance) <= minPointDistance) {
+            if (this.position.x > bacterium.position.x) {
+              this.speed.value.x = 0;
+            } else if (this.position.x < bacterium.position.x) {
+              this.speed.value.x = 0;
+            }
+            if (this.position.y > bacterium.position.y) {
+              results.push(this.speed.value.y = 0);
+            } else if (this.position.y < bacterium.position.y) {
+              results.push(this.speed.value.y = 0);
+            } else {
+              results.push(void 0);
+            }
+          } else {
+            results.push(void 0);
+          }
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
     };
 
     Lucarium.prototype.chooseDirection = function(angle) {
@@ -245,7 +273,7 @@
       if (angle == null) {
         angle = Random.value(0, 360);
       }
-      Math.floor(angle);
+      angle = Math.floor(angle);
       angle = angle * (Math.PI / 180);
       this.direction = new Point(Math.cos(angle), Math.sin(angle));
       targetSpeed = this.direction.normalize(this.maxSpeed.value);
@@ -459,7 +487,7 @@
       clearInterval(isLoaded);
       time.clock = setInterval(function() {
         if (!global.interaction.pauzed) {
-          return time.time += 2;
+          return time.time += 4;
         }
       }, 1);
       time.second = setInterval(function() {
