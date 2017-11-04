@@ -221,7 +221,7 @@
     };
 
     Bacteria.prototype.checkCollision = function() {
-      var bacterium, bodyRadius, distance, impactAngle, k, len1, otherBodyRadius, ref1, results;
+      var bacterium, bodyRadius, distance, k, len1, otherBodyRadius, ref1, results;
       bodyRadius = Calc.scale(this.radius.value);
       if (this.position.x + bodyRadius >= local.width) {
         this.speed.value.x = 0;
@@ -245,7 +245,7 @@
           distance = this.position.subtract(bacterium.position);
           otherBodyRadius = Calc.scale(bacterium.radius.value);
           if (Calc.combine(distance) <= bodyRadius + otherBodyRadius) {
-            impactAngle = distance.angle;
+            this.chooseDirection();
             if (this.position.x >= bacterium.position.x + otherBodyRadius) {
               this.speed.value.x = 0;
             } else if (this.position.x <= bacterium.position.x - otherBodyRadius) {

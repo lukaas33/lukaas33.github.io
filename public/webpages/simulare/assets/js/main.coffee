@@ -39,7 +39,7 @@ Calc.scale = (value, needed = 'scaled') ->
     size = size / global.constants.scaleFactor # Real value
     return size
 
-# Combines the vectors into one value
+# Combines the vector into one value
 Calc.combine = (vector) ->
   # Uses a^2 + b^2 = c^2
   result = Math.sqrt(vector.x**2 + vector.y**2)
@@ -201,7 +201,7 @@ class Bacteria
       @speed.value.y = 0
       @chooseDirection(90) # Start moving away
 
-    # Check collisions with other bacteria
+    # Check collisions with other bacteria TODO make this check error-free
     for bacterium in global.bacteria
       if @id != bacterium.id # Not itself
         # How far away the bacteria is
@@ -209,8 +209,7 @@ class Bacteria
         otherBodyRadius = Calc.scale(bacterium.radius.value)
         # If the paths are too close
         if Calc.combine(distance) <= bodyRadius + otherBodyRadius
-          impactAngle = distance.angle # Angle between in degrees
-          # @chooseDirection(impactAngle + 180) # Go opposite
+          @chooseDirection() # Choose new random direction
            # From the right (in certain range)
           if @position.x >= bacterium.position.x + otherBodyRadius
             @speed.value.x = 0
@@ -250,7 +249,7 @@ class Bacteria
 
 
 # Constructors that inherit code
-class Lucarium extends Bacteria
+class Lucarium extends Bacteria # TODO add unique traits for family
   constructor: ->
     # Are initialised
     @family = "Lucarium"
