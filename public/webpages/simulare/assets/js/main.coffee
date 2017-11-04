@@ -113,12 +113,11 @@ class Food
   # eaten: =>
 
 # Bacteria constructors
-class Lucarium
+class Bacteria
   # Values that need to be entered
   constructor: (@diameter, @energy, @position, @generation, @birth) ->
     # Values that are initialised
     @id = generate.id()
-    @family = "Lucarium"
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
     @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2')
     # x times its bodylength per second
@@ -187,42 +186,47 @@ class Lucarium
 
   # Checks if there is a collision
   checkCollision: =>
-    bodyRadius = (@body.bounds.width / 2)
+    bodyRadius = Calc.scale(@radius.value)
     # Check if in field
     if @position.x + bodyRadius >= local.width
-      @speed.value.x = 0 # Stop moving in x
+      @speed.value.x = 0
       @chooseDirection(180) # Start moving away
     else if @position.x - bodyRadius <= 0
-      @speed.value.x = 0 # Stop moving in x
+      @speed.value.x = 0
       @chooseDirection(0) # Start moving away
     if @position.y + bodyRadius >= local.height
-      @speed.value.y = 0 # Stop moving in y
+      @speed.value.y = 0
       @chooseDirection(270) # Start moving away
     else if @position.y - bodyRadius <= 0
-      @speed.value.y = 0 # Stop moving in y
+      @speed.value.y = 0
       @chooseDirection(90) # Start moving away
-    # TODO check collisions with other bacteria
+
+    # Check collisions with other bacteria
     for bacterium in global.bacteria
       if @id != bacterium.id # Not itself
         # How far away the bacteria is
         distance = @position.subtract(bacterium.position)
-        # How close the points can be
-        minPointDistance = Calc.scale(@radius.value + bacterium.radius.value)
+        otherBodyRadius = Calc.scale(bacterium.radius.value)
         # If the paths are too close
-        if Calc.combine(distance) <= minPointDistance
-          if @position.x > bacterium.position.x # From the right
-            @speed.value.x = 0 # Stop moving
-          else if @position.x < bacterium.position.x # From the left
-            @speed.value.x = 0 # Stop moving
-          if @position.y > bacterium.position.y # From the bottom
-            @speed.value.y = 0 # Stop moving
-          else if @position.y < bacterium.position.y # From the top
-            @speed.value.y = 0 # Stop moving
+        if Calc.combine(distance) <= bodyRadius + otherBodyRadius
+          impactAngle = distance.angle # Angle between in degrees
+          # @chooseDirection(impactAngle + 180) # Go opposite
+           # From the right (in certain range)
+          if @position.x >= bacterium.position.x + otherBodyRadius
+            @speed.value.x = 0
+          # From the left (in certain range)
+          else if @position.x <= bacterium.position.x - otherBodyRadius
+            @speed.value.x = 0
+          # From the bottom (in certain range)
+          if @position.y >= bacterium.position.y + otherBodyRadius
+            @speed.value.y = 0
+          # From the top (in certain range)
+          else if @position.y <= bacterium.position.y - otherBodyRadius
+            @speed.value.y = 0
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
-    angle = Math.floor(angle)
-    # console.log(@id, angle)
+    angle = angle % 360 # Get out the whole circles
     angle = angle * (Math.PI / 180) # In radians
     # Direction as point relative to self (origin)
     @direction = new Point(Math.cos(angle), Math.sin(angle))
@@ -246,6 +250,12 @@ class Lucarium
 
 
 # Constructors that inherit code
+class Lucarium extends Bacteria
+  constructor: ->
+    # Are initialised
+    @family = "Lucarium"
+    super # Call parent constructor
+
 class Viridis extends Lucarium # TODO make different traits for the species
   constructor: ->
     # Values that are initialised
