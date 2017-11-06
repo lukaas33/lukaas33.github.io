@@ -1,19 +1,16 @@
 (function() {
   $(function() {
-    var $feed, error, update;
+    var $feed, constraints;
     $feed = $('#feed');
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
-    error = function(error) {
-      return console.log(error);
+    constraints = {
+      audio: false,
+      video: true
     };
-    update = function(stream) {
+    return navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
       return $feed.attr('src', window.URL.createObjectURL(stream));
-    };
-    if (navigator.getUserMedia) {
-      return navigator.getUserMedia({
-        video: true
-      }, update, error);
-    }
+    })["catch"](function(error) {
+      return console.log(error);
+    });
   });
 
 }).call(this);
