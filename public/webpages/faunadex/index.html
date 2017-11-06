@@ -1,25 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <!-- Appdata -->
-    <title>Faunadex</title>
     <meta charset="UTF-8">
     <!-- Javascript -->
     <script src="assets/javascript/libraries/ejs.js"></script>
     <script src="assets/javascript/libraries/jquery.js"></script>
-    <script>
-      // << Page setup >>
-      var menu = new EJS({url: 'views/partials/menu.ejs'}).render({selected: 'Home'})
-
-      // Serviceworker register
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('serviceworker.js').then(function() {
-          console.log('Service Worker Registered')
-      	})
-      }
-    </script>
+    <script defer src="assets/javascript/app.js"></script>
     <script defer src="assets/javascript/home.js"></script> <!-- Will load content -->
     <!-- Styling -->
+    <link href="assets/css/home.css" media="screen"/>
+    <link href="assets/css/menu.css" media="screen"/>
   </head>
   <body>
     <nav id="menu"></nav>
@@ -33,7 +24,13 @@
     <main>
       <section id="scan">
         <h3 class="title">Scan</h3>
-        <div class="content"></div>
+        <div class="content">
+          <div class="card">
+            <a href="/scan">
+              <img src="assets/images/other/preview.jpg" alt="An illustration of the scanning"/>
+            </a>
+          </div>
+        </div>
       </section>
       <section id="results">
         <h3 class="title">Results</h3>
@@ -44,5 +41,12 @@
         <div class="content"></div>
       </section>
     </main>
+    <!-- Page setup -->
+    <script>
+      var menu = new EJS({url: 'views/partials/menu.ejs'}).render({selected: 'Home'})
+      var appData = new EJS({url: 'views/partials/appdata.ejs'}).render({name: 'Home'})
+      $('#menu').html(menu) // Add menu
+      $('meta[charset=UTF-8]').after(appData) // Add the app data
+    </script>
   </body>
 </html>

@@ -2,18 +2,20 @@
  var menuItems = ['Home', 'Scan', 'Results', 'Achievements', 'About']
 %>
 
-<% for (item in menuItems) { %>
+<% for (var index = 0; index < menuItems.length; index++) { %>
   <%
-  var path = item.toLowerCase()
-  var class = 'menuItem'
-  if (selected === item) {
-    path = ''
-    class = class + ' selected'
-  }
+    var item = menuItems[index]
+    var path = item.toLowerCase()
+    var classes  = 'menuItem'
+    if (selected === item) {
+      path = ''
+      classes = classes + ' selected'
+    }
   %>
-  <div class="<%= class %>">
+  <div class="<%= classes %>">
     <a href="/<%= path %>">
-      <img src="/assets/images/icons/<%= item.toLowerCase() %>.svg"/>
+      <img src="assets/images/icons/<%= item.toLowerCase() %>.svg"/>
+      <p><%= item %></p>
     </a>
   </div>
 <% } %>
