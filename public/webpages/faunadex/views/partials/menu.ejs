@@ -1,0 +1,19 @@
+<%
+ var menuItems = ['Home', 'Scan', 'Results', 'Achievements', 'About']
+%>
+
+<% for (item in menuItems) { %>
+  <%
+  var path = item.toLowerCase()
+  var class = 'menuItem'
+  if (selected === item) {
+    path = ''
+    class = class + ' selected'
+  }
+  %>
+  <div class="<%= class %>">
+    <a href="/<%= path %>">
+      <img src="/assets/images/icons/<%= item.toLowerCase() %>.svg"/>
+    </a>
+  </div>
+<% } %>

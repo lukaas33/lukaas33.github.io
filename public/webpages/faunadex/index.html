@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- Appdata -->
     <title>Faunadex</title>
+    <meta charset="UTF-8">
+    <!-- Javascript -->
+    <script src="assets/javascript/libraries/ejs.js"></script>
+    <script src="assets/javascript/libraries/jquery.js"></script>
     <script>
       // << Page setup >>
+      var menu = new EJS({url: 'views/partials/menu.ejs'}).render({selected: 'Home'})
 
       // Serviceworker register
       if ('serviceWorker' in navigator) {
@@ -12,8 +18,31 @@
       	})
       }
     </script>
-    <script src="assets/javascript/home.js"></script>
+    <script defer src="assets/javascript/home.js"></script> <!-- Will load content -->
+    <!-- Styling -->
   </head>
   <body>
+    <nav id="menu"></nav>
+    <header>
+      <button>
+        <img src="assets/images/other/logo-white.svg" alt="The app's white logo"/>
+      </button>
+      <h1>Faunadex</h1>
+    </header>
+    <div id="loader"></div>
+    <main>
+      <section id="scan">
+        <h3 class="title">Scan</h3>
+        <div class="content"></div>
+      </section>
+      <section id="results">
+        <h3 class="title">Results</h3>
+        <div class="content"></div>
+      </section>
+      <section id="achievements">
+        <h3 class="title">Achievements</h3>
+        <div class="content"></div>
+      </section>
+    </main>
   </body>
 </html>
