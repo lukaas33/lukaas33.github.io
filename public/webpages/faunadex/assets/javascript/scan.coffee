@@ -1,7 +1,6 @@
 $ ->
   # << Variables >>
   $feed = $('#feed')
-  # Source https://www.kirupa.com/html5/accessing_your_webcam_in_html5.htm
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia
 
   # << Functions >>

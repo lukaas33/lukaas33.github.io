@@ -18,14 +18,17 @@
   <button class="top" name="back">
     <img src="assets/images/other/back.svg"/>
   </button>
-  <button class="top" name="gallery">
+  <div class="top" name="gallery">
+    <input type="file" accept="image/*"/>
     <img src="assets/images/other/back.svg"/>
-  </button>
+  </div>
   <div class="page">
     <div id="loader"></div>
     <main>
-      <!-- <input type="file" accept="image/*" capture="camera"/> -->
+      <!-- Will display camera -->
       <video autoplay id="feed"></video>
+      <!-- Used to show and store image -->
+      <canvas id="image"></canvas>
       <button name="accept"></button>
     </main>
   </div>
