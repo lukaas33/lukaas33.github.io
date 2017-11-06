@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Faunadex</title>
+    <script>
+      // << Page setup >>
+
+      // Serviceworker register
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('serviceworker.js').then(function() {
+          console.log('Service Worker Registered')
+      	})
+      }
+    </script>
+    <script src="assets/javascript/home.js"></script>
+  </head>
+  <body>
+  </body>
+</html>
