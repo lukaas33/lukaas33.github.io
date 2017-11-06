@@ -15,32 +15,34 @@
   <body>
     <nav id="menu"></nav>
     <header>
-      <button>
+      <button name="menu">
         <img src="assets/images/other/logo-white.svg" alt="The app's white logo"/>
       </button>
       <h1>Faunadex</h1>
     </header>
-    <div id="loader"></div>
-    <main>
-      <section id="scan">
-        <h3 class="title">Scan</h3>
-        <div class="content">
-          <div class="card">
-            <a href="/scan">
-              <img src="assets/images/other/preview.jpg" alt="An illustration of the scanning"/>
-            </a>
+    <div class="page">
+      <div id="loader"></div>
+      <main>
+        <section id="scan">
+          <h3 class="title">Scan</h3>
+          <div class="content">
+            <div class="card">
+              <a href="/scan">
+                <img src="assets/images/other/preview.jpg" alt="An illustration of the scanning"/>
+              </a>
+            </div>
           </div>
-        </div>
-      </section>
-      <section id="results">
-        <h3 class="title">Results</h3>
-        <div class="content"></div>
-      </section>
-      <section id="achievements">
-        <h3 class="title">Achievements</h3>
-        <div class="content"></div>
-      </section>
-    </main>
+        </section>
+        <section id="results">
+          <h3 class="title">Results</h3>
+          <div class="content"></div>
+        </section>
+        <section id="achievements">
+          <h3 class="title">Achievements</h3>
+          <div class="content"></div>
+        </section>
+      </main>
+    </div>
     <!-- Page setup -->
     <script>
       var menu = new EJS({url: 'views/partials/menu.ejs'}).render({selected: 'Home'})

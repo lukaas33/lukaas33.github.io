@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Appdata -->
+  <meta charset="UTF-8"/>
+  <!-- Same root as index -->
+  <base href="../"/>
+  <!-- Javascript -->
+  <script src="assets/javascript/libraries/ejs.js"></script>
+  <script src="assets/javascript/libraries/jquery.js"></script>
+  <script defer src="assets/javascript/app.js"></script>
+  <script defer src="assets/javascript/scan.js"></script> <!-- Will load content -->
+  <!-- Styling -->
+  <link href="assets/css/home.css" media="screen"/>
+  <link href="assets/css/scan.css" media="screen"/>
+</head>
+<body>
+  <button class="top" name="back">
+    <img src="assets/images/other/back.svg"/>
+  </button>
+  <button class="top" name="gallery">
+    <img src="assets/images/other/back.svg"/>
+  </button>
+  <div class="page">
+    <div id="loader"></div>
+    <main>
+      <input type="file" accept="image/*" capture="camera"/>
+      <button name="accept"></button>
+    </main>
+  </div>
+  <!-- Page setup -->
+  <script>
+    var appData = new EJS({url: 'views/partials/appdata.ejs'}).render({name: 'Scan'})
+    $('meta[charset=UTF-8]').after(appData) // Add the app data
+  </script>
+</body>
+</html>
