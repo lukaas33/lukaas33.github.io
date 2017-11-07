@@ -68,7 +68,7 @@ Random.normal = () ->
   null
 
 # Creates unique id
-generate.id = ->
+generate.id = (instances) ->
   unique = false
   string = null
 
@@ -79,13 +79,13 @@ generate.id = ->
       result.push(String.fromCharCode(charcode)) # Add the string
     string = result.join('') # As string
 
-    if global.bacteria.length < 1 # No bacteria
+    if instances.length < 1 # No instances
       unique = true
       break # End the while loop
     else
       occurs = false # Until proven
-      for bacterium in global.bacteria
-        if bacterium.id == string
+      for instance in instances
+        if instance.id == string
           occurs = true # Loop will run again
           break # End the for loop
       unique = not occurs
@@ -101,12 +101,13 @@ class SciNum
 class Food
   # Values that need to be entered
   constructor: (@energy, @position) ->
-    @diameter = Random.value(0.3e-6, 0.5e-6)
+    @id = generate.id(global.food)
+    @diameter = Random.value(0.3e-6, 0.5e-6) # TODO is related to energy
     @radius = @diameter / 2
 
   # Creates the particle
   display: =>
-    @particle = new Path.Circle(@position, Calc.Scale(@radius))
+    @particle = new Path.Circle(@position, Calc.scale(@radius))
     @particle.fillColor = 'yellow'
 
   # Gets eaten TODO work out method
@@ -117,7 +118,8 @@ class Bacteria
   # Values that need to be entered
   constructor: (@diameter, @energy, @position, @generation, @birth) ->
     # Values that are initialised
-    @id = generate.id()
+    # TODO diameter is related to energy
+    @id = generate.id(global.bacteria)
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
     @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2')
     # x times its bodylength per second
@@ -372,9 +374,25 @@ simulation.createLife = ->
     0
   )
 
-# TODO add function that generates food
+# Generates food
 simulation.feed = ->
-  null
+  total = global.enviroment.energy.value
+  left = total # Inital
+  while left > 0
+    # A percentage of total
+    amount = Random.value(total * 0.02, total * 0.08)
+    if amount < left
+      leftThisSecond -= amount # Remove from what's left
+    else
+      amount = left # Remainder
+      leftThisSecond = 0 # Ends loop
+    # Random location in field
+    location = Point.random().multiply(local.size)
+    # Add food
+    amount = new SciNum(amount, 'energy', 'j')
+    food = new Food(amount, location)
+    food.display()
+    global.food.push(food) # Add to array
 
 # Sets up the document
 simulation.setup = ->
@@ -414,6 +432,7 @@ simulation.run = ->
   global.interaction.pauzed = false # Unpauze time
   for bacterium in global.bacteria
     bacterium.born() # Starts the bacteria
+  simulation.feed()
 
 # << Simulation functions >>
 # Groups
@@ -445,8 +464,8 @@ isLoaded = setInterval( ->
     # Update simulated time
     time.clock = setInterval( ->
       if not global.interaction.pauzed # Time is not pauzed
-        time.time += 4 # Update time, Is higher to account for code running time
-    , 1)
+        time.time += 5 # Update time, Is higher to account for code running time
+    , 5)
 
     # Every full second
     time.second = setInterval( ->
@@ -456,9 +475,9 @@ isLoaded = setInterval( ->
 
     # Every frame of the canvas
     view.onFrame = (event) ->
-      # Loop through the bacteria
-      for bacterium in global.bacteria
-        if not global.interaction.pauzed # Time is not pauzed
+      if not global.interaction.pauzed # Time is not pauzed
+        # Loop through the bacteria
+        for bacterium in global.bacteria
           bacterium.live() # Bacteria does actions
 
     # Paper.js canvas resize event
@@ -472,6 +491,14 @@ isLoaded = setInterval( ->
         (local.height / draw.bottom.bounds.height) * 2
       )
       draw.bottom.position = local.origin # Rectangle is updated
+
+      # Scale the food position
+      for food in global.food
+        scaledPosition = new Point( # Scale the position of the bubbles
+          x: (food.position.x / previous.width) * local.size.width
+          y: (food.position.y / previous.height) * local.size.height
+        )
+        food.position = scaledPosition.round() # Update position
 
       # Scale the position of the bacteria
       for bacterium in global.bacteria
