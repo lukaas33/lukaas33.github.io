@@ -13,6 +13,7 @@ var urlsToCache = [
 
 // Perform install steps
 self.addEventListener('install', function (event) {
+  debugger // Use the debugger
   event.waitUntil(
     caches.open(cacheName).then(function (cache) {
       console.log('Opened cache')
@@ -24,14 +25,27 @@ self.addEventListener('install', function (event) {
 // Return cached data
 self.addEventListener('fetch', function (event) {
   event.respondWith(
-    caches.match(event.request)
-      .then(function (response) {
-        // Cache hit - return response
-        if (response) {
-          return response
-        }
-        return fetch(event.request)
+    caches.match(event.request).then(function (response) {
+      // Cache hit - return response
+      if (response) {
+        return response
       }
-    )
+      return fetch(event.request)
+    })
   )
+})
+
+// On startup
+self.addEventListener('activate', function (event) {
+  console.log('Activated')
+  event.waitUntil(
+    caches.keys().then(function (keyList) {
+      return Promise.all(keyList.map(function (key) {
+        if (key !== cacheName) {
+          return caches.delete(key) // Delete old file
+        }
+      }))
+    })
+  )
+  return self.clients.claim()
 })
