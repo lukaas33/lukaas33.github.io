@@ -25,6 +25,7 @@ Random = {}
 generate = {}
 time =
   time: 0
+  trackSecond: 0
 
 # Returns the value according to a scale
 Calc.scale = (value, needed = 'scaled') ->
@@ -79,16 +80,17 @@ generate.id = (instances) ->
       result.push(String.fromCharCode(charcode)) # Add the string
     string = result.join('') # As string
 
-    if instances.length < 1 # No instances
-      unique = true
-      break # End the while loop
-    else
+    if instances.length > 0 # Not empty
       occurs = false # Until proven
       for instance in instances
         if instance.id == string
           occurs = true # Loop will run again
           break # End the for loop
       unique = not occurs
+    else # No instances
+      unique = true
+      break # End the while loop
+
   return string
 
 # << Constructors >>
@@ -101,7 +103,6 @@ class SciNum
 class Food
   # Values that need to be entered
   constructor: (@energy, @position) ->
-    @id = generate.id(global.food)
     @diameter = Random.value(0.3e-6, 0.5e-6) # TODO is related to energy
     @radius = @diameter / 2
 
@@ -121,10 +122,12 @@ class Bacteria
     # TODO diameter is related to energy
     @id = generate.id(global.bacteria)
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
-    @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2')
+    @viewRange = new SciNum(@diameter.value * 2, 'length', 'm')
+    @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s*s')
     # x times its bodylength per second
     @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s')
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
+    @target = null # No target
 
   # Methods
   # Starts living
@@ -136,6 +139,11 @@ class Bacteria
   # Continues living TODO work out energy system with traits
   live: =>
     @foodNearby()
+    if @target != null # Food is near
+      @findTarget() # Go get food
+    else # Wandering
+      # With a chance of 1/x, change direction
+      @chooseDirection() if Random.chance(25)
     @move()
     @update()
 
@@ -155,10 +163,16 @@ class Bacteria
       @age = new SciNum((time.time - @birth) / 1000, 'time', 's')
     , 1000)
 
+  # Change acceleration to go to direction
+  startMoving: =>
+     # Will change length of vector to be the max speed
+    targetSpeed = @direction.normalize(@maxSpeed.value)
+    # Set the acceleration, it will take x seconds to accelerate
+    @acceleration.value = targetSpeed.divide(3 * local.fps)
+
   # Starts moving TODO method uses energy
   move: =>
     @checkCollision() # Test if it can move
-
     # Will accelerate to maxSpeed
     @speed.value = @speed.value.add(@acceleration.value)
 
@@ -177,14 +191,23 @@ class Bacteria
     # Change position
     @position = @position.add(speed)
 
-  # Checks if there is food nearby TODO actually test it
+  # Checks if there is food nearby
   foodNearby: =>
-    if false # Food is near
-      @goToPoint()
-    else
-      # With a chance of 1/x, change direction
-      if Random.chance(25)
-        @chooseDirection()
+    isNearby = false # Until proven
+    possibleTargets = []
+    # Loops through food
+    for food in global.food
+      # The distance between the food and the bacteria
+      distance = Calc.combine(food.position.subtract(@position))
+      # Is in range
+      if distance < Calc.scale(@viewRange.value)
+        possibleTargets.push({instance: food, distance, distance})
+    if possibleTargets.length > 0 # There are targets
+      distances = (target.distance for target in possibleTargets)
+      minDistance = Math.min(distances...) # Lowest
+      for target in possibleTargets
+        # Set the correct target
+        @target = target.instance if target.distance == minDistance
 
   # Checks if there is a collision
   checkCollision: =>
@@ -211,10 +234,10 @@ class Bacteria
         otherBodyRadius = Calc.scale(bacterium.radius.value)
         # If the paths are too close
         if Calc.combine(distance) <= bodyRadius + otherBodyRadius
-          @chooseDirection() # Choose new random direction
            # From the right (in certain range)
           if @position.x >= bacterium.position.x + otherBodyRadius
             @speed.value.x = 0
+            @chooseDirection() # Move away
           # From the left (in certain range)
           else if @position.x <= bacterium.position.x - otherBodyRadius
             @speed.value.x = 0
@@ -231,14 +254,21 @@ class Bacteria
     angle = angle * (Math.PI / 180) # In radians
     # Direction as point relative to self (origin)
     @direction = new Point(Math.cos(angle), Math.sin(angle))
+    @startMoving()
 
-     # Will change length of vector to be the max speed
-    targetSpeed = @direction.normalize(@maxSpeed.value)
-    # Set the acceleration, it will take x seconds to accelerate
-    @acceleration.value = targetSpeed.divide(3 * local.fps)
+  # Will go to a point until reached
+  findTarget: =>
+    if @target.position == @position
+      @target = null # Stop following
+    else
+      @goToPoint(@target.position)
 
   # Go to a point TODO work out method
   goToPoint: (point) =>
+    # Set the direction
+    relativePosition = @target.position.subtract(@position)
+    @direction = relativePosition.normalize(1)
+    @startMoving()
 
   # Divide itself TODO work out this functionality
   divide: =>
@@ -325,7 +355,29 @@ html.clock = ->
 
 # TODO add function that sets up the values of the elements
 html.setup = ->
-  null
+  # << Events >>
+  # When view goes out of focus
+  $(window).blur(->
+    html.pause(off) # Set to on
+  )
+  # Window refocuses
+  $(window).focus(->
+    html.pause(on) # Set to off
+  )
+
+  # TODO add restart button event
+
+  # The menu events TODO work out these events
+  doc.menuItems.each( ->
+    $(@).click ->
+      switch @.name # Different name attributes
+        when "volume" then null
+        when "pause"
+          html.pause()
+        when "card" then null
+        when "view" then null
+        when "info" then null
+  )
 
 # TODO add function that updates info panel
 html.selected = ->
@@ -336,9 +388,9 @@ html.pie = ->
   null
 
 # Pauses the simulation
-html.pause = ->
-  icon = $("button[name=pause] img")
-  if global.interaction.pauzed # Unpauze
+html.pause = (change = global.interaction.pauzed) ->
+  icon = doc.menu.find("button[name=pause] img")
+  if change # Unpauze
     global.interaction.pauzed = false
     icon.attr('src', 'assets/images/icons/ic_pause_black_24px.svg')
   else # Pauze
@@ -378,20 +430,22 @@ simulation.createLife = ->
 simulation.feed = ->
   total = global.enviroment.energy.value
   left = total # Inital
-  while left > 0
-    # A percentage of total
-    amount = Random.value(total * 0.02, total * 0.08)
+  # Food left to give and maximum instances not reached
+  while left > 0 and global.food.length < 20
+    # A percentage of the total
+    amount = Random.value(total * 0.10, total * 0.15)
     if amount < left
-      leftThisSecond -= amount # Remove from what's left
+      left -= amount # Remove from what's left
     else
       amount = left # Remainder
-      leftThisSecond = 0 # Ends loop
-    # Random location in field
-    location = Point.random().multiply(local.size)
+      left = 0 # Ends loop
+    # Random location in field, not near the edges
+    range = local.size.subtract(50)
+    location = Point.random().multiply(range).add(25)
     # Add food
     amount = new SciNum(amount, 'energy', 'j')
     food = new Food(amount, location)
-    food.display()
+    food.display() # Draw in field
     global.food.push(food) # Add to array
 
 # Sets up the document
@@ -429,10 +483,11 @@ simulation.start = ->
 
 # Runs simulation
 simulation.run = ->
-  global.interaction.pauzed = false # Unpauze time
   for bacterium in global.bacteria
     bacterium.born() # Starts the bacteria
   simulation.feed()
+  global.interaction.pauzed = false # Unpauze time
+  html.setup() # Activate document
 
 # << Simulation functions >>
 # Groups
@@ -464,7 +519,12 @@ isLoaded = setInterval( ->
     # Update simulated time
     time.clock = setInterval( ->
       if not global.interaction.pauzed # Time is not pauzed
-        time.time += 5 # Update time, Is higher to account for code running time
+        time.time += 5 # Update time
+
+        time.trackSecond += 5
+        if time.trackSecond > 1000 # Full simulated second
+          time.trackSecond = 0 # Restart
+          simulation.feed()
     , 5)
 
     # Every full second
@@ -485,47 +545,23 @@ isLoaded = setInterval( ->
       previous = local.size # Before resizing
       html.setSize() # Update size variables
 
+      # Function for scaling positions
+      scalePositions = (instances) ->
+        for instance in instances
+          scaledPosition = new Point( # Scale the position of the instance
+            x: (instance.position.x / previous.width) * local.size.width
+            y: (instance.position.y / previous.height) * local.size.height
+          )
+          instance.position = scaledPosition.round() # Update position
+
+      scalePositions(global.bacteria)
+      scalePositions(global.food)
+      scalePositions(draw.bubbles)
+
       # Scale by a factor of intended width / real width
       draw.bottom.scale( # Don't know why times 2 but it works, don't touch it
         (local.width / draw.bottom.bounds.width) * 2,
         (local.height / draw.bottom.bounds.height) * 2
       )
       draw.bottom.position = local.origin # Rectangle is updated
-
-      # Scale the food position
-      for food in global.food
-        scaledPosition = new Point( # Scale the position of the bubbles
-          x: (food.position.x / previous.width) * local.size.width
-          y: (food.position.y / previous.height) * local.size.height
-        )
-        food.position = scaledPosition.round() # Update position
-
-      # Scale the position of the bacteria
-      for bacterium in global.bacteria
-        scaledPosition = new Point( # Scale the position of the bubbles
-          x: (bacterium.position.x / previous.width) * local.size.width
-          y: (bacterium.position.y / previous.height) * local.size.height
-        )
-        bacterium.position = scaledPosition.round() # Update position
-
-      for bubble in draw.bubbles
-        scaledPosition = new Point( # Scale the position of the bubbles
-          x: (bubble.position.x / previous.width) * local.size.width
-          y: (bubble.position.y / previous.height) * local.size.height
-        )
-        bubble.position = scaledPosition.round() # Update position
-
-    # TODO add restart button event
-
-    # The menu events TODO work out these events
-    doc.menuItems.each( ->
-      $(@).click ->
-        switch @.name # Different name attributes
-          when "volume" then null
-          when "pause"
-            html.pause()
-          when "card" then null
-          when "view" then null
-          when "info" then null
-    )
 , 1)

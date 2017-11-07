@@ -28,7 +28,8 @@
   generate = {};
 
   time = {
-    time: 0
+    time: 0,
+    trackSecond: 0
   };
 
   Calc.scale = function(value, needed) {
@@ -90,10 +91,7 @@
         result.push(String.fromCharCode(charcode));
       }
       string = result.join('');
-      if (instances.length < 1) {
-        unique = true;
-        break;
-      } else {
+      if (instances.length > 0) {
         occurs = false;
         for (l = 0, len1 = instances.length; l < len1; l++) {
           instance = instances[l];
@@ -103,6 +101,9 @@
           }
         }
         unique = !occurs;
+      } else {
+        unique = true;
+        break;
       }
     }
     return string;
@@ -124,7 +125,6 @@
       this.energy = energy1;
       this.position = position;
       this.display = bind(this.display, this);
-      this.id = generate.id(global.food);
       this.diameter = Random.value(0.3e-6, 0.5e-6);
       this.radius = this.diameter / 2;
     }
@@ -149,10 +149,12 @@
       this.die = bind(this.die, this);
       this.divide = bind(this.divide, this);
       this.goToPoint = bind(this.goToPoint, this);
+      this.findTarget = bind(this.findTarget, this);
       this.chooseDirection = bind(this.chooseDirection, this);
       this.checkCollision = bind(this.checkCollision, this);
       this.foodNearby = bind(this.foodNearby, this);
       this.move = bind(this.move, this);
+      this.startMoving = bind(this.startMoving, this);
       this.ages = bind(this.ages, this);
       this.update = bind(this.update, this);
       this.display = bind(this.display, this);
@@ -160,9 +162,11 @@
       this.born = bind(this.born, this);
       this.id = generate.id(global.bacteria);
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
-      this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2');
+      this.viewRange = new SciNum(this.diameter.value * 2, 'length', 'm');
+      this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s*s');
       this.maxSpeed = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
+      this.target = null;
     }
 
     Bacteria.prototype.born = function() {
@@ -173,6 +177,13 @@
 
     Bacteria.prototype.live = function() {
       this.foodNearby();
+      if (this.target !== null) {
+        this.findTarget();
+      } else {
+        if (Random.chance(25)) {
+          this.chooseDirection();
+        }
+      }
       this.move();
       return this.update();
     };
@@ -194,6 +205,12 @@
       })(this), 1000);
     };
 
+    Bacteria.prototype.startMoving = function() {
+      var targetSpeed;
+      targetSpeed = this.direction.normalize(this.maxSpeed.value);
+      return this.acceleration.value = targetSpeed.divide(3 * local.fps);
+    };
+
     Bacteria.prototype.move = function() {
       var speed;
       this.checkCollision();
@@ -211,12 +228,42 @@
     };
 
     Bacteria.prototype.foodNearby = function() {
-      if (false) {
-        return this.goToPoint();
-      } else {
-        if (Random.chance(25)) {
-          return this.chooseDirection();
+      var distance, distances, food, isNearby, k, l, len1, len2, minDistance, possibleTargets, ref1, results, target;
+      isNearby = false;
+      possibleTargets = [];
+      ref1 = global.food;
+      for (k = 0, len1 = ref1.length; k < len1; k++) {
+        food = ref1[k];
+        distance = Calc.combine(food.position.subtract(this.position));
+        if (distance < Calc.scale(this.viewRange.value)) {
+          possibleTargets.push({
+            instance: food,
+            distance: distance,
+            distance: distance
+          });
         }
+      }
+      if (possibleTargets.length > 0) {
+        distances = (function() {
+          var l, len2, results;
+          results = [];
+          for (l = 0, len2 = possibleTargets.length; l < len2; l++) {
+            target = possibleTargets[l];
+            results.push(target.distance);
+          }
+          return results;
+        })();
+        minDistance = Math.min.apply(Math, distances);
+        results = [];
+        for (l = 0, len2 = possibleTargets.length; l < len2; l++) {
+          target = possibleTargets[l];
+          if (target.distance === minDistance) {
+            results.push(this.target = target.instance);
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
       }
     };
 
@@ -245,9 +292,9 @@
           distance = this.position.subtract(bacterium.position);
           otherBodyRadius = Calc.scale(bacterium.radius.value);
           if (Calc.combine(distance) <= bodyRadius + otherBodyRadius) {
-            this.chooseDirection();
             if (this.position.x >= bacterium.position.x + otherBodyRadius) {
               this.speed.value.x = 0;
+              this.chooseDirection();
             } else if (this.position.x <= bacterium.position.x - otherBodyRadius) {
               this.speed.value.x = 0;
             }
@@ -269,18 +316,29 @@
     };
 
     Bacteria.prototype.chooseDirection = function(angle) {
-      var targetSpeed;
       if (angle == null) {
         angle = Random.value(0, 360);
       }
       angle = angle % 360;
       angle = angle * (Math.PI / 180);
       this.direction = new Point(Math.cos(angle), Math.sin(angle));
-      targetSpeed = this.direction.normalize(this.maxSpeed.value);
-      return this.acceleration.value = targetSpeed.divide(3 * local.fps);
+      return this.startMoving();
     };
 
-    Bacteria.prototype.goToPoint = function(point) {};
+    Bacteria.prototype.findTarget = function() {
+      if (this.target.position === this.position) {
+        return this.target = null;
+      } else {
+        return this.goToPoint(this.target.position);
+      }
+    };
+
+    Bacteria.prototype.goToPoint = function(point) {
+      var relativePosition;
+      relativePosition = this.target.position.subtract(this.position);
+      this.direction = relativePosition.normalize(1);
+      return this.startMoving();
+    };
 
     Bacteria.prototype.divide = function() {};
 
@@ -388,7 +446,28 @@
   };
 
   html.setup = function() {
-    return null;
+    $(window).blur(function() {
+      return html.pause(false);
+    });
+    $(window).focus(function() {
+      return html.pause(true);
+    });
+    return doc.menuItems.each(function() {
+      return $(this).click(function() {
+        switch (this.name) {
+          case "volume":
+            return null;
+          case "pause":
+            return html.pause();
+          case "card":
+            return null;
+          case "view":
+            return null;
+          case "info":
+            return null;
+        }
+      });
+    });
   };
 
   html.selected = function() {
@@ -399,10 +478,13 @@
     return null;
   };
 
-  html.pause = function() {
+  html.pause = function(change) {
     var icon;
-    icon = $("button[name=pause] img");
-    if (global.interaction.pauzed) {
+    if (change == null) {
+      change = global.interaction.pauzed;
+    }
+    icon = doc.menu.find("button[name=pause] img");
+    if (change) {
       global.interaction.pauzed = false;
       return icon.attr('src', 'assets/images/icons/ic_pause_black_24px.svg');
     } else {
@@ -422,19 +504,20 @@
   };
 
   simulation.feed = function() {
-    var amount, food, left, leftThisSecond, location, results, total;
+    var amount, food, left, location, range, results, total;
     total = global.enviroment.energy.value;
     left = total;
     results = [];
-    while (left > 0) {
-      amount = Random.value(total * 0.02, total * 0.08);
+    while (left > 0 && global.food.length < 20) {
+      amount = Random.value(total * 0.10, total * 0.15);
       if (amount < left) {
-        leftThisSecond -= amount;
+        left -= amount;
       } else {
         amount = left;
-        leftThisSecond = 0;
+        left = 0;
       }
-      location = Point.random().multiply(local.size);
+      range = local.size.subtract(50);
+      location = Point.random().multiply(range).add(25);
       amount = new SciNum(amount, 'energy', 'j');
       food = new Food(amount, location);
       food.display();
@@ -476,13 +559,14 @@
 
   simulation.run = function() {
     var bacterium, k, len1, ref1;
-    global.interaction.pauzed = false;
     ref1 = global.bacteria;
     for (k = 0, len1 = ref1.length; k < len1; k++) {
       bacterium = ref1[k];
       bacterium.born();
     }
-    return simulation.feed();
+    simulation.feed();
+    global.interaction.pauzed = false;
+    return html.setup();
   };
 
   draw = {};
@@ -516,7 +600,12 @@
       clearInterval(isLoaded);
       time.clock = setInterval(function() {
         if (!global.interaction.pauzed) {
-          return time.time += 5;
+          time.time += 5;
+          time.trackSecond += 5;
+          if (time.trackSecond > 1000) {
+            time.trackSecond = 0;
+            return simulation.feed();
+          }
         }
       }, 5);
       time.second = setInterval(function() {
@@ -536,58 +625,29 @@
           return results;
         }
       };
-      view.onResize = function(event) {
-        var bacterium, bubble, food, k, l, len1, len2, len3, m, previous, ref1, ref2, ref3, results, scaledPosition;
+      return view.onResize = function(event) {
+        var previous, scalePositions;
         previous = local.size;
         html.setSize();
-        draw.bottom.scale((local.width / draw.bottom.bounds.width) * 2, (local.height / draw.bottom.bounds.height) * 2);
-        draw.bottom.position = local.origin;
-        ref1 = global.food;
-        for (k = 0, len1 = ref1.length; k < len1; k++) {
-          food = ref1[k];
-          scaledPosition = new Point({
-            x: (food.position.x / previous.width) * local.size.width,
-            y: (food.position.y / previous.height) * local.size.height
-          });
-          food.position = scaledPosition.round();
-        }
-        ref2 = global.bacteria;
-        for (l = 0, len2 = ref2.length; l < len2; l++) {
-          bacterium = ref2[l];
-          scaledPosition = new Point({
-            x: (bacterium.position.x / previous.width) * local.size.width,
-            y: (bacterium.position.y / previous.height) * local.size.height
-          });
-          bacterium.position = scaledPosition.round();
-        }
-        ref3 = draw.bubbles;
-        results = [];
-        for (m = 0, len3 = ref3.length; m < len3; m++) {
-          bubble = ref3[m];
-          scaledPosition = new Point({
-            x: (bubble.position.x / previous.width) * local.size.width,
-            y: (bubble.position.y / previous.height) * local.size.height
-          });
-          results.push(bubble.position = scaledPosition.round());
-        }
-        return results;
-      };
-      return doc.menuItems.each(function() {
-        return $(this).click(function() {
-          switch (this.name) {
-            case "volume":
-              return null;
-            case "pause":
-              return html.pause();
-            case "card":
-              return null;
-            case "view":
-              return null;
-            case "info":
-              return null;
+        scalePositions = function(instances) {
+          var instance, k, len1, results, scaledPosition;
+          results = [];
+          for (k = 0, len1 = instances.length; k < len1; k++) {
+            instance = instances[k];
+            scaledPosition = new Point({
+              x: (instance.position.x / previous.width) * local.size.width,
+              y: (instance.position.y / previous.height) * local.size.height
+            });
+            results.push(instance.position = scaledPosition.round());
           }
-        });
-      });
+          return results;
+        };
+        scalePositions(global.bacteria);
+        scalePositions(global.food);
+        scalePositions(draw.bubbles);
+        draw.bottom.scale((local.width / draw.bottom.bounds.width) * 2, (local.height / draw.bottom.bounds.height) * 2);
+        return draw.bottom.position = local.origin;
+      };
     }
   }, 1);
 
