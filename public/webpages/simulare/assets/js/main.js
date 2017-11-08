@@ -19,7 +19,7 @@
 
   doc.menuItems = doc.menu.find('.item button');
 
-  doc.clock = doc.priority.find('.clock p');
+  doc.clock = doc.priority.find('.clock p span');
 
   doc.data = doc.sidebar.find('.data tr td');
 
@@ -177,6 +177,7 @@
       this.maxSpeed = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
       this.target = null;
+      this.age = new SciNum(0, 'time', 's');
     }
 
     Bacteria.prototype.born = function() {
@@ -210,7 +211,7 @@
     Bacteria.prototype.ages = function() {
       return setInterval((function(_this) {
         return function() {
-          return _this.age = new SciNum((time.time - _this.birth) / 1000, 'time', 's');
+          return _this.age.value = (time.time - _this.birth) / 1000;
         };
       })(this), 1000);
     };
@@ -278,7 +279,7 @@
     };
 
     Bacteria.prototype.checkCollision = function() {
-      var bacterium, bodyRadius, combinedSpeed, distance, impactAngle, k, len1, otherBodyRadius, ref1, results, speed, speedComponent;
+      var bacterium, bodyRadius, distance, impactAngle, k, len1, otherBodyRadius, ref1, results, speed, speedComponent;
       bodyRadius = Calc.scale(this.radius.value);
       if (this.position.x + bodyRadius >= local.width) {
         this.speed.value.x = 0;
@@ -306,10 +307,9 @@
             speed = Math.cos(Calc.rad(impactAngle));
             speedComponent = this.speed.value.multiply(speed);
             this.speed.value = this.speed.value.subtract(speedComponent);
-            combinedSpeed = Calc.combine(this.speed.value);
-            if (combinedSpeed === 0) {
-              results.push(this.chooseDirection());
-            } else if (combinedSpeed > this.maxspeed.value) {
+            this.speed.value = this.speed.value.multiply(0.75);
+            this.chooseDirection();
+            if (Calc.combine(this.speed.value) > this.maxSpeed.value) {
               results.push(this.speed.value.normalize(this.maxSpeed.value));
             } else {
               results.push(void 0);
@@ -363,6 +363,7 @@
 
     function Lucarium() {
       this.family = "Lucarium";
+      this.taxonomicName = this.family + " " + this.species;
       Lucarium.__super__.constructor.apply(this, arguments);
     }
 
@@ -442,7 +443,7 @@
       }
       return string;
     };
-    return doc.clock.find('span').each(function() {
+    return doc.clock.each(function() {
       if ($(this).hasClass('hour')) {
         return this.textContent = form(hours);
       } else if ($(this).hasClass('minute')) {
@@ -490,8 +491,29 @@
       }
     }
     if (data !== null) {
-      doc.data.each($(this).hasClass('name') ? this.textContent = null : $(this).hasClass('value') ? this.textContent = null : void 0);
-      return doc.values.each($(this).hasClass('name') ? this.textContent = null : $(this).hasClass('value') ? this.textContent = null : void 0);
+      doc.data.each(function() {
+        if ($(this).hasClass('value')) {
+          return this.textContent = data[this.dataset.name];
+        }
+      });
+      return doc.values.each(function() {
+        var scinum;
+        if ($(this).hasClass('value')) {
+          scinum = data[this.dataset.name];
+          return $(this).find('span').each(function() {
+            var value;
+            if ($(this).hasClass('number')) {
+              value = scinum.value;
+              if (value instanceof Point) {
+                value = Calc.combine(value);
+              }
+              return this.textContent = value;
+            } else if ($(this).hasClass('unit')) {
+              return this.textContent = scinum.unit;
+            }
+          });
+        }
+      });
     }
   };
 

@@ -16,7 +16,7 @@ for id in ['start', 'screen', 'field', 'menu', 'priority', 'sidebar']
   doc[id] = $("##{id}")
 # Store these selections
 doc.menuItems = doc.menu.find('.item button')
-doc.clock = doc.priority.find('.clock p')
+doc.clock = doc.priority.find('.clock p span')
 doc.data = doc.sidebar.find('.data tr td')
 doc.values = doc.sidebar.find('.values tr td')
 
@@ -139,6 +139,7 @@ class Bacteria
     @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s')
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @target = null # No target
+    @age = new SciNum(0, 'time', 's')
 
   # Methods
   # Starts living
@@ -174,7 +175,7 @@ class Bacteria
   # Gets older
   ages: =>
     setInterval( =>
-      @age = new SciNum((time.time - @birth) / 1000, 'time', 's')
+      @age.value = (time.time - @birth) / 1000
     , 1000)
 
   # Change acceleration to go to direction
@@ -255,11 +256,10 @@ class Bacteria
           speedComponent = @speed.value.multiply(speed)
           # Stop moving in this direction
           @speed.value = @speed.value.subtract(speedComponent)
+          @speed.value = @speed.value.multiply(0.75) # Loses speed by impact
+          @chooseDirection() # Pick a new direction
           # Check speed
-          combinedSpeed = Calc.combine(@speed.value)
-          if combinedSpeed == 0
-            @chooseDirection()
-          else if combinedSpeed > @maxspeed.value
+          if Calc.combine(@speed.value) > @maxSpeed.value
             @speed.value.normalize(@maxSpeed.value) # Reduce speed
 
   # Choose a new direction default is random
@@ -298,6 +298,7 @@ class Lucarium extends Bacteria # TODO add unique traits for family
   constructor: ->
     # Are initialised
     @family = "Lucarium"
+    @taxonomicName = "#{@family} #{@species}"
     super # Call parent constructor
 
 class Viridis extends Lucarium # TODO make different traits for the species
@@ -357,7 +358,7 @@ html.clock = ->
     return string
 
   # Loop through the parts of the clock
-  doc.clock.find('span').each( ->
+  doc.clock.each( ->
     if $(@).hasClass('hour')
       @.textContent = form(hours)
     else if $(@).hasClass('minute')
@@ -402,20 +403,30 @@ html.selected = ->
     if bacterium.id == global.interaction.selected
       data = bacterium
       break # End loop
+
   # The selected is found
   if data != null
     # Loop through the rows
-    doc.data.each(
-      if $(@).hasClass('name')
-        @.textContent = null
-      else if $(@).hasClass('value')
-        @.textContent = null
+    doc.data.each( ->
+      if $(@).hasClass('value')
+        # Get the value from the propertyname
+        @.textContent = data[@dataset.name]
     )
-    doc.values.each(
-      if $(@).hasClass('name')
-        @.textContent = null
-      else if $(@).hasClass('value')
-        @.textContent = null
+    doc.values.each( ->
+      if $(@).hasClass('value')
+        # TODO edit values before displaying
+        scinum = data[@dataset.name]
+        # Loop through two spans
+        $(@).find('span').each( ->
+          if $(@).hasClass('number')
+            value = scinum.value
+            if value instanceof Point # Vector value
+              value = Calc.combine(value)
+
+            @.textContent = value
+          else if $(@).hasClass('unit')
+            @.textContent = scinum.unit
+        )
     )
 
 # TODO add function that displays the ratio
