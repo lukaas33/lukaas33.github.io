@@ -230,23 +230,28 @@ class Bacteria
     for bacterium in global.bacteria
       if @id != bacterium.id # Not itself
         # How far away the bacteria is
-        distance = @position.subtract(bacterium.position)
+        distance = bacterium.position.subtract(@position)
         otherBodyRadius = Calc.scale(bacterium.radius.value)
         # If the paths are too close
         if Calc.combine(distance) <= bodyRadius + otherBodyRadius
-           # From the right (in certain range)
-          if @position.x >= bacterium.position.x + otherBodyRadius
-            @speed.value.x = 0
-            @chooseDirection() # Move away
-          # From the left (in certain range)
-          else if @position.x <= bacterium.position.x - otherBodyRadius
-            @speed.value.x = 0
-          # From the bottom (in certain range)
-          if @position.y >= bacterium.position.y + otherBodyRadius
-            @speed.value.y = 0
-          # From the top (in certain range)
-          else if @position.y <= bacterium.position.y - otherBodyRadius
-            @speed.value.y = 0
+          impactAngle = @speed.value.angle
+          speedComponent =
+          # Vector in direction
+          speedComponent = distance.normalize(speedComponent)
+          # Stop moving in this direction
+          @speed.value = @speed.value.subtract(speedComponent)
+          #  # From the right (in certain range)
+          # if @position.x >= bacterium.position.x + otherBodyRadius
+          #   @speed.value.x = 0
+          # # From the left (in certain range)
+          # else if @position.x <= bacterium.position.x - otherBodyRadius
+          #   @speed.value.x = 0
+          # # From the bottom (in certain range)
+          # if @position.y >= bacterium.position.y + otherBodyRadius
+          #   @speed.value.y = 0
+          # # From the top (in certain range)
+          # else if @position.y <= bacterium.position.y - otherBodyRadius
+          #   @speed.value.y = 0
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
