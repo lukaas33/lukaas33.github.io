@@ -420,8 +420,7 @@ html.selected = ->
         $(@).find('span').each( ->
           if $(@).hasClass('number')
             value = scinum.value
-            if value instanceof Point # Vector value
-              value = Calc.combine(value)
+            value = Calc.combine(value) if value instanceof Point # Vector value
 
             @.textContent = value
           else if $(@).hasClass('unit')

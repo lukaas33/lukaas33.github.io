@@ -73,6 +73,7 @@ var global = {
 
   // Changes progressbar on screen
   var progressBar = function (percentage) {
+    // TODO maybe make this work in firefox
     var $pie = document.getElementById('loading').getElementsByClassName('pie')[0]
     var total = Math.round(Math.PI * 100) // Circumference of circle
     var number = (percentage * total) / 100 // Part of the circle
