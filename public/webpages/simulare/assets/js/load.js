@@ -9,9 +9,10 @@ var global = {
     time: 400, // Standard animation time
     loaded: false,
     pauzed: true,
-    music: true
+    music: true,
+    selected: null // Selected instance
   },
-  enviroment: {
+  enviroment: { // Enviroment variables
     temperature: null,
     acidity: null,
     toxicity: null,
@@ -20,8 +21,8 @@ var global = {
   constants: { // TODO add more values
     scaleFactor: 1.5e6 // Scale of the animation, 1 cm : this cm
   },
-  bacteria: [],
-  food: []
+  bacteria: [], // Contains bacteria instances
+  food: [] // Contains food instances
 };
 
 // Has local scope

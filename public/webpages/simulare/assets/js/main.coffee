@@ -12,11 +12,13 @@ local =
   fps: 30 # Standard for canvas
 
 # Get elements with these id's
-for id in ['start', 'screen', 'field', 'menu', 'priority']
+for id in ['start', 'screen', 'field', 'menu', 'priority', 'sidebar']
   doc[id] = $("##{id}")
 # Store these selections
 doc.menuItems = doc.menu.find('.item button')
 doc.clock = doc.priority.find('.clock p')
+doc.data = doc.sidebar.find('.data tr td')
+doc.values = doc.sidebar.find('.values tr td')
 
 # << Return functions >>
 # Groups
@@ -27,6 +29,7 @@ time =
   time: 0
   trackSecond: 0
 
+# TODO add accuracy calculations
 # Returns the value according to a scale
 Calc.scale = (value, needed = 'scaled') ->
   DPC = local.resolution / 2.54 # From px/inch to px/cm
@@ -49,6 +52,11 @@ Calc.combine = (vector) ->
 # TODO add function that converts between base and si prefixes
 Calc.prefixSI = (scinum) ->
   null
+
+Calc.rad = (degrees) ->
+  angle = degrees * (Math.PI / 180) # In radians
+  return angle
+
 
 # Returns value in range
 Random.value = (bottom, top) ->
@@ -108,7 +116,10 @@ class Food
 
   # Creates the particle
   display: =>
-    @particle = new Path.Circle(@position, Calc.scale(@radius))
+    @particle = new Path.Circle(
+      @position.round(),
+      Math.round(Calc.scale(@radius))
+    )
     @particle.fillColor = 'yellow'
 
   # Gets eaten TODO work out method
@@ -122,7 +133,7 @@ class Bacteria
     # TODO diameter is related to energy
     @id = generate.id(global.bacteria)
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
-    @viewRange = new SciNum(@diameter.value * 2, 'length', 'm')
+    @viewRange = new SciNum(@diameter.value * 3, 'length', 'm')
     @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s*s')
     # x times its bodylength per second
     @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s')
@@ -150,7 +161,10 @@ class Bacteria
   # Creates a body TODO the colors and style of the bacteria
   display: =>
     # Body at instance's location
-    @body = new Path.Circle(@position.round(), Calc.scale(@radius.value))
+    @body = new Path.Circle(
+      @position.round(),
+      Math.round(Calc.scale(@radius.value))
+    )
     @body.fillColor = @color
 
   # Updates its body
@@ -234,29 +248,23 @@ class Bacteria
         otherBodyRadius = Calc.scale(bacterium.radius.value)
         # If the paths are too close
         if Calc.combine(distance) <= bodyRadius + otherBodyRadius
-          impactAngle = @speed.value.angle
-          speedComponent =
-          # Vector in direction
-          speedComponent = distance.normalize(speedComponent)
+          # Angle between vectors
+          impactAngle = @speed.value.getAngle(distance)
+          # Speed in the illegal direction
+          speed = Math.cos(Calc.rad(impactAngle))
+          speedComponent = @speed.value.multiply(speed)
           # Stop moving in this direction
           @speed.value = @speed.value.subtract(speedComponent)
-          #  # From the right (in certain range)
-          # if @position.x >= bacterium.position.x + otherBodyRadius
-          #   @speed.value.x = 0
-          # # From the left (in certain range)
-          # else if @position.x <= bacterium.position.x - otherBodyRadius
-          #   @speed.value.x = 0
-          # # From the bottom (in certain range)
-          # if @position.y >= bacterium.position.y + otherBodyRadius
-          #   @speed.value.y = 0
-          # # From the top (in certain range)
-          # else if @position.y <= bacterium.position.y - otherBodyRadius
-          #   @speed.value.y = 0
+          # Check speed
+          combinedSpeed = Calc.combine(@speed.value)
+          if combinedSpeed == 0
+            @chooseDirection()
+          else if combinedSpeed > @maxspeed.value
+            @speed.value.normalize(@maxSpeed.value) # Reduce speed
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
-    angle = angle % 360 # Get out the whole circles
-    angle = angle * (Math.PI / 180) # In radians
+    angle = Calc.rad(angle % 360) # Get out the whole circles
     # Direction as point relative to self (origin)
     @direction = new Point(Math.cos(angle), Math.sin(angle))
     @startMoving()
@@ -360,6 +368,8 @@ html.clock = ->
 
 # TODO add function that sets up the values of the elements
 html.setup = ->
+  # << Actions >>
+
   # << Events >>
   # When view goes out of focus
   $(window).blur(->
@@ -384,9 +394,29 @@ html.setup = ->
         when "info" then null
   )
 
-# TODO add function that updates info panel
+# Updates infopanel
 html.selected = ->
-  null
+  data = null
+  for bacterium in global.bacteria
+    # Find the selected
+    if bacterium.id == global.interaction.selected
+      data = bacterium
+      break # End loop
+  # The selected is found
+  if data != null
+    # Loop through the rows
+    doc.data.each(
+      if $(@).hasClass('name')
+        @.textContent = null
+      else if $(@).hasClass('value')
+        @.textContent = null
+    )
+    doc.values.each(
+      if $(@).hasClass('name')
+        @.textContent = null
+      else if $(@).hasClass('value')
+        @.textContent = null
+    )
 
 # TODO add function that displays the ratio
 html.pie = ->
@@ -430,6 +460,8 @@ simulation.createLife = ->
     1,
     0
   )
+
+  global.interaction.selected = global.bacteria[2].id # TODO let user select
 
 # Generates food
 simulation.feed = ->
@@ -490,7 +522,6 @@ simulation.start = ->
 simulation.run = ->
   for bacterium in global.bacteria
     bacterium.born() # Starts the bacteria
-  simulation.feed()
   global.interaction.pauzed = false # Unpauze time
   html.setup() # Activate document
 
@@ -528,7 +559,7 @@ isLoaded = setInterval( ->
 
         time.trackSecond += 5
         if time.trackSecond > 1000 # Full simulated second
-          time.trackSecond = 0 # Restart
+          time.trackSecond = 0 # Restart second
           simulation.feed()
     , 5)
 
@@ -536,6 +567,7 @@ isLoaded = setInterval( ->
     time.second = setInterval( ->
       if not global.interaction.pauzed # Time is not pauzed
         html.clock()
+        html.selected()
     , 1000)
 
     # Every frame of the canvas
@@ -559,6 +591,7 @@ isLoaded = setInterval( ->
           )
           instance.position = scaledPosition.round() # Update position
 
+      # Scale these
       scalePositions(global.bacteria)
       scalePositions(global.food)
       scalePositions(draw.bubbles)

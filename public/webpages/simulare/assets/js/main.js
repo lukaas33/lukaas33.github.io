@@ -11,7 +11,7 @@
     fps: 30
   };
 
-  ref = ['start', 'screen', 'field', 'menu', 'priority'];
+  ref = ['start', 'screen', 'field', 'menu', 'priority', 'sidebar'];
   for (j = 0, len = ref.length; j < len; j++) {
     id = ref[j];
     doc[id] = $("#" + id);
@@ -20,6 +20,10 @@
   doc.menuItems = doc.menu.find('.item button');
 
   doc.clock = doc.priority.find('.clock p');
+
+  doc.data = doc.sidebar.find('.data tr td');
+
+  doc.values = doc.sidebar.find('.values tr td');
 
   Calc = {};
 
@@ -57,6 +61,12 @@
 
   Calc.prefixSI = function(scinum) {
     return null;
+  };
+
+  Calc.rad = function(degrees) {
+    var angle;
+    angle = degrees * (Math.PI / 180);
+    return angle;
   };
 
   Random.value = function(bottom, top) {
@@ -130,7 +140,7 @@
     }
 
     Food.prototype.display = function() {
-      this.particle = new Path.Circle(this.position, Calc.scale(this.radius));
+      this.particle = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius)));
       return this.particle.fillColor = 'yellow';
     };
 
@@ -162,7 +172,7 @@
       this.born = bind(this.born, this);
       this.id = generate.id(global.bacteria);
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
-      this.viewRange = new SciNum(this.diameter.value * 2, 'length', 'm');
+      this.viewRange = new SciNum(this.diameter.value * 3, 'length', 'm');
       this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s*s');
       this.maxSpeed = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
@@ -189,7 +199,7 @@
     };
 
     Bacteria.prototype.display = function() {
-      this.body = new Path.Circle(this.position.round(), Calc.scale(this.radius.value));
+      this.body = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
       return this.body.fillColor = this.color;
     };
 
@@ -268,7 +278,7 @@
     };
 
     Bacteria.prototype.checkCollision = function() {
-      var bacterium, bodyRadius, distance, impactAngle, k, len1, otherBodyRadius, ref1, results, speedComponent;
+      var bacterium, bodyRadius, combinedSpeed, distance, impactAngle, k, len1, otherBodyRadius, ref1, results, speed, speedComponent;
       bodyRadius = Calc.scale(this.radius.value);
       if (this.position.x + bodyRadius >= local.width) {
         this.speed.value.x = 0;
@@ -292,9 +302,18 @@
           distance = bacterium.position.subtract(this.position);
           otherBodyRadius = Calc.scale(bacterium.radius.value);
           if (Calc.combine(distance) <= bodyRadius + otherBodyRadius) {
-            impactAngle = this.speed.value.angle;
-            speedComponent = speedComponent = distance.normalize(speedComponent);
-            results.push(this.speed.value = this.speed.value.subtract(speedComponent));
+            impactAngle = this.speed.value.getAngle(distance);
+            speed = Math.cos(Calc.rad(impactAngle));
+            speedComponent = this.speed.value.multiply(speed);
+            this.speed.value = this.speed.value.subtract(speedComponent);
+            combinedSpeed = Calc.combine(this.speed.value);
+            if (combinedSpeed === 0) {
+              results.push(this.chooseDirection());
+            } else if (combinedSpeed > this.maxspeed.value) {
+              results.push(this.speed.value.normalize(this.maxSpeed.value));
+            } else {
+              results.push(void 0);
+            }
           } else {
             results.push(void 0);
           }
@@ -309,8 +328,7 @@
       if (angle == null) {
         angle = Random.value(0, 360);
       }
-      angle = angle % 360;
-      angle = angle * (Math.PI / 180);
+      angle = Calc.rad(angle % 360);
       this.direction = new Point(Math.cos(angle), Math.sin(angle));
       return this.startMoving();
     };
@@ -461,7 +479,20 @@
   };
 
   html.selected = function() {
-    return null;
+    var bacterium, data, k, len1, ref1;
+    data = null;
+    ref1 = global.bacteria;
+    for (k = 0, len1 = ref1.length; k < len1; k++) {
+      bacterium = ref1[k];
+      if (bacterium.id === global.interaction.selected) {
+        data = bacterium;
+        break;
+      }
+    }
+    if (data !== null) {
+      doc.data.each($(this).hasClass('name') ? this.textContent = null : $(this).hasClass('value') ? this.textContent = null : void 0);
+      return doc.values.each($(this).hasClass('name') ? this.textContent = null : $(this).hasClass('value') ? this.textContent = null : void 0);
+    }
   };
 
   html.pie = function() {
@@ -490,7 +521,8 @@
     energy = new SciNum(3.9e9, 'energy', 'j');
     global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0);
     global.bacteria[1] = new Rubrum(size, energy, local.center.subtract(100, 0), 1, 0);
-    return global.bacteria[2] = new Caeruleus(size, energy, local.center.add(100, 0), 1, 0);
+    global.bacteria[2] = new Caeruleus(size, energy, local.center.add(100, 0), 1, 0);
+    return global.interaction.selected = global.bacteria[2].id;
   };
 
   simulation.feed = function() {
@@ -554,7 +586,6 @@
       bacterium = ref1[k];
       bacterium.born();
     }
-    simulation.feed();
     global.interaction.pauzed = false;
     return html.setup();
   };
@@ -600,7 +631,8 @@
       }, 5);
       time.second = setInterval(function() {
         if (!global.interaction.pauzed) {
-          return html.clock();
+          html.clock();
+          return html.selected();
         }
       }, 1000);
       view.onFrame = function(event) {
