@@ -151,8 +151,8 @@ class Bacteria
     # x times its bodylength per second
     @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s')
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
-    @target = null # No target
     @age = new SciNum(0, 'time', 's')
+    @target = null # No target yet
 
   # Methods
   # Starts living
@@ -238,6 +238,8 @@ class Bacteria
       for target in possibleTargets
         # Set the correct target or update with new data
         @target = target.instance if target.distance == minDistance
+    else
+      @target = null # Doesn't exist anymore
 
   # Checks if there is a collision
   checkCollision: =>
@@ -271,11 +273,7 @@ class Bacteria
           speedComponent = @speed.value.multiply(speed)
           # Stop moving in this direction
           @speed.value = @speed.value.subtract(speedComponent)
-          @speed.value = @speed.value.multiply(0.75) # Loses speed by impact
           @chooseDirection() # Pick a new direction
-          # Check speed
-          if Calc.combine(@speed.value) > @maxSpeed.value
-            @speed.value.normalize(@maxSpeed.value) # Reduce speed
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
@@ -286,11 +284,8 @@ class Bacteria
 
   # Will go to a point until reached
   findTarget: =>
-    if @target.position == @position
-      @target = null # Stop following
-    else
-      @goToPoint(@target.position)
-      @eat() # Try to eat
+    @goToPoint(@target.position)
+    @eat() # Try to eat
 
   # Go to a point TODO work out method
   goToPoint: (point) =>

@@ -204,8 +204,8 @@
       this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s*s');
       this.maxSpeed = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
-      this.target = null;
       this.age = new SciNum(0, 'time', 's');
+      this.target = null;
     }
 
     Bacteria.prototype.born = function() {
@@ -305,6 +305,8 @@
           }
         }
         return results;
+      } else {
+        return this.target = null;
       }
     };
 
@@ -337,13 +339,7 @@
             speed = Math.cos(Calc.rad(impactAngle));
             speedComponent = this.speed.value.multiply(speed);
             this.speed.value = this.speed.value.subtract(speedComponent);
-            this.speed.value = this.speed.value.multiply(0.75);
-            this.chooseDirection();
-            if (Calc.combine(this.speed.value) > this.maxSpeed.value) {
-              results.push(this.speed.value.normalize(this.maxSpeed.value));
-            } else {
-              results.push(void 0);
-            }
+            results.push(this.chooseDirection());
           } else {
             results.push(void 0);
           }
@@ -364,12 +360,8 @@
     };
 
     Bacteria.prototype.findTarget = function() {
-      if (this.target.position === this.position) {
-        return this.target = null;
-      } else {
-        this.goToPoint(this.target.position);
-        return this.eat();
-      }
+      this.goToPoint(this.target.position);
+      return this.eat();
     };
 
     Bacteria.prototype.goToPoint = function(point) {
