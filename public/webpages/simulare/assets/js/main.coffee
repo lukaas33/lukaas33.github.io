@@ -132,11 +132,10 @@ class Food
   eaten: =>
     @particle.remove() # Remove drawn shape
     for food, index in global.food
-      console.log(index, food)
-      # Find self
-      if food.id == @id
-        # Remove reference
-        global.food.splice(index, 1)
+      # Don't know why, but the loop keeps getting an undefined
+      if food != undefined
+        # Remove reference to self
+        global.food.splice(index, 1) if food.id == @id
 
 # Bacteria constructors
 class Bacteria
@@ -180,6 +179,7 @@ class Bacteria
       Math.round(Calc.scale(@radius.value))
     )
     @body.fillColor = @color
+    @body.name = @id # In paper.js layer
 
   # Updates its body
   update: =>
@@ -309,9 +309,9 @@ class Bacteria
     distance = Calc.combine(@target.position.subtract(@position))
     # Inside itself
     if distance + Calc.scale(@target.radius.value) <= Calc.scale(@radius.value)
+      @energy.value += @target.energy.value
       @target.eaten() # Removes itself
       @target = null # Doesn't exist anymore
-
 
 # Constructors that inherit code
 class Lucarium extends Bacteria # TODO add unique traits for family
@@ -498,7 +498,7 @@ simulation.feed = ->
   total = global.enviroment.energy.value
   left = total # Inital
   # Food left to give and maximum instances not reached
-  while left > 0 and global.food.length < 20
+  while left > 0 and global.food.length <= 20
     # A percentage of the total
     amount = Random.value(total * 0.10, total * 0.15)
     if amount < left
@@ -521,6 +521,7 @@ simulation.setup = ->
   paper.setup(doc.screen[0]) # Make use of the paperscript library
   html.setSize() # Initial value
 
+  global.layer = new Group()
   draw.background()
   simulation.createLife()
 

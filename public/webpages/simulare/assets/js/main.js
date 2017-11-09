@@ -158,9 +158,12 @@
       results = [];
       for (index = k = 0, len1 = ref1.length; k < len1; index = ++k) {
         food = ref1[index];
-        console.log(index, food);
-        if (food.id === this.id) {
-          results.push(global.food.splice(index, 1));
+        if (food !== void 0) {
+          if (food.id === this.id) {
+            results.push(global.food.splice(index, 1));
+          } else {
+            results.push(void 0);
+          }
         } else {
           results.push(void 0);
         }
@@ -225,7 +228,8 @@
 
     Bacteria.prototype.display = function() {
       this.body = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
-      return this.body.fillColor = this.color;
+      this.body.fillColor = this.color;
+      return this.body.name = this.id;
     };
 
     Bacteria.prototype.update = function() {
@@ -381,6 +385,7 @@
       var distance;
       distance = Calc.combine(this.target.position.subtract(this.position));
       if (distance + Calc.scale(this.target.radius.value) <= Calc.scale(this.radius.value)) {
+        this.energy.value += this.target.energy.value;
         this.target.eaten();
         return this.target = null;
       }
@@ -584,7 +589,7 @@
     total = global.enviroment.energy.value;
     left = total;
     results = [];
-    while (left > 0 && global.food.length < 20) {
+    while (left > 0 && global.food.length <= 20) {
       amount = Random.value(total * 0.10, total * 0.15);
       if (amount < left) {
         left -= amount;
@@ -606,6 +611,7 @@
     paper.install(window);
     paper.setup(doc.screen[0]);
     html.setSize();
+    global.layer = new Group();
     draw.background();
     return simulation.createLife();
   };
