@@ -111,19 +111,32 @@ class SciNum
 class Food
   # Values that need to be entered
   constructor: (@energy, @position) ->
-    @diameter = Random.value(0.3e-6, 0.5e-6) # TODO is related to energy
-    @radius = @diameter / 2
+    @id = generate.id(global.food)
+    # TODO is related to energy
+    @diameter = new SciNum(Random.value(0.3e-6, 0.5e-6), 'length', 'm')
+    @radius = new SciNum(@diameter.value / 2, 'length', 'm')
 
   # Creates the particle
   display: =>
     @particle = new Path.Circle(
       @position.round(),
-      Math.round(Calc.scale(@radius))
+      Math.round(Calc.scale(@radius.value))
     )
     @particle.fillColor = 'yellow'
 
-  # Gets eaten TODO work out method
-  # eaten: =>
+  # Update location
+  update: =>
+    @particle.position = @position.round()
+
+  # Gets eaten, removes itself
+  eaten: =>
+    @particle.remove() # Remove drawn shape
+    for food, index in global.food
+      console.log(index, food)
+      # Find self
+      if food.id == @id
+        # Remove reference
+        global.food.splice(index, 1)
 
 # Bacteria constructors
 class Bacteria
@@ -221,7 +234,7 @@ class Bacteria
       distances = (target.distance for target in possibleTargets)
       minDistance = Math.min(distances...) # Lowest
       for target in possibleTargets
-        # Set the correct target
+        # Set the correct target or update with new data
         @target = target.instance if target.distance == minDistance
 
   # Checks if there is a collision
@@ -275,6 +288,7 @@ class Bacteria
       @target = null # Stop following
     else
       @goToPoint(@target.position)
+      @eat() # Try to eat
 
   # Go to a point TODO work out method
   goToPoint: (point) =>
@@ -289,8 +303,14 @@ class Bacteria
   # Dies TODO work out method
   die: =>
 
-  # Gets energy TODO work out method
+  # Eat food instances
   eat: =>
+    # The distance between the food and the bacteria
+    distance = Calc.combine(@target.position.subtract(@position))
+    # Inside itself
+    if distance + Calc.scale(@target.radius.value) <= Calc.scale(@radius.value)
+      @target.eaten() # Removes itself
+      @target = null # Doesn't exist anymore
 
 
 # Constructors that inherit code
@@ -600,6 +620,9 @@ isLoaded = setInterval( ->
             y: (instance.position.y / previous.height) * local.size.height
           )
           instance.position = scaledPosition.round() # Update position
+          # If it isn't a shape
+          if instance not instanceof Path
+            instance.update() # Manual update
 
       # Scale these
       scalePositions(global.bacteria)

@@ -134,14 +134,38 @@
     function Food(energy1, position) {
       this.energy = energy1;
       this.position = position;
+      this.eaten = bind(this.eaten, this);
+      this.update = bind(this.update, this);
       this.display = bind(this.display, this);
-      this.diameter = Random.value(0.3e-6, 0.5e-6);
-      this.radius = this.diameter / 2;
+      this.id = generate.id(global.food);
+      this.diameter = new SciNum(Random.value(0.3e-6, 0.5e-6), 'length', 'm');
+      this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
     }
 
     Food.prototype.display = function() {
-      this.particle = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius)));
+      this.particle = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
       return this.particle.fillColor = 'yellow';
+    };
+
+    Food.prototype.update = function() {
+      return this.particle.position = this.position.round();
+    };
+
+    Food.prototype.eaten = function() {
+      var food, index, k, len1, ref1, results;
+      this.particle.remove();
+      ref1 = global.food;
+      results = [];
+      for (index = k = 0, len1 = ref1.length; k < len1; index = ++k) {
+        food = ref1[index];
+        console.log(index, food);
+        if (food.id === this.id) {
+          results.push(global.food.splice(index, 1));
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
     };
 
     return Food;
@@ -337,7 +361,8 @@
       if (this.target.position === this.position) {
         return this.target = null;
       } else {
-        return this.goToPoint(this.target.position);
+        this.goToPoint(this.target.position);
+        return this.eat();
       }
     };
 
@@ -352,7 +377,14 @@
 
     Bacteria.prototype.die = function() {};
 
-    Bacteria.prototype.eat = function() {};
+    Bacteria.prototype.eat = function() {
+      var distance;
+      distance = Calc.combine(this.target.position.subtract(this.position));
+      if (distance + Calc.scale(this.target.radius.value) <= Calc.scale(this.radius.value)) {
+        this.target.eaten();
+        return this.target = null;
+      }
+    };
 
     return Bacteria;
 
@@ -682,7 +714,12 @@
               x: (instance.position.x / previous.width) * local.size.width,
               y: (instance.position.y / previous.height) * local.size.height
             });
-            results.push(instance.position = scaledPosition.round());
+            instance.position = scaledPosition.round();
+            if (!(instance instanceof Path)) {
+              results.push(instance.update());
+            } else {
+              results.push(void 0);
+            }
           }
           return results;
         };
