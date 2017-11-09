@@ -144,7 +144,8 @@
 
     Food.prototype.display = function() {
       this.particle = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
-      return this.particle.fillColor = 'yellow';
+      this.particle.fillColor = 'yellow';
+      return html.layer.food.addChild(this.particle);
     };
 
     Food.prototype.update = function() {
@@ -229,7 +230,8 @@
     Bacteria.prototype.display = function() {
       this.body = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
       this.body.fillColor = this.color;
-      return this.body.name = this.id;
+      this.body.name = this.id;
+      return html.layer.bacteria.addChild(this.body);
     };
 
     Bacteria.prototype.update = function() {
@@ -451,6 +453,8 @@
 
   html = {};
 
+  html.layer = {};
+
   html.setSize = function() {
     var height, width;
     width = doc.field.width();
@@ -576,6 +580,7 @@
   simulation.createLife = function() {
     var energy, size;
     console.log("Creating life");
+    html.layer.bacteria.activate();
     size = new SciNum(1.0e-6, 'length', 'm');
     energy = new SciNum(3.9e9, 'energy', 'j');
     global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0);
@@ -586,6 +591,7 @@
 
   simulation.feed = function() {
     var amount, food, left, location, range, results, total;
+    html.layer.food.activate;
     total = global.enviroment.energy.value;
     left = total;
     results = [];
@@ -611,7 +617,9 @@
     paper.install(window);
     paper.setup(doc.screen[0]);
     html.setSize();
-    global.layer = new Group();
+    html.layer.background = new Layer();
+    html.layer.food = new Layer();
+    html.layer.bacteria = new Layer();
     draw.background();
     return simulation.createLife();
   };
@@ -647,15 +655,18 @@
       bacterium.born();
     }
     global.interaction.pauzed = false;
-    return html.setup();
+    html.setup();
+    return console.log(project.activeLayer);
   };
 
   draw = {};
 
   draw.background = function() {
-    var bubbleValues, index, k, len1, results, value;
+    var bubbleValues, index, k, len1, value;
+    html.layer.background.activate();
     draw.bottom = new Path.Rectangle(local.origin, local.size);
     draw.bottom.fillColor = 'grey';
+    html.layer.background.addChild(draw.bottom);
     draw.bubbles = [];
     bubbleValues = [
       {
@@ -666,13 +677,12 @@
         size: 100
       }
     ];
-    results = [];
     for (index = k = 0, len1 = bubbleValues.length; k < len1; index = ++k) {
       value = bubbleValues[index];
       draw.bubbles[index] = new Path.Circle(value.position, value.size / 2);
-      results.push(draw.bubbles[index].fillColor = 'darkgrey');
+      draw.bubbles[index].fillColor = 'darkgrey';
     }
-    return results;
+    return html.layer.background.addChildren(draw.bubbles);
   };
 
   isLoaded = setInterval(function() {

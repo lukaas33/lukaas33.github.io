@@ -123,6 +123,7 @@ class Food
       Math.round(Calc.scale(@radius.value))
     )
     @particle.fillColor = 'yellow'
+    html.layer.food.addChild(@particle) # Add to layer
 
   # Update location
   update: =>
@@ -180,6 +181,7 @@ class Bacteria
     )
     @body.fillColor = @color
     @body.name = @id # In paper.js layer
+    html.layer.bacteria.addChild(@body)
 
   # Updates its body
   update: =>
@@ -346,6 +348,7 @@ class Caeruleus extends Lucarium
 # Groups
 simulation = {}
 html = {}
+html.layer = {}
 
 # Sets the size variables
 html.setSize = ->
@@ -465,6 +468,8 @@ html.pause = (change = global.interaction.pauzed) ->
 # Creates instances of bacteria
 simulation.createLife = ->
   console.log("Creating life")
+  html.layer.bacteria.activate()
+
   # Starter values
   size = new SciNum(1.0e-6, 'length', 'm')
   energy = new SciNum(3.9e9, 'energy', 'j')
@@ -495,6 +500,8 @@ simulation.createLife = ->
 
 # Generates food
 simulation.feed = ->
+  html.layer.food.activate
+
   total = global.enviroment.energy.value
   left = total # Inital
   # Food left to give and maximum instances not reached
@@ -521,7 +528,11 @@ simulation.setup = ->
   paper.setup(doc.screen[0]) # Make use of the paperscript library
   html.setSize() # Initial value
 
-  global.layer = new Group()
+  # Paper.js layers
+  html.layer.background = new Layer()
+  html.layer.food = new Layer()
+  html.layer.bacteria = new Layer()
+
   draw.background()
   simulation.createLife()
 
@@ -555,6 +566,7 @@ simulation.run = ->
     bacterium.born() # Starts the bacteria
   global.interaction.pauzed = false # Unpauze time
   html.setup() # Activate document
+  console.log(project.activeLayer)
 
 # << Simulation functions >>
 # Groups
@@ -562,9 +574,13 @@ draw = {}
 
 # Draws the background
 draw.background = ->
+  html.layer.background.activate()
+
   # Background objects TODO add more and style them
   draw.bottom = new Path.Rectangle(local.origin, local.size)
   draw.bottom.fillColor = 'grey'
+  html.layer.background.addChild(draw.bottom)
+
   draw.bubbles = []
   bubbleValues = [ # Th info for the bubbles
     {position: [350, 200], size: 200}
@@ -574,6 +590,7 @@ draw.background = ->
   for value, index in bubbleValues # Every value
     draw.bubbles[index] = new Path.Circle(value.position, value.size / 2)
     draw.bubbles[index].fillColor = 'darkgrey'
+  html.layer.background.addChildren(draw.bubbles)
 
 # Checks if loading is done
 isLoaded = setInterval( ->
