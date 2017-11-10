@@ -311,7 +311,7 @@
     };
 
     Bacteria.prototype.checkCollision = function() {
-      var bacterium, bodyRadius, distance, impactAngle, k, len1, otherBodyRadius, ref1, results, speed, speedComponent;
+      var bacterium, bodyRadius, cosine, distance, impactAngle, k, len1, otherBodyRadius, ref1, results, speedComponent;
       bodyRadius = Calc.scale(this.radius.value);
       if (this.position.x + bodyRadius >= local.width) {
         this.speed.value.x = 0;
@@ -336,10 +336,13 @@
           otherBodyRadius = Calc.scale(bacterium.radius.value);
           if (Calc.combine(distance) <= bodyRadius + otherBodyRadius) {
             impactAngle = this.speed.value.getAngle(distance);
-            speed = Math.cos(Calc.rad(impactAngle));
-            speedComponent = this.speed.value.multiply(speed);
-            this.speed.value = this.speed.value.subtract(speedComponent);
-            results.push(this.chooseDirection());
+            cosine = Math.cos(Calc.rad(impactAngle));
+            speedComponent = this.speed.value.multiply(cosine);
+            if (!isNaN(Calc.combine(speedComponent))) {
+              results.push(this.speed.value = this.speed.value.subtract(speedComponent));
+            } else {
+              results.push(void 0);
+            }
           } else {
             results.push(void 0);
           }

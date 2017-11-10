@@ -269,11 +269,12 @@ class Bacteria
           # Angle between vectors
           impactAngle = @speed.value.getAngle(distance)
           # Speed in the illegal direction
-          speed = Math.cos(Calc.rad(impactAngle))
-          speedComponent = @speed.value.multiply(speed)
-          # Stop moving in this direction
-          @speed.value = @speed.value.subtract(speedComponent)
-          @chooseDirection() # Pick a new direction
+          cosine = Math.cos(Calc.rad(impactAngle))
+          speedComponent = @speed.value.multiply(cosine)
+          # Some values return NaN in Math.cos
+          if not isNaN(Calc.combine(speedComponent))
+            # Stop moving in this direction
+            @speed.value = @speed.value.subtract(speedComponent)
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
