@@ -19,6 +19,7 @@ doc.menuItems = doc.menu.find('.item button')
 doc.clock = doc.priority.find('.clock p span')
 doc.data = doc.sidebar.find('.data tr td')
 doc.values = doc.sidebar.find('.values tr td')
+doc.bacteria = doc.sidebar.find('#bacteria')
 
 # << Return functions >>
 # Groups
@@ -46,7 +47,7 @@ Calc.scale = (value, needed = 'scaled') ->
 # Combines the vector into one value
 Calc.combine = (vector) ->
   # Uses a^2 + b^2 = c^2
-  result = Math.sqrt(vector.x**2 + vector.y**2)
+  result = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2))
   return result
 
 # TODO add function that converts between base and si prefixes
@@ -107,6 +108,13 @@ class SciNum
   # Values that need to be entered
   constructor: (@value, @quantity, @unit) ->
 
+  notation: =>
+    if @value instanceof Point
+      value = Calc.combine(@value)
+    else
+      value = @value
+    return value.toExponential(4)
+
 # Constructor for food
 class Food
   # Values that need to be entered
@@ -147,12 +155,15 @@ class Bacteria
     @id = generate.id(global.bacteria)
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
     @viewRange = new SciNum(@diameter.value * 3, 'length', 'm')
-    @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s*s')
+    @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2')
     # x times its bodylength per second
     @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s')
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @age = new SciNum(0, 'time', 's')
     @target = null # No target yet
+    @minEnergyLoss = new SciNum(4e5, 'energy per second', 'atp/s')
+    # Tracks current action
+    @action = null
 
   # Methods
   # Starts living
@@ -170,6 +181,7 @@ class Bacteria
       # With a chance of 1/x, change direction
       @chooseDirection() if Random.chance(25)
     @move()
+    @loseEnergy()
     @update()
 
   # Creates a body TODO the colors and style of the bacteria
@@ -220,6 +232,26 @@ class Bacteria
     speed = speed.divide(local.fps)
     # Change position
     @position = @position.add(speed)
+
+  # Loses energy TODO calculate the energy loss with traits
+  loseEnergy: =>
+    loss = @minEnergyLoss.value
+    # Influence of conditions
+    for condition in ['temperature', 'toxicity', 'acidity']
+      # Get the difference between the value and ideal value
+      value = global.enviroment[condition]
+      difference = Math.abs(value - @idealConditions[condition].value)
+      # Each species has a different tolerance
+      if difference > @tolerance[condition].value
+        difference = difference - @tolerance[condition].value
+      else
+        difference = 0
+
+      # Energy loss can go up exponentially
+      loss += Math.pow(difference * @minEnergyLoss.value, 2)
+
+    # Loses energy per second
+    @energy.value -= (loss / local.fps)
 
   # Checks if there is food nearby
   foodNearby: =>
@@ -317,6 +349,10 @@ class Lucarium extends Bacteria # TODO add unique traits for family
     # Are initialised
     @family = "Lucarium"
     @taxonomicName = "#{@family} #{@species}"
+    @idealConditions =
+      temperature: new SciNum(20, 'temperature', 'degrees')
+      acidity: new SciNum(7, 'pH', '')
+      toxicity: new SciNum(0, 'concentration', 'M')
     super # Call parent constructor
 
 class Viridis extends Lucarium # TODO make different traits for the species
@@ -324,6 +360,10 @@ class Viridis extends Lucarium # TODO make different traits for the species
     # Values that are initialised
     @species = "Viridis"
     @color = '#4caf50'
+    @tolerance =
+      temperature: new SciNum(5, 'temperature', 'degrees')
+      acidity: new SciNum(0.5, 'pH', '')
+      toxicity: new SciNum(2, 'concentration', 'M')
     super # Call parent constructor
 
 class Rubrum extends Lucarium
@@ -331,6 +371,10 @@ class Rubrum extends Lucarium
     # Values that are initialised
     @species = "Rubrum"
     @color = '#f44336'
+    @tolerance =
+      temperature: new SciNum(5, 'temperature', 'degrees')
+      acidity: new SciNum(0.5, 'pH', '')
+      toxicity: new SciNum(2, 'concentration', 'M')
     super # Call parent constructor
 
 class Caeruleus extends Lucarium
@@ -338,6 +382,10 @@ class Caeruleus extends Lucarium
     # Values that are initialised
     @species = "Caeruleus"
     @color = '#2196f3'
+    @tolerance =
+      temperature: new SciNum(5, 'temperature', 'degrees')
+      acidity: new SciNum(0.5, 'pH', '')
+      toxicity: new SciNum(2, 'concentration', 'M')
     super # Call parent constructor
 
 # << Document functions >>
@@ -416,36 +464,34 @@ html.setup = ->
 
 # Updates infopanel
 html.selected = ->
-  data = null
-  for bacterium in global.bacteria
-    # Find the selected
-    if bacterium.id == global.interaction.selected
-      data = bacterium
-      break # End loop
+  if global.interaction.selected != null
+    for bacterium in global.bacteria
+      # Find the selected
+      if bacterium.id == global.interaction.selected
+        data = bacterium
 
-  # The selected is found
-  if data != null
-    # Loop through the rows
-    doc.data.each( ->
-      if $(@).hasClass('value')
-        # Get the value from the propertyname
-        @.textContent = data[@dataset.name]
-    )
-    doc.values.each( ->
-      if $(@).hasClass('value')
-        # TODO edit values before displaying
-        scinum = data[@dataset.name]
-        # Loop through two spans
-        $(@).find('span').each( ->
-          if $(@).hasClass('number')
-            value = scinum.value
-            value = Calc.combine(value) if value instanceof Point # Vector value
-
-            @.textContent = value
-          else if $(@).hasClass('unit')
-            @.textContent = scinum.unit
+        # Loop through the rows
+        doc.data.each( ->
+          if $(@).hasClass('value')
+            # Get the value from the propertyname
+            @.textContent = data[@dataset.name]
         )
-    )
+        doc.values.each( ->
+          if $(@).hasClass('value')
+            # TODO edit values before displaying
+            scinum = data[@dataset.name]
+            # Loop through two spans
+            $(@).find('span').each( ->
+              if $(@).hasClass('number')
+                @.textContent = scinum.notation()
+              else if $(@).hasClass('unit')
+                @.textContent = scinum.unit
+            )
+        )
+
+        doc.bacteria.attr('data-content', true) # Make visible
+  else # No selected
+    doc.bacteria.attr('data-content', false)
 
 # TODO add function that displays the ratio
 html.pie = ->
@@ -468,7 +514,7 @@ simulation.createLife = ->
 
   # Starter values
   size = new SciNum(1.0e-6, 'length', 'm')
-  energy = new SciNum(3.9e9, 'energy', 'j')
+  energy = new SciNum(3.9e9, 'energy', 'atp')
 
   global.bacteria[0] = new Viridis(
     size,
@@ -513,7 +559,7 @@ simulation.feed = ->
     range = local.size.subtract(50)
     location = Point.random().multiply(range).add(25)
     # Add food
-    amount = new SciNum(amount, 'energy', 'j')
+    amount = new SciNum(Math.floor(amount), 'energy', 'j')
     food = new Food(amount, location)
     food.display() # Draw in field
     global.food.push(food) # Add to array
@@ -604,7 +650,7 @@ isLoaded = setInterval( ->
         time.trackSecond += 5
         if time.trackSecond > 1000 # Full simulated second
           time.trackSecond = 0 # Restart second
-          simulation.feed()
+          # simulation.feed()
     , 5)
 
     # Every full second

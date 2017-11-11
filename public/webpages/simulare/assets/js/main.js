@@ -25,6 +25,8 @@
 
   doc.values = doc.sidebar.find('.values tr td');
 
+  doc.bacteria = doc.sidebar.find('#bacteria');
+
   Calc = {};
 
   Random = {};
@@ -124,7 +126,18 @@
       this.value = value1;
       this.quantity = quantity;
       this.unit = unit;
+      this.notation = bind(this.notation, this);
     }
+
+    SciNum.prototype.notation = function() {
+      var value;
+      if (this.value instanceof Point) {
+        value = Calc.combine(this.value);
+      } else {
+        value = this.value;
+      }
+      return value.toExponential(4);
+    };
 
     return SciNum;
 
@@ -191,6 +204,7 @@
       this.chooseDirection = bind(this.chooseDirection, this);
       this.checkCollision = bind(this.checkCollision, this);
       this.foodNearby = bind(this.foodNearby, this);
+      this.loseEnergy = bind(this.loseEnergy, this);
       this.move = bind(this.move, this);
       this.startMoving = bind(this.startMoving, this);
       this.ages = bind(this.ages, this);
@@ -201,11 +215,13 @@
       this.id = generate.id(global.bacteria);
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
       this.viewRange = new SciNum(this.diameter.value * 3, 'length', 'm');
-      this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s*s');
+      this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2');
       this.maxSpeed = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
       this.age = new SciNum(0, 'time', 's');
       this.target = null;
+      this.minEnergyLoss = new SciNum(4e5, 'energy per second', 'atp/s');
+      this.action = null;
     }
 
     Bacteria.prototype.born = function() {
@@ -224,6 +240,7 @@
         }
       }
       this.move();
+      this.loseEnergy();
       return this.update();
     };
 
@@ -266,6 +283,24 @@
       });
       speed = speed.divide(local.fps);
       return this.position = this.position.add(speed);
+    };
+
+    Bacteria.prototype.loseEnergy = function() {
+      var condition, difference, k, len1, loss, ref1, value;
+      loss = this.minEnergyLoss.value;
+      ref1 = ['temperature', 'toxicity', 'acidity'];
+      for (k = 0, len1 = ref1.length; k < len1; k++) {
+        condition = ref1[k];
+        value = global.enviroment[condition];
+        difference = Math.abs(value - this.idealConditions[condition].value);
+        if (difference > this.tolerance[condition].value) {
+          difference = difference - this.tolerance[condition].value;
+        } else {
+          difference = 0;
+        }
+        loss += Math.pow(difference * this.minEnergyLoss.value, 2);
+      }
+      return this.energy.value -= loss / local.fps;
     };
 
     Bacteria.prototype.foodNearby = function() {
@@ -398,6 +433,11 @@
     function Lucarium() {
       this.family = "Lucarium";
       this.taxonomicName = this.family + " " + this.species;
+      this.idealConditions = {
+        temperature: new SciNum(20, 'temperature', 'degrees'),
+        acidity: new SciNum(7, 'pH', ''),
+        toxicity: new SciNum(0, 'concentration', 'M')
+      };
       Lucarium.__super__.constructor.apply(this, arguments);
     }
 
@@ -411,6 +451,11 @@
     function Viridis() {
       this.species = "Viridis";
       this.color = '#4caf50';
+      this.tolerance = {
+        temperature: new SciNum(5, 'temperature', 'degrees'),
+        acidity: new SciNum(0.5, 'pH', ''),
+        toxicity: new SciNum(2, 'concentration', 'M')
+      };
       Viridis.__super__.constructor.apply(this, arguments);
     }
 
@@ -424,6 +469,11 @@
     function Rubrum() {
       this.species = "Rubrum";
       this.color = '#f44336';
+      this.tolerance = {
+        temperature: new SciNum(5, 'temperature', 'degrees'),
+        acidity: new SciNum(0.5, 'pH', ''),
+        toxicity: new SciNum(2, 'concentration', 'M')
+      };
       Rubrum.__super__.constructor.apply(this, arguments);
     }
 
@@ -437,6 +487,11 @@
     function Caeruleus() {
       this.species = "Caeruleus";
       this.color = '#2196f3';
+      this.tolerance = {
+        temperature: new SciNum(5, 'temperature', 'degrees'),
+        acidity: new SciNum(0.5, 'pH', ''),
+        toxicity: new SciNum(2, 'concentration', 'M')
+      };
       Caeruleus.__super__.constructor.apply(this, arguments);
     }
 
@@ -516,40 +571,40 @@
   };
 
   html.selected = function() {
-    var bacterium, data, k, len1, ref1;
-    data = null;
-    ref1 = global.bacteria;
-    for (k = 0, len1 = ref1.length; k < len1; k++) {
-      bacterium = ref1[k];
-      if (bacterium.id === global.interaction.selected) {
-        data = bacterium;
-        break;
-      }
-    }
-    if (data !== null) {
-      doc.data.each(function() {
-        if ($(this).hasClass('value')) {
-          return this.textContent = data[this.dataset.name];
-        }
-      });
-      return doc.values.each(function() {
-        var scinum;
-        if ($(this).hasClass('value')) {
-          scinum = data[this.dataset.name];
-          return $(this).find('span').each(function() {
-            var value;
-            if ($(this).hasClass('number')) {
-              value = scinum.value;
-              if (value instanceof Point) {
-                value = Calc.combine(value);
-              }
-              return this.textContent = value;
-            } else if ($(this).hasClass('unit')) {
-              return this.textContent = scinum.unit;
+    var bacterium, data, k, len1, ref1, results;
+    if (global.interaction.selected !== null) {
+      ref1 = global.bacteria;
+      results = [];
+      for (k = 0, len1 = ref1.length; k < len1; k++) {
+        bacterium = ref1[k];
+        if (bacterium.id === global.interaction.selected) {
+          data = bacterium;
+          doc.data.each(function() {
+            if ($(this).hasClass('value')) {
+              return this.textContent = data[this.dataset.name];
             }
           });
+          doc.values.each(function() {
+            var scinum;
+            if ($(this).hasClass('value')) {
+              scinum = data[this.dataset.name];
+              return $(this).find('span').each(function() {
+                if ($(this).hasClass('number')) {
+                  return this.textContent = scinum.notation();
+                } else if ($(this).hasClass('unit')) {
+                  return this.textContent = scinum.unit;
+                }
+              });
+            }
+          });
+          results.push(doc.bacteria.attr('data-content', true));
+        } else {
+          results.push(void 0);
         }
-      });
+      }
+      return results;
+    } else {
+      return doc.bacteria.attr('data-content', false);
     }
   };
 
@@ -577,7 +632,7 @@
     console.log("Creating life");
     html.layer.bacteria.activate();
     size = new SciNum(1.0e-6, 'length', 'm');
-    energy = new SciNum(3.9e9, 'energy', 'j');
+    energy = new SciNum(3.9e9, 'energy', 'atp');
     global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0);
     global.bacteria[1] = new Rubrum(size, energy, local.center.subtract(100, 0), 1, 0);
     global.bacteria[2] = new Caeruleus(size, energy, local.center.add(100, 0), 1, 0);
@@ -600,7 +655,7 @@
       }
       range = local.size.subtract(50);
       location = Point.random().multiply(range).add(25);
-      amount = new SciNum(amount, 'energy', 'j');
+      amount = new SciNum(Math.floor(amount), 'energy', 'j');
       food = new Food(amount, location);
       food.display();
       results.push(global.food.push(food));
@@ -689,8 +744,7 @@
           time.time += 5;
           time.trackSecond += 5;
           if (time.trackSecond > 1000) {
-            time.trackSecond = 0;
-            return simulation.feed();
+            return time.trackSecond = 0;
           }
         }
       }, 5);
