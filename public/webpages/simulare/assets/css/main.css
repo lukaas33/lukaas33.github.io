@@ -105,9 +105,11 @@ body {
         flex-direction: column;
         height: 80%;
         justify-content: space-between; }
-        #sidebar .info #enviroment .content progress {
-          display: block;
+        #sidebar .info #enviroment .content .data {
           width: 100%; }
+          #sidebar .info #enviroment .content .data meter {
+            display: block;
+            width: 100%; }
     #sidebar .info #bacteria {
       height: 55%; }
       #sidebar .info #bacteria[data-content='true'] .empty {

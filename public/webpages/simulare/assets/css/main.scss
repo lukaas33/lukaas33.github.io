@@ -189,9 +189,13 @@
         height: 80%; // Of enviroment
         justify-content: space-between; // How children are displayed
 
-        progress {
-          display: block; // Fill line
+        .data {
           width: 100%; // Of enviroment
+
+          meter {
+            display: block; // Fill line
+            width: 100%; // Of enviroment
+          }
         }
       }
     }

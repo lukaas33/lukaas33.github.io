@@ -21,11 +21,15 @@
 
   doc.clock = doc.priority.find('.clock p span');
 
-  doc.data = doc.sidebar.find('.data tr td');
-
-  doc.values = doc.sidebar.find('.values tr td');
-
   doc.bacteria = doc.sidebar.find('#bacteria');
+
+  doc.enviroment = doc.sidebar.find('#enviroment');
+
+  doc.data = doc.bacteria.find('.data tr td');
+
+  doc.values = doc.bacteria.find('.values tr td');
+
+  doc.conditions = doc.enviroment.find('meter');
 
   Calc = {};
 
@@ -546,6 +550,10 @@
   };
 
   html.setup = function() {
+    doc.conditions.each(function() {
+      console.log(this.name);
+      return $(this).attr('value', global.enviroment[this.dataset.name].value);
+    });
     $(window).blur(function() {
       return html.pause(false);
     });
@@ -744,7 +752,8 @@
           time.time += 5;
           time.trackSecond += 5;
           if (time.trackSecond > 1000) {
-            return time.trackSecond = 0;
+            time.trackSecond = 0;
+            return simulation.feed();
           }
         }
       }, 5);

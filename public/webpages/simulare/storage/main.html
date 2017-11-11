@@ -59,11 +59,23 @@
       </div>
       <div class="content">
         <!-- TODO work out these bars -->
-        <progress max="1" min="0" value="1">Temperature</progress>
-        <progress max="1" min="0" value="1">Acidity</progress>
-        <progress max="1" min="0" value="1">Toxicity</progress>
+        <div class="data">
+          <p>Temperature</p>
+          <meter data-name="temperature" optimum="20" min="0" max="40"></meter>
+        </div>
+        <div class="data">
+          <p>Acidity</p>
+          <meter data-name="acidity" optimum="7" min="5.5" max="8.5"></meter>
+        </div>
+        <div class="data">
+          <p>Toxicity</p>
+          <meter data-name="concentration" optimum="0" min="0" max="12"></meter>
+        </div>
         <br/>
-        <progress max="1" min="0" value="1">Energy</progress>
+        <div class="data">
+          <p>Energy</p>
+          <meter data-name="energy" optimum="0" min="2e10" max="6e11"></meter>
+        </div>
       </div>
     </section>
     <section class="part" data-content="false" id="bacteria">

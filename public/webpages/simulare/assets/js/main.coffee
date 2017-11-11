@@ -17,9 +17,11 @@ for id in ['start', 'screen', 'field', 'menu', 'priority', 'sidebar']
 # Store these selections
 doc.menuItems = doc.menu.find('.item button')
 doc.clock = doc.priority.find('.clock p span')
-doc.data = doc.sidebar.find('.data tr td')
-doc.values = doc.sidebar.find('.values tr td')
 doc.bacteria = doc.sidebar.find('#bacteria')
+doc.enviroment = doc.sidebar.find('#enviroment')
+doc.data = doc.bacteria.find('.data tr td')
+doc.values = doc.bacteria.find('.values tr td')
+doc.conditions = doc.enviroment.find('meter')
 
 # << Return functions >>
 # Groups
@@ -427,24 +429,28 @@ html.clock = ->
   # Loop through the parts of the clock
   doc.clock.each( ->
     if $(@).hasClass('hour')
-      @.textContent = form(hours)
+      @textContent = form(hours)
     else if $(@).hasClass('minute')
-      @.textContent = form(minutes)
+      @textContent = form(minutes)
     else if $(@).hasClass('second')
-      @.textContent = form(seconds)
+      @textContent = form(seconds)
   )
 
 # TODO add function that sets up the values of the elements
 html.setup = ->
   # << Actions >>
+  doc.conditions.each( ->
+    console.log(@name)
+    $(@).attr('value', global.enviroment[@dataset.name].value)
+  )
 
   # << Events >>
   # When view goes out of focus
-  $(window).blur(->
+  $(window).blur( ->
     html.pause(off) # Set to on
   )
   # Window refocuses
-  $(window).focus(->
+  $(window).focus( ->
     html.pause(on) # Set to off
   )
 
@@ -453,7 +459,7 @@ html.setup = ->
   # The menu events TODO work out these events
   doc.menuItems.each( ->
     $(@).click ->
-      switch @.name # Different name attributes
+      switch @name # Different name attributes
         when "volume" then null
         when "pause"
           html.pause()
@@ -474,7 +480,7 @@ html.selected = ->
         doc.data.each( ->
           if $(@).hasClass('value')
             # Get the value from the propertyname
-            @.textContent = data[@dataset.name]
+            @textContent = data[@dataset.name]
         )
         doc.values.each( ->
           if $(@).hasClass('value')
@@ -483,9 +489,9 @@ html.selected = ->
             # Loop through two spans
             $(@).find('span').each( ->
               if $(@).hasClass('number')
-                @.textContent = scinum.notation()
+                @textContent = scinum.notation()
               else if $(@).hasClass('unit')
-                @.textContent = scinum.unit
+                @textContent = scinum.unit
             )
         )
 
@@ -650,7 +656,7 @@ isLoaded = setInterval( ->
         time.trackSecond += 5
         if time.trackSecond > 1000 # Full simulated second
           time.trackSecond = 0 # Restart second
-          # simulation.feed()
+          simulation.feed()
     , 5)
 
     # Every full second
