@@ -8,10 +8,11 @@
 
   local = {
     resolution: 72,
-    fps: 30
+    fps: 30,
+    scaleFactor: 1.5e6
   };
 
-  ref = ['start', 'screen', 'field', 'menu', 'priority', 'sidebar'];
+  ref = ['start', 'screen', 'field', 'menu', 'sidebar', 'cards'];
   for (j = 0, len = ref.length; j < len; j++) {
     id = ref[j];
     doc[id] = $("#" + id);
@@ -19,7 +20,7 @@
 
   doc.menuItems = doc.menu.find('.item button');
 
-  doc.clock = doc.priority.find('.clock p span');
+  doc.menuButton = doc.menu.find('.indicator button');
 
   doc.bacteria = doc.sidebar.find('#bacteria');
 
@@ -30,6 +31,10 @@
   doc.values = doc.bacteria.find('.values tr td');
 
   doc.conditions = doc.enviroment.find('meter');
+
+  doc.priority = doc.sidebar.find('#priority');
+
+  doc.clock = doc.priority.find('.clock p span');
 
   Calc = {};
 
@@ -49,12 +54,12 @@
     }
     DPC = local.resolution / 2.54;
     if (needed === "scaled") {
-      size = value * global.constants.scaleFactor;
+      size = value * local.scaleFactor;
       size = size * DPC;
       return size;
     } else if (needed === "real") {
       size = value / DPC;
-      size = size / global.constants.scaleFactor;
+      size = size / local.scaleFactor;
       return size;
     }
   };
@@ -148,9 +153,8 @@
   })();
 
   Food = (function() {
-    function Food(energy1, position) {
+    function Food(energy1) {
       this.energy = energy1;
-      this.position = position;
       this.eaten = bind(this.eaten, this);
       this.update = bind(this.update, this);
       this.display = bind(this.display, this);
@@ -160,6 +164,9 @@
     }
 
     Food.prototype.display = function() {
+      var range;
+      range = local.size;
+      this.position = Point.random().multiply(range);
       this.particle = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
       this.particle.fillColor = 'yellow';
       return html.layer.food.addChild(this.particle);
@@ -221,6 +228,7 @@
       this.viewRange = new SciNum(this.diameter.value * 3, 'length', 'm');
       this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2');
       this.maxSpeed = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
+      this.minSpeed = new SciNum(new Point(0, 0), 'speed', 'm/s');
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
       this.age = new SciNum(0, 'time', 's');
       this.target = null;
@@ -270,16 +278,21 @@
     Bacteria.prototype.startMoving = function() {
       var targetSpeed;
       targetSpeed = this.direction.normalize(this.maxSpeed.value);
-      return this.acceleration.value = targetSpeed.divide(3 * local.fps);
+      return this.acceleration.value = targetSpeed.divide(3);
     };
 
     Bacteria.prototype.move = function() {
-      var speed;
+      var acceleration, speed;
       this.checkCollision();
-      this.speed.value = this.speed.value.add(this.acceleration.value);
-      if (Calc.combine(this.speed.value) > this.maxSpeed.value) {
+      acceleration = this.acceleration.value.divide(local.fps);
+      this.speed.value = this.speed.value.add(acceleration);
+      if (Calc.combine(this.speed.value) >= this.maxSpeed.value) {
         this.acceleration.value = new Point(0, 0);
         this.speed.value.normalize(this.maxSpeed.value);
+      } else if (Calc.combine(this.speed.value) <= this.minSpeed.value) {
+        this.minSpeed.value = new Point(0, 0);
+        this.acceleration.value = new Point(0, 0);
+        this.speed.value.normalize(this.minSpeed.value);
       }
       speed = new Point({
         x: Calc.scale(this.speed.value.x),
@@ -297,8 +310,8 @@
         condition = ref1[k];
         value = global.enviroment[condition];
         difference = Math.abs(value - this.idealConditions[condition].value);
-        if (difference > this.tolerance[condition].value) {
-          difference = difference - this.tolerance[condition].value;
+        if (difference >= this.tolerance[condition].value) {
+          difference -= this.tolerance[condition].value;
         } else {
           difference = 0;
         }
@@ -551,7 +564,6 @@
 
   html.setup = function() {
     doc.conditions.each(function() {
-      console.log(this.name);
       return $(this).attr('value', global.enviroment[this.dataset.name].value);
     });
     $(window).blur(function() {
@@ -560,15 +572,19 @@
     $(window).focus(function() {
       return html.pause(true);
     });
+    doc.start.click(function() {});
+    doc.menuButton.click(function() {
+      return html.menu();
+    });
     return doc.menuItems.each(function() {
       return $(this).click(function() {
         switch (this.name) {
           case "volume":
-            return null;
+            return html.sound();
           case "pause":
             return html.pause();
-          case "card":
-            return null;
+          case "cards":
+            return html.cardsToggle();
           case "view":
             return null;
           case "info":
@@ -635,6 +651,63 @@
     }
   };
 
+  html.sound = function(change) {
+    var icon;
+    if (change == null) {
+      change = global.interaction.sound;
+    }
+    icon = doc.menu.find("button[name=volume] img");
+    if (change) {
+      global.interaction.sound = false;
+      return icon.attr('src', 'assets/images/icons/ic_volume_off_black_24px.svg');
+    } else {
+      global.interaction.sound = true;
+      return icon.attr('src', 'assets/images/icons/ic_volume_up_black_24px.svg');
+    }
+  };
+
+  html.cardsToggle = function(change) {
+    var icon;
+    if (change == null) {
+      change = global.interaction.cards;
+    }
+    icon = doc.menu.find("button[name=cards] img");
+    if (change) {
+      global.interaction.cards = false;
+      doc.cards.hide();
+      return icon.attr('src', 'assets/images/icons/ic_chat_outline_black_24px.svg');
+    } else {
+      global.interaction.cards = true;
+      doc.cards.show();
+      return icon.attr('src', 'assets/images/icons/ic_chat_black_24px.svg');
+    }
+  };
+
+  html.menu = function(change) {
+    var icon;
+    if (change == null) {
+      change = doc.menu.attr('data-state');
+    }
+    icon = doc.menuButton.find('img');
+    console.log(change);
+    change = change === 'collapse' || change === true;
+    if (change) {
+      doc.menuButton.attr('disabled', true);
+      doc.menu.attr('data-state', 'expand');
+      return setTimeout(function() {
+        doc.menuButton.attr('disabled', false);
+        return icon.attr('src', 'assets/images/icons/ic_close_white_24px.svg');
+      }, global.interaction.time);
+    } else {
+      doc.menuButton.attr('disabled', true);
+      doc.menu.attr('data-state', 'collapse');
+      return setTimeout(function() {
+        doc.menuButton.attr('disabled', false);
+        return icon.attr('src', 'assets/images/icons/ic_menu_white_24px.svg');
+      }, global.interaction.time);
+    }
+  };
+
   simulation.createLife = function() {
     var energy, size;
     console.log("Creating life");
@@ -648,7 +721,7 @@
   };
 
   simulation.feed = function() {
-    var amount, food, left, location, range, results, total;
+    var amount, food, left, results, total;
     html.layer.food.activate;
     total = global.enviroment.energy.value;
     left = total;
@@ -661,10 +734,7 @@
         amount = left;
         left = 0;
       }
-      range = local.size.subtract(50);
-      location = Point.random().multiply(range).add(25);
-      amount = new SciNum(Math.floor(amount), 'energy', 'j');
-      food = new Food(amount, location);
+      food = new Food(new SciNum(Math.floor(amount), 'energy', 'j'));
       food.display();
       results.push(global.food.push(food));
     }

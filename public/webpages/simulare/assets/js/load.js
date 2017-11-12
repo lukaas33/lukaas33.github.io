@@ -9,7 +9,8 @@ var global = {
     time: 400, // Standard animation time
     loaded: false,
     pauzed: true,
-    music: true,
+    sound: true,
+    cards: true,
     selected: null // Selected instance
   },
   enviroment: { // Enviroment variables
@@ -19,7 +20,7 @@ var global = {
     energy: null
   },
   constants: { // TODO add more values
-    scaleFactor: 1.5e6 // Scale of the animation, 1 cm : this cm
+    density: 9
   },
   bacteria: [], // Contains bacteria instances
   food: [] // Contains food instances
@@ -99,7 +100,10 @@ var global = {
       load('https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.22/paper.min.js', 'js', function () {
         loaded('paper.js')
         // Load the main javascript
-        $.getScript('assets/js/main.js', function () {
+        // $.getScript('assets/js/main.js', function () {
+        //   loaded('js')
+        // })
+        load('assets/js/main.js', 'js', function () {
           loaded('js')
         })
       })

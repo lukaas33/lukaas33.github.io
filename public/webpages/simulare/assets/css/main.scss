@@ -77,19 +77,36 @@
   top: 0;
 
   &[data-state='collapse'] { // Menu state is set to collapse
+    .items {
+      display: block;
 
+      .item {
+        left: 0;
+        position: absolute; // Above each other
+        top: 0;
+      }
+    }
   }
 
   &[data-state='expand'] { // Menu state is set to expand
+    .items {
+      display: flex; // Children are next to each other
 
+      .item {
+        position: relative; // Z-index applies
+      }
+    }
   }
 
   .indicator {
+    position: relative; // Z-index applies
+    z-index: 90; // Above items
   }
 
   .items {
     .item {
       display: inline-block; // Next to each other
+      z-index: 85;
     }
   }
 }

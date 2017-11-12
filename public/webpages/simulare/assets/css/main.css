@@ -55,8 +55,22 @@ body {
   left: 0;
   position: absolute;
   top: 0; }
+  #menu[data-state='collapse'] .items {
+    display: block; }
+    #menu[data-state='collapse'] .items .item {
+      left: 0;
+      position: absolute;
+      top: 0; }
+  #menu[data-state='expand'] .items {
+    display: flex; }
+    #menu[data-state='expand'] .items .item {
+      position: relative; }
+  #menu .indicator {
+    position: relative;
+    z-index: 90; }
   #menu .items .item {
-    display: inline-block; }
+    display: inline-block;
+    z-index: 85; }
 
 #cards {
   position: absolute;

@@ -10,18 +10,21 @@ doc = {}
 local =
   resolution: 72 # No way to get this
   fps: 30 # Standard for canvas
+  scaleFactor: 1.5e6 # Scale of the animation, 1 cm : this cm
 
 # Get elements with these id's
-for id in ['start', 'screen', 'field', 'menu', 'priority', 'sidebar']
+for id in ['start', 'screen', 'field', 'menu', 'sidebar', 'cards']
   doc[id] = $("##{id}")
 # Store these selections
 doc.menuItems = doc.menu.find('.item button')
-doc.clock = doc.priority.find('.clock p span')
+doc.menuButton = doc.menu.find('.indicator button')
 doc.bacteria = doc.sidebar.find('#bacteria')
 doc.enviroment = doc.sidebar.find('#enviroment')
 doc.data = doc.bacteria.find('.data tr td')
 doc.values = doc.bacteria.find('.values tr td')
 doc.conditions = doc.enviroment.find('meter')
+doc.priority = doc.sidebar.find('#priority')
+doc.clock = doc.priority.find('.clock p span')
 
 # << Return functions >>
 # Groups
@@ -38,12 +41,12 @@ Calc.scale = (value, needed = 'scaled') ->
   DPC = local.resolution / 2.54 # From px/inch to px/cm
 
   if needed == "scaled"
-    size = value * global.constants.scaleFactor # Get the scaled value in cm
+    size = value * local.scaleFactor # Get the scaled value in cm
     size = size * DPC # Total size
     return size
   else if needed == "real"
     size = value / DPC # Scaled value in cm
-    size = size / global.constants.scaleFactor # Real value
+    size = size / local.scaleFactor # Real value
     return size
 
 # Combines the vector into one value
@@ -120,7 +123,7 @@ class SciNum
 # Constructor for food
 class Food
   # Values that need to be entered
-  constructor: (@energy, @position) ->
+  constructor: (@energy) ->
     @id = generate.id(global.food)
     # TODO is related to energy
     @diameter = new SciNum(Random.value(0.3e-6, 0.5e-6), 'length', 'm')
@@ -128,6 +131,10 @@ class Food
 
   # Creates the particle
   display: =>
+    # Random location in field, not near the edges
+    range = local.size
+    @position = Point.random().multiply(range)
+    # Canvas object
     @particle = new Path.Circle(
       @position.round(),
       Math.round(Calc.scale(@radius.value))
@@ -160,6 +167,7 @@ class Bacteria
     @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2')
     # x times its bodylength per second
     @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s')
+    @minSpeed = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @age = new SciNum(0, 'time', 's')
     @target = null # No target yet
@@ -212,24 +220,30 @@ class Bacteria
      # Will change length of vector to be the max speed
     targetSpeed = @direction.normalize(@maxSpeed.value)
     # Set the acceleration, it will take x seconds to accelerate
-    @acceleration.value = targetSpeed.divide(3 * local.fps)
+    @acceleration.value = targetSpeed.divide(3)
 
   # Starts moving TODO method uses energy
   move: =>
     @checkCollision() # Test if it can move
+    # Per second instead of frame
+    acceleration = @acceleration.value.divide(local.fps)
     # Will accelerate to maxSpeed
-    @speed.value = @speed.value.add(@acceleration.value)
+    @speed.value = @speed.value.add(acceleration)
 
     # Check if xSpeed and ySpeed together are higher than maxSpeed
-    if Calc.combine(@speed.value) > @maxSpeed.value
+    if Calc.combine(@speed.value) >= @maxSpeed.value
       @acceleration.value = new Point(0, 0) # No acceleration
       @speed.value.normalize(@maxSpeed.value) # Reduce speed
+    else if Calc.combine(@speed.value) <= @minSpeed.value
+      @minSpeed.value = new Point(0, 0) # Min speed reached
+      @acceleration.value = new Point(0, 0) # No acceleration
+      @speed.value.normalize(@minSpeed.value) # Reduce speed
+
     # Scaled speed
     speed = new Point(
       x: Calc.scale(@speed.value.x)
       y: Calc.scale(@speed.value.y)
     )
-
     # Per second instead of frame
     speed = speed.divide(local.fps)
     # Change position
@@ -244,8 +258,8 @@ class Bacteria
       value = global.enviroment[condition]
       difference = Math.abs(value - @idealConditions[condition].value)
       # Each species has a different tolerance
-      if difference > @tolerance[condition].value
-        difference = difference - @tolerance[condition].value
+      if difference >= @tolerance[condition].value
+        difference -= @tolerance[condition].value
       else
         difference = 0
 
@@ -309,6 +323,10 @@ class Bacteria
           if not isNaN(Calc.combine(speedComponent))
             # Stop moving in this direction
             @speed.value = @speed.value.subtract(speedComponent)
+            # # Loses speed
+            # lostSpeed = @speed.value.multiply(0.5)
+            # @minSpeed.value = lostSpeed
+            # @acceleration.value = lostSpeed.divide(-3)
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
@@ -440,7 +458,6 @@ html.clock = ->
 html.setup = ->
   # << Actions >>
   doc.conditions.each( ->
-    console.log(@name)
     $(@).attr('value', global.enviroment[@dataset.name].value)
   )
 
@@ -455,15 +472,22 @@ html.setup = ->
   )
 
   # TODO add restart button event
+  doc.start.click( ->
+
+  )
+
+  # Open and close menu
+  doc.menuButton.click( ->
+    html.menu()
+  )
 
   # The menu events TODO work out these events
   doc.menuItems.each( ->
     $(@).click ->
       switch @name # Different name attributes
-        when "volume" then null
-        when "pause"
-          html.pause()
-        when "card" then null
+        when "volume" then html.sound()
+        when "pause" then html.pause()
+        when "cards" then html.cardsToggle()
         when "view" then null
         when "info" then null
   )
@@ -494,7 +518,6 @@ html.selected = ->
                 @textContent = scinum.unit
             )
         )
-
         doc.bacteria.attr('data-content', true) # Make visible
   else # No selected
     doc.bacteria.attr('data-content', false)
@@ -512,6 +535,50 @@ html.pause = (change = global.interaction.pauzed) ->
   else # Pauze
     global.interaction.pauzed = true
     icon.attr('src', 'assets/images/icons/ic_play_arrow_black_24px.svg')
+
+# Music control
+html.sound = (change = global.interaction.sound) ->
+  icon = doc.menu.find("button[name=volume] img")
+  if change # Unpauze
+    global.interaction.sound = false
+    icon.attr('src', 'assets/images/icons/ic_volume_off_black_24px.svg')
+  else # Pauze
+    global.interaction.sound = true
+    icon.attr('src', 'assets/images/icons/ic_volume_up_black_24px.svg')
+
+# Toggle the card system
+html.cardsToggle = (change = global.interaction.cards) ->
+  icon = doc.menu.find("button[name=cards] img")
+  if change # Unpauze
+    global.interaction.cards = false
+    doc.cards.hide()
+    icon.attr('src', 'assets/images/icons/ic_chat_outline_black_24px.svg')
+  else # Pauze
+    global.interaction.cards = true
+    doc.cards.show()
+    icon.attr('src', 'assets/images/icons/ic_chat_black_24px.svg')
+
+html.menu = (change = doc.menu.attr('data-state')) ->
+  icon = doc.menuButton.find('img')
+  console.log(change)
+  # Possible values
+  change = (change == 'collapse' or change == true)
+  if change
+    doc.menuButton.attr('disabled', true) # No double click
+    doc.menu.attr('data-state', 'expand')
+    # After animation
+    setTimeout( ->
+      doc.menuButton.attr('disabled', false)
+      icon.attr('src', 'assets/images/icons/ic_close_white_24px.svg')
+    , global.interaction.time)
+  else
+    doc.menuButton.attr('disabled', true) # No double click
+    doc.menu.attr('data-state', 'collapse')
+    # After animation
+    setTimeout( ->
+      doc.menuButton.attr('disabled', false)
+      icon.attr('src', 'assets/images/icons/ic_menu_white_24px.svg')
+    , global.interaction.time)
 
 # Creates instances of bacteria
 simulation.createLife = ->
@@ -561,12 +628,8 @@ simulation.feed = ->
     else
       amount = left # Remainder
       left = 0 # Ends loop
-    # Random location in field, not near the edges
-    range = local.size.subtract(50)
-    location = Point.random().multiply(range).add(25)
     # Add food
-    amount = new SciNum(Math.floor(amount), 'energy', 'j')
-    food = new Food(amount, location)
+    food = new Food(new SciNum(Math.floor(amount), 'energy', 'j'))
     food.display() # Draw in field
     global.food.push(food) # Add to array
 
