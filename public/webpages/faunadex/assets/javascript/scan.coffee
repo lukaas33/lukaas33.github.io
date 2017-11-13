@@ -32,11 +32,11 @@ $ ->
           ideal: view.width
         height:
           ideal: view.height
-      facingMode:
-        exact: "environment"
-      frameRate:
-        ideal: 20
-        max: 25
+        facingMode:
+          exact: "environment"
+        frameRate:
+          ideal: 15
+          max: 30
 
     # TODO change based on device
     return constraints
@@ -72,6 +72,7 @@ $ ->
   navigator.mediaDevices.getUserMedia(setConstraints()).then((stream) ->
     # Add feed to video
     $feed[0].srcObject = stream # Add media stream to video element
+
     $feed[0].onloadedmetadata = (event) ->
       $feed[0].play() # Play feed
       loaded() # Everthing done
