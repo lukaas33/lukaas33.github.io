@@ -19,10 +19,10 @@
     }
 
     &.fill {
+      bottom: 0;
       height: 100vh;
       left: 0;
       position: fixed;
-      bottom: 0;
       width: 100vw;
 
       img {

@@ -211,13 +211,6 @@ $ ->
   $("#skills").find(".head").click -> # Only click on the top
     toggle($(@).parents(".card"), "skills")
 
-  $("#portfolio").find(".preview").hover(
-    -> # MouseIn
-      $(@).find(".tags").fadeTo(global.timing, 1)
-    -> # MouseOut
-      $(@).find(".tags").fadeTo(global.timing, 0)
-  )
-
   $("[tooltip]").hover(
     ->  # MouseIn
       $(@).find(".tooltip").off() # Doesn't respond to hover

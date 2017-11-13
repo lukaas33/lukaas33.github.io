@@ -85,6 +85,10 @@
 
           &:hover {
             background-color: rgba(0, 0, 0, .15); // Darker shade to show text
+
+            .tags {
+              opacity: 1;
+            }
           }
 
           .tags {

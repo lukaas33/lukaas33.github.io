@@ -243,11 +243,6 @@
     $("#skills").find(".head").click(function() {
       return toggle($(this).parents(".card"), "skills");
     });
-    $("#portfolio").find(".preview").hover(function() {
-      return $(this).find(".tags").fadeTo(global.timing, 1);
-    }, function() {
-      return $(this).find(".tags").fadeTo(global.timing, 0);
-    });
     $("[tooltip]").hover(function() {
       $(this).find(".tooltip").off();
       return global.timeouts.hover = setTimeout((function(_this) {
