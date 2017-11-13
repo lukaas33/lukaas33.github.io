@@ -32,19 +32,19 @@ marked.setOptions({renderer: renderer})
 // Setup
 app.set('port', process.env.PORT || 5000) // Chooses a port
 
-app.use(helmet())
-app.use(helmet.contentSecurityPolicy({ // Allowed sources
-  directives: {
-    // Setup for http headers
-    defaultSrc: ["'self'", '*.googleapis.com'],
-    frameSrc: ['*.google.com'],
-    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'ajax.cloudflare.com', 'cdnjs.cloudflare.com', 'ajax.googleapis.com', 'cdn.ampproject.org'],
-    styleSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com', '*.googleapis.com'],
-    fontSrc: ["'self'", 'fonts.gstatic.com'],
-    imgSrc: ["'self'", 'data'],
-    objectSrc: ["'self'"]
-  }
-}))
+// app.use(helmet())
+// app.use(helmet.contentSecurityPolicy({ // Allowed sources
+//   directives: {
+//     // Setup for http headers
+//     defaultSrc: ["'self'", '*.googleapis.com'],
+//     frameSrc: ['*.google.com'],
+//     scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'ajax.cloudflare.com', 'cdnjs.cloudflare.com', 'ajax.googleapis.com', 'cdn.ampproject.org'],
+//     styleSrc: ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com', '*.googleapis.com'],
+//     fontSrc: ["'self'", 'fonts.gstatic.com'],
+//     imgSrc: ["'self'", 'data'],
+//     objectSrc: ["'self'"]
+//   }
+// }))
 
 app.use(compression({ threshold: 0 })) // Compression for static files
 app.use(minify()) // Minifies code
