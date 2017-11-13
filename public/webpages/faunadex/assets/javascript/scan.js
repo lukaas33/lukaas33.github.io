@@ -1,7 +1,11 @@
 (function() {
   $(function() {
-    var $feed, constraints;
+    var $accept, $feed, $gallery, $image, $take, constraints, image;
     $feed = $('#feed');
+    $image = $('#image');
+    $take = $('button[name=take]');
+    $accept = $('button[name=accept]');
+    $gallery = $('input[name=gallery]');
     constraints = {
       audio: false,
       video: {
@@ -20,7 +24,8 @@
         }
       }
     };
-    return navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+    image = null;
+    navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
       var video;
       video = $feed[0];
       video.srcObject = stream;
@@ -28,9 +33,10 @@
         return video.play();
       };
     })["catch"](function(error) {
-      console.log(error);
-      return document.write(error);
+      return alert(error);
     });
+    $take.click(function() {});
+    return $gallery.change(function() {});
   });
 
 }).call(this);
