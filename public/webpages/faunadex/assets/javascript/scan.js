@@ -21,9 +21,11 @@
       }
     };
     return navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-      $feed.srcObject = stream;
-      return $feed.onloadedmetadata = function(event) {
-        return $feed.play();
+      var video;
+      video = $feed[0];
+      video.srcObject = stream;
+      return video.onloadedmetadata = function(event) {
+        return video.play();
       };
     })["catch"](function(error) {
       console.log(error);

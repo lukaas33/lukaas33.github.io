@@ -21,10 +21,12 @@ $ ->
   # Show in page
   # https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
   navigator.mediaDevices.getUserMedia(constraints).then((stream) ->
-    $feed.srcObject = stream
-    $feed.onloadedmetadata = (event) ->
-      $feed.play()
+    video = $feed[0] # jQuery to DOM
+    video.srcObject = stream
+    video.onloadedmetadata = (event) ->
+      video.play()
   ).catch((error) ->
+    # TODO handle error
     console.log(error)
     document.write(error)
   )
