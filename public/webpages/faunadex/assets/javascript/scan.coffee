@@ -32,11 +32,9 @@ $ ->
           ideal: view.width
         height:
           ideal: view.height
-        facingMode:
-          exact: "environment"
+        facingMode: "environment"
         frameRate:
           ideal: 15
-          max: 30
 
     # TODO change based on device
     return constraints
