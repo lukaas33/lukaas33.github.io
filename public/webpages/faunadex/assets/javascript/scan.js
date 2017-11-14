@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var $accept, $back, $feed, $gallery, $image, $take, context, displayImage, getFrame, image, imageTaken, loaded, setConstraints, state, validateInput, view;
+    var $accept, $back, $feed, $gallery, $image, $take, context, getFrame, image, imageGetResult, imageSent, imageTaken, loaded, setConstraints, state, toBase64, validateInput, view;
     $feed = $('#feed');
     $image = $('#image');
     $take = $('button[name=take]');
@@ -13,9 +13,6 @@
     view = {
       width: $(window).width(),
       height: $(window).height()
-    };
-    loaded = function() {
-      return null;
     };
     setConstraints = function() {
       var constraints;
@@ -39,13 +36,31 @@
     validateInput = function(input) {
       return true;
     };
+    toBase64 = function(img) {
+      img = img.replace(/^data:image\/(png|jpg);base64,/, "");
+      return img;
+    };
+    imageGetResult = function() {
+      return Clarifai.app.models.predict(Clarifai.model, {
+        base64: toBase64(image)
+      }).then((function(response) {
+        return console.log(response);
+      }), (function(error) {
+        return console.log(error);
+      }));
+    };
+    loaded = function() {
+      return null;
+    };
+    imageSent = function() {
+      $accept.hide();
+      state = 'result';
+      return imageGetResult();
+    };
     imageTaken = function() {
       $take.hide();
       $accept.show();
       return state = 'accept';
-    };
-    displayImage = function(image) {
-      return context.drawImage(image, 0, 0, view.width, view.height);
     };
     getFrame = function(video) {
       context.drawImage(video, 0, 0, view.width, view.height);
@@ -58,26 +73,28 @@
         return loaded();
       };
     })["catch"](function(error) {
-      return alert(error);
+      return console.log(error);
     });
     $take.click(function() {
       return getFrame($feed[0]);
     });
-    $accept.click(function() {});
+    $accept.click(function() {
+      return imageSent();
+    });
     $gallery.change(function() {
       var reader;
       if (validateInput(this.files)) {
-        image = this.files[0];
         reader = new FileReader();
         reader.onload = function(event) {
-          var htmlImg;
-          htmlImg = new Image();
-          htmlImg.src = this.result;
-          return htmlImg.onload = function() {
-            return displayImage(htmlImg);
+          var img;
+          image = this.result;
+          img = new Image();
+          img.src = this.result;
+          return img.onload = function() {
+            return context.drawImage(img, 0, 0, view.width, view.height);
           };
         };
-        return reader.readAsDataURL(image);
+        return reader.readAsDataURL(this.files[0]);
       }
     });
     $back.click(function() {});

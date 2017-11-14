@@ -1,4 +1,6 @@
 $ ->
+  # Flow: displayImage or getFrame --> imageTaken --> imageSent --> saveResult
+
   # << Variables >>
   # Document
   $feed = $('#feed')
@@ -17,11 +19,7 @@ $ ->
     width: $(window).width()
     height: $(window).height()
 
-  # << Functions >>
-  # The page is loaded
-  loaded = ->
-    null
-
+  # << Return functions >>
   # Sets the media constraints
   setConstraints = ->
     # Video input constraints TODO tweak values
@@ -43,16 +41,39 @@ $ ->
   validateInput = (input) ->
     return true
 
-  imageTaken = () ->
+  # Convert image
+    # https://stackoverflow.com/questions/19183180/how-to-save-an-image-to-localstorage-and-display-it-on-the-next-page
+  toBase64 = (img) ->
+    img = img.replace(/^data:image\/(png|jpg);base64,/, "")
+    return img
+
+  # << Functions >>
+  # Gets a result from an image
+  imageGetResult = ->
+    Clarifai.app.models.predict(Clarifai.model, base64: toBase64(image)).then((
+      (response) ->
+        console.log response
+    ), (
+      (error) ->
+        # TODO handle error
+        console.log error
+    ))
+
+  # The page is loaded
+  loaded = ->
+    null
+
+  # Image is selected by user TODO add loader
+  imageSent = ->
+    $accept.hide()
+    state = 'result' # Change behaviour of back
+    imageGetResult()
+
+  # Image is selected
+  imageTaken = ->
     $take.hide()
     $accept.show()
     state = 'accept' # Change behaviour of back
-
-  # Display image on screen
-    # https://www.w3schools.com/graphics/canvas_images.asp
-  displayImage = (image) ->
-    # Display the image in canvas
-    context.drawImage(image, 0, 0, view.width, view.height)
 
   # Get the video frame
     # http://cwestblog.com/2017/05/03/javascript-snippet-get-video-frame-as-an-image/
@@ -76,7 +97,7 @@ $ ->
       loaded() # Everthing done
   ).catch((error) ->
     # TODO handle error
-    alert(error)
+    console.log(error)
   )
 
   # << Events >>
@@ -87,22 +108,25 @@ $ ->
 
   # TODO image accept event
   $accept.click( ->
-
+    imageSent()
   )
 
   # When a new file is entered
     # https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL
   $gallery.change( ->
     if validateInput(@files)
-      image = @files[0]
-
       reader = new FileReader() # Can read the image
       reader.onload = (event) ->
-        htmlImg = new Image() # Canavas needs html image element
-        htmlImg.src = @result
-        htmlImg.onload = -> # Image needs to load before displaying
-          displayImage(htmlImg)
-      reader.readAsDataURL(image) # Read the image as a dataUrl
+        image = @result # Saved as dataUrl in variable
+
+        img = new Image() # Canavas needs html image element
+        img.src = @result
+        img.onload = -> # Image needs to load before displaying
+          # Display the image in canvas
+            # https://www.w3schools.com/graphics/canvas_images.asp
+          context.drawImage(img, 0, 0, view.width, view.height)
+
+      reader.readAsDataURL(@files[0]) # Read the image as a dataUrl
   )
 
   # TODO back button event
