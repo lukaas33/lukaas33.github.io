@@ -8,6 +8,7 @@
   <!-- Javascript -->
   <script src="assets/javascript/libraries/ejs.js"></script>
   <script src="assets/javascript/libraries/jquery.js"></script>
+  <script defer src="assets/javascript/libraries/clarifai.js"></script>
   <script defer src="assets/javascript/app.js"></script>
   <script defer src="assets/javascript/scan.js"></script> <!-- Will load content -->
   <!-- Styling -->
@@ -16,11 +17,11 @@
 </head>
 <body>
   <button class="top" name="back">
-    <img src="assets/images/other/back.svg"/>
+    <img src="assets/images/icons/back.svg"/>
   </button>
   <div class="top">
     <input name="gallery" type="file" accept="image/*"/>
-    <img src="assets/images/other/back.svg"/>
+    <img src="assets/images/icons/gallery.svg"/>
   </div>
   <div class="page">
     <div id="loader"></div>
@@ -29,8 +30,8 @@
       <video autoplay id="feed"></video>
       <!-- Used to show and store image -->
       <canvas id="image"></canvas>
-      <button name="take"><img src="assets/images/other/camera.svg"/></button>
-      <button name="accept"><img src="assets/images/other/done.svg"/></button>
+      <button name="take"><img src="assets/images/icons/camera.svg"/></button>
+      <button name="accept"><img src="assets/images/icons/done.svg"/></button>
     </main>
   </div>
   <!-- Page setup -->
