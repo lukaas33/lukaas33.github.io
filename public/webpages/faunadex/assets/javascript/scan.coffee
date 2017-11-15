@@ -1,5 +1,6 @@
 $ ->
-  # Flow: displayImage or getFrame --> imageTaken --> imageSent --> saveResult
+  # Control: mageTaken --> imageSent --> saveResult
+  # Data: image --> clarifai API --> wikipedia --> localstorage
 
   # << Variables >>
   # Document
@@ -7,6 +8,7 @@ $ ->
   $image = $('#image')
   $take = $('button[name=take]')
   $accept = $('button[name=accept]')
+  $save = $('button[name=save]')
   $gallery = $('input[name=gallery]')
   $back = $('button[name=back]')
 
@@ -42,18 +44,6 @@ $ ->
   validateInput = (input) ->
     return true
 
-  # Wikipedia query url
-    # https://www.mediawiki.org/wiki/API:Opensearch
-  queryUrl = (term) ->
-    url = "https://en.wikipedia.org/w/api.php" + # API url
-      "?action=opensearch" + # Action is search
-      "?search=#{term}" + # Get result for the term
-      "?limit=1" + # Only the first
-      "?namespace=0" + # No idea
-      "?format=json" # Json data
-    return url
-
-
   # Convert image
     # https://stackoverflow.com/questions/19183180/how-to-save-an-image-to-localstorage-and-display-it-on-the-next-page
   toBase64 = (img) ->
@@ -74,9 +64,37 @@ $ ->
     ))
 
   # Get wikipedia data
-  wikipedia = ->
-    $.ajax(queryUrl(result),
-      
+    # https://www.mediawiki.org/wiki/API:Query
+  wikipediaData = ->
+    $.ajax("https://en.wikipedia.org/w/api.php",
+      data: # Parameters
+        action: 'query'
+        list: 'search'
+        format: 'json' # To  return
+        srsearch: result # To search for
+      dataType: 'jsonp' # Get data from outside domain
+      method: 'POST' # Http method
+    ).done( (data) ->
+      console.log data
+      # Get data from this page
+      targetPage = data.query.search[0].pageid
+      $.ajax("https://en.wikipedia.org/w/api.php",
+        data: # Parameters
+          action: 'parse' # Return html of site
+          format: 'json' # As json format
+          pageid: targetPage # wikipedia page
+        dataType: 'jsonp' # Get data from outside domain
+        method: 'POST' # Http method
+      ).done( (data) ->
+        console.log data
+
+      ).fail( (error) ->
+        # TODO handle error
+        console.log error
+      )
+    ).fail( (error) ->
+      # TODO handle error
+      console.log error
     )
 
   # The page is loaded
@@ -126,9 +144,14 @@ $ ->
     getFrame($feed[0])
   )
 
-  # TODO image accept event
+  # Accept the image
   $accept.click( ->
     imageSent()
+  )
+
+  # TODO save data into storage
+  $save.click( ->
+
   )
 
   # When a new file is entered

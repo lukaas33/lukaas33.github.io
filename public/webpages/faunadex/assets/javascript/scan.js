@@ -1,10 +1,11 @@
 (function() {
   $(function() {
-    var $accept, $back, $feed, $gallery, $image, $take, context, getFrame, image, imageGetResult, imageSent, imageTaken, loaded, queryUrl, result, setConstraints, state, toBase64, validateInput, view, wikipedia;
+    var $accept, $back, $feed, $gallery, $image, $save, $take, context, getFrame, image, imageGetResult, imageSent, imageTaken, loaded, result, setConstraints, state, toBase64, validateInput, view, wikipediaData;
     $feed = $('#feed');
     $image = $('#image');
     $take = $('button[name=take]');
     $accept = $('button[name=accept]');
+    $save = $('button[name=save]');
     $gallery = $('input[name=gallery]');
     $back = $('button[name=back]');
     context = $image[0].getContext('2d');
@@ -37,11 +38,6 @@
     validateInput = function(input) {
       return true;
     };
-    queryUrl = function(term) {
-      var url;
-      url = "https://en.wikipedia.org/w/api.php" + "?action=opensearch" + ("?search=" + term) + "?limit=1" + "?namespace=0" + "?format=json";
-      return url;
-    };
     toBase64 = function(img) {
       img = img.replace(/^data:image\/(png|jpg);base64,/, "");
       return img;
@@ -55,8 +51,36 @@
         return console.log(error);
       }));
     };
-    wikipedia = function() {
-      return $.ajax(queryUrl(result));
+    wikipediaData = function() {
+      return $.ajax("https://en.wikipedia.org/w/api.php", {
+        data: {
+          action: 'query',
+          list: 'search',
+          format: 'json',
+          srsearch: result
+        },
+        dataType: 'jsonp',
+        method: 'POST'
+      }).done(function(data) {
+        var targetPage;
+        console.log(data);
+        targetPage = data.query.search[0].pageid;
+        return $.ajax("https://en.wikipedia.org/w/api.php", {
+          data: {
+            action: 'parse',
+            format: 'json',
+            pageid: targetPage
+          },
+          dataType: 'jsonp',
+          method: 'POST'
+        }).done(function(data) {
+          return console.log(data);
+        }).fail(function(error) {
+          return console.log(error);
+        });
+      }).fail(function(error) {
+        return console.log(error);
+      });
     };
     loaded = function() {
       return null;
@@ -90,6 +114,7 @@
     $accept.click(function() {
       return imageSent();
     });
+    $save.click(function() {});
     $gallery.change(function() {
       var reader;
       if (validateInput(this.files)) {
