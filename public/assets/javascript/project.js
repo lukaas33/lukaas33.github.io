@@ -3,8 +3,6 @@
 // TODO work out loading of content
 // TODO work out navbar
 
-// var $ = 0
-
 $(document).ready(function () {
   // Actions
   $('body').show()

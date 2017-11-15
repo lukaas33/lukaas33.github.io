@@ -3,6 +3,7 @@
 # Sometimes the comment for an expression will be above the line
 # Code groups are distinguised by << >>
 # Objects are used to group functions and variables
+"use strict"
 
 # << Variables >>
 # Group
@@ -52,7 +53,7 @@ Calc.scale = (value, needed = 'scaled') ->
 # Combines the vector into one value
 Calc.combine = (vector) ->
   # Uses a^2 + b^2 = c^2
-  result = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2))
+  result = Math.sqrt(vector.x**2 + vector.y**2)
   return result
 
 # TODO add function that converts between base and si prefixes
@@ -365,48 +366,50 @@ class Bacteria
 
 # Constructors that inherit code
 class Lucarium extends Bacteria # TODO add unique traits for family
-  constructor: ->
+  constructor: () ->
+    super(arguments...) # Parent constructor
     # Are initialised
     @family = "Lucarium"
-    @taxonomicName = "#{@family} #{@species}"
     @idealConditions =
       temperature: new SciNum(20, 'temperature', 'degrees')
       acidity: new SciNum(7, 'pH', '')
       toxicity: new SciNum(0, 'concentration', 'M')
-    super # Call parent constructor
 
 class Viridis extends Lucarium # TODO make different traits for the species
-  constructor: ->
+  constructor: () ->
+    super(arguments...) # Parent constructor
     # Values that are initialised
     @species = "Viridis"
+    @taxonomicName = "#{@family} #{@species}" # Super has to be called first
     @color = '#4caf50'
     @tolerance =
       temperature: new SciNum(5, 'temperature', 'degrees')
       acidity: new SciNum(0.5, 'pH', '')
       toxicity: new SciNum(2, 'concentration', 'M')
-    super # Call parent constructor
 
 class Rubrum extends Lucarium
-  constructor: ->
+  constructor: () ->
+    super(arguments...) # Parent constructor
     # Values that are initialised
     @species = "Rubrum"
+    @taxonomicName = "#{@family} #{@species}" # Super has to be called first
     @color = '#f44336'
     @tolerance =
       temperature: new SciNum(5, 'temperature', 'degrees')
       acidity: new SciNum(0.5, 'pH', '')
       toxicity: new SciNum(2, 'concentration', 'M')
-    super # Call parent constructor
 
 class Caeruleus extends Lucarium
-  constructor: ->
+  constructor: () ->
+    super(arguments...) # Parent constructor
     # Values that are initialised
     @species = "Caeruleus"
+    @taxonomicName = "#{@family} #{@species}" # Super has to be called first
     @color = '#2196f3'
     @tolerance =
       temperature: new SciNum(5, 'temperature', 'degrees')
       acidity: new SciNum(0.5, 'pH', '')
       toxicity: new SciNum(2, 'concentration', 'M')
-    super # Call parent constructor
 
 # << Document functions >>
 # Groups
@@ -634,7 +637,7 @@ simulation.feed = ->
     global.food.push(food) # Add to array
 
 # Sets up the document
-simulation.setup = ->
+simulation.setup = (callback) ->
   paper.install(window) # Don't have to acces objects via paper object
   paper.setup(doc.screen[0]) # Make use of the paperscript library
   html.setSize() # Initial value
@@ -647,10 +650,11 @@ simulation.setup = ->
   draw.background()
   simulation.createLife()
 
+  callback()
+
 # Starts simulation
 simulation.start = ->
   console.log "Loaded completely"
-  simulation.setup()
 
   # Add events to elements
   doc.start.find("button[name=continue]").click ->
@@ -707,8 +711,10 @@ draw.background = ->
 isLoaded = setInterval( ->
   if global.interaction.loaded
     # << Actions >>
-    simulation.start()
     clearInterval(isLoaded) # End itself from rechecking
+    simulation.setup( ->
+      simulation.start()
+    )
 
     # << Events >>
     # Update simulated time

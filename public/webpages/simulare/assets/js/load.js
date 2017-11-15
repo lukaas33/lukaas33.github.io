@@ -3,7 +3,7 @@
 // This file is optimised for speed, as it initialises the loading screen. That's why I only use the JS DOM here
 
 // Has global scope
-var global = {
+const global = {
   theory: undefined,
   interaction: {
     time: 400, // Standard animation time
@@ -28,11 +28,12 @@ var global = {
 
 // Has local scope
 (function () {
+  "use strict"
   // Loads files asynchronously
-  var load = function (url, type, callback) {
+  const load = function (url, type, callback) {
     if (type === 'css') {
-      var link = document.createElement('link')
-      link.onload = function () {
+      let link = document.createElement('link')
+      link.onload = () => {
         callback()
       }
       link.href = url
@@ -42,10 +43,10 @@ var global = {
       // Insert into dom at correct placc
       document.getElementsByTagName('link')[0].insertAdjacentElement('afterend', link)
     } else {
-      var script = document.createElement('script')
+      let script = document.createElement('script')
       script.async = true // Will load asynchronously
       script.src = url
-      script.onload = function () {
+      script.onload = () => {
         callback()
       }
 
@@ -58,7 +59,7 @@ var global = {
   var total = 9
   var toLoad = total // Initial value
   // Updates loaded files
-  var loaded = function (file) {
+  const loaded = function (file) {
     toLoad -= 1
 
     var percentage = Math.round((total - toLoad) / total * 100) // Total loaded files
@@ -66,58 +67,58 @@ var global = {
 
     console.log('Loaded:', file)
     if (toLoad === 0) {
-      setTimeout(function () {
+      setTimeout(() => {
         global.interaction.loaded = true
       }, 400) // Let's animation end when done
     }
   }
 
   // Changes progressbar on screen
-  var progressBar = function (percentage) {
+  const progressBar = function (percentage) {
     // TODO maybe make this work in firefox
     var $pie = document.getElementById('loading').getElementsByClassName('pie')[0]
     var total = Math.round(Math.PI * 100) // Circumference of circle
     var number = (percentage * total) / 100 // Part of the circle
-    $pie.style.strokeDasharray = number + '%, ' + total + '%'
+    $pie.style.strokeDasharray = `${number}%, ${total}%`
   }
 
   // When the loading page loads
   window.onload = function () {
     loaded('self')
     // Load the jquery library
-    load('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', 'js', function () {
+    load('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', 'js', () => {
       loaded('jquery')
       // Load data into global variable
-      $.getJSON('storage/theory.json', function (data) {
+      $.getJSON('storage/theory.json', (data) => {
         global.theory = data.content
         loaded('theory')
       })
       // Load html into an element, will be hidden
-      $('#home').load('storage/main.html', function () {
+      $('#home').load('storage/main.html', () => {
         loaded('html')
       })
       // Load the Paper.js library
-      load('https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.22/paper.min.js', 'js', function () {
+      load('https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.22/paper.min.js', 'js', () => {
         loaded('paper.js')
         // Load the main javascript
-        // $.getScript('assets/js/main.js', function () {
+        // $.getScript('assets/js/main.js', () => {
         //   loaded('js')
         // })
-        load('assets/js/main.js', 'js', function () {
+        load('assets/js/main.js', 'js', () => {
           loaded('js')
         })
       })
     })
     // Load the Showdown library
-    load('https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.6/showdown.min.js', 'js', function () {
+    load('https://cdnjs.cloudflare.com/ajax/libs/showdown/1.7.6/showdown.min.js', 'js', () => {
       loaded('showdown')
     })
     // Load the css normaliser
-    load('https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css', 'css', function () {
+    load('https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css', 'css', () => {
       loaded('normalize css')
     })
     // Load the main css
-    load('assets/css/main.css', 'css', function () {
+    load('assets/css/main.css', 'css', () => {
       loaded('css')
     })
   }

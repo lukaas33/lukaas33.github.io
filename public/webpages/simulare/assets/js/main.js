@@ -1,4 +1,5 @@
 (function() {
+  "use strict";
   var Bacteria, Caeruleus, Calc, Food, Lucarium, Random, Rubrum, SciNum, Viridis, doc, draw, generate, html, id, isLoaded, j, len, local, ref, simulation, time,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -448,14 +449,13 @@
     extend(Lucarium, superClass);
 
     function Lucarium() {
+      Lucarium.__super__.constructor.apply(this, arguments);
       this.family = "Lucarium";
-      this.taxonomicName = this.family + " " + this.species;
       this.idealConditions = {
         temperature: new SciNum(20, 'temperature', 'degrees'),
         acidity: new SciNum(7, 'pH', ''),
         toxicity: new SciNum(0, 'concentration', 'M')
       };
-      Lucarium.__super__.constructor.apply(this, arguments);
     }
 
     return Lucarium;
@@ -466,14 +466,15 @@
     extend(Viridis, superClass);
 
     function Viridis() {
+      Viridis.__super__.constructor.apply(this, arguments);
       this.species = "Viridis";
+      this.taxonomicName = this.family + " " + this.species;
       this.color = '#4caf50';
       this.tolerance = {
         temperature: new SciNum(5, 'temperature', 'degrees'),
         acidity: new SciNum(0.5, 'pH', ''),
         toxicity: new SciNum(2, 'concentration', 'M')
       };
-      Viridis.__super__.constructor.apply(this, arguments);
     }
 
     return Viridis;
@@ -484,14 +485,15 @@
     extend(Rubrum, superClass);
 
     function Rubrum() {
+      Rubrum.__super__.constructor.apply(this, arguments);
       this.species = "Rubrum";
+      this.taxonomicName = this.family + " " + this.species;
       this.color = '#f44336';
       this.tolerance = {
         temperature: new SciNum(5, 'temperature', 'degrees'),
         acidity: new SciNum(0.5, 'pH', ''),
         toxicity: new SciNum(2, 'concentration', 'M')
       };
-      Rubrum.__super__.constructor.apply(this, arguments);
     }
 
     return Rubrum;
@@ -502,14 +504,15 @@
     extend(Caeruleus, superClass);
 
     function Caeruleus() {
+      Caeruleus.__super__.constructor.apply(this, arguments);
       this.species = "Caeruleus";
+      this.taxonomicName = this.family + " " + this.species;
       this.color = '#2196f3';
       this.tolerance = {
         temperature: new SciNum(5, 'temperature', 'degrees'),
         acidity: new SciNum(0.5, 'pH', ''),
         toxicity: new SciNum(2, 'concentration', 'M')
       };
-      Caeruleus.__super__.constructor.apply(this, arguments);
     }
 
     return Caeruleus;
@@ -741,7 +744,7 @@
     return results;
   };
 
-  simulation.setup = function() {
+  simulation.setup = function(callback) {
     paper.install(window);
     paper.setup(doc.screen[0]);
     html.setSize();
@@ -749,13 +752,13 @@
     html.layer.food = new Layer();
     html.layer.bacteria = new Layer();
     draw.background();
-    return simulation.createLife();
+    simulation.createLife();
+    return callback();
   };
 
   simulation.start = function() {
     var input;
     console.log("Loaded completely");
-    simulation.setup();
     doc.start.find("button[name=continue]").click(function() {
       return doc.start.find(".screen:first").hide();
     });
@@ -815,8 +818,10 @@
 
   isLoaded = setInterval(function() {
     if (global.interaction.loaded) {
-      simulation.start();
       clearInterval(isLoaded);
+      simulation.setup(function() {
+        return simulation.start();
+      });
       time.clock = setInterval(function() {
         if (!global.interaction.pauzed) {
           time.time += 5;

@@ -677,6 +677,8 @@ main {
         width: 100%; }
         main #portfolio .page .container .preview span:hover {
           background-color: rgba(0, 0, 0, 0.15); }
+          main #portfolio .page .container .preview span:hover .tags {
+            opacity: 1; }
         main #portfolio .page .container .preview span .tags {
           color: #fff;
           margin: auto;
@@ -893,10 +895,10 @@ main {
     main #project .box.normal .shadow {
       display: block; }
   main #project .box.fill {
+    bottom: 0;
     height: 100vh;
     left: 0;
     position: fixed;
-    bottom: 0;
     width: 100vw; }
     main #project .box.fill img {
       height: 100%;

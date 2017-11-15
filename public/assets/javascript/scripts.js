@@ -1,5 +1,5 @@
 // Global scope
-var global = {
+const global = {
   // Variable with a global scope
   timing: 400, // Standard animation time
   animation: { // Standard animation object
@@ -32,11 +32,10 @@ var global = {
       // Cookie function
       var cookies = document.cookie.split(';')
       if (typeof value === 'undefined') { // Need to get
-        for (var i = 0; i < cookies.length; i++) {
-          value = cookies[i]
-          var current = value.split('=') // Name and value pair
+        for (let value of cookies) {
+          let current = value.split('=') // Name and value pair
           if (current[0].trim() === name) {
-            var result = current[1].trim()
+            let result = current[1].trim()
             try {
               result = JSON.parse(result) // Will parse strings to numbers, booleans, etc.
               return result
@@ -48,14 +47,14 @@ var global = {
           }
         }
       } else { // Need to set
-        console.log('Set cookie: ' + name + ' to ' + value)
-        document.cookie = name + '=' + value + '; secure;' // Set value
+        console.log(`set cookie: ${name} to ${value}`)
+        document.cookie = `${name}=${value};secure;` // Set value
       }
     } else { // Use variables instead of cookies
       if (typeof value === 'undefined') {
         return global.fallback[name] // Get value
       } else {
-        console.log('Set fallback variable: ' + name + ' to ' + value)
+        console.log(`Set fallback variable: ${name} to ${value}`)
         global.fallback[name] = value // Set value
       }
     }
