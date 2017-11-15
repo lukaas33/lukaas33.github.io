@@ -14,6 +14,7 @@ $ ->
 
   # Other
   image = null # Stores the image
+  result = null # Stores the top search result
   state = 'select' # Stores page state
   view =
     width: $(window).width()
@@ -41,6 +42,18 @@ $ ->
   validateInput = (input) ->
     return true
 
+  # Wikipedia query url
+    # https://www.mediawiki.org/wiki/API:Opensearch
+  queryUrl = (term) ->
+    url = "https://en.wikipedia.org/w/api.php" + # API url
+      "?action=opensearch" + # Action is search
+      "?search=#{term}" + # Get result for the term
+      "?limit=1" + # Only the first
+      "?namespace=0" + # No idea
+      "?format=json" # Json data
+    return url
+
+
   # Convert image
     # https://stackoverflow.com/questions/19183180/how-to-save-an-image-to-localstorage-and-display-it-on-the-next-page
   toBase64 = (img) ->
@@ -49,6 +62,7 @@ $ ->
 
   # << Functions >>
   # Gets a result from an image
+    # https://www.clarifai.com/developer/guide/
   imageGetResult = ->
     Clarifai.app.models.predict(Clarifai.model, base64: toBase64(image)).then((
       (response) ->
@@ -58,6 +72,12 @@ $ ->
         # TODO handle error
         console.log error
     ))
+
+  # Get wikipedia data
+  wikipedia = ->
+    $.ajax(queryUrl(result),
+      
+    )
 
   # The page is loaded
   loaded = ->
@@ -123,7 +143,6 @@ $ ->
         img.src = @result
         img.onload = -> # Image needs to load before displaying
           # Display the image in canvas
-            # https://www.w3schools.com/graphics/canvas_images.asp
           context.drawImage(img, 0, 0, view.width, view.height)
 
       reader.readAsDataURL(@files[0]) # Read the image as a dataUrl

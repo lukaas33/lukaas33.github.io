@@ -1,6 +1,6 @@
 (function() {
   $(function() {
-    var $accept, $back, $feed, $gallery, $image, $take, context, getFrame, image, imageGetResult, imageSent, imageTaken, loaded, setConstraints, state, toBase64, validateInput, view;
+    var $accept, $back, $feed, $gallery, $image, $take, context, getFrame, image, imageGetResult, imageSent, imageTaken, loaded, queryUrl, result, setConstraints, state, toBase64, validateInput, view, wikipedia;
     $feed = $('#feed');
     $image = $('#image');
     $take = $('button[name=take]');
@@ -9,6 +9,7 @@
     $back = $('button[name=back]');
     context = $image[0].getContext('2d');
     image = null;
+    result = null;
     state = 'select';
     view = {
       width: $(window).width(),
@@ -36,6 +37,11 @@
     validateInput = function(input) {
       return true;
     };
+    queryUrl = function(term) {
+      var url;
+      url = "https://en.wikipedia.org/w/api.php" + "?action=opensearch" + ("?search=" + term) + "?limit=1" + "?namespace=0" + "?format=json";
+      return url;
+    };
     toBase64 = function(img) {
       img = img.replace(/^data:image\/(png|jpg);base64,/, "");
       return img;
@@ -48,6 +54,9 @@
       }), (function(error) {
         return console.log(error);
       }));
+    };
+    wikipedia = function() {
+      return $.ajax(queryUrl(result));
     };
     loaded = function() {
       return null;
