@@ -1,6 +1,6 @@
 // Serviceworker code from https://developers.google.com/web/fundamentals/primers/service-workers/
-var cacheName = 'cached-files'
-var urlsToCache = [
+const cacheName = 'cached-files'
+const urlsToCache = [
   'index.html',
   'manifest.json',
   'assets/javascript/home.js',
@@ -15,7 +15,7 @@ var urlsToCache = [
 self.addEventListener('install', function (event) {
   debugger // Use the debugger
   event.waitUntil(
-    caches.open(cacheName).then(function (cache) {
+    caches.open(cacheName).then((cache) => {
       console.log('Opened cache')
       return cache.addAll(urlsToCache)
     })
@@ -40,7 +40,7 @@ self.addEventListener('activate', function (event) {
   console.log('Activated')
   event.waitUntil(
     caches.keys().then(function (keyList) {
-      return Promise.all(keyList.map(function (key) {
+      return Promise.all(keyList.map((key) => {
         if (key !== cacheName) {
           return caches.delete(key) // Delete old file
         }
