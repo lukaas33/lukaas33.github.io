@@ -1,143 +1,204 @@
-(function() {
-  $(function() {
-    var $accept, $back, $feed, $gallery, $image, $save, $take, context, getFrame, image, imageGetResult, imageSent, imageTaken, loaded, result, setConstraints, state, toBase64, validateInput, view, wikipediaData;
-    $feed = $('#feed');
-    $image = $('#image');
-    $take = $('button[name=take]');
-    $accept = $('button[name=accept]');
-    $save = $('button[name=save]');
-    $gallery = $('input[name=gallery]');
-    $back = $('button[name=back]');
-    context = $image[0].getContext('2d');
-    image = null;
-    result = null;
-    state = 'select';
-    view = {
+$(function () {
+  'use strict'
+  // Control: mageTaken --> imageSent --> saveResult
+  // Data: image --> clarifai API --> wikipedia --> localstorage
+
+  // << Variables >>
+  // Document
+  const doc = {
+    feed: $('#feed'),
+    image: $('#image'),
+    take: $('button[name=take]'),
+    accept: $('button[name=accept]'),
+    save: $('button[name=save]'),
+    gallery: $('input[name=gallery]'),
+    back: $('button[name=back]')
+  }
+
+  const context = doc.image[0].getContext('2d') // Used to draw on the canvas
+
+  // Other
+  const local = {
+    image: null, // Stores the image
+    result: null, // Stores the top search result
+    state: 'select', // Stores page state
+    view: {
       width: $(window).width(),
       height: $(window).height()
-    };
-    setConstraints = function() {
-      var constraints;
-      constraints = {
-        audio: false,
-        video: {
-          width: {
-            ideal: view.width
-          },
-          height: {
-            ideal: view.height
-          },
-          facingMode: "environment",
-          frameRate: {
-            ideal: 15
-          }
-        }
-      };
-      return constraints;
-    };
-    validateInput = function(input) {
-      return true;
-    };
-    toBase64 = function(img) {
-      img = img.replace(/^data:image\/(png|jpg);base64,/, "");
-      return img;
-    };
-    imageGetResult = function() {
-      return Clarifai.app.models.predict(Clarifai.model, {
-        base64: toBase64(image)
-      }).then((function(response) {
-        return console.log(response);
-      }), (function(error) {
-        return console.log(error);
-      }));
-    };
-    wikipediaData = function() {
-      return $.ajax("https://en.wikipedia.org/w/api.php", {
-        data: {
-          action: 'query',
-          list: 'search',
-          format: 'json',
-          srsearch: result
-        },
-        dataType: 'jsonp',
-        method: 'POST'
-      }).done(function(data) {
-        var targetPage;
-        console.log(data);
-        targetPage = data.query.search[0].pageid;
-        return $.ajax("https://en.wikipedia.org/w/api.php", {
-          data: {
-            action: 'parse',
-            format: 'json',
-            pageid: targetPage
-          },
-          dataType: 'jsonp',
-          method: 'POST'
-        }).done(function(data) {
-          return console.log(data);
-        }).fail(function(error) {
-          return console.log(error);
-        });
-      }).fail(function(error) {
-        return console.log(error);
-      });
-    };
-    loaded = function() {
-      return null;
-    };
-    imageSent = function() {
-      $accept.hide();
-      state = 'result';
-      return imageGetResult();
-    };
-    imageTaken = function() {
-      $take.hide();
-      $accept.show();
-      return state = 'accept';
-    };
-    getFrame = function(video) {
-      context.drawImage(video, 0, 0, view.width, view.height);
-      return image = $image[0].toDataURL();
-    };
-    navigator.mediaDevices.getUserMedia(setConstraints()).then(function(stream) {
-      $feed[0].srcObject = stream;
-      return $feed[0].onloadedmetadata = function(event) {
-        $feed[0].play();
-        return loaded();
-      };
-    })["catch"](function(error) {
-      return console.log(error);
-    });
-    $take.click(function() {
-      return getFrame($feed[0]);
-    });
-    $accept.click(function() {
-      return imageSent();
-    });
-    $save.click(function() {});
-    $gallery.change(function() {
-      var reader;
-      if (validateInput(this.files)) {
-        reader = new FileReader();
-        reader.onload = function(event) {
-          var img;
-          image = this.result;
-          img = new Image();
-          img.src = this.result;
-          return img.onload = function() {
-            return context.drawImage(img, 0, 0, view.width, view.height);
-          };
-        };
-        return reader.readAsDataURL(this.files[0]);
-      }
-    });
-    $back.click(function() {});
-    return $(window).resize(function() {
-      return view = {
-        width: $(window).width(),
-        height: $(window).height()
-      };
-    });
-  });
+    }
+  }
 
-}).call(this);
+  // << Return functions >>
+  // Sets the media constraints
+  const setConstraints = function() {
+    // Video input constraints TODO tweak values
+    const constraints = {
+      audio: false,
+      video: {
+        width: {
+          ideal: local.view.width
+        },
+        height: {
+          ideal: local.view.height
+        },
+        facingMode: "environment",
+        frameRate: {
+          ideal: 15
+        }
+      }
+    }
+
+    // TODO change based on device
+    return constraints
+  }
+
+  // TODO Tests input
+  const validateInput = input => {
+    true
+  }
+
+  // Convert image
+    // https://stackoverflow.com/questions/19183180/how-to-save-an-image-to-localstorage-and-display-it-on-the-next-page
+  const toBase64 = function(img) {
+    img = img.replace(/^data:image\/(png|jpg)base64,/, "")
+    return img
+  }
+
+  // << Functions >>
+  // Gets a local.result from an image
+    // https://www.clarifai.com/developer/guide/
+  const imageGetResult = () =>
+    Clarifai.app.models.predict(Clarifai.model, {base64: toBase64(local.image)}).then((
+      response =>
+        console.log(response)
+    ), (
+      error =>
+        // TODO handle error
+        console.log(error)
+    ))
+
+
+  // Get wikipedia data
+    // https://www.mediawiki.org/wiki/API:Query
+  const wikipediaData = () =>
+    $.ajax("https://en.wikipedia.org/w/api.php", {
+      data: { // Parameters
+        action: 'query',
+        list: 'search',
+        format: 'json', // To  return
+        srsearch: local.result
+      }, // To search for
+      dataType: 'jsonp', // Get data from outside domain
+      method: 'POST'
+    } // Http method
+    ).done( function (data) {
+      console.log(data)
+      // Get data from this page
+      const targetPage = data.query.search[0].pageid
+      return $.ajax("https://en.wikipedia.org/w/api.php", {
+        data: { // Parameters
+          action: 'parse', // Return html of site
+          format: 'json', // As json format
+          pageid: targetPage
+        }, // wikipedia page
+        dataType: 'jsonp', // Get data from outside domain
+        method: 'POST'
+      } // Http method
+      ).done( data => console.log(data)).fail( error =>
+        // TODO handle error
+        console.log(error)
+      )
+    }).fail( error =>
+      // TODO handle error
+      console.log(error)
+    )
+
+
+  // The page is loaded
+  const loaded = () => null
+
+  // Image is selected by user TODO add loader
+  const imageSent = function () {
+    $accept.hide()
+    local.state = 'result' // Change behaviour of back
+    imageGetResult()
+  }
+
+  // Image is selected
+  const imageTaken = function () {
+    doc.take.hide()
+    doc.accept.show()
+    local.state = 'accept' // Change behaviour of back
+  }
+
+  // Get the video frame
+    // http://cwestblog.com/2017/05/03/javascript-snippet-get-video-frame-as-an-image/
+  const getFrame = function (video) {
+    // Display videoframe in canvas
+    context.drawImage(video, 0, 0, local.view.width, local.view.height)
+    local.image = doc.image[0].toDataURL() // Store frame as image
+  }
+
+  // << Actions >>
+  // TODO Get permissions on phones
+
+  // Show camera feed in page
+    // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+    // https://developers.google.com/web/updates/2015/10/media-devices
+  navigator.mediaDevices.getUserMedia(setConstraints()).then(function (stream) {
+    // Add feed to video
+    doc.feed[0].srcObject = stream // Add media stream to video element
+
+    doc.feed[0].onloadedmetadata = function (event) {
+      doc.feed[0].play() // Play feed
+      loaded() // Everthing done
+    }
+  }).catch(error =>
+    // TODO handle error
+    console.log(error)
+  )
+
+  // << Events >>
+  // Camera take picture event
+  doc.take.click( () => getFrame(doc.feed[0]))
+
+  // Accept the image
+  doc.accept.click( () => imageSent())
+
+  // TODO save data into storage
+  doc.save.click( function () {
+
+  })
+
+  // When a new file is entered
+    // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL
+  doc.gallery.change( function () {
+    if (validateInput(this.files)) {
+      const reader = new FileReader() // Can read the image
+      reader.onload = function (event) {
+        local.image = this.result // Saved as dataUrl in variable
+
+        const img = new Image() // Canavas needs html image element
+        img.src = this.result
+        img.onload = () => // Image needs to load before displaying
+          // Display the image in canvas
+          context.drawImage(img, 0, 0, local.view.width, local.view.height)
+      }
+
+      reader.readAsDataURL(this.files[0]) // Read the image as a dataUrl
+    }
+  })
+
+  // TODO back button event
+  doc.back.click( function () {
+
+  })
+
+  // Update variables
+  $(window).resize( () =>
+    local.view = {
+      width: $(window).width(),
+      height: $(window).height()
+    }
+  )
+})
