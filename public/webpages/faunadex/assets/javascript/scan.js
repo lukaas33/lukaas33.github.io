@@ -15,8 +15,6 @@ $(function () {
     back: $('button[name=back]')
   }
 
-  const context = doc.image[0].getContext('2d') // Used to draw on the canvas
-
   // Other
   const local = {
     image: null, // Stores the image
@@ -25,7 +23,8 @@ $(function () {
     view: {
       width: $(window).width(),
       height: $(window).height()
-    }
+    },
+    context: doc.image[0].getContext('2d') // Used to draw on the canvas
   }
 
   // << Return functions >>
@@ -54,13 +53,20 @@ $(function () {
 
   // TODO Tests input
   const validateInput = input => {
-    true
+    return true
   }
 
   // Convert image
+    // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa
     // https://stackoverflow.com/questions/19183180/how-to-save-an-image-to-localstorage-and-display-it-on-the-next-page
-  const toBase64 = function(img) {
+  const toBase64 = function (img) {
     img = img.replace(/^data:image\/(png|jpg)base64,/, "")
+    // img = btoa(img)
+    // try {
+    //   atob(img) // Works
+    // } catch (error) {
+    //   console.log(error) // TODO handle error
+    // }
     return img
   }
 
@@ -68,14 +74,12 @@ $(function () {
   // Gets a local.result from an image
     // https://www.clarifai.com/developer/guide/
   const imageGetResult = () =>
-    Clarifai.app.models.predict(Clarifai.model, {base64: toBase64(local.image)}).then((
-      response =>
-        console.log(response)
-    ), (
-      error =>
-        // TODO handle error
-        console.log(error)
-    ))
+    Clarifai.app.models.predict(Clarifai.model, {base64: toBase64(local.image)}).then(function (response) {
+      console.log(response)
+    }, function (error) {
+      // TODO handle error
+      console.log(error)
+    })
 
 
   // Get wikipedia data
@@ -91,27 +95,28 @@ $(function () {
       dataType: 'jsonp', // Get data from outside domain
       method: 'POST'
     } // Http method
-    ).done( function (data) {
+  ).done((data) => {
       console.log(data)
       // Get data from this page
       const targetPage = data.query.search[0].pageid
-      return $.ajax("https://en.wikipedia.org/w/api.php", {
+      $.ajax("https://en.wikipedia.org/w/api.php", {
         data: { // Parameters
           action: 'parse', // Return html of site
           format: 'json', // As json format
           pageid: targetPage
         }, // wikipedia page
         dataType: 'jsonp', // Get data from outside domain
-        method: 'POST'
-      } // Http method
-      ).done( data => console.log(data)).fail( error =>
+        method: 'POST' // Http method
+      }).done((data) => {
+        console.log(data)
+      }).fail((error) => {
         // TODO handle error
         console.log(error)
-      )
-    }).fail( error =>
+      })
+    }).fail((error) => {
       // TODO handle error
       console.log(error)
-    )
+    })
 
 
   // The page is loaded
@@ -119,7 +124,7 @@ $(function () {
 
   // Image is selected by user TODO add loader
   const imageSent = function () {
-    $accept.hide()
+    doc.accept.hide()
     local.state = 'result' // Change behaviour of back
     imageGetResult()
   }
@@ -135,7 +140,7 @@ $(function () {
     // http://cwestblog.com/2017/05/03/javascript-snippet-get-video-frame-as-an-image/
   const getFrame = function (video) {
     // Display videoframe in canvas
-    context.drawImage(video, 0, 0, local.view.width, local.view.height)
+    local.context.drawImage(video, 0, 0, local.view.width, local.view.height)
     local.image = doc.image[0].toDataURL() // Store frame as image
   }
 
@@ -153,20 +158,24 @@ $(function () {
       doc.feed[0].play() // Play feed
       loaded() // Everthing done
     }
-  }).catch(error =>
+  }).catch((error) => {
     // TODO handle error
     console.log(error)
-  )
+  })
 
   // << Events >>
   // Camera take picture event
-  doc.take.click( () => getFrame(doc.feed[0]))
+  doc.take.click(() => {
+    getFrame(doc.feed[0])
+  })
 
   // Accept the image
-  doc.accept.click( () => imageSent())
+  doc.accept.click(() => {
+    imageSent()
+  })
 
   // TODO save data into storage
-  doc.save.click( function () {
+  doc.save.click(function () {
 
   })
 
@@ -176,13 +185,13 @@ $(function () {
     if (validateInput(this.files)) {
       const reader = new FileReader() // Can read the image
       reader.onload = function (event) {
-        local.image = this.result // Saved as dataUrl in variable
-
+        local.image = event.target.result // Saved as dataUrl in variable
         const img = new Image() // Canavas needs html image element
-        img.src = this.result
-        img.onload = () => // Image needs to load before displaying
+        img.src = local.image
+        img.onload = () => { // Image needs to load before displaying
           // Display the image in canvas
-          context.drawImage(img, 0, 0, local.view.width, local.view.height)
+          local.context.drawImage(img, 0, 0, local.view.width, local.view.height)
+        }
       }
 
       reader.readAsDataURL(this.files[0]) // Read the image as a dataUrl
@@ -195,10 +204,10 @@ $(function () {
   })
 
   // Update variables
-  $(window).resize( () =>
+  $(window).resize(() => {
     local.view = {
       width: $(window).width(),
       height: $(window).height()
     }
-  )
+  })
 })
