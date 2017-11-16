@@ -36,6 +36,10 @@ time =
   time: 0
   trackSecond: 0
 
+# TODO test if in circle
+Calc.inCircle = (point, circle) ->
+  return
+
 # TODO add accuracy calculations
 # Returns the value according to a scale
 Calc.scale = (value, needed = 'scaled') ->
@@ -209,6 +213,20 @@ class Bacteria
   # Updates its body
   update: =>
     @body.position = @position.round() # Change position
+
+  # Gets selected by user
+  select: =>
+    if global.interaction.selected == @id
+      global.interaction.selected = null # Deselect
+      @body.selected = false # Changes appearance
+    else # Other bacteria is selected
+      if global.interaction.selected != null
+        for bacterium in global.bacteria
+          if global.interaction.selected == bacterium.id
+            bacterium.body.selected = false # Deselect current
+            break # End loop
+      global.interaction.selected = @id
+      @body.selected = true # Changes appearance
 
   # Gets older
   ages: =>
@@ -465,6 +483,60 @@ html.setup = ->
   )
 
   # << Events >>
+  # Update simulated time
+  time.clock = setInterval( ->
+    if not global.interaction.pauzed # Time is not pauzed
+      time.time += 5 # Update time
+
+      time.trackSecond += 5
+      if time.trackSecond > 1000 # Full simulated second
+        time.trackSecond = 0 # Restart second
+        simulation.feed()
+  , 5)
+
+  # Every full second
+  time.second = setInterval( ->
+    if not global.interaction.pauzed # Time is not pauzed
+      html.clock()
+      html.selected()
+  , 1000)
+
+  # Every frame of the canvas
+  view.onFrame = (event) ->
+    if not global.interaction.pauzed # Time is not pauzed
+      # Loop through the bacteria
+      for bacterium in global.bacteria
+        bacterium.live() # Bacteria does actions
+
+  # Paper.js canvas resize event
+  view.onResize = (event) ->
+    previous = local.size # Before resizing
+    html.setSize() # Update size variables
+
+    # Function for scaling positions
+    scalePositions = (instances) ->
+      for instance in instances
+        scaledPosition = new Point( # Scale the position of the instance
+          x: (instance.position.x / previous.width) * local.size.width
+          y: (instance.position.y / previous.height) * local.size.height
+        )
+        instance.position = scaledPosition.round() # Update position
+        # If it isn't a shape
+        if instance not instanceof Path
+          instance.update() # Manual update
+
+    # Scale these
+    scalePositions(global.bacteria)
+    scalePositions(global.food)
+    scalePositions(draw.bubbles)
+
+    # Scale by a factor of intended width / real width
+    draw.bottom.scale( # Don't know why times 2 but it works, don't touch it
+      (local.width / draw.bottom.bounds.width) * 2,
+      (local.height / draw.bottom.bounds.height) * 2
+    )
+    draw.bottom.position = local.origin # Rectangle is updated
+
   # When view goes out of focus
   $(window).blur( ->
     html.pause(off) # Set to on
@@ -477,6 +549,13 @@ html.setup = ->
   # TODO add restart button event
   doc.start.click( ->
 
+  )
+
+  # Click events check if bacteria is clicked
+  doc.screen.click((event) ->
+    for bacterium in global.bacteria
+      click = new Point(event.pageX, event.pageY)
+      # if bacterium.position.x  click.x
   )
 
   # Open and close menu
@@ -522,6 +601,7 @@ html.selected = ->
             )
         )
         doc.bacteria.attr('data-content', true) # Make visible
+        break # End loop
   else # No selected
     doc.bacteria.attr('data-content', false)
 
@@ -613,8 +693,6 @@ simulation.createLife = ->
     1,
     0
   )
-
-  global.interaction.selected = global.bacteria[2].id # TODO let user select
 
 # Generates food
 simulation.feed = ->
@@ -715,59 +793,4 @@ isLoaded = setInterval( ->
     simulation.setup( ->
       simulation.start()
     )
-
-    # << Events >>
-    # Update simulated time
-    time.clock = setInterval( ->
-      if not global.interaction.pauzed # Time is not pauzed
-        time.time += 5 # Update time
-
-        time.trackSecond += 5
-        if time.trackSecond > 1000 # Full simulated second
-          time.trackSecond = 0 # Restart second
-          simulation.feed()
-    , 5)
-
-    # Every full second
-    time.second = setInterval( ->
-      if not global.interaction.pauzed # Time is not pauzed
-        html.clock()
-        html.selected()
-    , 1000)
-
-    # Every frame of the canvas
-    view.onFrame = (event) ->
-      if not global.interaction.pauzed # Time is not pauzed
-        # Loop through the bacteria
-        for bacterium in global.bacteria
-          bacterium.live() # Bacteria does actions
-
-    # Paper.js canvas resize event
-    view.onResize = (event) ->
-      previous = local.size # Before resizing
-      html.setSize() # Update size variables
-
-      # Function for scaling positions
-      scalePositions = (instances) ->
-        for instance in instances
-          scaledPosition = new Point( # Scale the position of the instance
-            x: (instance.position.x / previous.width) * local.size.width
-            y: (instance.position.y / previous.height) * local.size.height
-          )
-          instance.position = scaledPosition.round() # Update position
-          # If it isn't a shape
-          if instance not instanceof Path
-            instance.update() # Manual update
-
-      # Scale these
-      scalePositions(global.bacteria)
-      scalePositions(global.food)
-      scalePositions(draw.bubbles)
-
-      # Scale by a factor of intended width / real width
-      draw.bottom.scale( # Don't know why times 2 but it works, don't touch it
-        (local.width / draw.bottom.bounds.width) * 2,
-        (local.height / draw.bottom.bounds.height) * 2
-      )
-      draw.bottom.position = local.origin # Rectangle is updated
 , 1)

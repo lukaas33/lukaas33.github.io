@@ -48,6 +48,8 @@
     trackSecond: 0
   };
 
+  Calc.inCircle = function(point, circle) {};
+
   Calc.scale = function(value, needed) {
     var DPC, size;
     if (needed == null) {
@@ -220,6 +222,7 @@
       this.move = bind(this.move, this);
       this.startMoving = bind(this.startMoving, this);
       this.ages = bind(this.ages, this);
+      this.select = bind(this.select, this);
       this.update = bind(this.update, this);
       this.display = bind(this.display, this);
       this.live = bind(this.live, this);
@@ -266,6 +269,27 @@
 
     Bacteria.prototype.update = function() {
       return this.body.position = this.position.round();
+    };
+
+    Bacteria.prototype.select = function() {
+      var bacterium, k, len1, ref1;
+      if (global.interaction.selected === this.id) {
+        global.interaction.selected = null;
+        return this.body.selected = false;
+      } else {
+        if (global.interaction.selected !== null) {
+          ref1 = global.bacteria;
+          for (k = 0, len1 = ref1.length; k < len1; k++) {
+            bacterium = ref1[k];
+            if (global.interaction.selected === bacterium.id) {
+              bacterium.body.selected = false;
+              break;
+            }
+          }
+        }
+        global.interaction.selected = this.id;
+        return this.body.selected = true;
+      }
     };
 
     Bacteria.prototype.ages = function() {
@@ -569,6 +593,62 @@
     doc.conditions.each(function() {
       return $(this).attr('value', global.enviroment[this.dataset.name].value);
     });
+    time.clock = setInterval(function() {
+      if (!global.interaction.pauzed) {
+        time.time += 5;
+        time.trackSecond += 5;
+        if (time.trackSecond > 1000) {
+          time.trackSecond = 0;
+          return simulation.feed();
+        }
+      }
+    }, 5);
+    time.second = setInterval(function() {
+      if (!global.interaction.pauzed) {
+        html.clock();
+        return html.selected();
+      }
+    }, 1000);
+    view.onFrame = function(event) {
+      var bacterium, k, len1, ref1, results;
+      if (!global.interaction.pauzed) {
+        ref1 = global.bacteria;
+        results = [];
+        for (k = 0, len1 = ref1.length; k < len1; k++) {
+          bacterium = ref1[k];
+          results.push(bacterium.live());
+        }
+        return results;
+      }
+    };
+    view.onResize = function(event) {
+      var previous, scalePositions;
+      previous = local.size;
+      html.setSize();
+      scalePositions = function(instances) {
+        var instance, k, len1, results, scaledPosition;
+        results = [];
+        for (k = 0, len1 = instances.length; k < len1; k++) {
+          instance = instances[k];
+          scaledPosition = new Point({
+            x: (instance.position.x / previous.width) * local.size.width,
+            y: (instance.position.y / previous.height) * local.size.height
+          });
+          instance.position = scaledPosition.round();
+          if (!(instance instanceof Path)) {
+            results.push(instance.update());
+          } else {
+            results.push(void 0);
+          }
+        }
+        return results;
+      };
+      scalePositions(global.bacteria);
+      scalePositions(global.food);
+      scalePositions(draw.bubbles);
+      draw.bottom.scale((local.width / draw.bottom.bounds.width) * 2, (local.height / draw.bottom.bounds.height) * 2);
+      return draw.bottom.position = local.origin;
+    };
     $(window).blur(function() {
       return html.pause(false);
     });
@@ -576,6 +656,16 @@
       return html.pause(true);
     });
     doc.start.click(function() {});
+    doc.screen.click(function(event) {
+      var bacterium, click, k, len1, ref1, results;
+      ref1 = global.bacteria;
+      results = [];
+      for (k = 0, len1 = ref1.length; k < len1; k++) {
+        bacterium = ref1[k];
+        results.push(click = new Point(event.pageX, event.pageY));
+      }
+      return results;
+    });
     doc.menuButton.click(function() {
       return html.menu();
     });
@@ -624,7 +714,8 @@
               });
             }
           });
-          results.push(doc.bacteria.attr('data-content', true));
+          doc.bacteria.attr('data-content', true);
+          break;
         } else {
           results.push(void 0);
         }
@@ -719,8 +810,7 @@
     energy = new SciNum(3.9e9, 'energy', 'atp');
     global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0);
     global.bacteria[1] = new Rubrum(size, energy, local.center.subtract(100, 0), 1, 0);
-    global.bacteria[2] = new Caeruleus(size, energy, local.center.add(100, 0), 1, 0);
-    return global.interaction.selected = global.bacteria[2].id;
+    return global.bacteria[2] = new Caeruleus(size, energy, local.center.add(100, 0), 1, 0);
   };
 
   simulation.feed = function() {
@@ -819,65 +909,9 @@
   isLoaded = setInterval(function() {
     if (global.interaction.loaded) {
       clearInterval(isLoaded);
-      simulation.setup(function() {
+      return simulation.setup(function() {
         return simulation.start();
       });
-      time.clock = setInterval(function() {
-        if (!global.interaction.pauzed) {
-          time.time += 5;
-          time.trackSecond += 5;
-          if (time.trackSecond > 1000) {
-            time.trackSecond = 0;
-            return simulation.feed();
-          }
-        }
-      }, 5);
-      time.second = setInterval(function() {
-        if (!global.interaction.pauzed) {
-          html.clock();
-          return html.selected();
-        }
-      }, 1000);
-      view.onFrame = function(event) {
-        var bacterium, k, len1, ref1, results;
-        if (!global.interaction.pauzed) {
-          ref1 = global.bacteria;
-          results = [];
-          for (k = 0, len1 = ref1.length; k < len1; k++) {
-            bacterium = ref1[k];
-            results.push(bacterium.live());
-          }
-          return results;
-        }
-      };
-      return view.onResize = function(event) {
-        var previous, scalePositions;
-        previous = local.size;
-        html.setSize();
-        scalePositions = function(instances) {
-          var instance, k, len1, results, scaledPosition;
-          results = [];
-          for (k = 0, len1 = instances.length; k < len1; k++) {
-            instance = instances[k];
-            scaledPosition = new Point({
-              x: (instance.position.x / previous.width) * local.size.width,
-              y: (instance.position.y / previous.height) * local.size.height
-            });
-            instance.position = scaledPosition.round();
-            if (!(instance instanceof Path)) {
-              results.push(instance.update());
-            } else {
-              results.push(void 0);
-            }
-          }
-          return results;
-        };
-        scalePositions(global.bacteria);
-        scalePositions(global.food);
-        scalePositions(draw.bubbles);
-        draw.bottom.scale((local.width / draw.bottom.bounds.width) * 2, (local.height / draw.bottom.bounds.height) * 2);
-        return draw.bottom.position = local.origin;
-      };
     }
   }, 1);
 

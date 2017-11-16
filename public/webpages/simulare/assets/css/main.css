@@ -6,7 +6,8 @@
 
 body {
   font-family: 'Orbitron', sans-serif;
-  font-size: 1rem; }
+  font-size: 1rem;
+  pointer-events: none; }
 
 #sidebar header, #sidebar .info #priority .status {
   align-items: center;
@@ -26,14 +27,16 @@ body {
       z-index: 70; }
     #start .intro .screen:last-child {
       z-index: 60; }
-    #start .intro .screen .continue button {
-      background-color: orange;
-      border: 0;
-      border-radius: 100%;
-      bottom: 10%;
-      position: absolute;
-      right: 0;
-      transform: translateX(50%); }
+    #start .intro .screen .continue {
+      pointer-events: auto; }
+      #start .intro .screen .continue button {
+        background-color: orange;
+        border: 0;
+        border-radius: 100%;
+        bottom: 10%;
+        position: absolute;
+        right: 0;
+        transform: translateX(50%); }
 
 #overlay {
   background-color: rgba(0, 0, 0, 0.5);
@@ -49,12 +52,15 @@ body {
   height: 100vh;
   position: relative;
   width: 80vw; }
+  #field #screen {
+    pointer-events: all; }
 
 #menu {
   display: flex;
   left: 0;
   position: absolute;
-  top: 0; }
+  top: 0;
+  pointer-events: auto; }
   #menu[data-state='collapse'] .items {
     display: block; }
     #menu[data-state='collapse'] .items .item {
@@ -73,6 +79,7 @@ body {
     z-index: 85; }
 
 #cards {
+  pointer-events: auto;
   position: absolute;
   right: 0;
   top: 0;
@@ -85,7 +92,8 @@ body {
 
 #sidebar {
   height: 100vh;
-  width: 20vw; }
+  width: 20vw;
+  pointer-events: auto; }
   #sidebar header {
     background-color: green;
     height: 10%;

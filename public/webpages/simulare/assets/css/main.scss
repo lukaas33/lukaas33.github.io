@@ -35,6 +35,8 @@
       }
 
       .continue {
+        pointer-events: auto; // Can be clicked
+
         button {
           background-color: orange;
           border: 0;
@@ -66,7 +68,7 @@
   width: 80vw;
 
   #screen {
-
+    pointer-events: all; // Can be clicked
   }
 }
 
@@ -75,6 +77,7 @@
   left: 0;
   position: absolute;
   top: 0;
+  pointer-events: auto; // Can be clicked
 
   &[data-state='collapse'] { // Menu state is set to collapse
     .items {
@@ -112,6 +115,7 @@
 }
 
 #cards {
+  pointer-events: auto; // Can be clicked
   position: absolute;
   right: 0;
   top: 0;
@@ -144,6 +148,7 @@
 #sidebar {
   height: 100vh;
   width: 20vw;
+  pointer-events: auto; // Can be clicked
 
   header {
     @extend %center-complete; // Center children on both axis
