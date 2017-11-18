@@ -1,5 +1,4 @@
-{
-  "content": [{
+{"content": [{
     "title": "Elementary school",
     "place": "Wentelwiek",
     "type": "school",
@@ -28,7 +27,7 @@
       }
     ]
   },  {
-    "title": "HAVO",
+    "title": "HSGE",
     "place": "Pleinschool Helder",
     "type": "school",
     "date": {
@@ -59,7 +58,7 @@
       }
     ]
   },  {
-    "title": "HAVO / VWO",
+    "title": "HSGE / Grammar school",
     "place": "Lorentz Casimir Lyceum",
     "type": "school",
     "date": {
@@ -75,5 +74,5 @@
         "value": "+31 040 2909420"
       }
     ]
-  }]
-}
+  }
+]}

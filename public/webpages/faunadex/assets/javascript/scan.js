@@ -52,7 +52,7 @@ $(function () {
   }
 
   // TODO Tests input
-  const validateInput = input => {
+  const validateInput = (input) => {
     return true
   }
 
