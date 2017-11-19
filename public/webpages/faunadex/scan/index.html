@@ -8,17 +8,16 @@
   <!-- Javascript -->
   <script src="assets/javascript/libraries/ejs.js"></script>
   <script src="assets/javascript/libraries/jquery.js"></script>
-  <script defer src="assets/javascript/libraries/clarifai.js"></script>
   <script defer src="assets/javascript/app.js"></script>
+  <script defer src="assets/javascript/libraries/clarifai.js"></script>
   <script defer src="assets/javascript/scan.js"></script> <!-- Will load content -->
   <!-- Styling -->
-  <link href="assets/css/home.css" media="screen"/>
-  <link href="assets/css/scan.css" media="screen"/>
+  <link href="assets/css/scan.css" media="screen" rel="stylesheet"/>
 </head>
 <body>
-  <button class="top" name="back">
-    <img src="assets/images/icons/back.svg"/>
-  </button>
+  <div class="top">
+    <button name="back"><img src="assets/images/icons/back.svg"/></button>
+  </div>
   <div class="top">
     <input name="gallery" type="file" accept="image/*"/>
     <img src="assets/images/icons/gallery.svg"/>
@@ -27,9 +26,9 @@
     <div id="loader"></div>
     <main>
       <!-- Will display camera -->
-      <video autoplay id="feed"></video>
+      <video class="full" id="feed"></video>
       <!-- Used to show and store image -->
-      <canvas id="image"></canvas>
+      <canvas class="full" id="image"></canvas>
       <button class="control" name="take"><img src="assets/images/icons/camera.svg"/></button>
       <button class="control" name="accept"><img src="assets/images/icons/done.svg"/></button>
       <button class="control" name="save"><img src="assets/images/icons/store.svg"/></button>

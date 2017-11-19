@@ -1,0 +1,75 @@
+// imports
+@import "partials/variables";
+@import "partials/mixins";
+@import "partials/classes";
+@import "partials/global";
+
+.top {
+  position: absolute;
+  z-index: 20;
+
+  &:nth-child(1) {
+    left: 0;
+
+    button[name=back] {
+
+    }
+  }
+  &:nth-child(2) {
+    right: 0;
+
+    input[name=gallery] {
+
+    }
+  }
+}
+
+main {
+
+  .full {
+    position: absolute;
+
+    &#feed {
+      z-index: 0; // Below all buttons
+      // Display feed fullscreen
+        // https://stackoverflow.com/questions/36949747/make-video-fit-100-with-any-screen-resolution
+      min-height: 100%; // Fill main
+      min-width: 100%;
+      height: auto; // Don't strech element
+      width: auto;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    &#image {
+      display: none; // Initial
+      z-index: 10; // Above video feed
+      width: 100%;
+      background-color: black;
+    }
+  }
+
+  .control {
+    $width: 20vw;
+
+    width: $width;
+    height: $width;
+    position: absolute;
+    bottom: 0;
+    left: 50vw - ($width / 2); // Center
+
+    &[name=take] {
+      display: block; // Starts visible
+      z-index: 30;
+    }
+    &[name=accept] {
+      display: none;
+      z-index: 25;
+    }
+    &[name=save] {
+      display: none;
+      z-index: 20;
+    }
+  }
+}

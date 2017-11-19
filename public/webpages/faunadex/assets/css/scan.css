@@ -1,0 +1,50 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0; }
+
+body {
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh; }
+
+.top {
+  position: absolute;
+  z-index: 20; }
+  .top:nth-child(1) {
+    left: 0; }
+  .top:nth-child(2) {
+    right: 0; }
+
+main .full {
+  position: absolute; }
+  main .full#feed {
+    z-index: 0;
+    min-height: 100%;
+    min-width: 100%;
+    height: auto;
+    width: auto;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%); }
+  main .full#image {
+    display: none;
+    z-index: 10;
+    width: 100%;
+    background-color: black; }
+
+main .control {
+  width: 20vw;
+  height: 20vw;
+  position: absolute;
+  bottom: 0;
+  left: 40vw; }
+  main .control[name=take] {
+    display: block;
+    z-index: 30; }
+  main .control[name=accept] {
+    display: none;
+    z-index: 25; }
+  main .control[name=save] {
+    display: none;
+    z-index: 20; }
