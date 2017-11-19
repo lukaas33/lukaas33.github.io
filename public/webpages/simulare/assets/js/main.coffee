@@ -30,19 +30,26 @@ doc.clock = doc.priority.find('.clock p span')
 # Groups
 Calc = {}
 Random = {}
+check = {}
 generate = {}
 time =
   time: 0
   trackSecond: 0
 
+# Tests if the circles overlap
+check.circleOverlap = (circle1, circle2) ->
+  distance = Calc.combine(circle1.position.subtract(circle2.position))
+  result = distance <= (circle2.bounds.width + circle1.bounds.width) / 2
+  return result
+
 # Tests if circle 2 is inside circle 1
-Calc.circleOverlap = (circle1, circle2) ->
+check.circleInside = (circle1, circle2) ->
   distance = Calc.combine(circle1.position.subtract(circle2.position))
   result = distance + (circle2.bounds.width / 2) <= circle1.bounds.width / 2
   return result
 
 # Tests if point in circle
-Calc.inCircle = (point, circle) ->
+check.inCircle = (point, circle) ->
   distance = Calc.combine(circle.position.subtract(point))
   result = distance <= circle.bounds.width / 2 # Inside circle radius
   return result
@@ -71,7 +78,6 @@ Calc.rad = (degrees) ->
   angle = degrees * (Math.PI / 180) # In radians
   return angle
 
-
 # Returns value in range
 Random.value = (bottom, top) ->
   middle = top - bottom
@@ -97,7 +103,7 @@ generate.id = (instances) ->
 
   while not unique
     result = []
-    for i in [0..8] # Length of 8
+    for i in [0..9] # Length of 10
       charcode = Random.value(65, 91) # A-Z
       result.push(String.fromCharCode(charcode)) # Add the string
     string = result.join('') # As string
@@ -138,16 +144,45 @@ class Food
     @diameter = new SciNum(Random.value(0.3e-6, 0.5e-6), 'length', 'm')
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
 
+  # Checks if position is legal
+  isLegal: =>
+    radius = Calc.scale(@radius.value)
+    if @position.x - radius <= 0
+      return false
+    else if @position.x + radius >= local.size.width
+      return false
+    if @position.y - radius <= 0
+      return false
+    else if @position.y + radius >= local.size.height
+      return false
+
+    for bacterium in global.bacteria
+      if check.circleOverlap(bacterium.body, @particle)
+        return false
+
+    if global.food.length > 0 # Not empty
+      for food in global.food
+        if food.id != @id
+          if check.circleOverlap(food.particle, @particle)
+            return false
+
+    return true # Only if nothing else has returned
+
   # Creates the particle
   display: =>
     # Random location in field, not near the edges
     range = local.size
-    @position = Point.random().multiply(range)
+    @position = Point.random().multiply(range) # Initial
     # Canvas object
     @particle = new Path.Circle(
       @position.round(),
       Math.round(Calc.scale(@radius.value))
     )
+
+    while not @isLegal() # Choose position again
+      @position = Point.random().multiply(range)
+      @particle.position = @position # Update
+    # @particle.visible = true # Draw
     @particle.fillColor = 'yellow'
     html.layer.food.addChild(@particle) # Add to layer
 
@@ -412,7 +447,7 @@ class Bacteria
   # Eat food instances
   eat: =>
     # Inside it
-    if Calc.circleOverlap(@body, @target.particle)
+    if check.circleInside(@body, @target.particle)
       @energy.value += @target.energy.value
       @target.eaten() # Removes itself
       # findTarget won't be called anymore
@@ -553,8 +588,8 @@ html.setup = ->
     scalePositions = (instances) ->
       for instance in instances
         scaledPosition = new Point( # Scale the position of the instance
-          x: (instance.position.x / previous.width) * local.size.width
-          y: (instance.position.y / previous.height) * local.size.height
+          x: (instance.position.x / previous.width) * local.width
+          y: (instance.position.y / previous.height) * local.height
         )
         instance.position = scaledPosition.round() # Update position
         # If it isn't a shape
@@ -592,7 +627,7 @@ html.setup = ->
     location = new Point(event.pageX, event.pageY)
     console.log("Click at ", location)
     for bacterium in global.bacteria
-      if Calc.inCircle(location, bacterium.body)
+      if check.inCircle(location, bacterium.body)
         bacterium.select() # Gets selected
         html.selected() # Trigger now instead of waiting
         break # End loop

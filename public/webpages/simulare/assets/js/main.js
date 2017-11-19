@@ -1,6 +1,6 @@
 (function() {
   "use strict";
-  var Bacteria, Caeruleus, Calc, Food, Lucarium, Random, Rubrum, SciNum, Viridis, doc, draw, generate, html, id, isLoaded, j, len, local, ref, simulation, time,
+  var Bacteria, Caeruleus, Calc, Food, Lucarium, Random, Rubrum, SciNum, Viridis, check, doc, draw, generate, html, id, isLoaded, j, len, local, ref, simulation, time,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
@@ -35,6 +35,8 @@
 
   Random = {};
 
+  check = {};
+
   generate = {};
 
   time = {
@@ -42,14 +44,21 @@
     trackSecond: 0
   };
 
-  Calc.circleOverlap = function(circle1, circle2) {
+  check.circleOverlap = function(circle1, circle2) {
+    var distance, result;
+    distance = Calc.combine(circle1.position.subtract(circle2.position));
+    result = distance <= (circle2.bounds.width + circle1.bounds.width) / 2;
+    return result;
+  };
+
+  check.circleInside = function(circle1, circle2) {
     var distance, result;
     distance = Calc.combine(circle1.position.subtract(circle2.position));
     result = distance + (circle2.bounds.width / 2) <= circle1.bounds.width / 2;
     return result;
   };
 
-  Calc.inCircle = function(point, circle) {
+  check.inCircle = function(point, circle) {
     var distance, result;
     distance = Calc.combine(circle.position.subtract(point));
     result = distance <= circle.bounds.width / 2;
@@ -112,7 +121,7 @@
     string = null;
     while (!unique) {
       result = [];
-      for (i = k = 0; k <= 8; i = ++k) {
+      for (i = k = 0; k <= 9; i = ++k) {
         charcode = Random.value(65, 91);
         result.push(String.fromCharCode(charcode));
       }
@@ -163,16 +172,55 @@
       this.eaten = bind(this.eaten, this);
       this.update = bind(this.update, this);
       this.display = bind(this.display, this);
+      this.isLegal = bind(this.isLegal, this);
       this.id = generate.id(global.food);
       this.diameter = new SciNum(Random.value(0.3e-6, 0.5e-6), 'length', 'm');
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
     }
+
+    Food.prototype.isLegal = function() {
+      var bacterium, food, k, l, len1, len2, radius, ref1, ref2;
+      radius = Calc.scale(this.radius.value);
+      if (this.position.x - radius <= 0) {
+        return false;
+      } else if (this.position.x + radius >= local.size.width) {
+        return false;
+      }
+      if (this.position.y - radius <= 0) {
+        return false;
+      } else if (this.position.y + radius >= local.size.height) {
+        return false;
+      }
+      ref1 = global.bacteria;
+      for (k = 0, len1 = ref1.length; k < len1; k++) {
+        bacterium = ref1[k];
+        if (check.circleOverlap(bacterium.body, this.particle)) {
+          return false;
+        }
+      }
+      if (global.food.length > 0) {
+        ref2 = global.food;
+        for (l = 0, len2 = ref2.length; l < len2; l++) {
+          food = ref2[l];
+          if (food.id !== this.id) {
+            if (check.circleOverlap(food.particle, this.particle)) {
+              return false;
+            }
+          }
+        }
+      }
+      return true;
+    };
 
     Food.prototype.display = function() {
       var range;
       range = local.size;
       this.position = Point.random().multiply(range);
       this.particle = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
+      while (!this.isLegal()) {
+        this.position = Point.random().multiply(range);
+        this.particle.position = this.position;
+      }
       this.particle.fillColor = 'yellow';
       return html.layer.food.addChild(this.particle);
     };
@@ -491,7 +539,7 @@
     Bacteria.prototype.die = function() {};
 
     Bacteria.prototype.eat = function() {
-      if (Calc.circleOverlap(this.body, this.target.particle)) {
+      if (check.circleInside(this.body, this.target.particle)) {
         this.energy.value += this.target.energy.value;
         this.target.eaten();
         return this.target = null;
@@ -664,8 +712,8 @@
         for (k = 0, len1 = instances.length; k < len1; k++) {
           instance = instances[k];
           scaledPosition = new Point({
-            x: (instance.position.x / previous.width) * local.size.width,
-            y: (instance.position.y / previous.height) * local.size.height
+            x: (instance.position.x / previous.width) * local.width,
+            y: (instance.position.y / previous.height) * local.height
           });
           instance.position = scaledPosition.round();
           if (!(instance instanceof Path)) {
@@ -697,7 +745,7 @@
       results = [];
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         bacterium = ref1[k];
-        if (Calc.inCircle(location, bacterium.body)) {
+        if (check.inCircle(location, bacterium.body)) {
           bacterium.select();
           html.selected();
           break;
