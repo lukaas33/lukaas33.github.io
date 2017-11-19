@@ -1,6 +1,6 @@
 $(function () {
   'use strict'
-  // Control: mageTaken --> imageSent --> saveResult
+  // Control: imageTaken || getFrame --> imageSelected --> imageSent --> saveResult
   // Data: image --> clarifai API --> wikipedia --> localstorage
 
   // << Variables >>
@@ -22,7 +22,12 @@ $(function () {
     state: 'select', // Stores page state
     view: {
       width: $(window).width(),
-      height: $(window).height()
+      height: $(window).height(),
+      ratio:  $(window).width() / $(window).height() // Multiply by a height to get a width
+    },
+    feed: { // Will store real feed dimentions
+      width: undefined,
+      height: undefined
     },
     context: doc.image[0].getContext('2d') // Used to draw on the canvas
   }
@@ -34,15 +39,16 @@ $(function () {
     const constraints = {
       audio: false,
       video: {
-        width: {
-          ideal: local.view.width
-        },
-        height: {
-          ideal: local.view.height
-        },
+        // width: {
+        //   ideal: local.view.width
+        // },
+        // height: {
+        //   ideal: local.view.height
+        // },
+        // aspectRatio: local.view.ratio,
         facingMode: "environment",
         frameRate: {
-          ideal: 15
+          ideal: 20
         }
       }
     }
@@ -60,13 +66,12 @@ $(function () {
     // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa
     // https://stackoverflow.com/questions/19183180/how-to-save-an-image-to-localstorage-and-display-it-on-the-next-page
   const toBase64 = function (img) {
-    img = img.replace(/^data:image\/(png|jpg)base64,/, "")
-    // img = btoa(img)
-    // try {
-    //   atob(img) // Works
-    // } catch (error) {
-    //   console.log(error) // TODO handle error
-    // }
+    img = img.split(',')[1] // Withoput metadata
+    try {
+      atob(img) // Works
+    } catch (error) {
+      console.log(error) // TODO handle error
+    }
     return img
   }
 
@@ -120,7 +125,9 @@ $(function () {
 
 
   // The page is loaded
-  const loaded = () => null
+  const loaded = () => {
+
+  }
 
   // Image is selected by user TODO add loader
   const imageSent = function () {
@@ -129,19 +136,61 @@ $(function () {
     imageGetResult()
   }
 
-  // Image is selected
-  const imageTaken = function () {
+  const imageSelected = function () {
     doc.take.hide()
     doc.accept.show()
+    doc.gallery.hide()
     local.state = 'accept' // Change behaviour of back
+  }
+
+  // Image is selected
+  const imageTaken = function () {
+    const img = new Image() // Canavas needs html image element
+    img.src = local.image
+    img.onload = () => { // Image needs to load before displaying
+      drawImg(img)
+    }
+    doc.feed.hide()
+    doc.image.show()
+    imageSelected()
+  }
+
+  const drawImg = function (img) {
+    var size = { // Get from img
+      height: img.height,
+      width: img.width
+    }
+    var height, width = 0 // Initial
+    var startHeight, startWidth = 0
+    if (size.width >= size.height) {
+      // Center the image
+      startHeight = (local.view.height - size.height) / 2
+      // Values
+      width = local.view.width
+      height = size.height
+    } else {
+      // Center the image
+      startWidth = (local.view.width - size.width) / 2
+      // Values
+      width = size.width
+      height = local.view.height
+    }
+    // Display the image in canvas
+    local.context.drawImage(
+      img, 0, 0, width, height, startWidth, startHeight, width, height
+    )
   }
 
   // Get the video frame
     // http://cwestblog.com/2017/05/03/javascript-snippet-get-video-frame-as-an-image/
   const getFrame = function (video) {
-    // Display videoframe in canvas
-    local.context.drawImage(video, 0, 0, local.view.width, local.view.height)
+    // Display to get frame
+    local.context.drawImage(
+      video, 0,0
+    )
     local.image = doc.image[0].toDataURL() // Store frame as image
+    // Clear canvas
+    local.context.clearRect(0, 0, local.view.width, local.view.height)
   }
 
   // << Actions >>
@@ -155,6 +204,8 @@ $(function () {
     doc.feed[0].srcObject = stream // Add media stream to video element
 
     doc.feed[0].onloadedmetadata = function (event) {
+      local.feed.height = this.videoHeight // Store value
+      local.feed.width = this.videoHeight * local.view.ratio // Real width
       doc.feed[0].play() // Play feed
       loaded() // Everthing done
     }
@@ -163,10 +214,16 @@ $(function () {
     console.log(error)
   })
 
+  // Canvas size can't be via css
+  doc.image.attr('height', local.view.height)
+  doc.image.attr('width', local.view.width)
+
   // << Events >>
   // Camera take picture event
   doc.take.click(() => {
-    getFrame(doc.feed[0])
+    doc.feed[0].pause() // User sees current frame
+    getFrame(doc.feed[0]) // Stores it
+    imageSelected()
   })
 
   // Accept the image
@@ -186,12 +243,7 @@ $(function () {
       const reader = new FileReader() // Can read the image
       reader.onload = function (event) {
         local.image = event.target.result // Saved as dataUrl in variable
-        const img = new Image() // Canavas needs html image element
-        img.src = local.image
-        img.onload = () => { // Image needs to load before displaying
-          // Display the image in canvas
-          local.context.drawImage(img, 0, 0, local.view.width, local.view.height)
-        }
+        imageTaken()
       }
 
       reader.readAsDataURL(this.files[0]) // Read the image as a dataUrl
@@ -201,13 +253,5 @@ $(function () {
   // TODO back button event
   doc.back.click( function () {
 
-  })
-
-  // Update variables
-  $(window).resize(() => {
-    local.view = {
-      width: $(window).width(),
-      height: $(window).height()
-    }
   })
 })
