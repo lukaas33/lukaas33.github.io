@@ -13,7 +13,7 @@
     scaleFactor: 1.5e6
   };
 
-  ref = ['start', 'screen', 'field', 'menu', 'sidebar', 'cards'];
+  ref = ['start', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority'];
   for (j = 0, len = ref.length; j < len; j++) {
     id = ref[j];
     doc[id] = $("#" + id);
@@ -23,17 +23,11 @@
 
   doc.menuButton = doc.menu.find('.indicator button');
 
-  doc.bacteria = doc.sidebar.find('#bacteria');
-
-  doc.enviroment = doc.sidebar.find('#enviroment');
-
   doc.data = doc.bacteria.find('.data tr td');
 
   doc.values = doc.bacteria.find('.values tr td');
 
   doc.conditions = doc.enviroment.find('meter');
-
-  doc.priority = doc.sidebar.find('#priority');
 
   doc.clock = doc.priority.find('.clock p span');
 
@@ -48,7 +42,19 @@
     trackSecond: 0
   };
 
-  Calc.inCircle = function(point, circle) {};
+  Calc.circleOverlap = function(circle1, circle2) {
+    var distance, result;
+    distance = Calc.combine(circle1.position.subtract(circle2.position));
+    result = distance + (circle2.bounds.width / 2) <= circle1.bounds.width / 2;
+    return result;
+  };
+
+  Calc.inCircle = function(point, circle) {
+    var distance, result;
+    distance = Calc.combine(circle.position.subtract(point));
+    result = distance <= circle.bounds.width / 2;
+    return result;
+  };
 
   Calc.scale = function(value, needed) {
     var DPC, size;
@@ -71,10 +77,6 @@
     var result;
     result = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
     return result;
-  };
-
-  Calc.prefixSI = function(scinum) {
-    return null;
   };
 
   Calc.rad = function(degrees) {
@@ -220,6 +222,7 @@
       this.foodNearby = bind(this.foodNearby, this);
       this.loseEnergy = bind(this.loseEnergy, this);
       this.move = bind(this.move, this);
+      this.slowDown = bind(this.slowDown, this);
       this.startMoving = bind(this.startMoving, this);
       this.ages = bind(this.ages, this);
       this.select = bind(this.select, this);
@@ -247,12 +250,18 @@
     };
 
     Bacteria.prototype.live = function() {
-      this.foodNearby();
-      if (this.target !== null) {
-        this.findTarget();
-      } else {
-        if (Random.chance(25)) {
-          this.chooseDirection();
+      if (this.action !== 'colliding') {
+        this.foodNearby();
+        if (this.target !== null) {
+          if (this.action !== 'chasing') {
+            this.action = 'searching';
+          }
+          this.findTarget();
+        } else {
+          this.action = 'wandering';
+          if (Random.chance(25)) {
+            this.chooseDirection();
+          }
         }
       }
       this.move();
@@ -306,6 +315,11 @@
       return this.acceleration.value = targetSpeed.divide(3);
     };
 
+    Bacteria.prototype.slowDown = function() {
+      this.minSpeed.value = this.speed.value.divide(3);
+      return this.speed.value = this.minSpeed.value;
+    };
+
     Bacteria.prototype.move = function() {
       var acceleration, speed;
       this.checkCollision();
@@ -315,8 +329,8 @@
         this.acceleration.value = new Point(0, 0);
         this.speed.value.normalize(this.maxSpeed.value);
       } else if (Calc.combine(this.speed.value) <= this.minSpeed.value) {
-        this.minSpeed.value = new Point(0, 0);
         this.acceleration.value = new Point(0, 0);
+        this.minSpeed.value = new Point(0, 0);
         this.speed.value.normalize(this.minSpeed.value);
       }
       speed = new Point({
@@ -376,6 +390,11 @@
         for (l = 0, len2 = possibleTargets.length; l < len2; l++) {
           target = possibleTargets[l];
           if (target.distance === minDistance) {
+            if (this.target !== null) {
+              if (this.target.id !== target.instance.id) {
+                this.action = 'searching';
+              }
+            }
             results.push(this.target = target.instance);
           } else {
             results.push(void 0);
@@ -388,46 +407,58 @@
     };
 
     Bacteria.prototype.checkCollision = function() {
-      var bacterium, bodyRadius, cosine, distance, impactAngle, k, len1, otherBodyRadius, ref1, results, speedComponent;
+      var bacterium, bodyRadius, checkNotColliding, cosine, currentAction, distance, impactAngle, k, len1, otherBodyRadius, ref1, speedComponent;
+      checkNotColliding = 0;
+      if (this.action === 'colliding') {
+        currentAction = 'wandering';
+      } else {
+        currentAction = this.action;
+      }
       bodyRadius = Calc.scale(this.radius.value);
       if (this.position.x + bodyRadius >= local.width) {
+        this.action = 'colliding';
         this.speed.value.x = 0;
         this.chooseDirection(180);
       } else if (this.position.x - bodyRadius <= 0) {
+        this.action = 'colliding';
         this.speed.value.x = 0;
         this.chooseDirection(0);
+      } else {
+        checkNotColliding += 1;
       }
       if (this.position.y + bodyRadius >= local.height) {
+        this.action = 'colliding';
         this.speed.value.y = 0;
         this.chooseDirection(270);
       } else if (this.position.y - bodyRadius <= 0) {
+        this.action = 'colliding';
         this.speed.value.y = 0;
         this.chooseDirection(90);
+      } else {
+        checkNotColliding += 1;
       }
       ref1 = global.bacteria;
-      results = [];
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         bacterium = ref1[k];
         if (this.id !== bacterium.id) {
           distance = bacterium.position.subtract(this.position);
           otherBodyRadius = Calc.scale(bacterium.radius.value);
           if (Calc.combine(distance) <= bodyRadius + otherBodyRadius) {
+            this.action = 'colliding';
             impactAngle = this.speed.value.getAngle(distance);
             cosine = Math.cos(Calc.rad(impactAngle));
             speedComponent = this.speed.value.multiply(cosine);
             if (!isNaN(Calc.combine(speedComponent))) {
-              results.push(this.speed.value = this.speed.value.subtract(speedComponent));
-            } else {
-              results.push(void 0);
+              this.speed.value = this.speed.value.subtract(speedComponent);
             }
           } else {
-            results.push(void 0);
+            checkNotColliding += 1;
           }
-        } else {
-          results.push(void 0);
         }
       }
-      return results;
+      if (checkNotColliding === 2 + global.bacteria.length - 1) {
+        return this.action = currentAction;
+      }
     };
 
     Bacteria.prototype.chooseDirection = function(angle) {
@@ -440,6 +471,10 @@
     };
 
     Bacteria.prototype.findTarget = function() {
+      if (this.action === 'searching') {
+        this.slowDown();
+        this.action = 'chasing';
+      }
       this.goToPoint(this.target.position);
       return this.eat();
     };
@@ -456,9 +491,7 @@
     Bacteria.prototype.die = function() {};
 
     Bacteria.prototype.eat = function() {
-      var distance;
-      distance = Calc.combine(this.target.position.subtract(this.position));
-      if (distance + Calc.scale(this.target.radius.value) <= Calc.scale(this.radius.value)) {
+      if (Calc.circleOverlap(this.body, this.target.particle)) {
         this.energy.value += this.target.energy.value;
         this.target.eaten();
         return this.target = null;
@@ -657,12 +690,20 @@
     });
     doc.start.click(function() {});
     doc.screen.click(function(event) {
-      var bacterium, click, k, len1, ref1, results;
+      var bacterium, k, len1, location, ref1, results;
+      location = new Point(event.pageX, event.pageY);
+      console.log("Click at ", location);
       ref1 = global.bacteria;
       results = [];
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         bacterium = ref1[k];
-        results.push(click = new Point(event.pageX, event.pageY));
+        if (Calc.inCircle(location, bacterium.body)) {
+          bacterium.select();
+          html.selected();
+          break;
+        } else {
+          results.push(void 0);
+        }
       }
       return results;
     });
@@ -783,7 +824,6 @@
       change = doc.menu.attr('data-state');
     }
     icon = doc.menuButton.find('img');
-    console.log(change);
     change = change === 'collapse' || change === true;
     if (change) {
       doc.menuButton.attr('disabled', true);

@@ -1,9 +1,11 @@
-# The Js for the main page is made for readibility
+# The Js for the main page is made in coffeescript for readibility
 # Lines have a max length
 # Sometimes the comment for an expression will be above the line
 # Code groups are distinguised by << >>
 # Objects are used to group functions and variables
 "use strict"
+
+# TODO work on efficiency of code
 
 # << Variables >>
 # Group
@@ -14,17 +16,14 @@ local =
   scaleFactor: 1.5e6 # Scale of the animation, 1 cm : this cm
 
 # Get elements with these id's
-for id in ['start', 'screen', 'field', 'menu', 'sidebar', 'cards']
+for id in ['start', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority']
   doc[id] = $("##{id}")
 # Store these selections
 doc.menuItems = doc.menu.find('.item button')
 doc.menuButton = doc.menu.find('.indicator button')
-doc.bacteria = doc.sidebar.find('#bacteria')
-doc.enviroment = doc.sidebar.find('#enviroment')
 doc.data = doc.bacteria.find('.data tr td')
 doc.values = doc.bacteria.find('.values tr td')
 doc.conditions = doc.enviroment.find('meter')
-doc.priority = doc.sidebar.find('#priority')
 doc.clock = doc.priority.find('.clock p span')
 
 # << Return functions >>
@@ -36,9 +35,17 @@ time =
   time: 0
   trackSecond: 0
 
-# TODO test if in circle
+# Tests if circle 2 is inside circle 1
+Calc.circleOverlap = (circle1, circle2) ->
+  distance = Calc.combine(circle1.position.subtract(circle2.position))
+  result = distance + (circle2.bounds.width / 2) <= circle1.bounds.width / 2
+  return result
+
+# Tests if point in circle
 Calc.inCircle = (point, circle) ->
-  return
+  distance = Calc.combine(circle.position.subtract(point))
+  result = distance <= circle.bounds.width / 2 # Inside circle radius
+  return result
 
 # TODO add accuracy calculations
 # Returns the value according to a scale
@@ -59,10 +66,6 @@ Calc.combine = (vector) ->
   # Uses a^2 + b^2 = c^2
   result = Math.sqrt(vector.x**2 + vector.y**2)
   return result
-
-# TODO add function that converts between base and si prefixes
-Calc.prefixSI = (scinum) ->
-  null
 
 Calc.rad = (degrees) ->
   angle = degrees * (Math.PI / 180) # In radians
@@ -118,6 +121,7 @@ class SciNum
   # Values that need to be entered
   constructor: (@value, @quantity, @unit) ->
 
+  # TODO add method that converts between base and si prefixes
   notation: =>
     if @value instanceof Point
       value = Calc.combine(@value)
@@ -177,7 +181,7 @@ class Bacteria
     @age = new SciNum(0, 'time', 's')
     @target = null # No target yet
     @minEnergyLoss = new SciNum(4e5, 'energy per second', 'atp/s')
-    # Tracks current action
+    # Tracks current actions
     @action = null
 
   # Methods
@@ -189,12 +193,15 @@ class Bacteria
 
   # Continues living TODO work out energy system with traits
   live: =>
-    @foodNearby()
-    if @target != null # Food is near
-      @findTarget() # Go get food
-    else # Wandering
-      # With a chance of 1/x, change direction
-      @chooseDirection() if Random.chance(25)
+    if @action != 'colliding'
+      @foodNearby()
+      if @target != null # Food is near
+        @action = 'searching' if @action != 'chasing'
+        @findTarget() # Go get food
+      else # Wandering
+        @action = 'wandering'
+        # With a chance of 1/x, change direction
+        @chooseDirection() if Random.chance(25)
     @move()
     @loseEnergy()
     @update()
@@ -236,12 +243,20 @@ class Bacteria
 
   # Change acceleration to go to direction
   startMoving: =>
-     # Will change length of vector to be the max speed
+    # Will change length of vector to be the max speed
     targetSpeed = @direction.normalize(@maxSpeed.value)
-    # Set the acceleration, it will take x seconds to accelerate
+    # Add to the acceleration, at 0 it will take x seconds to accelerate
     @acceleration.value = targetSpeed.divide(3)
 
-  # Starts moving TODO method uses energy
+  # Slows the bacteria down
+  slowDown: =>
+    # Will slow down until reached
+    @minSpeed.value = @speed.value.divide(3)
+    # Slow down in x seconds
+    # @acceleration.value = @minSpeed.value.divide(-2)
+    @speed.value = @minSpeed.value
+
+  # Starts moving
   move: =>
     @checkCollision() # Test if it can move
     # Per second instead of frame
@@ -254,9 +269,9 @@ class Bacteria
       @acceleration.value = new Point(0, 0) # No acceleration
       @speed.value.normalize(@maxSpeed.value) # Reduce speed
     else if Calc.combine(@speed.value) <= @minSpeed.value
-      @minSpeed.value = new Point(0, 0) # Min speed reached
       @acceleration.value = new Point(0, 0) # No acceleration
-      @speed.value.normalize(@minSpeed.value) # Reduce speed
+      @minSpeed.value = new Point(0, 0) # Min speed reached
+      @speed.value.normalize(@minSpeed.value) # Increase speed
 
     # Scaled speed
     speed = new Point(
@@ -304,26 +319,43 @@ class Bacteria
       minDistance = Math.min(distances...) # Lowest
       for target in possibleTargets
         # Set the correct target or update with new data
-        @target = target.instance if target.distance == minDistance
+        if target.distance == minDistance
+          if @target != null
+            @action = 'searching' if @target.id != target.instance.id # New target
+          @target = target.instance
     else
       @target = null # Doesn't exist anymore
 
   # Checks if there is a collision
   checkCollision: =>
+    checkNotColliding = 0
+    if @action == 'colliding'
+      currentAction = 'wandering' # Set to when not colliding
+    else
+      currentAction = @action
+
     bodyRadius = Calc.scale(@radius.value)
     # Check if in field
     if @position.x + bodyRadius >= local.width
+      @action = 'colliding'
       @speed.value.x = 0
       @chooseDirection(180) # Start moving away
     else if @position.x - bodyRadius <= 0
+      @action = 'colliding'
       @speed.value.x = 0
       @chooseDirection(0) # Start moving away
+    else
+      checkNotColliding += 1
     if @position.y + bodyRadius >= local.height
+      @action = 'colliding'
       @speed.value.y = 0
       @chooseDirection(270) # Start moving away
     else if @position.y - bodyRadius <= 0
+      @action = 'colliding'
       @speed.value.y = 0
       @chooseDirection(90) # Start moving away
+    else
+      checkNotColliding += 1
 
     # Check collisions with other bacteria TODO make this check error-free
     for bacterium in global.bacteria
@@ -333,6 +365,7 @@ class Bacteria
         otherBodyRadius = Calc.scale(bacterium.radius.value)
         # If the paths are too close
         if Calc.combine(distance) <= bodyRadius + otherBodyRadius
+          @action = 'colliding'
           # Angle between vectors
           impactAngle = @speed.value.getAngle(distance)
           # Speed in the illegal direction
@@ -342,10 +375,11 @@ class Bacteria
           if not isNaN(Calc.combine(speedComponent))
             # Stop moving in this direction
             @speed.value = @speed.value.subtract(speedComponent)
-            # # Loses speed
-            # lostSpeed = @speed.value.multiply(0.5)
-            # @minSpeed.value = lostSpeed
-            # @acceleration.value = lostSpeed.divide(-3)
+        else
+          checkNotColliding += 1
+
+    if checkNotColliding == 2 + global.bacteria.length - 1
+      @action = currentAction # Not colliding with anything
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
@@ -356,6 +390,9 @@ class Bacteria
 
   # Will go to a point until reached
   findTarget: =>
+    if @action == 'searching' # First time called
+      @slowDown()
+      @action = 'chasing'
     @goToPoint(@target.position)
     @eat() # Try to eat
 
@@ -374,12 +411,11 @@ class Bacteria
 
   # Eat food instances
   eat: =>
-    # The distance between the food and the bacteria
-    distance = Calc.combine(@target.position.subtract(@position))
-    # Inside itself
-    if distance + Calc.scale(@target.radius.value) <= Calc.scale(@radius.value)
+    # Inside it
+    if Calc.circleOverlap(@body, @target.particle)
       @energy.value += @target.energy.value
       @target.eaten() # Removes itself
+      # findTarget won't be called anymore
       @target = null # Doesn't exist anymore
 
 # Constructors that inherit code
@@ -553,9 +589,13 @@ html.setup = ->
 
   # Click events check if bacteria is clicked
   doc.screen.click((event) ->
+    location = new Point(event.pageX, event.pageY)
+    console.log("Click at ", location)
     for bacterium in global.bacteria
-      click = new Point(event.pageX, event.pageY)
-      # if bacterium.position.x  click.x
+      if Calc.inCircle(location, bacterium.body)
+        bacterium.select() # Gets selected
+        html.selected() # Trigger now instead of waiting
+        break # End loop
   )
 
   # Open and close menu
@@ -643,7 +683,6 @@ html.cardsToggle = (change = global.interaction.cards) ->
 
 html.menu = (change = doc.menu.attr('data-state')) ->
   icon = doc.menuButton.find('img')
-  console.log(change)
   # Possible values
   change = (change == 'collapse' or change == true)
   if change
