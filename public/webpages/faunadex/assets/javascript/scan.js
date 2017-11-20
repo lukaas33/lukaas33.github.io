@@ -62,8 +62,14 @@ $(function () {
     return true
   }
 
+  // TODO filters image recognition output for animals
+  const filterOutput = function (output) {
+    data = output.outputs[0]
+    result = data.concepts[0] // The most likely guess
+    return result
+  }
+
   // Convert image
-    // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa
     // https://stackoverflow.com/questions/19183180/how-to-save-an-image-to-localstorage-and-display-it-on-the-next-page
   const toBase64 = function (img) {
     img = img.split(',')[1] // Withoput metadata
@@ -81,6 +87,13 @@ $(function () {
   const imageGetResult = () =>
     Clarifai.app.models.predict(Clarifai.model, {base64: toBase64(local.image)}).then(function (response) {
       console.log(response)
+      local.result = filterOutput(response)
+      wikipediaData((data) => {
+          local.result = {
+              response: local.result,
+              data: data 
+          }
+      })
     }, function (error) {
       // TODO handle error
       console.log(error)
@@ -89,7 +102,7 @@ $(function () {
 
   // Get wikipedia data
     // https://www.mediawiki.org/wiki/API:Query
-  const wikipediaData = () =>
+  const wikipediaData = (callback) =>
     $.ajax("https://en.wikipedia.org/w/api.php", {
       data: { // Parameters
         action: 'query',
@@ -98,12 +111,12 @@ $(function () {
         srsearch: local.result
       }, // To search for
       dataType: 'jsonp', // Get data from outside domain
-      method: 'POST'
-    } // Http method
-  ).done((data) => {
+      method: 'POST' // Http method
+    }).done((pages) => {
       console.log(data)
       // Get data from this page
-      const targetPage = data.query.search[0].pageid
+      const targetPage = pages.query.search[0].pageid
+
       $.ajax("https://en.wikipedia.org/w/api.php", {
         data: { // Parameters
           action: 'parse', // Return html of site
@@ -114,6 +127,7 @@ $(function () {
         method: 'POST' // Http method
       }).done((data) => {
         console.log(data)
+        callback(data) // Call function with the data
       }).fail((error) => {
         // TODO handle error
         console.log(error)
