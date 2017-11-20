@@ -188,6 +188,8 @@ $(function () {
       doc.image.hide()
       doc.result.hide()
       doc.feed.show()
+      
+      doc.feed[0].play()
       local.state = 'selecting' // Revert to previous screen
     }
 
@@ -195,10 +197,12 @@ $(function () {
       let home = window.location.href.replace('scan/', '')
       window.location.href = home
     } else if (local.state === 'selected') {
+      local.image = null
       // Clear canvas
       local.context.clearRect(0, 0, local.view.width, local.view.height)
       beginState()
     } else if (local.state === 'result') {
+      local.result = null
       doc.result.empty() // Html content is removed
       beginState()
     }
