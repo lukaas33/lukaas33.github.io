@@ -1,12 +1,13 @@
 $(function () {
   'use strict'
-  // Control: imageTaken || getFrame --> imageSelected --> imageSent --> saveResult
-  // Data: image --> clarifai API --> wikipedia --> localstorage
+  // Control: select img || take pic --> accept || go back --> send and wait --> send and wait for wikipedia twice --> display result --> save || go back
+  // TODO import partials
 
   // << Variables >>
   // Document
   const doc = {
     feed: $('#feed'),
+    result: $('#result'),
     image: $('#image'),
     take: $('button[name=take]'),
     accept: $('button[name=accept]'),
@@ -19,7 +20,7 @@ $(function () {
   const local = {
     image: null, // Stores the image
     result: null, // Stores the top search result
-    state: 'select', // Stores page state
+    state: 'selecting', // Stores page state
     view: {
       width: $(window).width(),
       height: $(window).height(),
@@ -64,8 +65,8 @@ $(function () {
 
   // TODO filters image recognition output for animals
   const filterOutput = function (output) {
-    data = output.outputs[0]
-    result = data.concepts[0] // The most likely guess
+    var data = output.outputs[0].data
+    var result = data.concepts[0] // The most likely guess
     return result
   }
 
@@ -82,38 +83,36 @@ $(function () {
   }
 
   // << Functions >>
+  // The page is loaded
+  const loaded = () => {
+
+  }
+
   // Gets a local.result from an image
-    // https://www.clarifai.com/developer/guide/
-  const imageGetResult = () =>
-    Clarifai.app.models.predict(Clarifai.model, {base64: toBase64(local.image)}).then(function (response) {
-      console.log(response)
-      local.result = filterOutput(response)
-      wikipediaData((data) => {
-          local.result = {
-              response: local.result,
-              data: data 
-          }
-      })
-    }, function (error) {
+  // https://www.clarifai.com/developer/guide/
+  const imageGetResult = function () {
+    Clarifai.app.models.predict(Clarifai.model, {base64: toBase64(local.image)}).then((response) => {
+      processOutput(response)
+    }, (error) => {
       // TODO handle error
       console.log(error)
     })
-
+  }
 
   // Get wikipedia data
     // https://www.mediawiki.org/wiki/API:Query
-  const wikipediaData = (callback) =>
+  const wikipediaData = function (search, callback) {
     $.ajax("https://en.wikipedia.org/w/api.php", {
       data: { // Parameters
         action: 'query',
         list: 'search',
         format: 'json', // To  return
-        srsearch: local.result
+        srsearch: search
       }, // To search for
       dataType: 'jsonp', // Get data from outside domain
       method: 'POST' // Http method
     }).done((pages) => {
-      console.log(data)
+      console.log(pages)
       // Get data from this page
       const targetPage = pages.query.search[0].pageid
 
@@ -136,25 +135,73 @@ $(function () {
       // TODO handle error
       console.log(error)
     })
-
-
-  // The page is loaded
-  const loaded = () => {
-
   }
 
-  // Image is selected by user TODO add loader
+  // Processes the image response
+  const processOutput = function (output) {
+    console.log(output)
+    local.result = filterOutput(output) // The result
+    // Call to wikipedia api
+    wikipediaData(local.result.name, (data) => {
+      local.result = {
+        returned: local.result,
+        data: data
+      }
+      displayResult()
+    })
+  }
+
+  // Displays the final result
+  const displayResult = function () {
+    // TODO include html using EJS
+    doc.result.html(local.result.data.parse.text['*'])
+    doc.result.show()
+    doc.back.parents('.top').show()
+    doc.save.show()
+    local.state = 'result' // Change behaviour of back
+  }
+
+  // Image is selected by user TODO add loaders
   const imageSent = function () {
     doc.accept.hide()
-    local.state = 'result' // Change behaviour of back
+    doc.back.parents('.top').hide() // Until loaded
     imageGetResult()
+    local.state = 'accepted' // Change behaviour of back
   }
 
   const imageSelected = function () {
     doc.take.hide()
     doc.accept.show()
-    doc.gallery.hide()
-    local.state = 'accept' // Change behaviour of back
+    doc.gallery.parents('.top').hide()
+    local.state = 'selected' // Change behaviour of back
+  }
+
+  const goBack = function () {
+    // The begin state of the site Will always work because hiding a hidden object won't do anything
+    const beginState = () => {
+      // Buttons
+      doc.gallery.parents('.top').show()
+      doc.accept.hide()
+      doc.save.hide()
+      doc.take.show()
+      // Screens
+      doc.image.hide()
+      doc.result.hide()
+      doc.feed.show()
+      local.state = 'selecting' // Revert to previous screen
+    }
+
+    if (local.state === 'selecting') {
+      let home = window.location.href.replace('scan/', '')
+      window.location.href = home
+    } else if (local.state === 'selected') {
+      // Clear canvas
+      local.context.clearRect(0, 0, local.view.width, local.view.height)
+      beginState()
+    } else if (local.state === 'result') {
+      doc.result.empty() // Html content is removed
+      beginState()
+    }
   }
 
   // Image is selected
@@ -175,7 +222,9 @@ $(function () {
       width: img.width
     }
     var height, width = 0 // Initial
-    var startHeight, startWidth = 0
+    var startHeight, startWidth = 0 // Initial
+
+    // Image ratio
     if (size.width >= size.height) {
       // Center the image
       startHeight = (local.view.height - size.height) / 2
@@ -189,22 +238,14 @@ $(function () {
       width = size.width
       height = local.view.height
     }
+    // Image does not fit on screen
+    if (size.width > local.view.width || size.height > local.view.height) {
+      // TODO handle it
+    }
     // Display the image in canvas
     local.context.drawImage(
       img, 0, 0, width, height, startWidth, startHeight, width, height
     )
-  }
-
-  // Get the video frame
-    // http://cwestblog.com/2017/05/03/javascript-snippet-get-video-frame-as-an-image/
-  const getFrame = function (video) {
-    // Display to get frame
-    local.context.drawImage(
-      video, 0,0
-    )
-    local.image = doc.image[0].toDataURL() // Store frame as image
-    // Clear canvas
-    local.context.clearRect(0, 0, local.view.width, local.view.height)
   }
 
   // << Actions >>
@@ -213,11 +254,11 @@ $(function () {
   // Show camera feed in page
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
     // https://developers.google.com/web/updates/2015/10/media-devices
-  navigator.mediaDevices.getUserMedia(setConstraints()).then(function (stream) {
+  navigator.mediaDevices.getUserMedia(setConstraints()).then((stream) => {
     // Add feed to video
     doc.feed[0].srcObject = stream // Add media stream to video element
 
-    doc.feed[0].onloadedmetadata = function (event) {
+    doc.feed[0].onloadedmetadata = (event) => {
       local.feed.height = this.videoHeight // Store value
       local.feed.width = this.videoHeight * local.view.ratio // Real width
       doc.feed[0].play() // Play feed
@@ -233,13 +274,6 @@ $(function () {
   doc.image.attr('width', local.view.width)
 
   // << Events >>
-  // Camera take picture event
-  doc.take.click(() => {
-    doc.feed[0].pause() // User sees current frame
-    getFrame(doc.feed[0]) // Stores it
-    imageSelected()
-  })
-
   // Accept the image
   doc.accept.click(() => {
     imageSent()
@@ -248,6 +282,24 @@ $(function () {
   // TODO save data into storage
   doc.save.click(function () {
 
+  })
+
+  // Camera take picture event
+  doc.take.click(() => {
+    var video = doc.feed[0]
+    video.pause() // User sees current frame
+    // Get the video frame
+      // http://cwestblog.com/2017/05/03/javascript-snippet-get-video-frame-as-an-image/
+    local.context.drawImage(video, 0, 0) // Display to get frame
+    local.image = doc.image[0].toDataURL() // Store frame as image
+    // Clear canvas
+    local.context.clearRect(0, 0, local.view.width, local.view.height)
+    imageSelected()
+  })
+
+  // Back button event
+  doc.back.click( function () {
+    goBack()
   })
 
   // When a new file is entered
@@ -262,10 +314,5 @@ $(function () {
 
       reader.readAsDataURL(this.files[0]) // Read the image as a dataUrl
     }
-  })
-
-  // TODO back button event
-  doc.back.click( function () {
-
   })
 })
