@@ -2,7 +2,7 @@ window.addEventListener('load', function () {
   // Serviceworker register
   if ('serviceWorker' in navigator) { // If support
     navigator.serviceWorker.register('serviceworker.js').then(function () {
-      console.log('Service Worker Registered')
+      console.log('Service Worker Registered at:', registration.scope)
     }, function (error) {
       console.log('Registration failed', error)
     })

@@ -1,15 +1,16 @@
-// Serviceworker code from https://developers.google.com/web/fundamentals/primers/service-workers/
+// The apps serviceworker
+    // Serviceworker code from https://developers.google.com/web/fundamentals/primers/service-workers/
+
+// Files to cache for quick loading TODO divide cache
 const cacheName = 'cached-files'
 const urlsToCache = [
   'index.html',
   'manifest.json',
-  'assets/javascript/home.js',
-  'assets/javascript/libraries/jquery.js',
-  'assets/javascript/libraries/ejs.js',
-  // 'assets/css/home.css'
-  // 'assets/images/other/logo-white.svg',
-  // 'assets/images/other/preview.jpg',
+  'assets/javascript/libraries/jquery.js', // Needed to complete pages
+  'assets/javascript/libraries/ejs.js', // Needed to complete pages
 ]
+
+// TODO add loops to add the css and index files, they have the same name each time
 
 // Perform install steps
 self.addEventListener('install', function (event) {

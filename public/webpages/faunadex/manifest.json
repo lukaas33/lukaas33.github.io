@@ -2,10 +2,10 @@
   "name": "Faunadex",
   "short_name": "Faunadex",
   "display": "standalone",
-  "start_url": "/",
+  "start_url": "",
   "serviceworker": {
-    "src": "./serviceworker.js",
-    "scope": "./",
+    "src": "serviceworker.js",
+    "scope": "",
     "use_cache": true
   }
 }
