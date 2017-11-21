@@ -5,7 +5,7 @@
   "start_url": "",
   "serviceworker": {
     "src": "serviceworker.js",
-    "scope": "",
+    "scope": "./",
     "use_cache": true
   }
 }
