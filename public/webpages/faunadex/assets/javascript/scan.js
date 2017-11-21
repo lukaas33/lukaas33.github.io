@@ -1,7 +1,7 @@
 $(function () {
   'use strict'
   // Control: select img || take pic --> accept || go back --> send and wait --> send and wait for wikipedia twice --> display result --> save || go back
-  // TODO import partials
+  // TODO import partials for shared js
 
   // << Variables >>
   // Document
@@ -17,7 +17,7 @@ $(function () {
   }
 
   // Other
-  const local = {
+  const local = { // To this file
     image: null, // Stores the image
     result: null, // Stores the top search result
     state: 'selecting', // Stores page state
@@ -37,7 +37,7 @@ $(function () {
   // Sets the media constraints
   const setConstraints = function() {
     // Video input constraints TODO tweak values
-    const constraints = {
+    var constraints = {
       audio: false,
       video: {
         // width: {
@@ -64,10 +64,16 @@ $(function () {
   }
 
   // TODO filters image recognition output for animals
+  // TODO throw error if not animal
   const filterOutput = function (output) {
     var data = output.outputs[0].data
     var result = data.concepts[0] // The most likely guess
     return result
+  }
+
+  // TODO filters the wikipedia text into a standard object
+  const filterText = function (html) {
+    return html
   }
 
   // Convert image
@@ -83,8 +89,8 @@ $(function () {
   }
 
   // << Functions >>
-  // The page is loaded
-  const loaded = () => {
+  // TODO he page is loaded
+  const loaded = function () {
 
   }
 
@@ -188,7 +194,7 @@ $(function () {
       doc.image.hide()
       doc.result.hide()
       doc.feed.show()
-      
+
       doc.feed[0].play()
       local.state = 'selecting' // Revert to previous screen
     }
@@ -253,7 +259,9 @@ $(function () {
   }
 
   // << Actions >>
-  // TODO Get permissions on phones
+  // Canvas size can't be via css
+  doc.image.attr('height', local.view.height)
+  doc.image.attr('width', local.view.width)
 
   // Show camera feed in page
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
@@ -273,19 +281,20 @@ $(function () {
     console.log(error)
   })
 
-  // Canvas size can't be via css
-  doc.image.attr('height', local.view.height)
-  doc.image.attr('width', local.view.width)
-
   // << Events >>
+  // TODO save data into storage
+  doc.save.click(function () {
+
+  })
+
   // Accept the image
   doc.accept.click(() => {
     imageSent()
   })
 
-  // TODO save data into storage
-  doc.save.click(function () {
-
+  // Back button event
+  doc.back.click( function () {
+      goBack()
   })
 
   // Camera take picture event
@@ -299,11 +308,6 @@ $(function () {
     // Clear canvas
     local.context.clearRect(0, 0, local.view.width, local.view.height)
     imageSelected()
-  })
-
-  // Back button event
-  doc.back.click( function () {
-    goBack()
   })
 
   // When a new file is entered

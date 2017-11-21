@@ -8,6 +8,5 @@ window.addEventListener('load', function () {
     })
   }
 
-  // Setup local storage
-  // TODO create code
+  // TODO Setup local storage
 })

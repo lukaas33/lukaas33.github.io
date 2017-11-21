@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Appdata -->
+  <meta charset="UTF-8"/>
+  <!-- Same root as index -->
+  <base href="../"/>
+  <!-- Javascript -->
+  <script src="assets/javascript/libraries/ejs.js"></script> <!-- Template engine -->
+  <script src="assets/javascript/libraries/jquery.js"></script> <!-- DOM interaction -->
+  <script defer src="assets/javascript/app.js"></script>
+  <script defer src="assets/javascript/achievements.js"></script> <!-- Will load content -->
+  <!-- Styling -->
+  <link href="assets/css/achievements.css" media="screen" rel="stylesheet"/>
+  <link href="assets/css/menu.css" media="screen" rel="stylesheet"/>
+</head>
+<body>
+  <nav id="menu" data-state="extended"></nav>
+  <div class="page">
+    <div id="loader"></div>
+    <main>
+    </main>
+  </div>
+  <!-- Page setup -->
+  <script>
+    var menu = new EJS({url: 'views/partials/menu.ejs'}).render({selected: 'Achievements'})
+    var appData = new EJS({url: 'views/partials/appdata.ejs'}).render({name: 'Achievements'})
+    $('#menu').html(menu) // Add menu
+    $('meta[charset=UTF-8]').after(appData) // Add the app data
+  </script>
+</body>
+</html>

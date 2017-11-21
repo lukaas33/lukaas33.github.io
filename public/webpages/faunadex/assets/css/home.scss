@@ -1,2 +1,10 @@
-// Every page has its own css file for speed purposes 
+// Every page has its own css file for speed purposes
 // Shares values are in seperate files
+
+// imports
+@import "partials/variables";
+@import "partials/mixins";
+@import "partials/classes";
+@import "partials/global";
+
+// TODO style pages
