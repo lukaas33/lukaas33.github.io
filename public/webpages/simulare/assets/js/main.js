@@ -82,6 +82,20 @@
     }
   };
 
+  Calc.diameter = function(value, needed) {
+    var diameter, volume;
+    if (needed == null) {
+      needed = 'diameter';
+    }
+    if (needed === 'diameter') {
+      diameter = Math.pow((8 * 3 * value) / (4 * Math.PI), 1 / 3);
+      return diameter;
+    } else if (needed === 'volume') {
+      volume = (4 / 3) * Math.PI * Math.pow(value / 2, 3);
+      return volume;
+    }
+  };
+
   Calc.combine = function(vector) {
     var result;
     result = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
@@ -254,8 +268,8 @@
   })();
 
   Bacteria = (function() {
-    function Bacteria(diameter, energy1, position, generation, birth) {
-      this.diameter = diameter;
+    function Bacteria(mass1, energy1, position, generation, birth) {
+      this.mass = mass1;
       this.energy = energy1;
       this.position = position;
       this.generation = generation;
@@ -267,6 +281,7 @@
       this.findTarget = bind(this.findTarget, this);
       this.chooseDirection = bind(this.chooseDirection, this);
       this.checkCollision = bind(this.checkCollision, this);
+      this.checkValues = bind(this.checkValues, this);
       this.foodNearby = bind(this.foodNearby, this);
       this.loseEnergy = bind(this.loseEnergy, this);
       this.move = bind(this.move, this);
@@ -275,10 +290,13 @@
       this.ages = bind(this.ages, this);
       this.select = bind(this.select, this);
       this.update = bind(this.update, this);
+      this.proportions = bind(this.proportions, this);
       this.display = bind(this.display, this);
       this.live = bind(this.live, this);
       this.born = bind(this.born, this);
       this.id = generate.id(global.bacteria);
+      this.volume = new SciNum(this.mass.value / global.constants.bacteriaDensity.value, 'volume', 'm^3');
+      this.diameter = new SciNum(Calc.diameter(this.volume.value), 'length', 'm');
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
       this.viewRange = new SciNum(this.diameter.value * 3, 'length', 'm');
       this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2');
@@ -287,7 +305,7 @@
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
       this.age = new SciNum(0, 'time', 's');
       this.target = null;
-      this.minEnergyLoss = new SciNum(4e5, 'energy per second', 'atp/s');
+      this.minEnergyLoss = new SciNum(4e6, 'energy per second', 'atp/s');
       this.action = null;
     }
 
@@ -322,6 +340,16 @@
       this.body.fillColor = this.color;
       this.body.name = this.id;
       return html.layer.bacteria.addChild(this.body);
+    };
+
+    Bacteria.prototype.proportions = function() {
+      var difference, previous;
+      this.volume.value = this.mass.value / global.constants.bacteriaDensity.value;
+      this.diameter.value = Calc.diameter(this.volume.value);
+      previous = this.radius.value;
+      this.radius.value = this.diameter.value / 2;
+      difference = this.radius.value / previous;
+      return this.body.scale(difference);
     };
 
     Bacteria.prototype.update = function() {
@@ -390,7 +418,7 @@
     };
 
     Bacteria.prototype.loseEnergy = function() {
-      var condition, difference, k, len1, loss, ref1, value;
+      var atpSec, condition, difference, k, len1, loss, ref1, value;
       loss = this.minEnergyLoss.value;
       ref1 = ['temperature', 'toxicity', 'acidity'];
       for (k = 0, len1 = ref1.length; k < len1; k++) {
@@ -404,7 +432,11 @@
         }
         loss += Math.pow(difference * this.minEnergyLoss.value, 2);
       }
-      return this.energy.value -= loss / local.fps;
+      atpSec = loss / local.fps;
+      this.energy.value -= atpSec;
+      this.mass.value -= atpSec * global.constants.atpMass.value;
+      this.checkValues();
+      return this.proportions();
     };
 
     Bacteria.prototype.foodNearby = function() {
@@ -453,6 +485,8 @@
         return this.target = null;
       }
     };
+
+    Bacteria.prototype.checkValues = function() {};
 
     Bacteria.prototype.checkCollision = function() {
       var bacterium, bodyRadius, checkNotColliding, cosine, currentAction, distance, impactAngle, k, len1, otherBodyRadius, ref1, speedComponent;
@@ -891,14 +925,23 @@
   };
 
   simulation.createLife = function() {
-    var energy, size;
+    var energy, mass;
     console.log("Creating life");
     html.layer.bacteria.activate();
-    size = new SciNum(1.0e-6, 'length', 'm');
+    mass = new SciNum(7e-16, 'mass', 'kg');
     energy = new SciNum(3.9e9, 'energy', 'atp');
-    global.bacteria[0] = new Viridis(size, energy, local.center, 1, 0);
-    global.bacteria[1] = new Rubrum(size, energy, local.center.subtract(100, 0), 1, 0);
-    return global.bacteria[2] = new Caeruleus(size, energy, local.center.add(100, 0), 1, 0);
+    global.bacteria[0] = new Viridis(mass, energy, local.center, 1, 0);
+    global.bacteria[1] = new Rubrum(mass, energy, local.center.subtract(100, 0), 1, 0);
+    return global.bacteria[2] = new Caeruleus(mass, energy, local.center.add(100, 0), 1, 0);
+  };
+
+  simulation.setConstants = function() {
+    global.constants = {
+      waterDensity: new SciNum(0.982e3, 'density', 'kg/m^3'),
+      atomairMass: new SciNum(1.660539e-27, 'mass', 'kg')
+    };
+    global.constants.bacteriaDensity = new SciNum(((2 / 3) * global.constants.waterDensity.value) + ((1 / 3) * (13 / 10) * global.constants.waterDensity.value), 'density', 'kg/m^3');
+    return global.constants.atpMass = new SciNum(507.18 * global.constants.atomairMass.value, 'mass', 'kg');
   };
 
   simulation.feed = function() {
@@ -929,6 +972,7 @@
     html.layer.background = new Layer();
     html.layer.food = new Layer();
     html.layer.bacteria = new Layer();
+    simulation.setConstants();
     draw.background();
     simulation.createLife();
     return callback();

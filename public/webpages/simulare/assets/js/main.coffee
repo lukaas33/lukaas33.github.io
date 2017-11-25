@@ -15,6 +15,7 @@ local =
   fps: 30 # Standard for canvas
   scaleFactor: 1.5e6 # Scale of the animation, 1 cm : this cm
 
+
 # Get elements with these id's
 for id in ['start', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority']
   doc[id] = $("##{id}")
@@ -67,6 +68,17 @@ Calc.scale = (value, needed = 'scaled') ->
     size = value / DPC # Scaled value in cm
     size = size / local.scaleFactor # Real value
     return size
+
+# Diameter to volume and back
+Calc.diameter = (value, needed = 'diameter') ->
+  if needed == 'diameter'
+    # Rewritten formula
+    diameter = Math.pow((8 * 3 * value) / (4 * Math.PI), 1/3) # 3th root
+    return diameter
+
+  else if needed == 'volume'
+    volume = (4/3) * Math.PI * (value/2)**3 # Formula for volume of sphere
+    return volume
 
 # Combines the vector into one value
 Calc.combine = (vector) ->
@@ -202,10 +214,12 @@ class Food
 # Bacteria constructors
 class Bacteria
   # Values that need to be entered
-  constructor: (@diameter, @energy, @position, @generation, @birth) ->
+  constructor: (@mass, @energy, @position, @generation, @birth) ->
     # Values that are initialised
     # TODO diameter is related to energy
     @id = generate.id(global.bacteria)
+    @volume = new SciNum(@mass.value / global.constants.bacteriaDensity.value, 'volume', 'm^3')
+    @diameter = new SciNum(Calc.diameter(@volume.value), 'length', 'm')
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
     @viewRange = new SciNum(@diameter.value * 3, 'length', 'm')
     @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2')
@@ -215,7 +229,7 @@ class Bacteria
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @age = new SciNum(0, 'time', 's')
     @target = null # No target yet
-    @minEnergyLoss = new SciNum(4e5, 'energy per second', 'atp/s')
+    @minEnergyLoss = new SciNum(4e6, 'energy per second', 'atp/s')
     # Tracks current actions
     @action = null
 
@@ -251,6 +265,16 @@ class Bacteria
     @body.fillColor = @color
     @body.name = @id # In paper.js layer
     html.layer.bacteria.addChild(@body)
+
+  # Update variables propotional to each other
+  proportions: =>
+    @volume.value = @mass.value / global.constants.bacteriaDensity.value
+    @diameter.value = Calc.diameter(@volume.value)
+    # Change its size
+    previous = @radius.value
+    @radius.value = @diameter.value / 2
+    difference = @radius.value / previous # Ratio
+    @body.scale(difference)
 
   # Updates its body
   update: =>
@@ -336,7 +360,14 @@ class Bacteria
       loss += Math.pow(difference * @minEnergyLoss.value, 2)
 
     # Loses energy per second
-    @energy.value -= (loss / local.fps)
+    atpSec = (loss / local.fps)
+    @energy.value -= atpSec
+
+    # Loses mass
+    @mass.value -= atpSec * global.constants.atpMass.value
+    # Changes volume
+    @checkValues()
+    @proportions()
 
   # Checks if there is food nearby
   foodNearby: =>
@@ -360,6 +391,10 @@ class Bacteria
           @target = target.instance
     else
       @target = null # Doesn't exist anymore
+
+  # Check if it can divide or if it dies
+  checkValues: =>
+
 
   # Checks if there is a collision
   checkCollision: =>
@@ -743,29 +778,47 @@ simulation.createLife = ->
   html.layer.bacteria.activate()
 
   # Starter values
-  size = new SciNum(1.0e-6, 'length', 'm')
+  mass = new SciNum(7e-16, 'mass', 'kg')
   energy = new SciNum(3.9e9, 'energy', 'atp')
 
   global.bacteria[0] = new Viridis(
-    size,
+    mass,
     energy,
     local.center,
     1,
     0
   )
   global.bacteria[1] = new Rubrum(
-    size,
+    mass,
     energy,
     local.center.subtract(100, 0),
     1,
     0
   )
   global.bacteria[2] = new Caeruleus(
-    size,
+    mass,
     energy,
     local.center.add(100, 0),
     1,
     0
+  )
+
+# Set up the constants
+simulation.setConstants = ->
+  global.constants =
+    waterDensity: new SciNum(0.982e3, 'density', 'kg/m^3') # Around a temperature of 20 degrees
+    atomairMass: new SciNum(1.660539e-27, 'mass', 'kg')
+
+  global.constants.bacteriaDensity = new SciNum( # Different by a factor of 1.1
+    ((2/3) * global.constants.waterDensity.value) + ((1/3) * (13/10) * global.constants.waterDensity.value),
+    'density',
+    'kg/m^3'
+  )
+
+  global.constants.atpMass = new SciNum( # Using the mass of 507 u
+    507.18 * global.constants.atomairMass.value,
+    'mass',
+    'kg'
   )
 
 # Generates food
@@ -798,6 +851,8 @@ simulation.setup = (callback) ->
   html.layer.background = new Layer()
   html.layer.food = new Layer()
   html.layer.bacteria = new Layer()
+
+  simulation.setConstants()
 
   draw.background()
   simulation.createLife()

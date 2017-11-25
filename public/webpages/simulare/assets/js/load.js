@@ -19,9 +19,7 @@ const global = {
     toxicity: null,
     energy: null
   },
-  constants: { // TODO add more values
-    density: 9
-  },
+  constants: {},
   bacteria: [], // Contains bacteria instances
   food: [] // Contains food instances
 };
