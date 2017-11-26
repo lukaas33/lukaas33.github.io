@@ -307,8 +307,8 @@
       this.direction = null;
       this.age = new SciNum(0, 'time', 's');
       this.target = null;
-      this.minEnergyLoss = new SciNum(4e5, 'energy per second', 'atp/s');
-      this.energyLoss = new SciNum(4e5, 'energy per second', 'atp/s');
+      this.minEnergyLoss = new SciNum(4e6, 'energy per second', 'atp/s');
+      this.energyLoss = new SciNum(0, 'energy per second', 'atp/s');
       this.action = null;
       this.previousAction = null;
     }
@@ -358,6 +358,8 @@
     };
 
     Bacteria.prototype.update = function() {
+      this.checkValues();
+      this.proportions();
       return this.body.position = this.position.round();
     };
 
@@ -433,9 +435,7 @@
       this.energyLoss.value = loss;
       atpSec = this.energyLoss.value / local.fps;
       this.energy.value -= atpSec;
-      this.mass.value -= atpSec * global.constants.atpMass.value;
-      this.checkValues();
-      return this.proportions();
+      return this.mass.value -= atpSec * global.constants.atpMass.value;
     };
 
     Bacteria.prototype.foodNearby = function() {
@@ -591,6 +591,7 @@
     Bacteria.prototype.eat = function() {
       if (check.circleInside(this.body, this.target.particle)) {
         this.energy.value += this.target.energy.value;
+        this.mass.value += this.target.energy.value * global.constants.atpMass.value;
         this.target.eaten();
         this.target = null;
         this.previousAction = this.action;

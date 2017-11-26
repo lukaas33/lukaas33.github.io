@@ -230,8 +230,8 @@ class Bacteria
     @direction = null # Stores the direction as point
     @age = new SciNum(0, 'time', 's')
     @target = null # No target yet
-    @minEnergyLoss = new SciNum(4e5, 'energy per second', 'atp/s')
-    @energyLoss = new SciNum(4e5, 'energy per second', 'atp/s') # Initially
+    @minEnergyLoss = new SciNum(4e6, 'energy per second', 'atp/s')
+    @energyLoss = new SciNum(0, 'energy per second', 'atp/s') # Initially
     # Tracks actions
     @action = null
     @previousAction = null
@@ -282,6 +282,8 @@ class Bacteria
 
   # Updates its body
   update: =>
+    @checkValues()
+    @proportions()
     @body.position = @position.round() # Change position
 
   # Gets selected by user
@@ -363,9 +365,7 @@ class Bacteria
 
     # Loses mass
     @mass.value -= atpSec * global.constants.atpMass.value
-    # Changes volume
-    @checkValues()
-    @proportions()
+
 
   # Checks if there is food nearby
   foodNearby: =>
@@ -500,6 +500,9 @@ class Bacteria
     # Inside it
     if check.circleInside(@body, @target.particle)
       @energy.value += @target.energy.value
+      # Gains mass
+      @mass.value += @target.energy.value * global.constants.atpMass.value
+
       @target.eaten() # Removes itself
       # findTarget won't be called anymore
       @target = null # Doesn't exist anymore
