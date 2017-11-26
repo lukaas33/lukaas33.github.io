@@ -227,11 +227,14 @@ class Bacteria
     @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s')
     @minSpeed = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
+    @direction = null # Stores the direction as point
     @age = new SciNum(0, 'time', 's')
     @target = null # No target yet
-    @minEnergyLoss = new SciNum(4e6, 'energy per second', 'atp/s')
-    # Tracks current actions
+    @minEnergyLoss = new SciNum(4e5, 'energy per second', 'atp/s')
+    @energyLoss = new SciNum(4e5, 'energy per second', 'atp/s') # Initially
+    # Tracks actions
     @action = null
+    @previousAction = null
 
   # Methods
   # Starts living
@@ -244,13 +247,14 @@ class Bacteria
   live: =>
     if @action != 'colliding'
       @foodNearby()
-      if @target != null # Food is near
-        @action = 'searching' if @action != 'chasing'
-        @findTarget() # Go get food
-      else # Wandering
+      if @target == null
+        @previousAction = @action
         @action = 'wandering'
         # With a chance of 1/x, change direction
         @chooseDirection() if Random.chance(25)
+      else # Food is near
+        console.log(@action) if global.interaction.selected == @id
+        @findTarget() # Go get food
     @move()
     @loseEnergy()
     @update()
@@ -305,15 +309,17 @@ class Bacteria
     # Will change length of vector to be the max speed
     targetSpeed = @direction.normalize(@maxSpeed.value)
     # Add to the acceleration, at 0 it will take x seconds to accelerate
-    @acceleration.value = targetSpeed.divide(3)
+    @acceleration.value = targetSpeed.divide(3.5)
 
   # Slows the bacteria down
   slowDown: =>
     # Will slow down until reached
-    @minSpeed.value = @speed.value.divide(3)
+    @minSpeed.value = Calc.combine(@speed.value.divide(4))
     # Slow down in x seconds
-    # @acceleration.value = @minSpeed.value.divide(-2)
-    @speed.value = @minSpeed.value
+    @acceleration.value = @direction.normalize(@minSpeed.value).multiply(-1) # Negative acceleration
+    if @action = 'finding'
+      @previousAction = @action
+      @action = 'slowing'
 
   # Starts moving
   move: =>
@@ -323,14 +329,7 @@ class Bacteria
     # Will accelerate to maxSpeed
     @speed.value = @speed.value.add(acceleration)
 
-    # Check if xSpeed and ySpeed together are higher than maxSpeed
-    if Calc.combine(@speed.value) >= @maxSpeed.value
-      @acceleration.value = new Point(0, 0) # No acceleration
-      @speed.value.normalize(@maxSpeed.value) # Reduce speed
-    else if Calc.combine(@speed.value) <= @minSpeed.value
-      @acceleration.value = new Point(0, 0) # No acceleration
-      @minSpeed.value = new Point(0, 0) # Min speed reached
-      @speed.value.normalize(@minSpeed.value) # Increase speed
+    @checkSpeed()
 
     # Scaled speed
     speed = new Point(
@@ -357,10 +356,12 @@ class Bacteria
         difference = 0
 
       # Energy loss can go up exponentially
-      loss += Math.pow(difference * @minEnergyLoss.value, 2)
+      loss += difference * @minEnergyLoss.value
+
+    @energyLoss.value = loss
 
     # Loses energy per second
-    atpSec = (loss / local.fps)
+    atpSec = (@energyLoss.value / local.fps)
     @energy.value -= atpSec
 
     # Loses mass
@@ -386,8 +387,12 @@ class Bacteria
       for target in possibleTargets
         # Set the correct target or update with new data
         if target.distance == minDistance
-          if @target != null
-            @action = 'searching' if @target.id != target.instance.id # New target
+          if @target == null # First encounter
+            @previousAction = @action
+            @action = 'finding'
+          else if @target.id != target.instance.id
+            @previousAction = @action
+            @action = 'finding' # New target
           @target = target.instance
     else
       @target = null # Doesn't exist anymore
@@ -395,14 +400,26 @@ class Bacteria
   # Check if it can divide or if it dies
   checkValues: =>
 
+  # Checks the speed
+  checkSpeed: =>
+    # Check if xSpeed and ySpeed together are higher than maxSpeed
+    if Calc.combine(@speed.value) >= @maxSpeed.value
+      @acceleration.value = new Point(0, 0) # No acceleration
+      @speed.value.normalize(@maxSpeed.value) # Reduce speed
+    else if Calc.combine(@speed.value) <= @minSpeed.value
+      @speed.value.normalize(@minSpeed.value) # Increase speed
+
+      if @action == 'slowing' # Has slowed down
+        @minSpeed.value = new Point(0, 0) # Reached
+        @acceleration.value = new Point(0, 0) # No acceleration
+        @previousAction = @action
+        @action = 'chasing'
 
   # Checks if there is a collision
   checkCollision: =>
     checkNotColliding = 0
-    if @action == 'colliding'
-      currentAction = 'wandering' # Set to when not colliding
-    else
-      currentAction = @action
+    if @action != 'colliding'
+      @previousAction = @action # Stores to return to
 
     bodyRadius = Calc.scale(@radius.value)
     # Check if in field
@@ -445,11 +462,12 @@ class Bacteria
           if not isNaN(Calc.combine(speedComponent))
             # Stop moving in this direction
             @speed.value = @speed.value.subtract(speedComponent)
+          @chooseDirection()
         else
           checkNotColliding += 1
 
     if checkNotColliding == 2 + global.bacteria.length - 1
-      @action = currentAction # Not colliding with anything
+      @action = @previousAction # Not colliding with anything
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
@@ -460,11 +478,11 @@ class Bacteria
 
   # Will go to a point until reached
   findTarget: =>
-    if @action == 'searching' # First time called
+    if @action == 'finding' # First time called
       @slowDown()
-      @action = 'chasing'
-    @goToPoint(@target.position)
-    @eat() # Try to eat
+    else if @action == 'chasing' # After it has slowed
+      @goToPoint(@target.position)
+      @eat() # Try to eat
 
   # Go to a point TODO work out method
   goToPoint: (point) =>
@@ -487,6 +505,8 @@ class Bacteria
       @target.eaten() # Removes itself
       # findTarget won't be called anymore
       @target = null # Doesn't exist anymore
+      @previousAction = @action
+      @action = 'wandering'
 
 # Constructors that inherit code
 class Lucarium extends Bacteria # TODO add unique traits for family

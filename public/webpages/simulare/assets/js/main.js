@@ -281,6 +281,7 @@
       this.findTarget = bind(this.findTarget, this);
       this.chooseDirection = bind(this.chooseDirection, this);
       this.checkCollision = bind(this.checkCollision, this);
+      this.checkSpeed = bind(this.checkSpeed, this);
       this.checkValues = bind(this.checkValues, this);
       this.foodNearby = bind(this.foodNearby, this);
       this.loseEnergy = bind(this.loseEnergy, this);
@@ -303,10 +304,13 @@
       this.maxSpeed = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
       this.minSpeed = new SciNum(new Point(0, 0), 'speed', 'm/s');
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
+      this.direction = null;
       this.age = new SciNum(0, 'time', 's');
       this.target = null;
-      this.minEnergyLoss = new SciNum(4e6, 'energy per second', 'atp/s');
+      this.minEnergyLoss = new SciNum(4e5, 'energy per second', 'atp/s');
+      this.energyLoss = new SciNum(4e5, 'energy per second', 'atp/s');
       this.action = null;
+      this.previousAction = null;
     }
 
     Bacteria.prototype.born = function() {
@@ -318,16 +322,17 @@
     Bacteria.prototype.live = function() {
       if (this.action !== 'colliding') {
         this.foodNearby();
-        if (this.target !== null) {
-          if (this.action !== 'chasing') {
-            this.action = 'searching';
-          }
-          this.findTarget();
-        } else {
+        if (this.target === null) {
+          this.previousAction = this.action;
           this.action = 'wandering';
           if (Random.chance(25)) {
             this.chooseDirection();
           }
+        } else {
+          if (global.interaction.selected === this.id) {
+            console.log(this.action);
+          }
+          this.findTarget();
         }
       }
       this.move();
@@ -388,12 +393,16 @@
     Bacteria.prototype.startMoving = function() {
       var targetSpeed;
       targetSpeed = this.direction.normalize(this.maxSpeed.value);
-      return this.acceleration.value = targetSpeed.divide(3);
+      return this.acceleration.value = targetSpeed.divide(3.5);
     };
 
     Bacteria.prototype.slowDown = function() {
-      this.minSpeed.value = this.speed.value.divide(3);
-      return this.speed.value = this.minSpeed.value;
+      this.minSpeed.value = Calc.combine(this.speed.value.divide(4));
+      this.acceleration.value = this.direction.normalize(this.minSpeed.value).multiply(-1);
+      if (this.action = 'finding') {
+        this.previousAction = this.action;
+        return this.action = 'slowing';
+      }
     };
 
     Bacteria.prototype.move = function() {
@@ -401,14 +410,7 @@
       this.checkCollision();
       acceleration = this.acceleration.value.divide(local.fps);
       this.speed.value = this.speed.value.add(acceleration);
-      if (Calc.combine(this.speed.value) >= this.maxSpeed.value) {
-        this.acceleration.value = new Point(0, 0);
-        this.speed.value.normalize(this.maxSpeed.value);
-      } else if (Calc.combine(this.speed.value) <= this.minSpeed.value) {
-        this.acceleration.value = new Point(0, 0);
-        this.minSpeed.value = new Point(0, 0);
-        this.speed.value.normalize(this.minSpeed.value);
-      }
+      this.checkSpeed();
       speed = new Point({
         x: Calc.scale(this.speed.value.x),
         y: Calc.scale(this.speed.value.y)
@@ -430,9 +432,10 @@
         } else {
           difference = 0;
         }
-        loss += Math.pow(difference * this.minEnergyLoss.value, 2);
+        loss += difference * this.minEnergyLoss.value;
       }
-      atpSec = loss / local.fps;
+      this.energyLoss.value = loss;
+      atpSec = this.energyLoss.value / local.fps;
       this.energy.value -= atpSec;
       this.mass.value -= atpSec * global.constants.atpMass.value;
       this.checkValues();
@@ -470,10 +473,12 @@
         for (l = 0, len2 = possibleTargets.length; l < len2; l++) {
           target = possibleTargets[l];
           if (target.distance === minDistance) {
-            if (this.target !== null) {
-              if (this.target.id !== target.instance.id) {
-                this.action = 'searching';
-              }
+            if (this.target === null) {
+              this.previousAction = this.action;
+              this.action = 'finding';
+            } else if (this.target.id !== target.instance.id) {
+              this.previousAction = this.action;
+              this.action = 'finding';
             }
             results.push(this.target = target.instance);
           } else {
@@ -488,13 +493,26 @@
 
     Bacteria.prototype.checkValues = function() {};
 
+    Bacteria.prototype.checkSpeed = function() {
+      if (Calc.combine(this.speed.value) >= this.maxSpeed.value) {
+        this.acceleration.value = new Point(0, 0);
+        return this.speed.value.normalize(this.maxSpeed.value);
+      } else if (Calc.combine(this.speed.value) <= this.minSpeed.value) {
+        this.speed.value.normalize(this.minSpeed.value);
+        if (this.action === 'slowing') {
+          this.minSpeed.value = new Point(0, 0);
+          this.acceleration.value = new Point(0, 0);
+          this.previousAction = this.action;
+          return this.action = 'chasing';
+        }
+      }
+    };
+
     Bacteria.prototype.checkCollision = function() {
-      var bacterium, bodyRadius, checkNotColliding, cosine, currentAction, distance, impactAngle, k, len1, otherBodyRadius, ref1, speedComponent;
+      var bacterium, bodyRadius, checkNotColliding, cosine, distance, impactAngle, k, len1, otherBodyRadius, ref1, speedComponent;
       checkNotColliding = 0;
-      if (this.action === 'colliding') {
-        currentAction = 'wandering';
-      } else {
-        currentAction = this.action;
+      if (this.action !== 'colliding') {
+        this.previousAction = this.action;
       }
       bodyRadius = Calc.scale(this.radius.value);
       if (this.position.x + bodyRadius >= local.width) {
@@ -533,13 +551,14 @@
             if (!isNaN(Calc.combine(speedComponent))) {
               this.speed.value = this.speed.value.subtract(speedComponent);
             }
+            this.chooseDirection();
           } else {
             checkNotColliding += 1;
           }
         }
       }
       if (checkNotColliding === 2 + global.bacteria.length - 1) {
-        return this.action = currentAction;
+        return this.action = this.previousAction;
       }
     };
 
@@ -553,12 +572,12 @@
     };
 
     Bacteria.prototype.findTarget = function() {
-      if (this.action === 'searching') {
-        this.slowDown();
-        this.action = 'chasing';
+      if (this.action === 'finding') {
+        return this.slowDown();
+      } else if (this.action === 'chasing') {
+        this.goToPoint(this.target.position);
+        return this.eat();
       }
-      this.goToPoint(this.target.position);
-      return this.eat();
     };
 
     Bacteria.prototype.goToPoint = function(point) {
@@ -576,7 +595,9 @@
       if (check.circleInside(this.body, this.target.particle)) {
         this.energy.value += this.target.energy.value;
         this.target.eaten();
-        return this.target = null;
+        this.target = null;
+        this.previousAction = this.action;
+        return this.action = 'wandering';
       }
     };
 
