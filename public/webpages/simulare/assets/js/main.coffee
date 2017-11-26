@@ -246,6 +246,7 @@ class Bacteria
   # Continues living TODO work out energy system with traits
   live: =>
     if @action != 'colliding'
+      console.log(@action, @previousAction) if global.interaction.selected == @id
       @foodNearby()
       if @target == null
         @previousAction = @action
@@ -253,7 +254,6 @@ class Bacteria
         # With a chance of 1/x, change direction
         @chooseDirection() if Random.chance(25)
       else # Food is near
-        console.log(@action) if global.interaction.selected == @id
         @findTarget() # Go get food
     @move()
     @loseEnergy()
@@ -317,9 +317,6 @@ class Bacteria
     @minSpeed.value = Calc.combine(@speed.value.divide(4))
     # Slow down in x seconds
     @acceleration.value = @direction.normalize(@minSpeed.value).multiply(-1) # Negative acceleration
-    if @action = 'finding'
-      @previousAction = @action
-      @action = 'slowing'
 
   # Starts moving
   move: =>
@@ -390,12 +387,15 @@ class Bacteria
           if @target == null # First encounter
             @previousAction = @action
             @action = 'finding'
+            @slowDown()
           else if @target.id != target.instance.id
             @previousAction = @action
             @action = 'finding' # New target
+            @slowDown()
           @target = target.instance
     else
       @target = null # Doesn't exist anymore
+      @action = @previousAction
 
   # Check if it can divide or if it dies
   checkValues: =>
@@ -409,7 +409,7 @@ class Bacteria
     else if Calc.combine(@speed.value) <= @minSpeed.value
       @speed.value.normalize(@minSpeed.value) # Increase speed
 
-      if @action == 'slowing' # Has slowed down
+      if @action == 'finding' # Has slowed down
         @minSpeed.value = new Point(0, 0) # Reached
         @acceleration.value = new Point(0, 0) # No acceleration
         @previousAction = @action
@@ -478,9 +478,7 @@ class Bacteria
 
   # Will go to a point until reached
   findTarget: =>
-    if @action == 'finding' # First time called
-      @slowDown()
-    else if @action == 'chasing' # After it has slowed
+    if @action == 'chasing' # After it has slowed
       @goToPoint(@target.position)
       @eat() # Try to eat
 
@@ -505,8 +503,10 @@ class Bacteria
       @target.eaten() # Removes itself
       # findTarget won't be called anymore
       @target = null # Doesn't exist anymore
+
       @previousAction = @action
       @action = 'wandering'
+      @chooseDirection()
 
 # Constructors that inherit code
 class Lucarium extends Bacteria # TODO add unique traits for family
