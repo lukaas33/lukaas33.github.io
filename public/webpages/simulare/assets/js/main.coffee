@@ -245,16 +245,16 @@ class Bacteria
 
   # Continues living TODO work out energy system with traits
   live: =>
-    if @action != 'colliding'
-      console.log(@action, @previousAction) if global.interaction.selected == @id
-      @foodNearby()
-      if @target == null
-        @previousAction = @action
-        @action = 'wandering'
-        # With a chance of 1/x, change direction
-        @chooseDirection() if Random.chance(25)
-      else # Food is near
-        @findTarget() # Go get food
+    # if @action != 'colliding'
+      # console.log(@minSpeed.value) if global.interaction.selected == @id
+    @foodNearby()
+    if @target == null
+      @previousAction = @action
+      @action = 'wandering'
+      # With a chance of 1/x, change direction
+      @chooseDirection() if Random.chance(25)
+    else # Food is near
+      @findTarget() # Go get food
     @move()
     @loseEnergy()
     @update()
@@ -283,7 +283,7 @@ class Bacteria
   # Updates its body
   update: =>
     @checkValues()
-    @proportions()
+    # @proportions()
     @body.position = @position.round() # Change position
 
   # Gets selected by user
@@ -316,9 +316,11 @@ class Bacteria
   # Slows the bacteria down
   slowDown: =>
     # Will slow down until reached
-    @minSpeed.value = Calc.combine(@speed.value.divide(4))
+    # @minSpeed.value = Calc.combine(@speed.value.divide(4))
+    @minSpeed.value = @maxSpeed.value
     # Slow down in x seconds
     @acceleration.value = @direction.normalize(@minSpeed.value).multiply(-1) # Negative acceleration
+    # @speed.value = @speed.value.normalize(@minSpeed.value)
 
   # Starts moving
   move: =>
@@ -361,10 +363,10 @@ class Bacteria
 
     # Loses energy per second
     atpSec = (@energyLoss.value / local.fps)
-    @energy.value -= atpSec
+    # @energy.value -= atpSec
 
     # Loses mass
-    @mass.value -= atpSec * global.constants.atpMass.value
+    # @mass.value -= atpSec * global.constants.atpMass.value
 
 
   # Checks if there is food nearby
@@ -402,6 +404,7 @@ class Bacteria
 
   # Checks the speed
   checkSpeed: =>
+    console.log(@action, @previousAction) if global.interaction.selected == @id
     # Check if xSpeed and ySpeed together are higher than maxSpeed
     if Calc.combine(@speed.value) >= @maxSpeed.value
       @acceleration.value = new Point(0, 0) # No acceleration
@@ -410,7 +413,8 @@ class Bacteria
       @speed.value.normalize(@minSpeed.value) # Increase speed
 
       if @action == 'finding' # Has slowed down
-        @minSpeed.value = new Point(0, 0) # Reached
+        console.log(true) if global.interaction.selected == @id
+        @minSpeed.value = 0 # Reached
         @acceleration.value = new Point(0, 0) # No acceleration
         @previousAction = @action
         @action = 'chasing'
@@ -418,27 +422,27 @@ class Bacteria
   # Checks if there is a collision
   checkCollision: =>
     checkNotColliding = 0
-    if @action != 'colliding'
-      @previousAction = @action # Stores to return to
+    # if @action != 'colliding'
+    #   @previousAction = @action # Stores to return to
 
     bodyRadius = Calc.scale(@radius.value)
     # Check if in field
     if @position.x + bodyRadius >= local.width
-      @action = 'colliding'
+      # @action = 'colliding'
       @speed.value.x = 0
       @chooseDirection(180) # Start moving away
     else if @position.x - bodyRadius <= 0
-      @action = 'colliding'
+      # @action = 'colliding'
       @speed.value.x = 0
       @chooseDirection(0) # Start moving away
     else
       checkNotColliding += 1
     if @position.y + bodyRadius >= local.height
-      @action = 'colliding'
+      # @action = 'colliding'
       @speed.value.y = 0
       @chooseDirection(270) # Start moving away
     else if @position.y - bodyRadius <= 0
-      @action = 'colliding'
+      # @action = 'colliding'
       @speed.value.y = 0
       @chooseDirection(90) # Start moving away
     else
@@ -452,7 +456,7 @@ class Bacteria
         otherBodyRadius = Calc.scale(bacterium.radius.value)
         # If the paths are too close
         if Calc.combine(distance) <= bodyRadius + otherBodyRadius
-          @action = 'colliding'
+            # @action = 'colliding'
           # Angle between vectors
           impactAngle = @speed.value.getAngle(distance)
           # Speed in the illegal direction
@@ -466,8 +470,8 @@ class Bacteria
         else
           checkNotColliding += 1
 
-    if checkNotColliding == 2 + global.bacteria.length - 1
-      @action = @previousAction # Not colliding with anything
+    # if checkNotColliding == 2 + global.bacteria.length - 1
+      # @action = @previousAction # Not colliding with anything
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
