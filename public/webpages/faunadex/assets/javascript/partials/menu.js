@@ -1,5 +1,4 @@
-$(function () {
-    'use strict'
-    // TODO add menu functionality here
-
-})
+(function() { // Global vars are local to this file
+'use strict'
+// TODO add menu functionality here
+}).call(this)
