@@ -4,34 +4,37 @@ const shared = {} // No naming confict between files
 // Uses getter and setters
 
 shared.cookie = function (name, value) {
+  if (typeof(value) === 'undefined') { // Getting
     var cookies = decodeURIComponent(document.cookie) // Removes the expires header
-
+    cookies = cookies.split(';')
+    console.log(`Got from cookies: ${cookies}`)
     if (cookies.length > 0) {
-        cookies = cookies.split(';')
-        console.log(`Got from cookies: ${cookies}`)
+      console.log(`Will get cookie: ${name}`)
+      let object = undefined
+      for (let index in cookies) {
+        let cookie = cookies[index]
+        cookie = cookie.trim()
+        let cookieName = cookie.split('=')[0]
 
-        if (typeof(value) === 'undefined') { // Getting
-            console.log(`Will get cookie: ${name}`)
-            object = undefined
-            for (let cookie in cookies) {
-                let item = cookie.trim()
-                let cookieName = item.split('=')[0]
-                if (name === cookieName) {
-                    try {
-                      object = JSON.parse(item)
-                    } catch (error) {
-                      object = item // Strings can't be parsed, are already ok
-                    }
-                }
-            }
-            return object
-        } else { // Setting
-            console.log(`Will set cookie: ${name} to ${value}`)
-            document.cookie = ``
+        if (name === cookieName) {
+          try {
+            object = JSON.parse(cookie.split('=')[1])
+          } catch (error) {
+            object = cookie.split('=')[1] // Strings can't be parsed, are already ok
+          }
         }
+      }
+      return object
     } else {
-        return undefined
+      return undefined
     }
+  } else { // Setting
+    console.log(`Will set cookie: ${name} to ${value}`)
+    let strValue = JSON.stringify(value) // To store objects
+    let nextWeek = new Date(Date.now() + (7*24*60*60*1000))
+    // TODO add secure tag after testing
+    document.cookie = `${name}=${strValue}; expires=${nextWeek.toUTCString()}; path=./` // Store cookie
+  }
 }
 
 shared.storage = function (name, options = null) {
