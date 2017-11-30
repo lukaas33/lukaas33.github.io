@@ -3,8 +3,35 @@ const shared = {} // No naming confict between files
 
 // Uses getter and setters
 
-shared.cookie = function (name, value = null) {
+shared.cookie = function (name, value) {
+    var cookies = decodeURIComponent(document.cookie) // Removes the expires header
 
+    if (cookies.length > 0) {
+        cookies = cookies.split(';')
+        console.log(`Got from cookies: ${cookies}`)
+
+        if (typeof(value) === 'undefined') { // Getting
+            console.log(`Will get cookie: ${name}`)
+            object = undefined
+            for (let cookie in cookies) {
+                let item = cookie.trim()
+                let cookieName = item.split('=')[0]
+                if (name === cookieName) {
+                    try {
+                      object = JSON.parse(item)
+                    } catch (error) {
+                      object = item // Strings can't be parsed, are already ok
+                    }
+                }
+            }
+            return object
+        } else { // Setting
+            console.log(`Will set cookie: ${name} to ${value}`)
+            document.cookie = ``
+        }
+    } else {
+        return undefined
+    }
 }
 
 shared.storage = function (name, options = null) {
@@ -57,7 +84,7 @@ shared.storage = function (name, options = null) {
       localStorage.setItem(name, JSON.stringify(object)) // Store as string
     }
   } else {
-    	return null
+    	return undefined
   }
 
 
