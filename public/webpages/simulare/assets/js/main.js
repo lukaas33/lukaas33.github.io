@@ -300,7 +300,7 @@
       this.volume = new SciNum(this.mass.value / global.constants.bacteriaDensity.value, 'volume', 'm^3');
       this.diameter = new SciNum(Calc.diameter(this.volume.value), 'length', 'm');
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
-      this.viewRange = new SciNum(this.diameter.value * 3.5, 'length', 'm');
+      this.viewRange = new SciNum(this.diameter.value * 2.5, 'length', 'm');
       this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2');
       this.decceleration = new SciNum(0, 'negative acceleration', 'm/s^2');
       this.maxSpeed = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
@@ -322,10 +322,11 @@
     };
 
     Bacteria.prototype.live = function() {
-      if (this.action !== 'colliding') {
+      if (this.action === 'colliding') {
+        this.chooseDirection();
+      } else {
         this.foodNearby();
         if (this.target === null) {
-          this.changeAction('wandering');
           if (Random.chance(25)) {
             this.chooseDirection();
           }
@@ -404,7 +405,7 @@
 
     Bacteria.prototype.slowDown = function() {
       this.changeAction('finding');
-      this.minSpeed.value = this.maxSpeed.value / 4;
+      this.minSpeed.value = this.maxSpeed.value / 8;
       return this.decceleration.value = this.minSpeed.value * 2;
     };
 
@@ -550,7 +551,6 @@
             if (!isNaN(Calc.combine(speedComponent))) {
               this.speed.value = this.speed.value.subtract(speedComponent);
             }
-            this.chooseDirection();
           } else {
             checkNotColliding += 1;
           }
@@ -567,7 +567,8 @@
       }
       angle = Calc.rad(angle % 360);
       this.direction = new Point(Math.cos(angle), Math.sin(angle));
-      return this.startMoving();
+      this.startMoving();
+      return this.changeAction('wandering');
     };
 
     Bacteria.prototype.findTarget = function() {

@@ -221,7 +221,7 @@ class Bacteria
     @volume = new SciNum(@mass.value / global.constants.bacteriaDensity.value, 'volume', 'm^3')
     @diameter = new SciNum(Calc.diameter(@volume.value), 'length', 'm')
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
-    @viewRange = new SciNum(@diameter.value * 3.5, 'length', 'm')
+    @viewRange = new SciNum(@diameter.value * 2.5, 'length', 'm')
     @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2') # Used when starting to move
     @decceleration = new SciNum(0, 'negative acceleration', 'm/s^2') # Used when slowing down
     # x times its bodylength per second
@@ -246,12 +246,14 @@ class Bacteria
 
   # Continues living TODO work out energy system with traits
   live: =>
-    if @action != 'colliding'
+    if @action == 'colliding' # Needs to move away
+      @chooseDirection()
+    else
       @foodNearby()
-      if @target == null
-        @changeAction('wandering')
+      if @target == null # Not chasing
         # With a chance of 1/x, change direction
         @chooseDirection() if Random.chance(25)
+
       else # Food is near
         @findTarget() # Go get food
     @move()
@@ -322,7 +324,7 @@ class Bacteria
   slowDown: =>
     @changeAction('finding')
     # Will slow down until reached
-    @minSpeed.value = @maxSpeed.value / 4
+    @minSpeed.value = @maxSpeed.value / 8
     # Slow down in 1/2 second
     @decceleration.value = @minSpeed.value * 2
 
@@ -469,7 +471,7 @@ class Bacteria
           if not isNaN(Calc.combine(speedComponent))
             # Stop moving in this direction
             @speed.value = @speed.value.subtract(speedComponent)
-          @chooseDirection()
+          # @chooseDirection()
         else
           checkNotColliding += 1
 
@@ -482,6 +484,7 @@ class Bacteria
     # Direction as point relative to self (origin)
     @direction = new Point(Math.cos(angle), Math.sin(angle))
     @startMoving()
+    @changeAction('wandering')
 
   # Will go to a point until reached
   findTarget: =>
