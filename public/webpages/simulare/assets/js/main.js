@@ -1,33 +1,24 @@
 (function() {
-  // The Js for the main page is made in coffeescript for readibility
-  // Lines have a max length
-  // Sometimes the comment for an expression will be above the line
-  // Code groups are distinguised by << >>
-  // Objects are used to group functions and variables
   "use strict";
-  var Bacteria, Caeruleus, Calc, Food, Lucarium, Random, Rubrum, SciNum, Viridis, check, doc, draw, generate, html, id, isLoaded, j, len, local, ref, simulation, time;
+  var Bacteria, Caeruleus, Calc, Food, Lucarium, Random, Rubrum, SciNum, Viridis, check, doc, draw, generate, html, id, isLoaded, j, len, local, ref, simulation, time,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty;
 
-  // TODO work on efficiency of code
-
-  // << Variables >>
-  // Group
   doc = {};
 
   local = {
-    resolution: 72, // No way to get this
-    fps: 30, // Standard for canvas
-    scaleFactor: 1.5e6 // Scale of the animation, 1 cm : this cm
+    resolution: 72,
+    fps: 30,
+    scaleFactor: 1.5e6
   };
 
   ref = ['start', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority'];
-  
-  // Get elements with these id's
   for (j = 0, len = ref.length; j < len; j++) {
     id = ref[j];
-    doc[id] = $(`#${id}`);
+    doc[id] = $("#" + id);
   }
 
-  // Store these selections
   doc.menuItems = doc.menu.find('.item button');
 
   doc.menuButton = doc.menu.find('.indicator button');
@@ -40,8 +31,6 @@
 
   doc.clock = doc.priority.find('.clock p span');
 
-  // << Return functions >>
-  // Groups
   Calc = {};
 
   Random = {};
@@ -55,7 +44,6 @@
     trackSecond: 0
   };
 
-  // Tests if the circles overlap
   check.circleOverlap = function(circle1, circle2) {
     var distance, result;
     distance = Calc.combine(circle1.position.subtract(circle2.position));
@@ -63,7 +51,6 @@
     return result;
   };
 
-  // Tests if circle 2 is inside circle 1
   check.circleInside = function(circle1, circle2) {
     var distance, result;
     distance = Calc.combine(circle1.position.subtract(circle2.position));
@@ -71,58 +58,56 @@
     return result;
   };
 
-  // Tests if point in circle
   check.inCircle = function(point, circle) {
     var distance, result;
     distance = Calc.combine(circle.position.subtract(point));
-    result = distance <= circle.bounds.width / 2; // Inside circle radius
+    result = distance <= circle.bounds.width / 2;
     return result;
   };
 
-  // TODO add accuracy calculations
-  // Returns the value according to a scale
-  Calc.scale = function(value, needed = 'scaled') {
+  Calc.scale = function(value, needed) {
     var DPC, size;
-    DPC = local.resolution / 2.54; // From px/inch to px/cm
+    if (needed == null) {
+      needed = 'scaled';
+    }
+    DPC = local.resolution / 2.54;
     if (needed === "scaled") {
-      size = value * local.scaleFactor; // Get the scaled value in cm
-      size = size * DPC; // Total size
+      size = value * local.scaleFactor;
+      size = size * DPC;
       return size;
     } else if (needed === "real") {
-      size = value / DPC; // Scaled value in cm
-      size = size / local.scaleFactor; // Real value
+      size = value / DPC;
+      size = size / local.scaleFactor;
       return size;
     }
   };
 
-  // Diameter to volume and back
-  Calc.diameter = function(value, needed = 'diameter') {
+  Calc.diameter = function(value, needed) {
     var diameter, volume;
+    if (needed == null) {
+      needed = 'diameter';
+    }
     if (needed === 'diameter') {
-      // Rewritten formula
-      diameter = Math.pow((8 * 3 * value) / (4 * Math.PI), 1 / 3); // 3th root
+      diameter = Math.pow((8 * 3 * value) / (4 * Math.PI), 1 / 3);
       return diameter;
     } else if (needed === 'volume') {
-      volume = (4 / 3) * Math.PI * Math.pow(value / 2, 3); // Formula for volume of sphere
+      volume = (4 / 3) * Math.PI * Math.pow(value / 2, 3);
       return volume;
     }
   };
 
-  // Combines the vector into one value
   Calc.combine = function(vector) {
     var result;
-    // Uses a^2 + b^2 = c^2
     result = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
     return result;
   };
 
   Calc.rad = function(degrees) {
     var angle;
-    angle = degrees * (Math.PI / 180); // In radians
+    angle = degrees * (Math.PI / 180);
     return angle;
   };
 
-  // Returns value in range
   Random.value = function(bottom, top) {
     var middle, value;
     middle = top - bottom;
@@ -130,66 +115,58 @@
     return value;
   };
 
-  // Return true with a certain chance TODO seed random function
   Random.chance = function(chance) {
     var result;
-    result = Math.ceil(Math.random() * chance); // Number 1 until chance
-    if (result === 1) { // Chance of one in chance
+    result = Math.ceil(Math.random() * chance);
+    if (result === 1) {
       return true;
     } else {
       return false;
     }
   };
 
-  // TODO add a normal distribution function
   Random.normal = function() {
     return null;
   };
 
-  // Creates unique id
   generate.id = function(instances) {
     var charcode, i, instance, k, l, len1, occurs, result, string, unique;
     unique = false;
     string = null;
     while (!unique) {
       result = [];
-      // Length of 10
       for (i = k = 0; k <= 9; i = ++k) {
-        charcode = Random.value(65, 91); // A-Z
-        result.push(String.fromCharCode(charcode)); // Add the string
+        charcode = Random.value(65, 91);
+        result.push(String.fromCharCode(charcode));
       }
-      string = result.join(''); // As string
-      if (instances.length > 0) { // Not empty
-        occurs = false; // Until proven
+      string = result.join('');
+      if (instances.length > 0) {
+        occurs = false;
         for (l = 0, len1 = instances.length; l < len1; l++) {
           instance = instances[l];
           if (instance.id === string) {
-            occurs = true; // Loop will run again
-            break; // End the for loop
+            occurs = true;
+            break;
           }
         }
-        unique = !occurs; // No instances
+        unique = !occurs;
       } else {
         unique = true;
-        break; // End the while loop
+        break;
       }
     }
     return string;
   };
 
-  // << Constructors >>
-  // Constructor for scientific numbers
-  SciNum = class SciNum {
-    // Values that need to be entered
-    constructor(value1, quantity, unit) {
-      // TODO add method that converts between base and si prefixes
-      this.notation = this.notation.bind(this);
+  SciNum = (function() {
+    function SciNum(value1, quantity, unit) {
       this.value = value1;
       this.quantity = quantity;
       this.unit = unit;
+      this.notation = bind(this.notation, this);
     }
 
-    notation() {
+    SciNum.prototype.notation = function() {
       var value;
       if (this.value instanceof Point) {
         value = Calc.combine(this.value);
@@ -197,32 +174,25 @@
         value = this.value;
       }
       return value.toExponential(4);
-    }
+    };
 
-  };
+    return SciNum;
 
-  // Constructor for food
-  Food = class Food {
-    // Values that need to be entered
-    constructor(energy1) {
-      // Checks if position is legal
-      this.isLegal = this.isLegal.bind(this);
-      
-      // Creates the particle
-      this.display = this.display.bind(this);
-      
-      // Update location
-      this.update = this.update.bind(this);
-      // Gets eaten, removes itself
-      this.eaten = this.eaten.bind(this);
+  })();
+
+  Food = (function() {
+    function Food(energy1) {
       this.energy = energy1;
+      this.eaten = bind(this.eaten, this);
+      this.update = bind(this.update, this);
+      this.display = bind(this.display, this);
+      this.isLegal = bind(this.isLegal, this);
       this.id = generate.id(global.food);
-      // TODO is related to energy
       this.diameter = new SciNum(Random.value(0.3e-6, 0.5e-6), 'length', 'm');
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
     }
 
-    isLegal() {
+    Food.prototype.isLegal = function() {
       var bacterium, food, k, l, len1, len2, radius, ref1, ref2;
       radius = Calc.scale(this.radius.value);
       if (this.position.x - radius <= 0) {
@@ -242,7 +212,7 @@
           return false;
         }
       }
-      if (global.food.length > 0) { // Not empty
+      if (global.food.length > 0) {
         ref2 = global.food;
         for (l = 0, len2 = ref2.length; l < len2; l++) {
           food = ref2[l];
@@ -253,40 +223,35 @@
           }
         }
       }
-      return true; // Only if nothing else has returned
-    }
+      return true;
+    };
 
-    display() {
+    Food.prototype.display = function() {
       var range;
-      // Random location in field, not near the edges
       range = local.size;
-      this.position = Point.random().multiply(range); // Initial
-      // Canvas object
+      this.position = Point.random().multiply(range);
       this.particle = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
-      while (!this.isLegal()) { // Choose position again
+      while (!this.isLegal()) {
         this.position = Point.random().multiply(range);
-        this.particle.position = this.position; // Update
+        this.particle.position = this.position;
       }
-      // @particle.visible = true # Draw
       this.particle.fillColor = 'yellow';
-      return html.layer.food.addChild(this.particle); // Add to layer
-    }
+      return html.layer.food.addChild(this.particle);
+    };
 
-    update() {
+    Food.prototype.update = function() {
       return this.particle.position = this.position.round();
-    }
+    };
 
-    eaten() {
+    Food.prototype.eaten = function() {
       var food, index, k, len1, ref1, results;
-      this.particle.remove(); // Remove drawn shape
+      this.particle.remove();
       ref1 = global.food;
       results = [];
       for (index = k = 0, len1 = ref1.length; k < len1; index = ++k) {
         food = ref1[index];
-        // Don't know why, but the loop keeps getting an undefined
         if (food !== void 0) {
           if (food.id === this.id) {
-            // Remove reference to self
             results.push(global.food.splice(index, 1));
           } else {
             results.push(void 0);
@@ -296,254 +261,209 @@
         }
       }
       return results;
-    }
+    };
 
-  };
+    return Food;
 
-  // Bacteria constructors
-  Bacteria = class Bacteria {
-    // Values that need to be entered
-    constructor(mass1, energy1, position, generation, birth) {
-      // Methods
-      // Starts living
-      this.born = this.born.bind(this);
-      // Continues living TODO work out energy system with traits
-      this.live = this.live.bind(this);
-      // Creates a body TODO the colors and style of the bacteria
-      this.display = this.display.bind(this);
-      // Update variables propotional to each other
-      this.proportions = this.proportions.bind(this);
-      // Updates its body
-      this.update = this.update.bind(this);
-      
-      // Gets selected by user
-      this.select = this.select.bind(this);
-      
-      // Gets older
-      this.ages = this.ages.bind(this);
-      // Change acceleration to go to direction
-      this.startMoving = this.startMoving.bind(this);
-      // Slows the bacteria down
-      this.slowDown = this.slowDown.bind(this);
-      // @speed.value = @speed.value.normalize(@minSpeed.value)
+  })();
 
-      // Starts moving
-      this.move = this.move.bind(this);
-      // Loses energy TODO calculate the energy loss with traits
-      this.loseEnergy = this.loseEnergy.bind(this);
-      // @energy.value -= atpSec
-
-      // Loses mass
-      // @mass.value -= atpSec * global.constants.atpMass.value
-
-      // Checks if there is food nearby
-      this.foodNearby = this.foodNearby.bind(this);
-      // Check if it can divide or if it dies
-      this.checkValues = this.checkValues.bind(this);
-      // Checks the speed
-      this.checkSpeed = this.checkSpeed.bind(this);
-      // Checks if there is a collision
-      this.checkCollision = this.checkCollision.bind(this);
-      // if checkNotColliding == 2 + global.bacteria.length - 1
-      // @action = @previousAction # Not colliding with anything
-
-      // Choose a new direction default is random
-      this.chooseDirection = this.chooseDirection.bind(this);
-      // Will go to a point until reached
-      this.findTarget = this.findTarget.bind(this);
-      
-      // Go to a point TODO work out method
-      this.goToPoint = this.goToPoint.bind(this);
-      // Divide itself TODO work out this functionality
-      this.divide = this.divide.bind(this);
-      // Dies TODO work out method
-      this.die = this.die.bind(this);
-      // Eat food instances
-      this.eat = this.eat.bind(this);
+  Bacteria = (function() {
+    function Bacteria(mass1, energy1, position, generation, birth) {
       this.mass = mass1;
       this.energy = energy1;
       this.position = position;
       this.generation = generation;
       this.birth = birth;
-      // Values that are initialised
-      // TODO diameter is related to energy
+      this.eat = bind(this.eat, this);
+      this.die = bind(this.die, this);
+      this.divide = bind(this.divide, this);
+      this.goToPoint = bind(this.goToPoint, this);
+      this.findTarget = bind(this.findTarget, this);
+      this.chooseDirection = bind(this.chooseDirection, this);
+      this.checkCollision = bind(this.checkCollision, this);
+      this.checkSpeed = bind(this.checkSpeed, this);
+      this.checkValues = bind(this.checkValues, this);
+      this.foodNearby = bind(this.foodNearby, this);
+      this.loseEnergy = bind(this.loseEnergy, this);
+      this.move = bind(this.move, this);
+      this.slowDown = bind(this.slowDown, this);
+      this.startMoving = bind(this.startMoving, this);
+      this.ages = bind(this.ages, this);
+      this.select = bind(this.select, this);
+      this.update = bind(this.update, this);
+      this.proportions = bind(this.proportions, this);
+      this.display = bind(this.display, this);
+      this.changeAction = bind(this.changeAction, this);
+      this.live = bind(this.live, this);
+      this.born = bind(this.born, this);
       this.id = generate.id(global.bacteria);
       this.volume = new SciNum(this.mass.value / global.constants.bacteriaDensity.value, 'volume', 'm^3');
       this.diameter = new SciNum(Calc.diameter(this.volume.value), 'length', 'm');
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
-      this.viewRange = new SciNum(this.diameter.value * 3, 'length', 'm');
+      this.viewRange = new SciNum(this.diameter.value * 3.5, 'length', 'm');
       this.acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2');
-      // x times its bodylength per second
+      this.decceleration = new SciNum(0, 'negative acceleration', 'm/s^2');
       this.maxSpeed = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
       this.minSpeed = new SciNum(new Point(0, 0), 'speed', 'm/s');
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
-      this.direction = null; // Stores the direction as point
+      this.direction = null;
       this.age = new SciNum(0, 'time', 's');
-      this.target = null; // No target yet
+      this.target = null;
       this.minEnergyLoss = new SciNum(4e6, 'energy per second', 'atp/s');
-      this.energyLoss = new SciNum(0, 'energy per second', 'atp/s'); // Initially
-      // Tracks actions
+      this.energyLoss = new SciNum(0, 'energy per second', 'atp/s');
       this.action = null;
       this.previousAction = null;
     }
 
-    born() {
+    Bacteria.prototype.born = function() {
       this.display();
       this.ages();
       return this.chooseDirection();
-    }
+    };
 
-    live() {
-      // if @action != 'colliding'
-      // console.log(@minSpeed.value) if global.interaction.selected == @id
-      this.foodNearby();
-      if (this.target === null) {
-        this.previousAction = this.action;
-        this.action = 'wandering';
-        if (Random.chance(25)) { // Food is near
-          // With a chance of 1/x, change direction
-          this.chooseDirection();
+    Bacteria.prototype.live = function() {
+      if (this.action !== 'colliding') {
+        this.foodNearby();
+        if (this.target === null) {
+          this.changeAction('wandering');
+          if (Random.chance(25)) {
+            this.chooseDirection();
+          }
+        } else {
+          this.findTarget();
         }
-      } else {
-        this.findTarget(); // Go get food
       }
       this.move();
       this.loseEnergy();
       return this.update();
-    }
+    };
 
-    display() {
-      // Body at instance's location
+    Bacteria.prototype.changeAction = function(action) {
+      if (action !== this.action || this.action === null) {
+        this.previousAction = this.action;
+        return this.action = action;
+      }
+    };
+
+    Bacteria.prototype.display = function() {
       this.body = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
       this.body.fillColor = this.color;
-      this.body.name = this.id; // In paper.js layer
+      this.body.name = this.id;
       return html.layer.bacteria.addChild(this.body);
-    }
+    };
 
-    proportions() {
+    Bacteria.prototype.proportions = function() {
       var difference, previous;
       this.volume.value = this.mass.value / global.constants.bacteriaDensity.value;
       this.diameter.value = Calc.diameter(this.volume.value);
-      // Change its size
       previous = this.radius.value;
       this.radius.value = this.diameter.value / 2;
-      difference = this.radius.value / previous; // Ratio
+      difference = this.radius.value / previous;
       return this.body.scale(difference);
-    }
+    };
 
-    update() {
+    Bacteria.prototype.update = function() {
       this.checkValues();
-      // @proportions()
-      return this.body.position = this.position.round(); // Change position
-    }
+      return this.body.position = this.position.round();
+    };
 
-    select() {
+    Bacteria.prototype.select = function() {
       var bacterium, k, len1, ref1;
       if (global.interaction.selected === this.id) {
-        global.interaction.selected = null; // Deselect
-        return this.body.selected = false; // Changes appearance
-// Other bacteria is selected
+        global.interaction.selected = null;
+        return this.body.selected = false;
       } else {
         if (global.interaction.selected !== null) {
           ref1 = global.bacteria;
           for (k = 0, len1 = ref1.length; k < len1; k++) {
             bacterium = ref1[k];
             if (global.interaction.selected === bacterium.id) {
-              bacterium.body.selected = false; // Deselect current
-              break; // End loop
+              bacterium.body.selected = false;
+              break;
             }
           }
         }
         global.interaction.selected = this.id;
-        return this.body.selected = true; // Changes appearance
+        return this.body.selected = true;
       }
-    }
+    };
 
-    ages() {
-      return setInterval(() => {
-        return this.age.value = (time.time - this.birth) / 1000;
-      }, 1000);
-    }
+    Bacteria.prototype.ages = function() {
+      return setInterval((function(_this) {
+        return function() {
+          return _this.age.value = (time.time - _this.birth) / 1000;
+        };
+      })(this), 1000);
+    };
 
-    startMoving() {
+    Bacteria.prototype.startMoving = function() {
       var targetSpeed;
-      // Will change length of vector to be the max speed
       targetSpeed = this.direction.normalize(this.maxSpeed.value);
-      // Add to the acceleration, at 0 it will take x seconds to accelerate
       return this.acceleration.value = targetSpeed.divide(3.5);
-    }
+    };
 
-    slowDown() {
-      // Will slow down until reached
-      // @minSpeed.value = Calc.combine(@speed.value.divide(4))
-      this.minSpeed.value = this.maxSpeed.value;
-      // Slow down in x seconds
-      return this.acceleration.value = this.direction.normalize(this.minSpeed.value).multiply(-1); // Negative acceleration
-    }
+    Bacteria.prototype.slowDown = function() {
+      this.changeAction('finding');
+      this.minSpeed.value = this.maxSpeed.value / 4;
+      return this.decceleration.value = this.minSpeed.value * 2;
+    };
 
-    move() {
-      var acceleration, speed;
-      this.checkCollision(); // Test if it can move
-      // Per second instead of frame
-      acceleration = this.acceleration.value.divide(local.fps);
-      // Will accelerate to maxSpeed
-      this.speed.value = this.speed.value.add(acceleration);
+    Bacteria.prototype.move = function() {
+      var acceleration, decceleration, newSpeed, speed;
+      this.checkCollision();
+      if (this.action === 'finding') {
+        decceleration = this.decceleration.value / local.fps;
+        newSpeed = Calc.combine(this.speed.value) - decceleration;
+        this.speed.value = this.speed.value.normalize(newSpeed);
+      } else {
+        acceleration = this.acceleration.value.divide(local.fps);
+        this.speed.value = this.speed.value.add(acceleration);
+      }
       this.checkSpeed();
-      // Scaled speed
       speed = new Point({
         x: Calc.scale(this.speed.value.x),
         y: Calc.scale(this.speed.value.y)
       });
-      // Per second instead of frame
       speed = speed.divide(local.fps);
-      // Change position
       return this.position = this.position.add(speed);
-    }
+    };
 
-    loseEnergy() {
+    Bacteria.prototype.loseEnergy = function() {
       var atpSec, condition, difference, k, len1, loss, ref1, value;
       loss = this.minEnergyLoss.value;
       ref1 = ['temperature', 'toxicity', 'acidity'];
-      // Influence of conditions
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         condition = ref1[k];
-        // Get the difference between the value and ideal value
         value = global.enviroment[condition];
         difference = Math.abs(value - this.idealConditions[condition].value);
-        // Each species has a different tolerance
         if (difference >= this.tolerance[condition].value) {
           difference -= this.tolerance[condition].value;
         } else {
           difference = 0;
         }
-        // Energy loss can go up exponentially
         loss += difference * this.minEnergyLoss.value;
       }
       this.energyLoss.value = loss;
-      // Loses energy per second
       return atpSec = this.energyLoss.value / local.fps;
-    }
+    };
 
-    foodNearby() {
+    Bacteria.prototype.foodNearby = function() {
       var distance, distances, food, isNearby, k, l, len1, len2, minDistance, possibleTargets, ref1, results, target;
-      isNearby = false; // Until proven
+      isNearby = false;
       possibleTargets = [];
       ref1 = global.food;
-      // Loops through food
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         food = ref1[k];
-        // The distance between the food and the bacteria
         distance = Calc.combine(food.position.subtract(this.position));
-        // Is in range
         if (distance < Calc.scale(this.viewRange.value)) {
           possibleTargets.push({
             instance: food,
-            distance,
-            distance
+            distance: distance,
+            distance: distance
           });
         }
       }
-      if (possibleTargets.length > 0) { // There are targets
+      if (possibleTargets.length > 0) {
         distances = (function() {
           var l, len2, results;
           results = [];
@@ -553,19 +473,14 @@
           }
           return results;
         })();
-        minDistance = Math.min(...distances); // Lowest
+        minDistance = Math.min.apply(Math, distances);
         results = [];
         for (l = 0, len2 = possibleTargets.length; l < len2; l++) {
           target = possibleTargets[l];
-          // Set the correct target or update with new data
           if (target.distance === minDistance) {
-            if (this.target === null) { // First encounter
-              this.previousAction = this.action;
-              this.action = 'finding';
+            if (this.target === null) {
               this.slowDown();
             } else if (this.target.id !== target.instance.id) {
-              this.previousAction = this.action;
-              this.action = 'finding'; // New target
               this.slowDown();
             }
             results.push(this.target = target.instance);
@@ -575,145 +490,122 @@
         }
         return results;
       } else {
-        this.target = null; // Doesn't exist anymore
-        return this.action = this.previousAction;
+        return this.target = null;
       }
-    }
+    };
 
-    checkValues() {}
+    Bacteria.prototype.checkValues = function() {};
 
-    checkSpeed() {
-      if (global.interaction.selected === this.id) {
-        console.log(this.action, this.previousAction);
-      }
-      // Check if xSpeed and ySpeed together are higher than maxSpeed
+    Bacteria.prototype.checkSpeed = function() {
       if (Calc.combine(this.speed.value) >= this.maxSpeed.value) {
-        this.acceleration.value = new Point(0, 0); // No acceleration
-        return this.speed.value.normalize(this.maxSpeed.value); // Reduce speed
+        this.acceleration.value = new Point(0, 0);
+        return this.speed.value.normalize(this.maxSpeed.value);
       } else if (Calc.combine(this.speed.value) <= this.minSpeed.value) {
-        this.speed.value.normalize(this.minSpeed.value); // Increase speed
-        if (this.action === 'finding') { // Has slowed down
-          if (global.interaction.selected === this.id) {
-            console.log(true);
-          }
-          this.minSpeed.value = 0; // Reached
-          this.acceleration.value = new Point(0, 0); // No acceleration
-          this.previousAction = this.action;
-          return this.action = 'chasing';
+        this.speed.value.normalize(this.minSpeed.value);
+        if (this.action === 'finding') {
+          this.minSpeed.value = 0;
+          this.decceleration.value = 0;
+          return this.changeAction('chasing');
         }
       }
-    }
+    };
 
-    checkCollision() {
-      var bacterium, bodyRadius, checkNotColliding, cosine, distance, impactAngle, k, len1, otherBodyRadius, ref1, results, speedComponent;
+    Bacteria.prototype.checkCollision = function() {
+      var bacterium, bodyRadius, checkNotColliding, cosine, distance, impactAngle, k, len1, otherBodyRadius, ref1, speedComponent;
       checkNotColliding = 0;
-      // if @action != 'colliding'
-      //   @previousAction = @action # Stores to return to
       bodyRadius = Calc.scale(this.radius.value);
-      // Check if in field
       if (this.position.x + bodyRadius >= local.width) {
-        // @action = 'colliding'
+        this.changeAction('colliding');
         this.speed.value.x = 0;
-        this.chooseDirection(180); // Start moving away
+        this.chooseDirection(180);
       } else if (this.position.x - bodyRadius <= 0) {
-        // @action = 'colliding'
+        this.changeAction('colliding');
         this.speed.value.x = 0;
-        this.chooseDirection(0); // Start moving away
+        this.chooseDirection(0);
       } else {
         checkNotColliding += 1;
       }
       if (this.position.y + bodyRadius >= local.height) {
-        // @action = 'colliding'
+        this.changeAction('colliding');
         this.speed.value.y = 0;
-        this.chooseDirection(270); // Start moving away
+        this.chooseDirection(270);
       } else if (this.position.y - bodyRadius <= 0) {
-        // @action = 'colliding'
+        this.changeAction('colliding');
         this.speed.value.y = 0;
-        this.chooseDirection(90); // Start moving away
+        this.chooseDirection(90);
       } else {
         checkNotColliding += 1;
       }
       ref1 = global.bacteria;
-      // Check collisions with other bacteria TODO make this check error-free
-      results = [];
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         bacterium = ref1[k];
-        if (this.id !== bacterium.id) { // Not itself
-          // How far away the bacteria is
+        if (this.id !== bacterium.id) {
           distance = bacterium.position.subtract(this.position);
           otherBodyRadius = Calc.scale(bacterium.radius.value);
-          // If the paths are too close
           if (Calc.combine(distance) <= bodyRadius + otherBodyRadius) {
-            // @action = 'colliding'
-            // Angle between vectors
+            this.changeAction('colliding');
             impactAngle = this.speed.value.getAngle(distance);
-            // Speed in the illegal direction
             cosine = Math.cos(Calc.rad(impactAngle));
             speedComponent = this.speed.value.multiply(cosine);
-            // Some values return NaN in Math.cos
             if (!isNaN(Calc.combine(speedComponent))) {
-              // Stop moving in this direction
               this.speed.value = this.speed.value.subtract(speedComponent);
             }
-            results.push(this.chooseDirection());
+            this.chooseDirection();
           } else {
-            results.push(checkNotColliding += 1);
+            checkNotColliding += 1;
           }
-        } else {
-          results.push(void 0);
         }
       }
-      return results;
-    }
+      if (this.action === 'colliding' && checkNotColliding === 2 + global.bacteria.length - 1) {
+        return this.changeAction(this.previousAction);
+      }
+    };
 
-    chooseDirection(angle = Random.value(0, 360)) { // TODO use perlin noise
-      angle = Calc.rad(angle % 360); // Get out the whole circles
-      // Direction as point relative to self (origin)
+    Bacteria.prototype.chooseDirection = function(angle) {
+      if (angle == null) {
+        angle = Random.value(0, 360);
+      }
+      angle = Calc.rad(angle % 360);
       this.direction = new Point(Math.cos(angle), Math.sin(angle));
       return this.startMoving();
-    }
+    };
 
-    findTarget() {
-      if (this.action === 'chasing') { // After it has slowed
+    Bacteria.prototype.findTarget = function() {
+      if (this.action === 'chasing') {
         this.goToPoint(this.target.position);
-        return this.eat(); // Try to eat
       }
-    }
+      return this.eat();
+    };
 
-    goToPoint(point) {
+    Bacteria.prototype.goToPoint = function(point) {
       var relativePosition;
-      // Set the direction
       relativePosition = this.target.position.subtract(this.position);
       this.direction = relativePosition.normalize(1);
       return this.startMoving();
-    }
+    };
 
-    divide() {}
+    Bacteria.prototype.divide = function() {};
 
-    die() {}
+    Bacteria.prototype.die = function() {};
 
-    eat() {
-      // Inside it
+    Bacteria.prototype.eat = function() {
       if (check.circleInside(this.body, this.target.particle)) {
         this.energy.value += this.target.energy.value;
-        // Gains mass
         this.mass.value += this.target.energy.value * global.constants.atpMass.value;
-        this.target.eaten(); // Removes itself
-        // findTarget won't be called anymore
-        this.target = null; // Doesn't exist anymore
-        this.previousAction = this.action;
-        this.action = 'wandering';
-        return this.chooseDirection();
+        this.target.eaten();
+        return this.target = null;
       }
-    }
+    };
 
-  };
+    return Bacteria;
 
-  // Constructors that inherit code
-  Lucarium = class Lucarium extends Bacteria { // TODO add unique traits for family
-    constructor() {
-      super(...arguments); // Parent constructor
-      // Are initialised
+  })();
+
+  Lucarium = (function(superClass) {
+    extend(Lucarium, superClass);
+
+    function Lucarium() {
+      Lucarium.__super__.constructor.apply(this, arguments);
       this.family = "Lucarium";
       this.idealConditions = {
         temperature: new SciNum(20, 'temperature', 'degrees'),
@@ -722,15 +614,17 @@
       };
     }
 
-  };
+    return Lucarium;
 
-  Viridis = class Viridis extends Lucarium { // TODO make different traits for the species
-    constructor() {
-      super(...arguments); // Parent constructor
-      // Values that are initialised
+  })(Bacteria);
+
+  Viridis = (function(superClass) {
+    extend(Viridis, superClass);
+
+    function Viridis() {
+      Viridis.__super__.constructor.apply(this, arguments);
       this.species = "Viridis";
-      this.taxonomicName = `${this.family} ${this.species // Super has to be called first
-}`;
+      this.taxonomicName = this.family + " " + this.species;
       this.color = '#4caf50';
       this.tolerance = {
         temperature: new SciNum(5, 'temperature', 'degrees'),
@@ -739,15 +633,17 @@
       };
     }
 
-  };
+    return Viridis;
 
-  Rubrum = class Rubrum extends Lucarium {
-    constructor() {
-      super(...arguments); // Parent constructor
-      // Values that are initialised
+  })(Lucarium);
+
+  Rubrum = (function(superClass) {
+    extend(Rubrum, superClass);
+
+    function Rubrum() {
+      Rubrum.__super__.constructor.apply(this, arguments);
       this.species = "Rubrum";
-      this.taxonomicName = `${this.family} ${this.species // Super has to be called first
-}`;
+      this.taxonomicName = this.family + " " + this.species;
       this.color = '#f44336';
       this.tolerance = {
         temperature: new SciNum(5, 'temperature', 'degrees'),
@@ -756,15 +652,17 @@
       };
     }
 
-  };
+    return Rubrum;
 
-  Caeruleus = class Caeruleus extends Lucarium {
-    constructor() {
-      super(...arguments); // Parent constructor
-      // Values that are initialised
+  })(Lucarium);
+
+  Caeruleus = (function(superClass) {
+    extend(Caeruleus, superClass);
+
+    function Caeruleus() {
+      Caeruleus.__super__.constructor.apply(this, arguments);
       this.species = "Caeruleus";
-      this.taxonomicName = `${this.family} ${this.species // Super has to be called first
-}`;
+      this.taxonomicName = this.family + " " + this.species;
       this.color = '#2196f3';
       this.tolerance = {
         temperature: new SciNum(5, 'temperature', 'degrees'),
@@ -773,22 +671,20 @@
       };
     }
 
-  };
+    return Caeruleus;
 
-  // << Document functions >>
-  // Groups
+  })(Lucarium);
+
   simulation = {};
 
   html = {};
 
   html.layer = {};
 
-  // Sets the size variables
   html.setSize = function() {
     var height, width;
     width = doc.field.width();
     height = doc.field.height();
-    // Local variables
     local.width = width;
     local.height = height;
     local.center = new Point(width / 2, height / 2);
@@ -796,29 +692,24 @@
     return local.origin = new Point(0, 0);
   };
 
-  // TODO add function that adds cards from data
   html.card = function(data) {
     return null;
   };
 
-  // Updates the screen clock
   html.clock = function() {
     var form, hours, minutes, seconds, total;
-    // Set values, from https://goo.gl/P14JkU
     total = time.time / 1000;
     hours = Math.floor(total / 3600);
     minutes = Math.floor(total % 3600 / 60);
     seconds = Math.floor(total % 3600 % 60);
-    // Format a timestring
     form = function(number) {
       var string;
       string = String(number);
       if (string.length === 1) {
-        string = `0${string}`;
+        string = "0" + string;
       }
       return string;
     };
-    // Loop through the parts of the clock
     return doc.clock.each(function() {
       if ($(this).hasClass('hour')) {
         return this.textContent = form(hours);
@@ -830,93 +721,73 @@
     });
   };
 
-  // TODO add function that sets up the values of the elements
   html.setup = function() {
-    // << Actions >>
     doc.conditions.each(function() {
       return $(this).attr('value', global.enviroment[this.dataset.name].value);
     });
-    // << Events >>
-    // Update simulated time
     time.clock = setInterval(function() {
-      if (!global.interaction.pauzed) { // Time is not pauzed
-        time.time += 5; // Update time
+      if (!global.interaction.pauzed) {
+        time.time += 5;
         time.trackSecond += 5;
-        if (time.trackSecond > 1000) { // Full simulated second
-          time.trackSecond = 0; // Restart second
+        if (time.trackSecond > 1000) {
+          time.trackSecond = 0;
           return simulation.feed();
         }
       }
     }, 5);
-    // Every full second
     time.second = setInterval(function() {
-      if (!global.interaction.pauzed) { // Time is not pauzed
+      if (!global.interaction.pauzed) {
         html.clock();
         return html.selected();
       }
     }, 1000);
-    // Every frame of the canvas
     view.onFrame = function(event) {
       var bacterium, k, len1, ref1, results;
-      if (!global.interaction.pauzed) { // Time is not pauzed
+      if (!global.interaction.pauzed) {
         ref1 = global.bacteria;
-        // Loop through the bacteria
         results = [];
         for (k = 0, len1 = ref1.length; k < len1; k++) {
           bacterium = ref1[k];
-          results.push(bacterium.live()); // Bacteria does actions
+          results.push(bacterium.live());
         }
         return results;
       }
     };
-    
-    // Paper.js canvas resize event
     view.onResize = function(event) {
       var previous, scalePositions;
-      previous = local.size; // Before resizing
-      html.setSize(); // Update size variables
-      
-      // Function for scaling positions
+      previous = local.size;
+      html.setSize();
       scalePositions = function(instances) {
         var instance, k, len1, results, scaledPosition;
         results = [];
         for (k = 0, len1 = instances.length; k < len1; k++) {
           instance = instances[k];
-          scaledPosition = new Point({ // Scale the position of the instance
+          scaledPosition = new Point({
             x: (instance.position.x / previous.width) * local.width,
             y: (instance.position.y / previous.height) * local.height
           });
-          instance.position = scaledPosition.round(); // Update position
-          // If it isn't a shape
+          instance.position = scaledPosition.round();
           if (!(instance instanceof Path)) {
-            results.push(instance.update()); // Manual update
+            results.push(instance.update());
           } else {
             results.push(void 0);
           }
         }
         return results;
       };
-      
-      // Scale these
       scalePositions(global.bacteria);
       scalePositions(global.food);
       scalePositions(draw.bubbles);
-      // Scale by a factor of intended width / real width
-      draw.bottom.scale((local.width / draw.bottom.bounds.width) * 2, (local.height / draw.bottom.bounds.height) * 2); // Don't know why times 2 but it works, don't touch it
-      return draw.bottom.position = local.origin; // Rectangle is updated
+      draw.bottom.scale((local.width / draw.bottom.bounds.width) * 2, (local.height / draw.bottom.bounds.height) * 2);
+      return draw.bottom.position = local.origin;
     };
-    
-    // When view goes out of focus
     $(window).blur(function() {
-      return html.pause(false); // Set to on
+      return html.pause(false);
     });
-    // Window refocuses
     $(window).focus(function() {
-      return html.pause(true); // Set to off
+      return html.pause(true);
     });
-    // TODO add restart button event
     doc.start.click(function() {});
-    // Click events check if bacteria is clicked
     doc.screen.click(function(event) {
       var bacterium, k, len1, location, ref1, results;
       location = new Point(event.pageX, event.pageY);
@@ -926,23 +797,21 @@
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         bacterium = ref1[k];
         if (check.inCircle(location, bacterium.body)) {
-          bacterium.select(); // Gets selected
-          html.selected(); // Trigger now instead of waiting
-          break; // End loop
+          bacterium.select();
+          html.selected();
+          break;
         } else {
           results.push(void 0);
         }
       }
       return results;
     });
-    // Open and close menu
     doc.menuButton.click(function() {
       return html.menu();
     });
-    // The menu events TODO work out these events
     return doc.menuItems.each(function() {
       return $(this).click(function() {
-        switch (this.name) { // Different name attributes
+        switch (this.name) {
           case "volume":
             return html.sound();
           case "pause":
@@ -958,7 +827,6 @@
     });
   };
 
-  // Updates infopanel
   html.selected = function() {
     var bacterium, data, k, len1, ref1, results;
     if (global.interaction.selected !== null) {
@@ -966,22 +834,17 @@
       results = [];
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         bacterium = ref1[k];
-        // Find the selected
         if (bacterium.id === global.interaction.selected) {
           data = bacterium;
-          // Loop through the rows
           doc.data.each(function() {
             if ($(this).hasClass('value')) {
-              // Get the value from the propertyname
               return this.textContent = data[this.dataset.name];
             }
           });
           doc.values.each(function() {
             var scinum;
             if ($(this).hasClass('value')) {
-              // TODO edit values before displaying
               scinum = data[this.dataset.name];
-              // Loop through two spans
               return $(this).find('span').each(function() {
                 if ($(this).hasClass('number')) {
                   return this.textContent = scinum.notation();
@@ -991,9 +854,8 @@
               });
             }
           });
-          doc.bacteria.attr('data-content', true); // Make visible
-          break; // End loop
-// No selected
+          doc.bacteria.attr('data-content', true);
+          break;
         } else {
           results.push(void 0);
         }
@@ -1004,45 +866,50 @@
     }
   };
 
-  // TODO add function that displays the ratio
   html.pie = function() {
     return null;
   };
 
-  // Pauses the simulation
-  html.pause = function(change = global.interaction.pauzed) {
+  html.pause = function(change) {
     var icon;
+    if (change == null) {
+      change = global.interaction.pauzed;
+    }
     icon = doc.menu.find("button[name=pause] img");
-    if (change) { // Unpauze
+    if (change) {
       global.interaction.pauzed = false;
-      return icon.attr('src', 'assets/images/icons/ic_pause_black_24px.svg'); // Pauze
+      return icon.attr('src', 'assets/images/icons/ic_pause_black_24px.svg');
     } else {
       global.interaction.pauzed = true;
       return icon.attr('src', 'assets/images/icons/ic_play_arrow_black_24px.svg');
     }
   };
 
-  // Music control
-  html.sound = function(change = global.interaction.sound) {
+  html.sound = function(change) {
     var icon;
+    if (change == null) {
+      change = global.interaction.sound;
+    }
     icon = doc.menu.find("button[name=volume] img");
-    if (change) { // Unpauze
+    if (change) {
       global.interaction.sound = false;
-      return icon.attr('src', 'assets/images/icons/ic_volume_off_black_24px.svg'); // Pauze
+      return icon.attr('src', 'assets/images/icons/ic_volume_off_black_24px.svg');
     } else {
       global.interaction.sound = true;
       return icon.attr('src', 'assets/images/icons/ic_volume_up_black_24px.svg');
     }
   };
 
-  // Toggle the card system
-  html.cardsToggle = function(change = global.interaction.cards) {
+  html.cardsToggle = function(change) {
     var icon;
+    if (change == null) {
+      change = global.interaction.cards;
+    }
     icon = doc.menu.find("button[name=cards] img");
-    if (change) { // Unpauze
+    if (change) {
       global.interaction.cards = false;
       doc.cards.hide();
-      return icon.attr('src', 'assets/images/icons/ic_chat_outline_black_24px.svg'); // Pauze
+      return icon.attr('src', 'assets/images/icons/ic_chat_outline_black_24px.svg');
     } else {
       global.interaction.cards = true;
       doc.cards.show();
@@ -1050,23 +917,23 @@
     }
   };
 
-  html.menu = function(change = doc.menu.attr('data-state')) {
+  html.menu = function(change) {
     var icon;
+    if (change == null) {
+      change = doc.menu.attr('data-state');
+    }
     icon = doc.menuButton.find('img');
-    // Possible values
     change = change === 'collapse' || change === true;
     if (change) {
-      doc.menuButton.attr('disabled', true); // No double click
+      doc.menuButton.attr('disabled', true);
       doc.menu.attr('data-state', 'expand');
-      // After animation
       return setTimeout(function() {
         doc.menuButton.attr('disabled', false);
         return icon.attr('src', 'assets/images/icons/ic_close_white_24px.svg');
       }, global.interaction.time);
     } else {
-      doc.menuButton.attr('disabled', true); // No double click
+      doc.menuButton.attr('disabled', true);
       doc.menu.attr('data-state', 'collapse');
-      // After animation
       return setTimeout(function() {
         doc.menuButton.attr('disabled', false);
         return icon.attr('src', 'assets/images/icons/ic_menu_white_24px.svg');
@@ -1074,12 +941,10 @@
     }
   };
 
-  // Creates instances of bacteria
   simulation.createLife = function() {
     var energy, mass;
     console.log("Creating life");
     html.layer.bacteria.activate();
-    // Starter values
     mass = new SciNum(7e-16, 'mass', 'kg');
     energy = new SciNum(3.9e9, 'energy', 'atp');
     global.bacteria[0] = new Viridis(mass, energy, local.center, 1, 0);
@@ -1087,49 +952,40 @@
     return global.bacteria[2] = new Caeruleus(mass, energy, local.center.add(100, 0), 1, 0);
   };
 
-  // Set up the constants
   simulation.setConstants = function() {
     global.constants = {
-      waterDensity: new SciNum(0.982e3, 'density', 'kg/m^3'), // Around a temperature of 20 degrees
+      waterDensity: new SciNum(0.982e3, 'density', 'kg/m^3'),
       atomairMass: new SciNum(1.660539e-27, 'mass', 'kg')
     };
-    global.constants.bacteriaDensity = new SciNum(((2 / 3) * global.constants.waterDensity.value) + ((1 / 3) * (13 / 10) * global.constants.waterDensity.value), 'density', 'kg/m^3'); // Different by a factor of 1.1
-    return global.constants.atpMass = new SciNum(507.18 * global.constants.atomairMass.value, 'mass', 'kg'); // Using the mass of 507 u
+    global.constants.bacteriaDensity = new SciNum(((2 / 3) * global.constants.waterDensity.value) + ((1 / 3) * (13 / 10) * global.constants.waterDensity.value), 'density', 'kg/m^3');
+    return global.constants.atpMass = new SciNum(507.18 * global.constants.atomairMass.value, 'mass', 'kg');
   };
 
-  // Generates food
   simulation.feed = function() {
     var amount, food, left, results, total;
     html.layer.food.activate;
     total = global.enviroment.energy.value;
-    left = total; // Inital
+    left = total;
     results = [];
-    // Food left to give and maximum instances not reached
     while (left > 0 && global.food.length <= 20) {
-      // A percentage of the total
       amount = Random.value(total * 0.10, total * 0.15);
       if (amount < left) {
-        left -= amount; // Remove from what's left
+        left -= amount;
       } else {
-        amount = left; // Remainder
-        left = 0; // Ends loop
+        amount = left;
+        left = 0;
       }
-      // Add food
       food = new Food(new SciNum(Math.floor(amount), 'energy', 'j'));
-      food.display(); // Draw in field
-      results.push(global.food.push(food)); // Add to array
+      food.display();
+      results.push(global.food.push(food));
     }
     return results;
   };
 
-  
-  // Sets up the document
   simulation.setup = function(callback) {
-    paper.install(window); // Don't have to acces objects via paper object
+    paper.install(window);
     paper.setup(doc.screen[0]);
-    html.setSize(); // Initial value
-    
-    // Paper.js layers
+    html.setSize();
     html.layer.background = new Layer();
     html.layer.food = new Layer();
     html.layer.bacteria = new Layer();
@@ -1139,72 +995,58 @@
     return callback();
   };
 
-  // Starts simulation
   simulation.start = function() {
     var input;
     console.log("Loaded completely");
-    // Add events to elements
     doc.start.find("button[name=continue]").click(function() {
-      return doc.start.find(".screen:first").hide(); // Hide first screen
+      return doc.start.find(".screen:first").hide();
     });
     doc.start.find("button[name=start]").click(function() {
-      doc.start.hide(); // Hide complete screen
+      doc.start.hide();
       return simulation.run();
     });
     input = doc.start.find(".slider");
     input.each(function() {
-      // Initial value
       global.enviroment[this.name] = new SciNum(Number(this.value), this.name, this.dataset.unit);
-      // Update the variables on change
       return $(this).change(function() {
         var value;
-        value = Number(this.value); // Is recieved as string
+        value = Number(this.value);
         return global.enviroment[this.name] = new SciNum(value, this.name, this.dataset.unit);
       });
     });
-    return $("#loading").hide(); // Hide loading screen
+    return $("#loading").hide();
   };
 
-  
-  // Runs simulation
   simulation.run = function() {
     var bacterium, k, len1, ref1;
     ref1 = global.bacteria;
     for (k = 0, len1 = ref1.length; k < len1; k++) {
       bacterium = ref1[k];
-      bacterium.born(); // Starts the bacteria
+      bacterium.born();
     }
-    global.interaction.pauzed = false; // Unpauze time
-    html.setup(); // Activate document
+    global.interaction.pauzed = false;
+    html.setup();
     return console.log(project.activeLayer);
   };
 
-  // << Simulation functions >>
-  // Groups
   draw = {};
 
-  // Draws the background
   draw.background = function() {
     var bubbleValues, index, k, len1, value;
     html.layer.background.activate();
-    // Background objects TODO add more and style them
     draw.bottom = new Path.Rectangle(local.origin, local.size);
     draw.bottom.fillColor = 'grey';
     html.layer.background.addChild(draw.bottom);
     draw.bubbles = [];
-    bubbleValues = [ // Th info for the bubbles
+    bubbleValues = [
       {
-        position: [350,
-      200],
+        position: [350, 200],
         size: 200
-      },
-      {
-        position: [600,
-      700],
+      }, {
+        position: [600, 700],
         size: 100
       }
     ];
-    // Every value
     for (index = k = 0, len1 = bubbleValues.length; k < len1; index = ++k) {
       value = bubbleValues[index];
       draw.bubbles[index] = new Path.Circle(value.position, value.size / 2);
@@ -1213,11 +1055,9 @@
     return html.layer.background.addChildren(draw.bubbles);
   };
 
-  // Checks if loading is done
   isLoaded = setInterval(function() {
     if (global.interaction.loaded) {
-      // << Actions >>
-      clearInterval(isLoaded); // End itself from rechecking
+      clearInterval(isLoaded);
       return simulation.setup(function() {
         return simulation.start();
       });
