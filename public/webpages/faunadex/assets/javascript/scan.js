@@ -18,7 +18,9 @@ const doc = {
 // Other
 const local = { // To this file
   image: null, // Stores the image
+  metadata: null, // Stores location data
   result: null, // Stores the top search result
+  data: null, // Stores the final object
   state: 'selecting', // Stores page state
   view: {
     width: $(window).width(),
@@ -63,16 +65,26 @@ const validateInput = (input) => {
 }
 
 // TODO filters image recognition output for animals
-// TODO throw error if not animal
+// TODO error if not animal
 const filterOutput = function (output) {
   var data = output.outputs[0].data
   var result = data.concepts[0] // The most likely guess
   return result
 }
 
-// TODO filters the wikipedia text into a standard object
-const filterText = function (html) {
-  return html
+// Returns date
+const getDate = function () { // TODO UTC and such
+  var now = new Date()
+  return now
+}
+
+// Returns the location
+const getLocation = function (coordinates) { // TODO ask for permission and get location
+  if (coordinates) {
+    return 1000000
+  } else {
+    return "street"
+  }
 }
 
 // Convert image
@@ -91,6 +103,61 @@ const toBase64 = function (img) {
 // TODO he page is loaded
 const loaded = function () {
 
+}
+
+// Filters the wikipedia text into a standard object
+const filterText = function (html) { // Asumes the Wikipedia page of an animal
+  var object = $(html.text['*'])
+  var name = html.displaytitle
+  var text = []
+  var sciName = null
+
+  object.find('#mw-content-text').find(':first-child')
+  object.children().each(function () {
+    if ($(this).is('p')) { // First paragraphs
+      var cleanText = $(this)
+      cleanText.find('.reference').remove() // Remove references
+      cleanText.find('a').contents().unwrap() // Change links into urls
+      text.push(cleanText[0]) // Add the stripped html
+    } else {
+      if ($(this).hasClass('infobox biota')) { // Contains scientific name
+        let result = []
+
+        $(this).find('tr').each(function () { // Table rows loop
+          let cells = $(this).find('td')
+          if (cells.length) { // Exist
+            if (cells[0].textContent === 'Genus:') {
+              result[0] = $(this).find('a').text() // Genus name
+            }
+            if (cells[0].textContent === 'Species:') {
+              result[1] = $(this).find('a').text() // Species name
+            }
+          }
+        })
+
+        sciName = result.join(' ')
+
+      } else if ($(this).hasClass('toc')) { // End of intro
+        return false // Ends the jquery loop
+      }
+    }
+  })
+
+
+  var links = { // TODO get more
+    Wikipedia: `https://en.wikipedia.org/wiki/${name}`
+  }
+
+
+  local.data = {
+    name: name,
+    scientific: sciName,
+    confidence: `${Math.floor(local.result.returned.value * 100)}%`,
+    date: local.metadata.date,
+    location: local.metadata.location,
+    text: text, // From local scope
+    links: links // From local scope
+  }
 }
 
 // Gets a local.result from an image
@@ -159,7 +226,9 @@ const processOutput = function (output) {
 // Displays the final result
 const displayResult = function () {
   // TODO include html using EJS
-  doc.result.html(local.result.data.parse.text['*'])
+  filterText(local.result.data.parse)
+  console.log(local.data)
+  doc.result.html('test')
   doc.result.show()
   doc.back.parents('.top').show()
   doc.save.show()
@@ -207,7 +276,10 @@ const goBack = function () {
     local.context.clearRect(0, 0, local.view.width, local.view.height)
     beginState()
   } else if (local.state === 'result') {
+    ocal.image = null
     local.result = null
+    local.metadata = null
+    local.data = null
     doc.result.empty() // Html content is removed
     beginState()
   }
@@ -215,6 +287,13 @@ const goBack = function () {
 
 // Image is selected
 const imageTaken = function () {
+  local.metadata = { // Store the image data
+    date: getDate(),
+    location: {
+      coordinates: getLocation(false),
+      representation: getLocation(true)
+    }
+  }
   const img = new Image() // Canavas needs html image element
   img.src = local.image
   img.onload = () => { // Image needs to load before displaying
@@ -311,7 +390,7 @@ doc.take.click(() => {
 
 // When a new file is entered
   // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL
-doc.gallery.change( function () {
+doc.gallery.change(function () {
   if (validateInput(this.files)) {
     const reader = new FileReader() // Can read the image
     reader.onload = function (event) {

@@ -4,6 +4,7 @@
       "id": "000001",
       "name": "Test",
       "description": "This is an achievement",
+      "categorie": "one",
       "got": false
     }
   ]
