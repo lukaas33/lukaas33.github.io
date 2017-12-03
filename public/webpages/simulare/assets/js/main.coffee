@@ -14,6 +14,9 @@ local =
   resolution: 72 # No way to get this
   fps: 30 # Standard for canvas
   scaleFactor: 1.5e6 # Scale of the animation, 1 cm : this cm
+  maxInstances:
+    food: 15,
+    bacteria: 30
 
 
 # Get elements with these id's
@@ -204,12 +207,12 @@ class Food
 
   # Gets eaten, removes itself
   eaten: =>
-    @particle.remove() # Remove drawn shape
     for food, index in global.food
       # Don't know why, but the loop keeps getting an undefined
       if food != undefined
         # Remove reference to self
         global.food.splice(index, 1) if food.id == @id
+    @particle.remove() # Remove drawn shape
 
 # Bacteria constructors
 class Bacteria
@@ -231,7 +234,7 @@ class Bacteria
     @direction = null # Stores the direction as point
     @age = new SciNum(0, 'time', 's')
     @target = null # No target yet
-    @minEnergyLoss = new SciNum(4e6, 'energy per second', 'atp/s')
+    @minEnergyLoss = new SciNum(5e6, 'energy per second', 'atp/s')
     @energyLoss = new SciNum(0, 'energy per second', 'atp/s') # Initially
     # Tracks actions
     @action = null # Initial
@@ -277,20 +280,17 @@ class Bacteria
     @body.name = @id # In paper.js layer
     html.layer.bacteria.addChild(@body)
 
-  # Update variables propotional to each other
-  proportions: =>
+  # Updates its body
+  update: =>
+    @checkValues()
     @volume.value = @mass.value / global.constants.bacteriaDensity.value
     @diameter.value = Calc.diameter(@volume.value)
     # Change its size
     previous = @radius.value
     @radius.value = @diameter.value / 2
-    difference = @radius.value / previous # Ratio
-    @body.scale(difference)
-
-  # Updates its body
-  update: =>
-    @checkValues()
-    # @proportions()
+    if @radius.value != previous
+      difference = @radius.value / previous # Ratio
+      @body.scale(difference)
     @body.position = @position.round() # Change position
 
   # Gets selected by user
@@ -376,10 +376,10 @@ class Bacteria
 
     # Loses energy per second
     atpSec = (@energyLoss.value / local.fps)
-    # @energy.value -= atpSec
-
+    @energy.value -= atpSec
     # Loses mass
-    # @mass.value -= atpSec * global.constants.atpMass.value
+    mass = atpSec * global.constants.atpMass.value
+    @mass.value -= mass
 
 
   # Checks if there is food nearby
@@ -471,7 +471,6 @@ class Bacteria
           if not isNaN(Calc.combine(speedComponent))
             # Stop moving in this direction
             @speed.value = @speed.value.subtract(speedComponent)
-          # @chooseDirection()
         else
           checkNotColliding += 1
 
@@ -511,8 +510,8 @@ class Bacteria
     if check.circleInside(@body, @target.particle)
       @energy.value += @target.energy.value
       # Gains mass
-      @mass.value += @target.energy.value * global.constants.atpMass.value
-
+      mass = @target.energy.value * global.constants.atpMass.value
+      @mass.value += mass
       @target.eaten() # Removes itself
       # findTarget won't be called anymore
       @target = null # Doesn't exist anymore
@@ -857,7 +856,7 @@ simulation.feed = ->
   total = global.enviroment.energy.value
   left = total # Inital
   # Food left to give and maximum instances not reached
-  while left > 0 and global.food.length <= 20
+  while left > 0 and global.food.length <= local.maxInstances.food
     # A percentage of the total
     amount = Random.value(total * 0.10, total * 0.15)
     if amount < left

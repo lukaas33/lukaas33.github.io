@@ -10,7 +10,11 @@
   local = {
     resolution: 72,
     fps: 30,
-    scaleFactor: 1.5e6
+    scaleFactor: 1.5e6,
+    maxInstances: {
+      food: 15,
+      bacteria: 30
+    }
   };
 
   ref = ['start', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority'];
@@ -244,23 +248,17 @@
     };
 
     Food.prototype.eaten = function() {
-      var food, index, k, len1, ref1, results;
-      this.particle.remove();
+      var food, index, k, len1, ref1;
       ref1 = global.food;
-      results = [];
       for (index = k = 0, len1 = ref1.length; k < len1; index = ++k) {
         food = ref1[index];
         if (food !== void 0) {
           if (food.id === this.id) {
-            results.push(global.food.splice(index, 1));
-          } else {
-            results.push(void 0);
+            global.food.splice(index, 1);
           }
-        } else {
-          results.push(void 0);
         }
       }
-      return results;
+      return this.particle.remove();
     };
 
     return Food;
@@ -291,7 +289,6 @@
       this.ages = bind(this.ages, this);
       this.select = bind(this.select, this);
       this.update = bind(this.update, this);
-      this.proportions = bind(this.proportions, this);
       this.display = bind(this.display, this);
       this.changeAction = bind(this.changeAction, this);
       this.live = bind(this.live, this);
@@ -309,7 +306,7 @@
       this.direction = null;
       this.age = new SciNum(0, 'time', 's');
       this.target = null;
-      this.minEnergyLoss = new SciNum(4e6, 'energy per second', 'atp/s');
+      this.minEnergyLoss = new SciNum(5e6, 'energy per second', 'atp/s');
       this.energyLoss = new SciNum(0, 'energy per second', 'atp/s');
       this.action = null;
       this.previousAction = null;
@@ -353,18 +350,17 @@
       return html.layer.bacteria.addChild(this.body);
     };
 
-    Bacteria.prototype.proportions = function() {
+    Bacteria.prototype.update = function() {
       var difference, previous;
+      this.checkValues();
       this.volume.value = this.mass.value / global.constants.bacteriaDensity.value;
       this.diameter.value = Calc.diameter(this.volume.value);
       previous = this.radius.value;
       this.radius.value = this.diameter.value / 2;
-      difference = this.radius.value / previous;
-      return this.body.scale(difference);
-    };
-
-    Bacteria.prototype.update = function() {
-      this.checkValues();
+      if (this.radius.value !== previous) {
+        difference = this.radius.value / previous;
+        this.body.scale(difference);
+      }
       return this.body.position = this.position.round();
     };
 
@@ -430,7 +426,7 @@
     };
 
     Bacteria.prototype.loseEnergy = function() {
-      var atpSec, condition, difference, k, len1, loss, ref1, value;
+      var atpSec, condition, difference, k, len1, loss, mass, ref1, value;
       loss = this.minEnergyLoss.value;
       ref1 = ['temperature', 'toxicity', 'acidity'];
       for (k = 0, len1 = ref1.length; k < len1; k++) {
@@ -445,7 +441,10 @@
         loss += difference * this.minEnergyLoss.value;
       }
       this.energyLoss.value = loss;
-      return atpSec = this.energyLoss.value / local.fps;
+      atpSec = this.energyLoss.value / local.fps;
+      this.energy.value -= atpSec;
+      mass = atpSec * global.constants.atpMass.value;
+      return this.mass.value -= mass;
     };
 
     Bacteria.prototype.foodNearby = function() {
@@ -590,9 +589,11 @@
     Bacteria.prototype.die = function() {};
 
     Bacteria.prototype.eat = function() {
+      var mass;
       if (check.circleInside(this.body, this.target.particle)) {
         this.energy.value += this.target.energy.value;
-        this.mass.value += this.target.energy.value * global.constants.atpMass.value;
+        mass = this.target.energy.value * global.constants.atpMass.value;
+        this.mass.value += mass;
         this.target.eaten();
         return this.target = null;
       }
@@ -968,7 +969,7 @@
     total = global.enviroment.energy.value;
     left = total;
     results = [];
-    while (left > 0 && global.food.length <= 20) {
+    while (left > 0 && global.food.length <= local.maxInstances.food) {
       amount = Random.value(total * 0.10, total * 0.15);
       if (amount < left) {
         left -= amount;
