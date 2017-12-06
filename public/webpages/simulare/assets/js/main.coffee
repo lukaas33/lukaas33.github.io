@@ -217,10 +217,16 @@ class Food
 # Bacteria constructors
 class Bacteria
   # Values that need to be entered
-  constructor: (@mass, @energy, @position, @generation, @birth) ->
-    # Values that are initialised
-    # TODO diameter is related to energy
+  constructor: (mass, energy, position, generation, birth) ->
+    # Values that are initialised from arguments
     @id = generate.id(global.bacteria)
+    @mass = new SciNum(mass, 'mass', 'kg')
+    @energy = new SciNum(energy, 'energy', 'atp')
+    @position = position
+    @generation = generation
+    @birth = birth
+
+    # Other values
     @volume = new SciNum(@mass.value / global.constants.bacteriaDensity.value, 'volume', 'm^3')
     @diameter = new SciNum(Calc.diameter(@volume.value), 'length', 'm')
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
@@ -231,8 +237,8 @@ class Bacteria
     @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s')
     @minSpeed = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
-    @direction = null # Stores the direction as point
     @age = new SciNum(0, 'time', 's')
+    @direction = null # Stores the direction as point
     @target = null # No target yet
     @minEnergyLoss = new SciNum(5e6, 'energy per second', 'atp/s')
     @energyLoss = new SciNum(0, 'energy per second', 'atp/s') # Initially
@@ -489,7 +495,7 @@ class Bacteria
   findTarget: =>
     if @action == 'chasing' # After it has slowed
       @goToPoint(@target.position)
-    @eat() # Try to eat
+      @eat() # Try to eat
 
   # Go to a point TODO work out method
   goToPoint: (point) =>
@@ -508,7 +514,7 @@ class Bacteria
   eat: =>
     # Inside it
     if check.circleInside(@body, @target.particle)
-      @energy.value += @target.energy.value
+      @energy.value = @energy.value + @target.energy.value
       # Gains mass
       mass = @target.energy.value * global.constants.atpMass.value
       @mass.value += mass
@@ -806,8 +812,8 @@ simulation.createLife = ->
   html.layer.bacteria.activate()
 
   # Starter values
-  mass = new SciNum(7e-16, 'mass', 'kg')
-  energy = new SciNum(3.9e9, 'energy', 'atp')
+  mass = 7e-16
+  energy = 3.9e9
 
   global.bacteria[0] = new Viridis(
     mass,

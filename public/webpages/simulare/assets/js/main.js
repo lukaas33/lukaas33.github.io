@@ -266,12 +266,7 @@
   })();
 
   Bacteria = (function() {
-    function Bacteria(mass1, energy1, position, generation, birth) {
-      this.mass = mass1;
-      this.energy = energy1;
-      this.position = position;
-      this.generation = generation;
-      this.birth = birth;
+    function Bacteria(mass, energy, position, generation, birth) {
       this.eat = bind(this.eat, this);
       this.die = bind(this.die, this);
       this.divide = bind(this.divide, this);
@@ -294,6 +289,11 @@
       this.live = bind(this.live, this);
       this.born = bind(this.born, this);
       this.id = generate.id(global.bacteria);
+      this.mass = new SciNum(mass, 'mass', 'kg');
+      this.energy = new SciNum(energy, 'energy', 'atp');
+      this.position = position;
+      this.generation = generation;
+      this.birth = birth;
       this.volume = new SciNum(this.mass.value / global.constants.bacteriaDensity.value, 'volume', 'm^3');
       this.diameter = new SciNum(Calc.diameter(this.volume.value), 'length', 'm');
       this.radius = new SciNum(this.diameter.value / 2, 'length', 'm');
@@ -303,8 +303,8 @@
       this.maxSpeed = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
       this.minSpeed = new SciNum(new Point(0, 0), 'speed', 'm/s');
       this.speed = new SciNum(new Point(0, 0), 'speed', 'm/s');
-      this.direction = null;
       this.age = new SciNum(0, 'time', 's');
+      this.direction = null;
       this.target = null;
       this.minEnergyLoss = new SciNum(5e6, 'energy per second', 'atp/s');
       this.energyLoss = new SciNum(0, 'energy per second', 'atp/s');
@@ -573,8 +573,8 @@
     Bacteria.prototype.findTarget = function() {
       if (this.action === 'chasing') {
         this.goToPoint(this.target.position);
+        return this.eat();
       }
-      return this.eat();
     };
 
     Bacteria.prototype.goToPoint = function(point) {
@@ -591,7 +591,7 @@
     Bacteria.prototype.eat = function() {
       var mass;
       if (check.circleInside(this.body, this.target.particle)) {
-        this.energy.value += this.target.energy.value;
+        this.energy.value = this.energy.value + this.target.energy.value;
         mass = this.target.energy.value * global.constants.atpMass.value;
         this.mass.value += mass;
         this.target.eaten();
@@ -947,8 +947,8 @@
     var energy, mass;
     console.log("Creating life");
     html.layer.bacteria.activate();
-    mass = new SciNum(7e-16, 'mass', 'kg');
-    energy = new SciNum(3.9e9, 'energy', 'atp');
+    mass = 7e-16;
+    energy = 3.9e9;
     global.bacteria[0] = new Viridis(mass, energy, local.center, 1, 0);
     global.bacteria[1] = new Rubrum(mass, energy, local.center.subtract(100, 0), 1, 0);
     return global.bacteria[2] = new Caeruleus(mass, energy, local.center.add(100, 0), 1, 0);
