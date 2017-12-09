@@ -13,9 +13,9 @@ const global = {
     cards: true,
     selected: null // Selected instance
   },
-  enviroment: { // Enviroment variables
-    temperature: null,
-    acidity: null,
+  enviroment: { // Enviroment variables, are filled via input elements
+    temperature: null, // 0 - 40 C
+    acidity: null, // 5.5 - 8.5
     toxicity: null,
     energy: null
   },

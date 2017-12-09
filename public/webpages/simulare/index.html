@@ -54,26 +54,26 @@
             <div class="value">
               <p>Temperature</p>
               <span class="limit">0 <span class="unit">&deg;C</span></span>
-              <input type="range" name="temperature" data-unit="celcius" min="0" max="40" value="20" class="slider">
+              <input type="range" name="temperature" data-unit="&deg;C" step="4" min="0" max="40" value="20" class="slider">
               <span class="limit">40 <span class="unit">&deg;C</span></span>
             </div>
             <div class="value">
               <p>Acidity</p>
               <span class="limit">5.5</span>
-              <input type="range" name="acidity" data-unit="" min="5.5" max="8.5" value="7" class="slider">
+              <input type="range" name="acidity" data-unit="" step="0.30" min="5.5" max="8.5" value="7.0" class="slider">
               <span class="limit">8.5</span>
             </div>
             <div class="value">
               <p>Toxicity</p>
-              <span class="limit">0 <span class="unit">M</span></span>
-              <input type="range" name="concentration" data-unit="molar" min="0" max="12" value="0" class="slider">
-              <span class="limit">12 <span class="unit">M</span></span>
+              <span class="limit">0 <span class="unit">kg/m^3</span></span>
+              <input type="range" name="concentration" data-unit="kg/m^3" step="1.56" min="0" max="15.6" value="0" class="slider">
+              <span class="limit">15.6 <span class="unit">kg/m^3</span></span>
             </div>
             <div class="value">
               <p>Energy</p>
-              <span class="limit">2e10 <span class="unit">ATP/s</span></span>
-              <input type="range" name="energy" data-unit="atp/s" min="5e7" max="5e8" value="5e8" class="slider">
-              <span class="limit">6e11 <span class="unit">ATP/s</span></span>
+              <span class="limit">6e7 <span class="unit">ATP/s</span></span>
+              <input type="range" name="energy" data-unit="atp/s" min="6e7" max="1.56e8" value="1.56e8" class="slider">
+              <span class="limit">1.6e8 <span class="unit">ATP/s</span></span>
             </div>
           </form>
         </section>

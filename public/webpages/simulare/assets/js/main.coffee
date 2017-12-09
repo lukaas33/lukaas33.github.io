@@ -13,14 +13,14 @@ doc = {}
 local =
   resolution: 72 # No way to get this
   fps: 30 # Standard for canvas
-  scaleFactor: 1.5e6 # Scale of the animation, 1 cm : this cm
+  scaleFactor: 1.2e6 # Scale of the animation, 1 cm : this cm
   maxInstances:
     food: 15,
     bacteria: 30
 
 
 # Get elements with these id's
-for id in ['start', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority']
+for id in ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority']
   doc[id] = $("##{id}")
 # Store these selections
 doc.menuItems = doc.menu.find('.item button')
@@ -153,10 +153,13 @@ class SciNum
 # Constructor for food
 class Food
   # Values that need to be entered
-  constructor: (@energy) ->
+  constructor: (energy) ->
     @id = generate.id(global.food)
-    # TODO is related to energy
-    @diameter = new SciNum(Random.value(0.3e-6, 0.5e-6), 'length', 'm')
+    @energy = new SciNum(energy, 'energy', 'atp')
+    @mass = new SciNum(@energy.value * global.constants.atpMass.value, 'mass', 'kg')
+    # Density based on water density, real value doesn't exist because the molecules are made up
+    @volume = new SciNum(@mass.value / (global.constants.waterDensity.value / 2.5), 'volume', 'm^3')
+    @diameter = new SciNum(Calc.diameter(@volume.value), 'length', 'm') # Size depends on energy
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
 
   # Checks if position is legal
@@ -215,33 +218,38 @@ class Food
     @particle.remove() # Remove drawn shape
 
 # Bacteria constructors
-class Bacteria
+class Bacteria # Has values shared by all bacteria
   # Values that need to be entered
-  constructor: (mass, energy, position, generation, birth) ->
+  constructor: (mass, position, generation, birth) ->
     # Values that are initialised from arguments
     @id = generate.id(global.bacteria)
     @mass = new SciNum(mass, 'mass', 'kg')
-    @energy = new SciNum(energy, 'energy', 'atp')
     @position = position
     @generation = generation
     @birth = birth
 
     # Other values
-    @volume = new SciNum(@mass.value / global.constants.bacteriaDensity.value, 'volume', 'm^3')
+    @energy = new SciNum(
+      Math.round(@mass.value / global.constants.atpMass.value), # Number of atp molecules
+      'energy',
+      'atp'
+    )
+    @density = new SciNum( # Different by a factor of 1.1 from water
+      ((2/3) * global.constants.waterDensity.value) + ((1/3) * (13/10) * global.constants.waterDensity.value),
+      'density',
+      'kg/m^3'
+    )
+    @volume = new SciNum(@mass.value / @density.value, 'volume', 'm^3')
     @diameter = new SciNum(Calc.diameter(@volume.value), 'length', 'm')
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
-    @viewRange = new SciNum(@diameter.value * 2.5, 'length', 'm')
     @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2') # Used when starting to move
     @decceleration = new SciNum(0, 'negative acceleration', 'm/s^2') # Used when slowing down
-    # x times its bodylength per second
-    @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s')
     @minSpeed = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @age = new SciNum(0, 'time', 's')
+    @energyLoss = new SciNum(0, 'energy per second', 'atp/s') # Initially
     @direction = null # Stores the direction as point
     @target = null # No target yet
-    @minEnergyLoss = new SciNum(5e6, 'energy per second', 'atp/s')
-    @energyLoss = new SciNum(0, 'energy per second', 'atp/s') # Initially
     # Tracks actions
     @action = null # Initial
     @previousAction = null
@@ -289,7 +297,7 @@ class Bacteria
   # Updates its body
   update: =>
     @checkValues()
-    @volume.value = @mass.value / global.constants.bacteriaDensity.value
+    @volume.value = @mass.value / @density.value
     @diameter.value = Calc.diameter(@volume.value)
     # Change its size
     previous = @radius.value
@@ -375,9 +383,10 @@ class Bacteria
       else
         difference = 0
 
-      # Energy loss can go up exponentially
-      loss += difference * @minEnergyLoss.value
+      # Increase the Influence of the conditions
+      loss += (difference * 100) * @minEnergyLoss.value
 
+    loss *= 25 # Increased to speed up things
     @energyLoss.value = loss
 
     # Loses energy per second
@@ -386,7 +395,6 @@ class Bacteria
     # Loses mass
     mass = atpSec * global.constants.atpMass.value
     @mass.value -= mass
-
 
   # Checks if there is food nearby
   foodNearby: =>
@@ -516,18 +524,23 @@ class Bacteria
     if check.circleInside(@body, @target.particle)
       @energy.value = @energy.value + @target.energy.value
       # Gains mass
-      mass = @target.energy.value * global.constants.atpMass.value
+      energy = @target.energy.value * 15 # Increased to speed up things
+      mass = energy * global.constants.atpMass.value
       @mass.value += mass
       @target.eaten() # Removes itself
       # findTarget won't be called anymore
       @target = null # Doesn't exist anymore
-
 # Constructors that inherit code
-class Lucarium extends Bacteria # TODO add unique traits for family
+
+class Lucarium extends Bacteria # This family of bacteria has its own traits
   constructor: () ->
     super(arguments...) # Parent constructor
     # Are initialised
     @family = "Lucarium"
+    @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s') # Speed based on body size
+    @minEnergyLoss = new SciNum(4e5, 'energy per second', 'atp/s')
+    @viewRange = new SciNum(@diameter.value * 2.5, 'length', 'm')
+    @mutationChance = 1/1000 # Will be mutated for user experience
     @idealConditions =
       temperature: new SciNum(20, 'temperature', 'degrees')
       acidity: new SciNum(7, 'pH', '')
@@ -541,9 +554,9 @@ class Viridis extends Lucarium # TODO make different traits for the species
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
     @color = '#4caf50'
     @tolerance =
-      temperature: new SciNum(5, 'temperature', 'degrees')
+      temperature: new SciNum(5, 'temperature', '&deg;C')
       acidity: new SciNum(0.5, 'pH', '')
-      toxicity: new SciNum(2, 'concentration', 'M')
+      toxicity: new SciNum(2, 'concentration', 'kg/m^3')
 
 class Rubrum extends Lucarium
   constructor: () ->
@@ -553,9 +566,9 @@ class Rubrum extends Lucarium
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
     @color = '#f44336'
     @tolerance =
-      temperature: new SciNum(5, 'temperature', 'degrees')
+      temperature: new SciNum(5, 'temperature', '&deg;C')
       acidity: new SciNum(0.5, 'pH', '')
-      toxicity: new SciNum(2, 'concentration', 'M')
+      toxicity: new SciNum(2, 'concentration', 'kg/m^3')
 
 class Caeruleus extends Lucarium
   constructor: () ->
@@ -565,9 +578,9 @@ class Caeruleus extends Lucarium
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
     @color = '#2196f3'
     @tolerance =
-      temperature: new SciNum(5, 'temperature', 'degrees')
+      temperature: new SciNum(5, 'temperature', '&deg;C')
       acidity: new SciNum(0.5, 'pH', '')
-      toxicity: new SciNum(2, 'concentration', 'M')
+      toxicity: new SciNum(2, 'concentration', 'kg/m^3')
 
 # << Document functions >>
 # Groups
@@ -812,26 +825,22 @@ simulation.createLife = ->
   html.layer.bacteria.activate()
 
   # Starter values
-  mass = 7e-16
-  energy = 3.9e9
+  mass = 1.64e-15 # Will get the average values of the species
 
   global.bacteria[0] = new Viridis(
     mass,
-    energy,
     local.center,
     1,
     0
   )
   global.bacteria[1] = new Rubrum(
     mass,
-    energy,
     local.center.subtract(100, 0),
     1,
     0
   )
   global.bacteria[2] = new Caeruleus(
     mass,
-    energy,
     local.center.add(100, 0),
     1,
     0
@@ -840,14 +849,27 @@ simulation.createLife = ->
 # Set up the constants
 simulation.setConstants = ->
   global.constants =
-    waterDensity: new SciNum(0.982e3, 'density', 'kg/m^3') # Around a temperature of 20 degrees
+    waterDensity: new SciNum(0.9982e3, 'density', 'kg/m^3') # Around a temperature of 20 degrees
     atomairMass: new SciNum(1.660539e-27, 'mass', 'kg')
-
-  global.constants.bacteriaDensity = new SciNum( # Different by a factor of 1.1
-    ((2/3) * global.constants.waterDensity.value) + ((1/3) * (13/10) * global.constants.waterDensity.value),
-    'density',
-    'kg/m^3'
-  )
+    avogadroContstant: 6.02214129e23
+    prefixes: # In SI
+      'y': 1e-24
+      'z': 1e-21
+      'a': 1e-18
+      'f': 1e-15
+      'p': 1e-12
+      'n': 1e-9
+      '&#181;': 1e-6 # Html code
+      'm': 1e-3
+      '': 1e0
+      'k': 1e3
+      'M': 1e6
+      'G': 1e9
+      'T': 1e12
+      'P': 1e15
+      'E': 1e18
+      'Z': 1e21
+      'Y': 1e24
 
   global.constants.atpMass = new SciNum( # Using the mass of 507 u
     507.18 * global.constants.atomairMass.value,
@@ -864,14 +886,14 @@ simulation.feed = ->
   # Food left to give and maximum instances not reached
   while left > 0 and global.food.length <= local.maxInstances.food
     # A percentage of the total
-    amount = Random.value(total * 0.10, total * 0.15)
-    if amount < left
+    amount = Random.value(total * 0.10, total * 0.45)
+    if amount < left * 0.95 # Spawn while higher lower than 95% of what's left
       left -= amount # Remove from what's left
     else
       amount = left # Remainder
       left = 0 # Ends loop
     # Add food
-    food = new Food(new SciNum(Math.floor(amount), 'energy', 'j'))
+    food = new Food(Math.floor(amount))
     food.display() # Draw in field
     global.food.push(food) # Add to array
 
@@ -898,10 +920,13 @@ simulation.start = ->
   console.log "Loaded completely"
 
   # Add events to elements
+  doc.start.find(".screen:first").show() # Show first screen
   doc.start.find("button[name=continue]").click ->
     doc.start.find(".screen:first").hide() # Hide first screen
+    doc.start.find(".screen:last").show() # Show second screen
   doc.start.find("button[name=start]").click ->
     doc.start.hide() # Hide complete screen
+    doc.home.css(display: 'flex')
     simulation.run()
 
   input = doc.start.find(".slider")
