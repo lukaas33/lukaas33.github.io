@@ -109,7 +109,7 @@ const loaded = function () {
 const filterText = function (html) { // Asumes the Wikipedia page of an animal
   var object = $(html.text['*'])
   var name = html.displaytitle
-  var text = []
+  var text = $('<div></div>') // Container object
   var sciName = null
 
   object.find('#mw-content-text').find(':first-child')
@@ -118,7 +118,7 @@ const filterText = function (html) { // Asumes the Wikipedia page of an animal
       var cleanText = $(this)
       cleanText.find('.reference').remove() // Remove references
       cleanText.find('a').contents().unwrap() // Change links into urls
-      text.push(cleanText[0]) // Add the stripped html
+      text.append(cleanText[0]) // Add the stripped html
     } else {
       if ($(this).hasClass('infobox biota')) { // Contains scientific name
         let result = []
@@ -143,20 +143,19 @@ const filterText = function (html) { // Asumes the Wikipedia page of an animal
     }
   })
 
-
   var links = { // TODO get more
     Wikipedia: `https://en.wikipedia.org/wiki/${name}`
   }
 
-
   local.data = {
+    // Local scope
     name: name,
     scientific: sciName,
+    text: text[0],
+    links: links,
     confidence: `${Math.floor(local.result.returned.value * 100)}%`,
     date: local.metadata.date,
-    location: local.metadata.location,
-    text: text, // From local scope
-    links: links // From local scope
+    location: local.metadata.location
   }
 }
 
@@ -219,6 +218,7 @@ const processOutput = function (output) {
       returned: local.result,
       data: data
     }
+    filterText(local.result.data.parse) // Change format
     displayResult()
   })
 }
@@ -226,9 +226,9 @@ const processOutput = function (output) {
 // Displays the final result
 const displayResult = function () {
   // TODO include html using EJS
-  filterText(local.result.data.parse)
+
   console.log(local.data)
-  doc.result.html('test')
+  doc.result.html(JSON.stringify(local.data, shared.json.stringify))
   doc.result.show()
   doc.back.parents('.top').show()
   doc.save.show()
@@ -290,8 +290,8 @@ const imageTaken = function () {
   local.metadata = { // Store the image data
     date: getDate(),
     location: {
-      coordinates: getLocation(false),
-      representation: getLocation(true)
+      coordinates: getLocation(true),
+      representation: getLocation(false)
     }
   }
   const img = new Image() // Canavas needs html image element
@@ -360,9 +360,12 @@ navigator.mediaDevices.getUserMedia(setConstraints()).then((stream) => {
 })
 
 // << Events >>
-// TODO save data into storage
 doc.save.click(function () {
-
+  // Store
+  shared.storage('results', {value: local.data, genId: true}, () => {
+    var newLink = window.location.href.replace('scan', 'results')
+    window.location.href = newLink // Redirect, behaviour similar to clicking a link
+  })
 })
 
 // Accept the image

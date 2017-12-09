@@ -1,10 +1,22 @@
 {
   "content": [
     {
-      "id": "000001",
-      "name": "Test",
-      "description": "This is an achievement",
-      "categorie": "one",
+      "id": "S001",
+      "name": "Eagle!!!",
+      "description": "Succesfully find and scan an eagle",
+      "category": "specific",
+      "got": false
+    }, {
+      "id": "S002",
+      "name": "I like turtles",
+      "description": "Scan a turtle",
+      "category": "specific",
+      "got": false
+    }, {
+      "id": "N001",
+      "name": "Boyscout",
+      "description": "Scan 10 animals",
+      "category": "number",
       "got": false
     }
   ]
