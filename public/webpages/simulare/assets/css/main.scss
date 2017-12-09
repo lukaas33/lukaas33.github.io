@@ -25,6 +25,10 @@
       &:last-child {
         z-index: 60;
 
+        form {
+          pointer-events: auto; // Can be clicked
+        }
+
         .value {
 
           .slider {

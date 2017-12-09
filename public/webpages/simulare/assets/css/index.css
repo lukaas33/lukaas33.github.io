@@ -6,7 +6,8 @@
 
 body {
   font-family: 'Orbitron', sans-serif;
-  font-size: 1rem; }
+  font-size: 1rem;
+  pointer-events: none; }
 
 #loading,
 #start,
@@ -64,7 +65,10 @@ body {
 
 #start {
   z-index: 50; }
+  #start .screen:first-child, #start .screen:last-child {
+    display: none; }
 
 #home {
   background-color: white;
+  display: none;
   z-index: 0; }

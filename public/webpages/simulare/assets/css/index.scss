@@ -77,9 +77,16 @@
 
 #start {
   z-index: 50; // Middle page
+
+  .screen {
+    &:first-child, &:last-child {
+      display: none;
+    }
+  }
 }
 
 #home {
   background-color: white;
+  display: none;
   z-index: 0; // Lowest page
 }
