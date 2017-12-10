@@ -1,45 +1,74 @@
 # My websites
 
-![My personal logo and profile picture](https://www.lukaas33.com/assets/images/other/logo.svg)
+![A banner image for this repository](https://image.ibb.co/jYh1Sw/cover_web.jpg)
 
-## Intro
+In this repository I keep the websites that I make. It's kind of a mess, I'm figuring this out as I go along.   
+Smaller websites are kept in the webpages folder.
 
-In this repository I keep the websites that I make.
-Smaller websites are kept in the webpages folder while descriptions are generated at the projects folder.
 It's published to a webhost and it serves as my resume and portfolio.
-My websites are in English but some documentation in the portfolio may be Dutch.
+My websites are in English but some documentation be in Dutch.
+Descriptions of projects are stored in the data-folder and can be viewed at the projects/{name} path.
 
 I currently only make websites for learning or for fun.
 All my code is open source, so if I ever make something nice everyone can use it.
 
-## News
 
-I am working on three projects now: Faunadex, resume and Simulare.
+---
 
-I've learned some Python and am not sure what I can do with it.
-
-## Links
+#### Links
 
 -   [Domain](https://www.lukaas33.com)
 -   [Google+](https://plus.google.com/u/0/+LucasvanOsenbruggen)
 -   [Email](mailto:contact@lukaas33.com)
 
-## To learn
 
--   C _(Perhaps some)_
+#### Project highlights
+
+-   [Resume](https://www.lukaas33.com)
+
+    This repository is a prject itself.
+
+-   [Simulare](https://www.lukaas33.com/webpages/simulare)
+
+    A simulation of bacteria.
+
+-   [Faunadex](https://www.lukaas33.com/webpages/faunadex)
+
+    Scan an animal to get information about it.
+
+-   [Solaris](https://www.lukaas33.com/webpages/solaris)
+
+    A simple model of the solar system.
+
+-   [Breakout](https://www.lukaas33.com/webpages/breakout)
+
+    My version of the classic game.
+
+
+#### Things to do / learn
+
+-   Information theory
+-   Algorithms
+-   C / C++
+    -   Arduino programming
+-   AI and machine learning
+-   Node.js
+    -   Mongo DB
+    -   ~~EJS~~
+
+
 -   Regex
 -   Latex
--   Mongo DB
--   ~~EJS~~
--   Node.js
 -   ~~Markdown~~ _(Duh)_
 -   ~~Python~~ _(Haven't found a purpose for it)_
--   ~~CoffeeScript~~
--   ~~Sass~~
 -   ~~PHP~~ _(Not interested anymore)_
 -   ~~SQL~~
 -   ~~Git~~ _(A little)_
--   ~~jQuery~~
--   ~~JavaScript~~
+
+
+-   ~~JavaScript~~ _(A lot)_
+    -   ~~jQuery~~
+    -   ~~CoffeeScript~~
 -   ~~CSS~~
+    -   ~~Sass~~
 -   ~~Html~~
