@@ -7,3 +7,17 @@ body {
   overflow: hidden;
   width: 100vw;
   height: 100vh; }
+
+#data .container {
+  height: 25vh; }
+  #data .container .text {
+    height: 75vh; }
+    #data .container .text .head {
+      height: 5vh; }
+    #data .container .text .body {
+      height: 45vh;
+      overflow-y: scroll; }
+    #data .container .text .meta {
+      height: 15vh; }
+    #data .container .text .links {
+      height: 10vh; }

@@ -150,6 +150,7 @@ const filterText = function (html) { // Asumes the Wikipedia page of an animal
   local.data = {
     // Local scope
     name: name,
+    img: '#', // TODO add image path
     scientific: sciName,
     text: text[0],
     links: links,
@@ -226,9 +227,9 @@ const processOutput = function (output) {
 // Displays the final result
 const displayResult = function () {
   // TODO include html using EJS
-
   console.log(local.data)
-  doc.result.html(JSON.stringify(local.data, shared.json.stringify))
+  var card = new EJS({url: 'views/partials/result.ejs'}).render({data: local.data})
+  doc.result.html(card)
   doc.result.show()
   doc.back.parents('.top').show()
   doc.save.show()
@@ -276,7 +277,7 @@ const goBack = function () {
     local.context.clearRect(0, 0, local.view.width, local.view.height)
     beginState()
   } else if (local.state === 'result') {
-    ocal.image = null
+    local.image = null
     local.result = null
     local.metadata = null
     local.data = null
@@ -290,7 +291,7 @@ const imageTaken = function () {
   local.metadata = { // Store the image data
     date: getDate(),
     location: {
-      coordinates: getLocation(true),
+      coordinates: getLocation(true), // Get as coordinate
       representation: getLocation(false)
     }
   }

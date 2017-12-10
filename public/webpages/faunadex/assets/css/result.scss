@@ -5,3 +5,29 @@
 @import "partials/global";
 
 // TODO style pages
+#data {
+  .container {
+    height: 25vh;
+
+    .text {
+      height: 75vh;
+
+      .head {
+        height: 5vh;
+      }
+
+      .body {
+        height: 45vh;
+        overflow-y: scroll;
+      }
+
+      .meta {
+        height: 15vh;
+      }
+
+      .links {
+        height: 10vh;
+      }
+    }
+  }
+}
