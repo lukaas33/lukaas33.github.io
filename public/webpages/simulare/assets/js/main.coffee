@@ -142,15 +142,57 @@ generate.id = (instances) ->
 # Constructor for scientific numbers
 class SciNum
   # Values that need to be entered
-  constructor: (@value, @quantity, @unit) ->
+  constructor: (value, quantity, unit) ->
+    @value = value
+    @quantity = quantity
+    @unit = unit
 
-  # TODO add method that converts between base and si prefixes
-  notation: =>
-    if @value instanceof Point
-      value = Calc.combine(@value)
+  # Change number notation as string
+  notation: (number) =>
+    number = number.toFixed(3)
+    string = number.toString()
+    return string
+
+  # Change unit to html markup
+  unitNotation: (string) =>
+    html = null
+    if string.indexOf('/') != -1 # Is a fraction
+      parts = string.split('/')
+      html = $('<span></span>').addClass('fraction')
+      html.append($('<span></span>').addClass('top').html(parts[0]))
+      html.append($('<span></span>').addClass('bottom').html(parts[1]))
+      html = html[0] # As dom object
     else
-      value = @value
-    return value.toExponential(4)
+      html = $('<span></span>').html(string)[0] # dom object
+    return html
+
+  # Changes unit to be more friendly
+  represent: =>
+    set = global.constants.prefixes
+    unit = @unit
+    value = @value
+
+    value = Calc.combine(value) if value instanceof Point # vector
+    value = 0 if @quantity == 'speed' and value < 1e-9 # When breaking
+
+    # Exeptions
+    if unit == 'kg' # Base of gram is at kilograms
+      unit = 'g'
+      newValue *= 1000
+
+    if 0 < Math.abs(value) < 1 # Low numbers
+      set = set.lower
+    else if Math.abs(value) >= 1 # Higher numbers
+      set = set.higher
+
+    for prefix in set
+      newValue = value / prefix[1] # Will make the value higher or lower
+
+      # Change prefix
+      if 1 <= Math.abs(newValue) <= 1000 # New value is of normal size
+        console.log newValue, @quantity
+        unitDifferent = new SciNum(@notation(newValue), @quantity, @unitNotation("#{prefix[0]}#{unit}"))
+        return unitDifferent
 
 # Constructor for food
 class Food
@@ -259,8 +301,9 @@ class Bacteria # Has values shared by all bacteria
     @direction = null # Stores the direction as point
     @target = null # No target yet
     # Tracks actions
-    @action = null # Initial
-    @previousAction = null
+    @action = {}
+    @action.current = null # Initial
+    @action.previous = null
 
   # Methods
   # Starts living
@@ -271,12 +314,12 @@ class Bacteria # Has values shared by all bacteria
 
   # Continues living TODO work out energy system with traits
   live: =>
-    if @action == 'dying' # RIP
+    if @action.current == 'dying' # RIP
       @die()
-    else if @action == 'dividing'
+    else if @action.current == 'dividing'
       @divide()
     else # Normal
-      if @action == 'colliding' # Needs to move away
+      if @action.current == 'colliding' # Needs to move away
         @chooseDirection()
       else
         @foodNearby()
@@ -291,9 +334,9 @@ class Bacteria # Has values shared by all bacteria
 
   # Changes the action
   changeAction: (action) =>
-    if action != @action or @action == null # Changes
-      @previousAction = @action
-      @action = action
+    if action != @action.current or @action.current == null # Changes
+      @action.previous = @action.current
+      @action.current = action
 
   # Creates a body TODO the colors and style of the bacteria
   display: =>
@@ -309,6 +352,7 @@ class Bacteria # Has values shared by all bacteria
   # Updates its body
   update: =>
     @checkValues()
+    @mass.current.value = @energy.value * global.constants.atpMass.value
     @volume.value = @mass.current.value / @density.value
     @diameter.value = Calc.diameter(@volume.value)
     # Change its size
@@ -355,7 +399,7 @@ class Bacteria # Has values shared by all bacteria
   # Starts moving
   move: =>
     @checkCollision() # Test if it can move
-    if @action == 'finding' # Slowing down
+    if @action.current == 'finding' # Slowing down
       # Per frame to per second
       decceleration = @decceleration.value / local.fps
       newSpeed = Calc.combine(@speed.current.value) - decceleration
@@ -402,9 +446,9 @@ class Bacteria # Has values shared by all bacteria
     # Loses energy per second
     atpSec = (@energyLoss.current.value / local.fps)
     @energy.value -= atpSec
-    # Loses mass
-    mass = atpSec * global.constants.atpMass.value
-    @mass.current.value -= mass
+    # # Loses mass
+    # mass = atpSec * global.constants.atpMass.value
+    # @mass.current.value -= mass
 
   # Checks if there is food nearby
   foodNearby: =>
@@ -452,7 +496,7 @@ class Bacteria # Has values shared by all bacteria
 
     else if Calc.combine(@speed.current.value) <= @speed.min.value
       @speed.current.value.normalize(@speed.min.value) # Increase speed
-      if @action == 'finding' # Has slowed down
+      if @action.current == 'finding' # Has slowed down
         # console.log(true) if global.interaction.selected == @id
         @speed.min.value = 0 # Reached, is reset
         @decceleration.value = 0 # Is reset
@@ -506,8 +550,8 @@ class Bacteria # Has values shared by all bacteria
         else
           checkNotColliding += 1
 
-    if @action == 'colliding' and checkNotColliding == 2 + global.bacteria.length - 1 # Stopped colliding
-      @changeAction(@previousAction)
+    if @action.current == 'colliding' and checkNotColliding == 2 + global.bacteria.length - 1 # Stopped colliding
+      @changeAction(@action.previous)
 
   # Choose a new direction default is random
   chooseDirection: (angle = Random.value(0, 360)) => # TODO use perlin noise
@@ -519,7 +563,7 @@ class Bacteria # Has values shared by all bacteria
 
   # Will go to a point until reached
   findTarget: =>
-    if @action == 'chasing' # After it has slowed
+    if @action.current == 'chasing' # After it has slowed
       @goToPoint(@target.position)
       @eat() # Try to eat
 
@@ -549,11 +593,11 @@ class Bacteria # Has values shared by all bacteria
   eat: =>
     # Inside it
     if check.circleInside(@body, @target.particle)
-      @energy.value = @energy.value + @target.energy.value
-      # Gains mass
       energy = @target.energy.value * 10 # Increased to speed up things
-      mass = energy * global.constants.atpMass.value
-      @mass.current.value += mass
+      @energy.value += energy
+      # Gains mass
+      # mass = energy * global.constants.atpMass.value
+      # @mass.current.value += mass
       @target.eaten() # Removes itself
       # findTarget won't be called anymore
       @target = null # Doesn't exist anymore
@@ -779,12 +823,16 @@ html.selected = ->
             scinum = data[@dataset.name]
             if @dataset.name in ['mass', 'speed']
               scinum = scinum.current
+
+            representation = scinum.represent()
             # Loop through two spans
             $(@).find('span').each( ->
               if $(@).hasClass('number')
-                @textContent = scinum.notation()
+                # console.log representation
+                @textContent = representation.value
               else if $(@).hasClass('unit')
-                @textContent = scinum.unit
+                @innerHTML = '' # Empty
+                @appendChild(representation.unit)
             )
         )
         doc.bacteria.attr('data-content', true) # Make visible
@@ -879,24 +927,29 @@ simulation.setConstants = ->
     waterDensity: new SciNum(0.9982e3, 'density', 'kg/m^3') # Around a temperature of 20 degrees
     atomairMass: new SciNum(1.660539e-27, 'mass', 'kg')
     avogadroContstant: 6.02214129e23
-    prefixes: # In SI
-      'y': 1e-24
-      'z': 1e-21
-      'a': 1e-18
-      'f': 1e-15
-      'p': 1e-12
-      'n': 1e-9
-      '&#181;': 1e-6 # Html code
-      'm': 1e-3
-      '': 1e0
-      'k': 1e3
-      'M': 1e6
-      'G': 1e9
-      'T': 1e12
-      'P': 1e15
-      'E': 1e18
-      'Z': 1e21
-      'Y': 1e24
+    prefixes:
+      lower: [ # In SI
+        ['y', 1e-24]
+        ['z', 1e-21]
+        ['a', 1e-18]
+        ['f', 1e-15]
+        ['p', 1e-12]
+        ['n', 1e-9]
+        ['&mu;', 1e-6] # Html code
+        ['m', 1e-3]
+      ],
+      higher: [
+        ['', 1e0]
+        ['k', 1e3]
+        ['M', 1e6]
+        ['G', 1e9]
+        ['T', 1e12]
+        ['P', 1e15]
+        ['E', 1e18]
+        ['Z', 1e21]
+        ['Y', 1e24]
+      ]
+  global.constants.prefixes.lower.reverse() # For looping
 
   global.constants.atpMass = new SciNum( # Using the mass of 507 u
     507.18 * global.constants.atomairMass.value,

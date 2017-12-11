@@ -156,6 +156,16 @@ body {
           #sidebar .info #bacteria .content div table {
             height: 100%;
             width: 100%; }
+            #sidebar .info #bacteria .content div table.values .value .unit .fraction {
+              display: inline-block;
+              vertical-align: middle;
+              text-align: center;
+              padding: 0 5px; }
+              #sidebar .info #bacteria .content div table.values .value .unit .fraction .top, #sidebar .info #bacteria .content div table.values .value .unit .fraction .bottom {
+                padding: 0 5px; }
+              #sidebar .info #bacteria .content div table.values .value .unit .fraction .bottom {
+                border-top: 1px solid #000;
+                display: block; }
     #sidebar .info .restart {
       left: 0;
       position: absolute;
