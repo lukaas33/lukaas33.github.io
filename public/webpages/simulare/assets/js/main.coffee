@@ -17,6 +17,8 @@ local =
   maxInstances:
     food: 15,
     bacteria: 30
+  standard:
+    mass: 1.64e-15 # Will get the average values of the species
 
 
 # Get elements with these id's
@@ -212,7 +214,7 @@ class Food
   eaten: =>
     for food, index in global.food
       # Don't know why, but the loop keeps getting an undefined
-      if food != undefined
+      if typeof(food) != 'undefined'
         # Remove reference to self
         global.food.splice(index, 1) if food.id == @id
     @particle.remove() # Remove drawn shape
@@ -228,7 +230,7 @@ class Bacteria # Has values shared by all bacteria
     @generation = generation
     @birth = birth
 
-    # Other values
+    # Other values TODO store as objects
     @energy = new SciNum(
       Math.round(@mass.value / global.constants.atpMass.value), # Number of atp molecules
       'energy',
@@ -247,6 +249,9 @@ class Bacteria # Has values shared by all bacteria
     @minSpeed = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @age = new SciNum(0, 'time', 's')
+    # Depends on constant to avoid change
+    @maxMass = new SciNum(1.5 * local.standard.mass, 'mass', 'kg')
+    @minMass = new SciNum(0.35 * local.standard.mass, 'mass', 'kg')
     @energyLoss = new SciNum(0, 'energy per second', 'atp/s') # Initially
     @direction = null # Stores the direction as point
     @target = null # No target yet
@@ -263,19 +268,23 @@ class Bacteria # Has values shared by all bacteria
 
   # Continues living TODO work out energy system with traits
   live: =>
-    if @action == 'colliding' # Needs to move away
-      @chooseDirection()
-    else
-      @foodNearby()
-      if @target == null # Not chasing
-        # With a chance of 1/x, change direction
-        @chooseDirection() if Random.chance(25)
-
-      else # Food is near
-        @findTarget() # Go get food
-    @move()
-    @loseEnergy()
-    @update()
+    if @action == 'dying' # RIP
+      @die() 
+    else if @action == 'dividing'
+        @divide()
+    else # Normal
+      if @action == 'colliding' # Needs to move away
+        @chooseDirection()
+      else
+        @foodNearby()
+        if @target == null # Not chasing
+          # With a chance of 1/x, change direction
+          @chooseDirection() if Random.chance(25)
+        else # Food is near
+          @findTarget() # Go get food
+      @move()
+      @loseEnergy()
+      @update()
 
   # Changes the action
   changeAction: (action) =>
@@ -423,6 +432,10 @@ class Bacteria # Has values shared by all bacteria
 
   # Check if it can divide or if it dies
   checkValues: =>
+    if @mass.value <= minMass.value
+      @changeAction('dying')
+    else if @mass.value >= @maxMass.value
+        @changeAction('dividing')
 
   # Checks the speed
   checkSpeed: =>
@@ -517,7 +530,12 @@ class Bacteria # Has values shared by all bacteria
 
   # Dies TODO work out method
   die: =>
-
+    for bacterium, index in global.bacteria
+      if typeof(bacterium) != 'undefined' # Can be called twice
+        if bacterium.id == @id
+          global.bacteria.splice(index, 1) # Stop tracking
+          @body.remove()
+        
   # Eat food instances
   eat: =>
     # Inside it
@@ -659,7 +677,8 @@ html.setup = ->
     if not global.interaction.pauzed # Time is not pauzed
       # Loop through the bacteria
       for bacterium in global.bacteria
-        bacterium.live() # Bacteria does actions
+        if typeof(bacterium) != 'undefined' # Stop being called when bacteria is removed
+          bacterium.live() # Bacteria does actions
 
   # Paper.js canvas resize event
   view.onResize = (event) ->
@@ -824,23 +843,20 @@ simulation.createLife = ->
   console.log("Creating life")
   html.layer.bacteria.activate()
 
-  # Starter values
-  mass = 1.64e-15 # Will get the average values of the species
-
   global.bacteria[0] = new Viridis(
-    mass,
+    local.standard.mass,
     local.center,
     1,
     0
   )
   global.bacteria[1] = new Rubrum(
-    mass,
+    local.standard.mass,
     local.center.subtract(100, 0),
     1,
     0
   )
   global.bacteria[2] = new Caeruleus(
-    mass,
+    local.standard.mass,
     local.center.add(100, 0),
     1,
     0
