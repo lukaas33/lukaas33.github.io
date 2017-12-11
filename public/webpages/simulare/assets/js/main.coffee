@@ -225,14 +225,15 @@ class Bacteria # Has values shared by all bacteria
   constructor: (mass, position, generation, birth) ->
     # Values that are initialised from arguments
     @id = generate.id(global.bacteria)
-    @mass = new SciNum(mass, 'mass', 'kg')
+    @mass = {}
+    @mass.current = new SciNum(mass, 'mass', 'kg')
     @position = position
     @generation = generation
     @birth = birth
 
     # Other values TODO store as objects
     @energy = new SciNum(
-      Math.round(@mass.value / global.constants.atpMass.value), # Number of atp molecules
+      Math.round(@mass.current.value / global.constants.atpMass.value), # Number of atp molecules
       'energy',
       'atp'
     )
@@ -241,18 +242,20 @@ class Bacteria # Has values shared by all bacteria
       'density',
       'kg/m^3'
     )
-    @volume = new SciNum(@mass.value / @density.value, 'volume', 'm^3')
+    @volume = new SciNum(@mass.current.value / @density.value, 'volume', 'm^3')
     @diameter = new SciNum(Calc.diameter(@volume.value), 'length', 'm')
     @radius = new SciNum(@diameter.value / 2, 'length', 'm')
     @acceleration = new SciNum(new Point(0, 0), 'acceleration', 'm/s^2') # Used when starting to move
+    @speed = {}
     @decceleration = new SciNum(0, 'negative acceleration', 'm/s^2') # Used when slowing down
-    @minSpeed = new SciNum(new Point(0, 0), 'speed', 'm/s')
-    @speed = new SciNum(new Point(0, 0), 'speed', 'm/s')
+    @speed.min = new SciNum(new Point(0, 0), 'speed', 'm/s')
+    @speed.current = new SciNum(new Point(0, 0), 'speed', 'm/s')
     @age = new SciNum(0, 'time', 's')
     # Depends on constant to avoid change
-    @maxMass = new SciNum(1.5 * local.standard.mass, 'mass', 'kg')
-    @minMass = new SciNum(0.35 * local.standard.mass, 'mass', 'kg')
-    @energyLoss = new SciNum(0, 'energy per second', 'atp/s') # Initially
+    @mass.max = new SciNum(1.5 * local.standard.mass, 'mass', 'kg')
+    @mass.min = new SciNum(0.35 * local.standard.mass, 'mass', 'kg')
+    @energyLoss = {}
+    @energyLoss.current = new SciNum(0, 'energy per second', 'atp/s') # Initially
     @direction = null # Stores the direction as point
     @target = null # No target yet
     # Tracks actions
@@ -269,9 +272,9 @@ class Bacteria # Has values shared by all bacteria
   # Continues living TODO work out energy system with traits
   live: =>
     if @action == 'dying' # RIP
-      @die() 
+      @die()
     else if @action == 'dividing'
-        @divide()
+      @divide()
     else # Normal
       if @action == 'colliding' # Needs to move away
         @chooseDirection()
@@ -282,9 +285,9 @@ class Bacteria # Has values shared by all bacteria
           @chooseDirection() if Random.chance(25)
         else # Food is near
           @findTarget() # Go get food
-      @move()
       @loseEnergy()
-      @update()
+    @move()
+    @update()
 
   # Changes the action
   changeAction: (action) =>
@@ -306,7 +309,7 @@ class Bacteria # Has values shared by all bacteria
   # Updates its body
   update: =>
     @checkValues()
-    @volume.value = @mass.value / @density.value
+    @volume.value = @mass.current.value / @density.value
     @diameter.value = Calc.diameter(@volume.value)
     # Change its size
     previous = @radius.value
@@ -339,17 +342,15 @@ class Bacteria # Has values shared by all bacteria
   # Change acceleration to go to direction
   startMoving: =>
     # Will change length of vector to be the max speed
-    targetSpeed = @direction.normalize(@maxSpeed.value)
+    targetSpeed = @direction.normalize(@speed.max.value)
     # Add to the acceleration, at 0 it will take x seconds to accelerate
     @acceleration.value = targetSpeed.divide(3.5)
 
   # Slows the bacteria down
   slowDown: =>
     @changeAction('finding')
-    # Will slow down until reached
-    @minSpeed.value = @maxSpeed.value / 8
-    # Slow down in 1/2 second
-    @decceleration.value = @minSpeed.value * 2
+    # Slow down
+    @decceleration.value = Calc.combine(@speed.current.value)
 
   # Starts moving
   move: =>
@@ -357,21 +358,21 @@ class Bacteria # Has values shared by all bacteria
     if @action == 'finding' # Slowing down
       # Per frame to per second
       decceleration = @decceleration.value / local.fps
-      newSpeed = Calc.combine(@speed.value) - decceleration
+      newSpeed = Calc.combine(@speed.current.value) - decceleration
       # Reduces speed
-      @speed.value = @speed.value.normalize(newSpeed)
+      @speed.current.value = @speed.current.value.normalize(newSpeed)
     else
       # Per second instead of frame
       acceleration = @acceleration.value.divide(local.fps)
       # Will accelerate to maxSpeed
-      @speed.value = @speed.value.add(acceleration)
+      @speed.current.value = @speed.current.value.add(acceleration)
 
     @checkSpeed()
 
     # Scaled speed
     speed = new Point(
-      x: Calc.scale(@speed.value.x)
-      y: Calc.scale(@speed.value.y)
+      x: Calc.scale(@speed.current.value.x)
+      y: Calc.scale(@speed.current.value.y)
     )
     # Per second instead of frame
     speed = speed.divide(local.fps)
@@ -380,7 +381,7 @@ class Bacteria # Has values shared by all bacteria
 
   # Loses energy TODO calculate the energy loss with traits
   loseEnergy: =>
-    loss = @minEnergyLoss.value
+    loss = @energyLoss.min.value
     # Influence of conditions
     for condition in ['temperature', 'toxicity', 'acidity']
       # Get the difference between the value and ideal value
@@ -393,17 +394,17 @@ class Bacteria # Has values shared by all bacteria
         difference = 0
 
       # Increase the Influence of the conditions
-      loss += (difference * 100) * @minEnergyLoss.value
+      loss += (difference * 100) * @energyLoss.min.value
 
-    loss *= 25 # Increased to speed up things
-    @energyLoss.value = loss
+    loss *= 35 # Increased to speed up things
+    @energyLoss.current.value = loss
 
     # Loses energy per second
-    atpSec = (@energyLoss.value / local.fps)
+    atpSec = (@energyLoss.current.value / local.fps)
     @energy.value -= atpSec
     # Loses mass
     mass = atpSec * global.constants.atpMass.value
-    @mass.value -= mass
+    @mass.current.value -= mass
 
   # Checks if there is food nearby
   foodNearby: =>
@@ -423,8 +424,12 @@ class Bacteria # Has values shared by all bacteria
         # Set the correct target or update with new data
         if target.distance == minDistance
           if @target == null # First encounter
+            # Will slow down until reached
+            @speed.min.value = @speed.max.value / 8
             @slowDown()
           else if @target.id != target.instance.id # New target
+            # Will slow down until reached
+            @speed.min.value = @speed.max.value / 8
             @slowDown()
           @target = target.instance
     else
@@ -432,24 +437,24 @@ class Bacteria # Has values shared by all bacteria
 
   # Check if it can divide or if it dies
   checkValues: =>
-    if @mass.value <= minMass.value
+    if @mass.current.value <= @mass.min.value
       @changeAction('dying')
-    else if @mass.value >= @maxMass.value
+    else if @mass.current.value >= @mass.max.value
         @changeAction('dividing')
 
   # Checks the speed
   checkSpeed: =>
     # console.log(@action, @previousAction) if global.interaction.selected == @id
     # Check if xSpeed and ySpeed together are higher than maxSpeed
-    if Calc.combine(@speed.value) >= @maxSpeed.value
+    if Calc.combine(@speed.current.value) >= @speed.max.value
       @acceleration.value = new Point(0, 0) # No acceleration
-      @speed.value.normalize(@maxSpeed.value) # Reduce speed
+      @speed.current.value.normalize(@speed.max.value) # Reduce speed
 
-    else if Calc.combine(@speed.value) <= @minSpeed.value
-      @speed.value.normalize(@minSpeed.value) # Increase speed
+    else if Calc.combine(@speed.current.value) <= @speed.min.value
+      @speed.current.value.normalize(@speed.min.value) # Increase speed
       if @action == 'finding' # Has slowed down
         # console.log(true) if global.interaction.selected == @id
-        @minSpeed.value = 0 # Reached, is reset
+        @speed.min.value = 0 # Reached, is reset
         @decceleration.value = 0 # Is reset
         @changeAction('chasing')
 
@@ -461,21 +466,21 @@ class Bacteria # Has values shared by all bacteria
     # Check if in field
     if @position.x + bodyRadius >= local.width
       @changeAction('colliding')
-      @speed.value.x = 0
+      @speed.current.value.x = 0
       @chooseDirection(180) # Start moving away
     else if @position.x - bodyRadius <= 0
       @changeAction('colliding')
-      @speed.value.x = 0
+      @speed.current.value.x = 0
       @chooseDirection(0) # Start moving away
     else
       checkNotColliding += 1
     if @position.y + bodyRadius >= local.height
       @changeAction('colliding')
-      @speed.value.y = 0
+      @speed.current.value.y = 0
       @chooseDirection(270) # Start moving away
     else if @position.y - bodyRadius <= 0
       @changeAction('colliding')
-      @speed.value.y = 0
+      @speed.current.value.y = 0
       @chooseDirection(90) # Start moving away
     else
       checkNotColliding += 1
@@ -490,14 +495,14 @@ class Bacteria # Has values shared by all bacteria
         if Calc.combine(distance) <= bodyRadius + otherBodyRadius
           @changeAction('colliding')
           # Angle between vectors
-          impactAngle = @speed.value.getAngle(distance)
+          impactAngle = @speed.current.value.getAngle(distance)
           # Speed in the illegal direction
           cosine = Math.cos(Calc.rad(impactAngle))
-          speedComponent = @speed.value.multiply(cosine)
+          speedComponent = @speed.current.value.multiply(cosine)
           # Some values return NaN in Math.cos
           if not isNaN(Calc.combine(speedComponent))
             # Stop moving in this direction
-            @speed.value = @speed.value.subtract(speedComponent)
+            @speed.current.value = @speed.current.value.subtract(speedComponent)
         else
           checkNotColliding += 1
 
@@ -527,24 +532,28 @@ class Bacteria # Has values shared by all bacteria
 
   # Divide itself TODO work out this functionality
   divide: =>
+    @speed.min.value = 0 # Stop
+    @slowDown()
 
   # Dies TODO work out method
   die: =>
+    @speed.min.value = 0 # Stop
+    @slowDown()
     for bacterium, index in global.bacteria
       if typeof(bacterium) != 'undefined' # Can be called twice
         if bacterium.id == @id
           global.bacteria.splice(index, 1) # Stop tracking
           @body.remove()
-        
+
   # Eat food instances
   eat: =>
     # Inside it
     if check.circleInside(@body, @target.particle)
       @energy.value = @energy.value + @target.energy.value
       # Gains mass
-      energy = @target.energy.value * 15 # Increased to speed up things
+      energy = @target.energy.value * 10 # Increased to speed up things
       mass = energy * global.constants.atpMass.value
-      @mass.value += mass
+      @mass.current.value += mass
       @target.eaten() # Removes itself
       # findTarget won't be called anymore
       @target = null # Doesn't exist anymore
@@ -555,10 +564,10 @@ class Lucarium extends Bacteria # This family of bacteria has its own traits
     super(arguments...) # Parent constructor
     # Are initialised
     @family = "Lucarium"
-    @maxSpeed = new SciNum(@diameter.value * 1.5, 'speed', 'm/s') # Speed based on body size
-    @minEnergyLoss = new SciNum(4e5, 'energy per second', 'atp/s')
+    @speed.max = new SciNum(@diameter.value * 1.5, 'speed', 'm/s') # Speed based on body size
+    @energyLoss.min = new SciNum(4e5, 'energy per second', 'atp/s')
     @viewRange = new SciNum(@diameter.value * 2.5, 'length', 'm')
-    @mutationChance = 1/1000 # Will be mutated for user experience
+    @mutationChance = 1/1000 # Will be increased for user experience
     @idealConditions =
       temperature: new SciNum(20, 'temperature', 'degrees')
       acidity: new SciNum(7, 'pH', '')
@@ -768,6 +777,8 @@ html.selected = ->
           if $(@).hasClass('value')
             # TODO edit values before displaying
             scinum = data[@dataset.name]
+            if @dataset.name in ['mass', 'speed']
+              scinum = scinum.current
             # Loop through two spans
             $(@).find('span').each( ->
               if $(@).hasClass('number')
