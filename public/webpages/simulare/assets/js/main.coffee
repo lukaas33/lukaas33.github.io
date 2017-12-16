@@ -22,7 +22,7 @@ local =
 
 
 # Get elements with these id's
-for id in ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority']
+for id in ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority', 'scale']
   doc[id] = $("##{id}")
 # Store these selections
 doc.menuItems = doc.menu.find('.item button')
@@ -41,6 +41,14 @@ generate = {}
 time =
   time: 0
   trackSecond: 0
+
+# Convert period to h:m:s
+time.represent = (total) ->
+  # Set values, from https://goo.gl/P14JkU
+  hours = Math.floor(total / 3600)
+  minutes = Math.floor(total % 3600 / 60)
+  seconds = Math.floor(total % 3600 % 60)
+  return [hours, minutes, seconds]
 
 # Tests if the circles overlap
 check.circleOverlap = (circle1, circle2) ->
@@ -171,28 +179,37 @@ class SciNum
     set = global.constants.prefixes
     unit = @unit
     value = @value
+    converted = null
 
     value = Calc.combine(value) if value instanceof Point # vector
-    value = 0 if @quantity == 'speed' and value < 1e-9 # When breaking
 
     # Exeptions
     if unit == 'kg' # Base of gram is at kilograms
       unit = 'g'
       newValue *= 1000
 
-    if 0 < Math.abs(value) < 1 # Low numbers
-      set = set.lower
-    else if Math.abs(value) >= 1 # Higher numbers
-      set = set.higher
+    if value == 0 # Same with every unit
+      converted = new SciNum(value, @quantity, @unitNotation(unit))
+    else
+      if unit == 's' # Different common notation
+        [hours, minutes, seconds] = time.represent(@value)
+        converted = new SciNum("#{hours}:#{minutes}:#{seconds}", @quantity, null)
+      else
+        if Math.abs(value) < 1 # Low numbers
+          set = set.lower
+        else if Math.abs(value) >= 1 # Higher numbers
+          set = set.higher
 
-    for prefix in set
-      newValue = value / prefix[1] # Will make the value higher or lower
+        for prefix in set
+          newValue = value / prefix[1] # Will make the value higher or lower
 
-      # Change prefix
-      if 1 <= Math.abs(newValue) <= 1000 # New value is of normal size
-        console.log newValue, @quantity
-        unitDifferent = new SciNum(@notation(newValue), @quantity, @unitNotation("#{prefix[0]}#{unit}"))
-        return unitDifferent
+          # Change prefix
+          if 1 <= Math.abs(newValue) <= 1000 # New value is of normal size
+            # console.log newValue, @quantity
+            converted = new SciNum(@notation(newValue), @quantity, @unitNotation("#{prefix[0]}#{unit}"))
+          # console.log unitDifferent
+
+    return converted
 
 # Constructor for food
 class Food
@@ -390,16 +407,10 @@ class Bacteria # Has values shared by all bacteria
     # Add to the acceleration, at 0 it will take x seconds to accelerate
     @acceleration.value = targetSpeed.divide(3.5)
 
-  # Slows the bacteria down
-  slowDown: =>
-    @changeAction('finding')
-    # Slow down
-    @decceleration.value = Calc.combine(@speed.current.value)
-
   # Starts moving
   move: =>
     @checkCollision() # Test if it can move
-    if @action.current == 'finding' # Slowing down
+    if @action.current in ['finding', 'stopping'] # Slowing down
       # Per frame to per second
       decceleration = @decceleration.value / local.fps
       newSpeed = Calc.combine(@speed.current.value) - decceleration
@@ -427,7 +438,7 @@ class Bacteria # Has values shared by all bacteria
   loseEnergy: =>
     loss = @energyLoss.min.value
     # Influence of conditions
-    for condition in ['temperature', 'toxicity', 'acidity']
+    for condition in ['temperature', 'concentration', 'acidity']
       # Get the difference between the value and ideal value
       value = global.enviroment[condition]
       difference = Math.abs(value - @idealConditions[condition].value)
@@ -440,7 +451,7 @@ class Bacteria # Has values shared by all bacteria
       # Increase the Influence of the conditions
       loss += (difference * 100) * @energyLoss.min.value
 
-    loss *= 35 # Increased to speed up things
+    loss *= 45 # Increased to speed up things
     @energyLoss.current.value = loss
 
     # Loses energy per second
@@ -470,21 +481,25 @@ class Bacteria # Has values shared by all bacteria
           if @target == null # First encounter
             # Will slow down until reached
             @speed.min.value = @speed.max.value / 8
-            @slowDown()
+            @changeAction('finding')
+            # Slow down
+            @decceleration.value = Calc.combine(@speed.current.value)
           else if @target.id != target.instance.id # New target
             # Will slow down until reached
             @speed.min.value = @speed.max.value / 8
-            @slowDown()
+            @changeAction('finding')
+            # Slow down
+            @decceleration.value = Calc.combine(@speed.current.value)
           @target = target.instance
     else
       @target = null # Doesn't exist anymore
 
   # Check if it can divide or if it dies
   checkValues: =>
-    if @mass.current.value <= @mass.min.value
+    if @mass.current.value <= @mass.min.value and @action != 'dying'
       @changeAction('dying')
-    else if @mass.current.value >= @mass.max.value
-        @changeAction('dividing')
+    else if @mass.current.value >= @mass.max.value and @action != 'dividing'
+      @changeAction('dividing')
 
   # Checks the speed
   checkSpeed: =>
@@ -494,13 +509,20 @@ class Bacteria # Has values shared by all bacteria
       @acceleration.value = new Point(0, 0) # No acceleration
       @speed.current.value.normalize(@speed.max.value) # Reduce speed
 
-    else if Calc.combine(@speed.current.value) <= @speed.min.value
-      @speed.current.value.normalize(@speed.min.value) # Increase speed
-      if @action.current == 'finding' # Has slowed down
-        # console.log(true) if global.interaction.selected == @id
+    if @action.current == 'finding' # Looking for food
+      if Calc.combine(@speed.current.value) <= @speed.min.value # Has slowed down
+        # Speed reached minimum or got too low
+        @speed.current.value.normalize(@speed.min.value) # Increase speed
         @speed.min.value = 0 # Reached, is reset
         @decceleration.value = 0 # Is reset
         @changeAction('chasing')
+
+    if @action.current == 'stopping' # Coming to a full stop
+      if Calc.combine(@speed.current.value) < 1e-9 # Too low to see
+        @speed.current.value = new Point(0, 0) # Stop completely
+        @decceleration.value = 0 # Is reset
+        @changeAction(@previousAction)
+
 
   # Checks if there is a collision
   checkCollision: =>
@@ -576,13 +598,12 @@ class Bacteria # Has values shared by all bacteria
 
   # Divide itself TODO work out this functionality
   divide: =>
-    @speed.min.value = 0 # Stop
-    @slowDown()
+    @changeAction('stopping')
+    # Slow to a stop
+    @decceleration.value = Calc.combine(@speed.current.value) / 1.5
 
   # Dies TODO work out method
   die: =>
-    @speed.min.value = 0 # Stop
-    @slowDown()
     for bacterium, index in global.bacteria
       if typeof(bacterium) != 'undefined' # Can be called twice
         if bacterium.id == @id
@@ -615,7 +636,7 @@ class Lucarium extends Bacteria # This family of bacteria has its own traits
     @idealConditions =
       temperature: new SciNum(20, 'temperature', 'degrees')
       acidity: new SciNum(7, 'pH', '')
-      toxicity: new SciNum(0, 'concentration', 'M')
+      concentration: new SciNum(0, 'concentration', 'M')
 
 class Viridis extends Lucarium # TODO make different traits for the species
   constructor: () ->
@@ -625,9 +646,9 @@ class Viridis extends Lucarium # TODO make different traits for the species
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
     @color = '#4caf50'
     @tolerance =
-      temperature: new SciNum(5, 'temperature', '&deg;C')
-      acidity: new SciNum(0.5, 'pH', '')
-      toxicity: new SciNum(2, 'concentration', 'kg/m^3')
+      temperature: new SciNum(2.5, 'temperature', '&deg;C')
+      acidity: new SciNum(0.25, 'pH', '')
+      concentration: new SciNum(2, 'concentration', 'kg/m^3')
 
 class Rubrum extends Lucarium
   constructor: () ->
@@ -638,8 +659,8 @@ class Rubrum extends Lucarium
     @color = '#f44336'
     @tolerance =
       temperature: new SciNum(5, 'temperature', '&deg;C')
-      acidity: new SciNum(0.5, 'pH', '')
-      toxicity: new SciNum(2, 'concentration', 'kg/m^3')
+      acidity: new SciNum(0.25, 'pH', '')
+      concentration: new SciNum(0.5, 'concentration', 'kg/m^3')
 
 class Caeruleus extends Lucarium
   constructor: () ->
@@ -649,9 +670,9 @@ class Caeruleus extends Lucarium
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
     @color = '#2196f3'
     @tolerance =
-      temperature: new SciNum(5, 'temperature', '&deg;C')
-      acidity: new SciNum(0.5, 'pH', '')
-      toxicity: new SciNum(2, 'concentration', 'kg/m^3')
+      temperature: new SciNum(2.5, 'temperature', '&deg;C')
+      acidity: new SciNum(0.25, 'pH', '')
+      concentration: new SciNum(2, 'concentration', 'kg/m^3')
 
 # << Document functions >>
 # Groups
@@ -676,11 +697,7 @@ html.card = (data) ->
 
 # Updates the screen clock
 html.clock = ->
-  # Set values, from https://goo.gl/P14JkU
-  total = time.time / 1000
-  hours = Math.floor(total / 3600)
-  minutes = Math.floor(total % 3600 / 60)
-  seconds = Math.floor(total % 3600 % 60)
+  [hours, minutes, seconds] = time.represent(time.time / 1000)
 
   # Format a timestring
   form = (number) ->
@@ -704,7 +721,12 @@ html.setup = ->
   # << Actions >>
   doc.conditions.each( ->
     $(@).attr('value', global.enviroment[@dataset.name].value)
+    range = global.enviroment.ranges[@dataset.name]
+    $(@).attr('min', range[0])
+    $(@).attr('max', range[1])
   )
+
+  doc.scale.find('span').text(" 1 : #{local.scaleFactor}")
 
   # << Events >>
   # Update simulated time
@@ -831,8 +853,9 @@ html.selected = ->
                 # console.log representation
                 @textContent = representation.value
               else if $(@).hasClass('unit')
-                @innerHTML = '' # Empty
-                @appendChild(representation.unit)
+                if representation.unit != null
+                  @innerHTML = '' # Empty
+                  @appendChild(representation.unit)
             )
         )
         doc.bacteria.attr('data-content', true) # Make visible
@@ -967,7 +990,7 @@ simulation.feed = ->
   while left > 0 and global.food.length <= local.maxInstances.food
     # A percentage of the total
     amount = Random.value(total * 0.10, total * 0.45)
-    if amount < left * 0.95 # Spawn while higher lower than 95% of what's left
+    if amount < left * 0.90 # Spawn while higher lower than 95% of what's left
       left -= amount # Remove from what's left
     else
       amount = left # Remainder

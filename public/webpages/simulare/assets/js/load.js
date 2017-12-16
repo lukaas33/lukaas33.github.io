@@ -14,10 +14,16 @@ const global = {
     selected: null // Selected instance
   },
   enviroment: { // Enviroment variables, are filled via input elements
-    temperature: null, // 0 - 40 C
+    temperature: null,
     acidity: null, // 5.5 - 8.5
-    toxicity: null,
-    energy: null
+    concentration: null,
+    energy: null,
+    ranges: { // Min and max
+      temperature: [0, 40],
+      acidity: [5.5, 8.5],
+      concentration: [0, 15.6],
+      energy: [6e7, 1.58e8],
+    }
   },
   constants: {},
   bacteria: [], // Contains bacteria instances

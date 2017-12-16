@@ -20,7 +20,7 @@
     }
   };
 
-  ref = ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority'];
+  ref = ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority', 'scale'];
   for (j = 0, len = ref.length; j < len; j++) {
     id = ref[j];
     doc[id] = $("#" + id);
@@ -49,6 +49,14 @@
   time = {
     time: 0,
     trackSecond: 0
+  };
+
+  time.represent = function(total) {
+    var hours, minutes, seconds;
+    hours = Math.floor(total / 3600);
+    minutes = Math.floor(total % 3600 / 60);
+    seconds = Math.floor(total % 3600 % 60);
+    return [hours, minutes, seconds];
   };
 
   check.circleOverlap = function(circle1, circle2) {
@@ -198,34 +206,40 @@
     };
 
     SciNum.prototype.represent = function() {
-      var k, len1, newValue, prefix, ref1, ref2, set, unit, unitDifferent, value;
+      var converted, hours, k, len1, minutes, newValue, prefix, ref1, ref2, seconds, set, unit, value;
       set = global.constants.prefixes;
       unit = this.unit;
       value = this.value;
+      converted = null;
       if (value instanceof Point) {
         value = Calc.combine(value);
-      }
-      if (this.quantity === 'speed' && value < 1e-9) {
-        value = 0;
       }
       if (unit === 'kg') {
         unit = 'g';
         newValue *= 1000;
       }
-      if ((0 < (ref1 = Math.abs(value)) && ref1 < 1)) {
-        set = set.lower;
-      } else if (Math.abs(value) >= 1) {
-        set = set.higher;
-      }
-      for (k = 0, len1 = set.length; k < len1; k++) {
-        prefix = set[k];
-        newValue = value / prefix[1];
-        if ((1 <= (ref2 = Math.abs(newValue)) && ref2 <= 1000)) {
-          console.log(newValue, this.quantity);
-          unitDifferent = new SciNum(this.notation(newValue), this.quantity, this.unitNotation("" + prefix[0] + unit));
-          return unitDifferent;
+      if (value === 0) {
+        converted = new SciNum(value, this.quantity, this.unitNotation(unit));
+      } else {
+        if (unit === 's') {
+          ref1 = time.represent(this.value), hours = ref1[0], minutes = ref1[1], seconds = ref1[2];
+          converted = new SciNum(hours + ":" + minutes + ":" + seconds, this.quantity, null);
+        } else {
+          if (Math.abs(value) < 1) {
+            set = set.lower;
+          } else if (Math.abs(value) >= 1) {
+            set = set.higher;
+          }
+          for (k = 0, len1 = set.length; k < len1; k++) {
+            prefix = set[k];
+            newValue = value / prefix[1];
+            if ((1 <= (ref2 = Math.abs(newValue)) && ref2 <= 1000)) {
+              converted = new SciNum(this.notation(newValue), this.quantity, this.unitNotation("" + prefix[0] + unit));
+            }
+          }
         }
       }
+      return converted;
     };
 
     return SciNum;
@@ -329,7 +343,6 @@
       this.foodNearby = bind(this.foodNearby, this);
       this.loseEnergy = bind(this.loseEnergy, this);
       this.move = bind(this.move, this);
-      this.slowDown = bind(this.slowDown, this);
       this.startMoving = bind(this.startMoving, this);
       this.ages = bind(this.ages, this);
       this.select = bind(this.select, this);
@@ -460,15 +473,10 @@
       return this.acceleration.value = targetSpeed.divide(3.5);
     };
 
-    Bacteria.prototype.slowDown = function() {
-      this.changeAction('finding');
-      return this.decceleration.value = Calc.combine(this.speed.current.value);
-    };
-
     Bacteria.prototype.move = function() {
-      var acceleration, decceleration, newSpeed, speed;
+      var acceleration, decceleration, newSpeed, ref1, speed;
       this.checkCollision();
-      if (this.action.current === 'finding') {
+      if ((ref1 = this.action.current) === 'finding' || ref1 === 'stopping') {
         decceleration = this.decceleration.value / local.fps;
         newSpeed = Calc.combine(this.speed.current.value) - decceleration;
         this.speed.current.value = this.speed.current.value.normalize(newSpeed);
@@ -488,7 +496,7 @@
     Bacteria.prototype.loseEnergy = function() {
       var atpSec, condition, difference, k, len1, loss, ref1, value;
       loss = this.energyLoss.min.value;
-      ref1 = ['temperature', 'toxicity', 'acidity'];
+      ref1 = ['temperature', 'concentration', 'acidity'];
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         condition = ref1[k];
         value = global.enviroment[condition];
@@ -500,7 +508,7 @@
         }
         loss += (difference * 100) * this.energyLoss.min.value;
       }
-      loss *= 35;
+      loss *= 45;
       this.energyLoss.current.value = loss;
       atpSec = this.energyLoss.current.value / local.fps;
       return this.energy.value -= atpSec;
@@ -539,10 +547,12 @@
           if (target.distance === minDistance) {
             if (this.target === null) {
               this.speed.min.value = this.speed.max.value / 8;
-              this.slowDown();
+              this.changeAction('finding');
+              this.decceleration.value = Calc.combine(this.speed.current.value);
             } else if (this.target.id !== target.instance.id) {
               this.speed.min.value = this.speed.max.value / 8;
-              this.slowDown();
+              this.changeAction('finding');
+              this.decceleration.value = Calc.combine(this.speed.current.value);
             }
             results.push(this.target = target.instance);
           } else {
@@ -556,9 +566,9 @@
     };
 
     Bacteria.prototype.checkValues = function() {
-      if (this.mass.current.value <= this.mass.min.value) {
+      if (this.mass.current.value <= this.mass.min.value && this.action !== 'dying') {
         return this.changeAction('dying');
-      } else if (this.mass.current.value >= this.mass.max.value) {
+      } else if (this.mass.current.value >= this.mass.max.value && this.action !== 'dividing') {
         return this.changeAction('dividing');
       }
     };
@@ -566,13 +576,21 @@
     Bacteria.prototype.checkSpeed = function() {
       if (Calc.combine(this.speed.current.value) >= this.speed.max.value) {
         this.acceleration.value = new Point(0, 0);
-        return this.speed.current.value.normalize(this.speed.max.value);
-      } else if (Calc.combine(this.speed.current.value) <= this.speed.min.value) {
-        this.speed.current.value.normalize(this.speed.min.value);
-        if (this.action.current === 'finding') {
+        this.speed.current.value.normalize(this.speed.max.value);
+      }
+      if (this.action.current === 'finding') {
+        if (Calc.combine(this.speed.current.value) <= this.speed.min.value) {
+          this.speed.current.value.normalize(this.speed.min.value);
           this.speed.min.value = 0;
           this.decceleration.value = 0;
-          return this.changeAction('chasing');
+          this.changeAction('chasing');
+        }
+      }
+      if (this.action.current === 'stopping') {
+        if (Calc.combine(this.speed.current.value) < 1e-9) {
+          this.speed.current.value = new Point(0, 0);
+          this.decceleration.value = 0;
+          return this.changeAction(this.previousAction);
         }
       }
     };
@@ -652,14 +670,12 @@
     };
 
     Bacteria.prototype.divide = function() {
-      this.speed.min.value = 0;
-      return this.slowDown();
+      this.changeAction('stopping');
+      return this.decceleration.value = Calc.combine(this.speed.current.value) / 1.5;
     };
 
     Bacteria.prototype.die = function() {
       var bacterium, index, k, len1, ref1, results;
-      this.speed.min.value = 0;
-      this.slowDown();
       ref1 = global.bacteria;
       results = [];
       for (index = k = 0, len1 = ref1.length; k < len1; index = ++k) {
@@ -705,7 +721,7 @@
       this.idealConditions = {
         temperature: new SciNum(20, 'temperature', 'degrees'),
         acidity: new SciNum(7, 'pH', ''),
-        toxicity: new SciNum(0, 'concentration', 'M')
+        concentration: new SciNum(0, 'concentration', 'M')
       };
     }
 
@@ -722,9 +738,9 @@
       this.taxonomicName = this.family + " " + this.species;
       this.color = '#4caf50';
       this.tolerance = {
-        temperature: new SciNum(5, 'temperature', '&deg;C'),
-        acidity: new SciNum(0.5, 'pH', ''),
-        toxicity: new SciNum(2, 'concentration', 'kg/m^3')
+        temperature: new SciNum(2.5, 'temperature', '&deg;C'),
+        acidity: new SciNum(0.25, 'pH', ''),
+        concentration: new SciNum(2, 'concentration', 'kg/m^3')
       };
     }
 
@@ -742,8 +758,8 @@
       this.color = '#f44336';
       this.tolerance = {
         temperature: new SciNum(5, 'temperature', '&deg;C'),
-        acidity: new SciNum(0.5, 'pH', ''),
-        toxicity: new SciNum(2, 'concentration', 'kg/m^3')
+        acidity: new SciNum(0.25, 'pH', ''),
+        concentration: new SciNum(0.5, 'concentration', 'kg/m^3')
       };
     }
 
@@ -760,9 +776,9 @@
       this.taxonomicName = this.family + " " + this.species;
       this.color = '#2196f3';
       this.tolerance = {
-        temperature: new SciNum(5, 'temperature', '&deg;C'),
-        acidity: new SciNum(0.5, 'pH', ''),
-        toxicity: new SciNum(2, 'concentration', 'kg/m^3')
+        temperature: new SciNum(2.5, 'temperature', '&deg;C'),
+        acidity: new SciNum(0.25, 'pH', ''),
+        concentration: new SciNum(2, 'concentration', 'kg/m^3')
       };
     }
 
@@ -792,11 +808,8 @@
   };
 
   html.clock = function() {
-    var form, hours, minutes, seconds, total;
-    total = time.time / 1000;
-    hours = Math.floor(total / 3600);
-    minutes = Math.floor(total % 3600 / 60);
-    seconds = Math.floor(total % 3600 % 60);
+    var form, hours, minutes, ref1, seconds;
+    ref1 = time.represent(time.time / 1000), hours = ref1[0], minutes = ref1[1], seconds = ref1[2];
     form = function(number) {
       var string;
       string = String(number);
@@ -818,8 +831,13 @@
 
   html.setup = function() {
     doc.conditions.each(function() {
-      return $(this).attr('value', global.enviroment[this.dataset.name].value);
+      var range;
+      $(this).attr('value', global.enviroment[this.dataset.name].value);
+      range = global.enviroment.ranges[this.dataset.name];
+      $(this).attr('min', range[0]);
+      return $(this).attr('max', range[1]);
     });
+    doc.scale.find('span').text(" 1 : " + local.scaleFactor);
     time.clock = setInterval(function() {
       if (!global.interaction.pauzed) {
         time.time += 5;
@@ -952,8 +970,10 @@
                 if ($(this).hasClass('number')) {
                   return this.textContent = representation.value;
                 } else if ($(this).hasClass('unit')) {
-                  this.innerHTML = '';
-                  return this.appendChild(representation.unit);
+                  if (representation.unit !== null) {
+                    this.innerHTML = '';
+                    return this.appendChild(representation.unit);
+                  }
                 }
               });
             }
@@ -1075,7 +1095,7 @@
     results = [];
     while (left > 0 && global.food.length <= local.maxInstances.food) {
       amount = Random.value(total * 0.10, total * 0.45);
-      if (amount < left * 0.95) {
+      if (amount < left * 0.90) {
         left -= amount;
       } else {
         amount = left;
