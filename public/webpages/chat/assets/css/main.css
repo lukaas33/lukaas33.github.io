@@ -1,8 +1,28 @@
 #chat {
-  display: none; }
-  #chat #users ul li span {
-    display: block; }
-  #chat #users ul li .ID {
-    font-size: 0.75rem; }
-    #chat #users ul li .ID:before {
-      content: '#'; }
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; }
+  #chat #users {
+    background-color: lightgrey;
+    width: 10vw;
+    height: 100vh;
+    overflow-y: scroll; }
+    #chat #users ul li {
+      cursor: pointer; }
+      #chat #users ul li.self {
+        margin-bottom: 1rem;
+        font-weight: bold;
+        color: blue; }
+      #chat #users ul li.selected {
+        color: blue; }
+      #chat #users ul li span {
+        display: block; }
+      #chat #users ul li .ID {
+        font-size: 0.75rem; }
+        #chat #users ul li .ID:before {
+          content: '#'; }
+  #chat #message {
+    width: 90vw;
+    height: 100vh;
+    overflow-y: scroll; }

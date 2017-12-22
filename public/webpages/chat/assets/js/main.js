@@ -8,7 +8,14 @@ const register = document.getElementById('register')
 const chat = document.getElementById('chat')
 const input = document.getElementById('input')
 
-var local = {}
+var local = {
+  selected: null,
+  user: null,
+  data: {
+    users: null,
+    messages: null
+  }
+}
 
 // Generates ids
 const id = function (len) {
@@ -98,34 +105,80 @@ const createUser = function (data, callback) {
   http.send(JSON.stringify(data)) // Sends the data
 }
 
+const displayUser = function (user, item) {
+  for (let prop in user) {
+    let value = user[prop]
+    if (value !== null && value !== 'null') { // Valid value
+      let elem = document.createElement('span')
+      elem.className = prop
+      elem.textContent = decodeURIComponent(value).replace(/\\/g, "")
+      if (prop === 'name') {
+        item.insertAdjacentElement('afterbegin', elem)
+      } else {
+        item.appendChild(elem)
+      }
+    }
+  }
+  return item
+}
+
+const chatUser = function () {
+  getData('messages', (data) => {
+
+  })
+}
+
+// Display the user data
 const displayData = function () {
   var list = doc('#users ul')
   list.innerHTML = ''
-  for (let user of local.data.users) {
+
+  var elem = document.createElement('li')
+  elem.className = 'self'
+  elem = displayUser(local.user, elem)
+  list.appendChild(elem)
+
+  for (let user of local.data.users) { // Add the connected users
     let item = document.createElement('li')
-    item.class = 'other'
-    // item.textContent = JSON.stringify(user)
-    for (let prop in user) {
-      let value = user[prop]
-      if (value !== null && value !== 'null') { // Valid value
-        let elem = document.createElement('span')
-        elem.className = prop
-        elem.textContent = decodeURIComponent(value).replace(/\\/g, "")
-        if (prop === 'name') {
-          item.insertAdjacentElement('afterbegin', elem)
-        } else {
-          item.appendChild(elem)
+    if (local.selected === user.ID) {
+      item.classList.add('selected', 'other')
+    } else {
+      item.className = 'other'
+    }
+
+    item.addEventListener('click', function (event) { // On click
+      if (this.classList.contains('selected')) { // Already selected
+        this.classList.remove('selected')
+        local.selected = null
+      } else { // Not selected
+        let select = doc('#users li.selected')
+        if (typeof(select) !== 'undefined') {
+          select.classList.remove('selected')
+        }
+        this.classList.add('selected')
+
+        // Store the id
+        for (let prop of this.children) {
+          if (prop.className === 'ID') {
+            local.selected = prop.textContent
+            console.log(local.selected)
+            chatUser()
+            break
+          }
         }
       }
-    }
+    })
+    // item.textContent = JSON.stringify(user)
+    item = displayUser(user, item)
     list.appendChild(item)
   }
 }
 
-const getData = function (callback) {
+const getData = function (needed, callback) {
   var http = new XMLHttpRequest()
   http.onreadystatechange = function () { // When done
     if (this.readyState === 4 && this.status === 200) {
+      console.log(this.responseText)
       if (this.responseText !== 'error') {
         callback(JSON.parse(this.responseText)) // Ajax succesfull
       } else {
@@ -133,7 +186,15 @@ const getData = function (callback) {
       }
     }
   }
-  http.open('GET', `${target}/data/${local.user.ID}`, true) // Post request at external server
+
+  var link = `${target}/data/`
+  if (needed === 'users') {
+    link += local.user.ID
+  } else if (needed === 'messages') {
+    link += `${local.user.ID}-${local.selected}`
+  }
+
+  http.open('GET', link, true) // Post request at external server
   // http.setRequestHeader('Content-Type', 'application/json') // Server will expect format
   http.send() // Sends the request
 }
@@ -142,9 +203,9 @@ const initialiseApp = function () {
   chat.style.display = 'block'
 
   local.refresh = setInterval(function refresh() { // Refresh
-    getData((data) => {
+    getData('users', (data) => {
       if (data !== null) {
-        local.data = data // Store
+        local.data.users = data // Store
         displayData()
       } else {
 
@@ -218,5 +279,10 @@ input.addEventListener('submit', function (event) {
   }
 
 })
+
+window.onbeforeunload = function (event) {
+  event.returnValue = 'All messages will be deleted when you leave'
+  return dialogText
+}
 
 }).call(this)
