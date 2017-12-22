@@ -9,7 +9,7 @@
 <body>
 	<main id="register">
 		<form id="input">
-			<input class="field" maxlength="64" required name="name" type="text" placeholder="Name"><br/>
+			<input class="field" maxlength="64" required name="name" type="text" placeholder="Name"/><br/>
 			<select class="field" name="country">
 				<option selected value=""></option>
 				<!-- Got from https://gist.github.com/soul-wish/8030172 -->
@@ -255,8 +255,8 @@
 				<option value="Zambia">Zambia</option>
 				<option value="Zimbabwe">Zimbabwe</option>
 			</select><br/>
-			<input class="field" name="age" min="5" max="125" type="number"><br/>
-			<input name="submit" type="submit" value="Join chat"><br/>
+			<input class="field" name="age" min="5" max="125" type="number"/><br/>
+			<input name="submit" type="submit" value="Join chat"/><br/>
 		</form>
 		<p id="status"></p>
 	</main>
@@ -265,7 +265,17 @@
 			<h3>Connected users</h3>
 			<ul></ul>
 		</div>
-		<div id="message"></div>
+		<div id="message">
+			<div id="messages">
+				<ul></ul>
+			</div>
+			<div id="send">
+				<form id="text">
+					<textarea rows="3" cols="100" required wrap="hard" name="message" maxlength="65536" placeholder="Type your message"></textarea>
+					<input name="submit" type="submit" value="Send"/><br/>
+				</form>
+			</div>
+		</div>
 	</main>
 </body>
 <!-- <head>

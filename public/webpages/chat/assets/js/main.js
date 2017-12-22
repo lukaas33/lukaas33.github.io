@@ -1,15 +1,19 @@
 (function() { // Global vars are local to this file
 'use strict'
 
+// << Variables >>
 // const target = 'https://general-server.herokuapp.com/chat' // Server route
 const target = 'http://localhost:5000/chat'
 
 const register = document.getElementById('register')
 const chat = document.getElementById('chat')
 const input = document.getElementById('input')
+const message = document.getElementById('message')
+const text = document.getElementById('text')
 
 var local = {
   selected: null,
+  load: null,
   user: null,
   data: {
     users: null,
@@ -17,6 +21,7 @@ var local = {
   }
 }
 
+// << Return functions >>
 // Generates ids
 const id = function (len) {
   // var options = []
@@ -88,8 +93,21 @@ const escape = function (value) {
   return result
 }
 
+// Short hand, like jquery
+const doc = function (query) {
+  var res = document.querySelectorAll(query)
+  if (res.length > 1) {
+    return res
+  } else if (res.length === 1) {
+    return res[0]
+  } else {
+    return undefined
+  }
+}
+
+// << Ajax functions
 // Creates the session
-const createUser = function (data, callback) {
+const sendData = function (sending, data, callback) {
   var http = new XMLHttpRequest()
   http.onreadystatechange = function () { // When done
     if (this.readyState === 4 && this.status === 200) {
@@ -100,80 +118,19 @@ const createUser = function (data, callback) {
       }
     }
   }
-  http.open('POST', target + '/createuser', true) // Post request at external server
+
+  var link = null
+  if (sending === 'user') {
+    link = target + '/createuser'
+  } else if (sending === 'message') {
+    link = target + '/sendmessage'
+  }
+  http.open('POST', link, true) // Post request at external server
   http.setRequestHeader('Content-Type', 'application/json') // Server will expect format
   http.send(JSON.stringify(data)) // Sends the data
 }
 
-const displayUser = function (user, item) {
-  for (let prop in user) {
-    let value = user[prop]
-    if (value !== null && value !== 'null') { // Valid value
-      let elem = document.createElement('span')
-      elem.className = prop
-      elem.textContent = decodeURIComponent(value).replace(/\\/g, "")
-      if (prop === 'name') {
-        item.insertAdjacentElement('afterbegin', elem)
-      } else {
-        item.appendChild(elem)
-      }
-    }
-  }
-  return item
-}
-
-const chatUser = function () {
-  getData('messages', (data) => {
-
-  })
-}
-
-// Display the user data
-const displayData = function () {
-  var list = doc('#users ul')
-  list.innerHTML = ''
-
-  var elem = document.createElement('li')
-  elem.className = 'self'
-  elem = displayUser(local.user, elem)
-  list.appendChild(elem)
-
-  for (let user of local.data.users) { // Add the connected users
-    let item = document.createElement('li')
-    if (local.selected === user.ID) {
-      item.classList.add('selected', 'other')
-    } else {
-      item.className = 'other'
-    }
-
-    item.addEventListener('click', function (event) { // On click
-      if (this.classList.contains('selected')) { // Already selected
-        this.classList.remove('selected')
-        local.selected = null
-      } else { // Not selected
-        let select = doc('#users li.selected')
-        if (typeof(select) !== 'undefined') {
-          select.classList.remove('selected')
-        }
-        this.classList.add('selected')
-
-        // Store the id
-        for (let prop of this.children) {
-          if (prop.className === 'ID') {
-            local.selected = prop.textContent
-            console.log(local.selected)
-            chatUser()
-            break
-          }
-        }
-      }
-    })
-    // item.textContent = JSON.stringify(user)
-    item = displayUser(user, item)
-    list.appendChild(item)
-  }
-}
-
+// Gets data from servers
 const getData = function (needed, callback) {
   var http = new XMLHttpRequest()
   http.onreadystatechange = function () { // When done
@@ -199,8 +156,95 @@ const getData = function (needed, callback) {
   http.send() // Sends the request
 }
 
+// << Other functions >>
+// Displays the chats
+const displayChats = function (chats) {
+
+}
+
+// Displays the users
+const displayUser = function (user, item) {
+  for (let prop in user) {
+    let value = user[prop]
+    if (value !== null && value !== 'null') { // Valid value
+      let elem = document.createElement('span')
+      elem.className = prop
+      elem.textContent = decodeURIComponent(value).replace(/\\/g, "")
+      if (prop === 'name') {
+        item.insertAdjacentElement('afterbegin', elem)
+      } else {
+        item.appendChild(elem)
+      }
+    }
+  }
+  return item
+}
+
+// Display the user data
+const displayData = function () {
+  var list = doc('#users ul')
+  list.innerHTML = ''
+
+  var elem = document.createElement('li')
+  elem.className = 'self'
+  elem = displayUser(local.user, elem)
+  list.appendChild(elem)
+
+  for (let user of local.data.users) { // Add the connected users
+    let item = document.createElement('li')
+    if (local.selected === user.ID) {
+      item.classList.add('selected', 'other')
+    } else {
+      item.className = 'other'
+    }
+
+    item.addEventListener('click', function (event) { // On click
+      if (this.classList.contains('selected')) { // Already selected
+        this.classList.remove('selected')
+        message.style.display = 'none'
+        local.selected = null
+        clearInterval(local.load)
+      } else { // Not selected
+        let select = doc('#users li.selected')
+        if (typeof(select) !== 'undefined') {
+          select.classList.remove('selected')
+        }
+        this.classList.add('selected')
+        message.style.display = 'inline-block'
+
+        // Store the id
+        for (let prop of this.children) {
+          if (prop.className === 'ID') {
+            local.selected = prop.textContent
+            console.log(local.selected)
+            chatUser()
+            break
+          }
+        }
+      }
+    })
+    // item.textContent = JSON.stringify(user)
+    item = displayUser(user, item)
+    list.appendChild(item)
+  }
+}
+
+const chatUser = function () {
+  local.load = setInterval(function load() {
+    getData('messages', (data) => {
+      console.log(data)
+      if (data !== null) {
+        displayChats(data)
+      } else {
+
+      }
+    })
+    return load // The function executes once before being loaded with the setInterval
+  }(), 2000)
+}
+
 const initialiseApp = function () {
-  chat.style.display = 'block'
+  chat.style.display = 'flex'
 
   local.refresh = setInterval(function refresh() { // Refresh
     getData('users', (data) => {
@@ -215,18 +259,7 @@ const initialiseApp = function () {
   }(), 10000)
 }
 
-// Short hand, like jquery
-const doc = function (query) {
-  var res = document.querySelectorAll(query)
-  if (res.length > 1) {
-    return res
-  } else if (res.length === 1) {
-    return res[0]
-  } else {
-    return undefined
-  }
-}
-
+// << Events >>
 // Input submit
 input.addEventListener('submit', function (event) {
   event.preventDefault() // I'll handle this
@@ -265,8 +298,8 @@ input.addEventListener('submit', function (event) {
   }
 
   if (valid) { // Send info
-    createUser(values, (succes) => {
-      if (succes) {
+    sendData('user', values, (success) => {
+      if (success) {
         register.style.display = 'none'
         local.user = values
         initialiseApp() // Start the app
@@ -278,6 +311,36 @@ input.addEventListener('submit', function (event) {
     })
   }
 
+})
+
+// Message
+text.addEventListener('submit', function (event) {
+  event.preventDefault()
+  var submit = doc('#text input[name=submit]')
+  var field = doc('#text textarea')
+
+  var values = {
+    messageID: id(16),
+    sender: local.user.ID,
+    receiver: local.selected,
+    message: escape(field.value),
+    time: new Date()
+  }
+  submit.disabled = true
+
+  if (values.message !== null) {
+    console.log(values)
+    sendData('message', values, (success) => {
+      submit.disabled = false
+      if (success) {
+
+      } else {
+
+      }
+    })
+  } else {
+
+  }
 })
 
 window.onbeforeunload = function (event) {
