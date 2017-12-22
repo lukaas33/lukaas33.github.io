@@ -1,0 +1,47 @@
+:root {
+
+}
+
+body {
+
+}
+
+#register {
+
+}
+#chat {
+  display: none;
+
+  #users {
+
+    ul li {
+      span {
+        display: block;
+      }
+
+      &.other {
+
+      }
+
+      .name {
+
+      }
+
+      .ID {
+        &:before {
+          content: '#';
+        }
+
+        font-size: 0.75rem;
+      }
+
+      .country {
+
+      }
+
+      .age {
+
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+#chat {
+  display: none; }
+  #chat #users ul li span {
+    display: block; }
+  #chat #users ul li .ID {
+    font-size: 0.75rem; }
+    #chat #users ul li .ID:before {
+      content: '#'; }
