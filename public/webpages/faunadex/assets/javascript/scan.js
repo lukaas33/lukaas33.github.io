@@ -252,6 +252,13 @@ const imageSent = function () {
 }
 
 const imageSelected = function () {
+  local.metadata = { // Store the image data
+    date: getDate(),
+    location: {
+      coordinates: getLocation(true), // Get as coordinate
+      representation: getLocation(false)
+    }
+  }
   doc.take.hide()
   doc.accept.show()
   doc.gallery.parents('.top').hide()
@@ -295,13 +302,6 @@ const goBack = function () {
 
 // Image is selected
 const imageTaken = function () {
-  local.metadata = { // Store the image data
-    date: getDate(),
-    location: {
-      coordinates: getLocation(true), // Get as coordinate
-      representation: getLocation(false)
-    }
-  }
   const img = new Image() // Canavas needs html image element
   img.src = local.image
   img.onload = () => { // Image needs to load before displaying
