@@ -42,9 +42,11 @@ body {
 
       span {
         display: block;
+        font-size: 0.75rem;
       }
 
       .name {
+        font-size: 1rem; // Bigger
 
       }
 
@@ -52,8 +54,6 @@ body {
         &:before {
           content: '#';
         }
-
-        font-size: 0.75rem;
       }
 
       .country {
@@ -69,12 +69,30 @@ body {
   #message {
     width: 90vw;
     height: 100vh;
-    overflow-y: scroll;
-    display: none;
+    display: none; // Start state
 
     #messages {
       width: 90vw;
       height: 90vh;
+      overflow-y: scroll;
+
+      .chat {
+        border: 1px solid black;
+        font-size: 1.25rem;
+
+        .date {
+          font-size: 0.75rem;
+        }
+      }
+
+      .self {
+        margin-right: 60%;
+
+      }
+
+      .other {
+        margin-left: 60%;
+      }
     }
 
     #send {
@@ -85,11 +103,13 @@ body {
         width: 100%;
         height: 100%;
         display: flex;
+        font-size: 1.5rem;
 
         textarea {
           width: 90%;
-          height: 100%;
+          max-height: 100%;
           display: inline-block;
+          resize: none; // Not resizable
         }
 
         input[type=submit] {

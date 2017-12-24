@@ -2,13 +2,14 @@
 'use strict'
 
 // << Variables >>
-// const target = 'https://general-server.herokuapp.com/chat' // Server route
-const target = 'http://localhost:5000/chat'
+const target = 'https://general-server.herokuapp.com/chat' // Server route
+// const target = 'http://localhost:5000/chat'
 
 const register = document.getElementById('register')
 const chat = document.getElementById('chat')
 const input = document.getElementById('input')
 const message = document.getElementById('message')
+const messages = document.getElementById('messages')
 const text = document.getElementById('text')
 
 var local = {
@@ -18,7 +19,8 @@ var local = {
   data: {
     users: null,
     messages: null
-  }
+  },
+  read: []
 }
 
 // << Return functions >>
@@ -131,11 +133,11 @@ const sendData = function (sending, data, callback) {
 }
 
 // Gets data from servers
-const getData = function (needed, callback) {
+const getData = function (callback) {
   var http = new XMLHttpRequest()
   http.onreadystatechange = function () { // When done
     if (this.readyState === 4 && this.status === 200) {
-      console.log(this.responseText)
+      console.log('got', this.responseText)
       if (this.responseText !== 'error') {
         callback(JSON.parse(this.responseText)) // Ajax succesfull
       } else {
@@ -144,13 +146,7 @@ const getData = function (needed, callback) {
     }
   }
 
-  var link = `${target}/data/`
-  if (needed === 'users') {
-    link += local.user.ID
-  } else if (needed === 'messages') {
-    link += `${local.user.ID}-${local.selected}`
-  }
-
+  var link = `${target}/data/${local.user.ID}`
   http.open('GET', link, true) // Post request at external server
   // http.setRequestHeader('Content-Type', 'application/json') // Server will expect format
   http.send() // Sends the request
@@ -158,8 +154,43 @@ const getData = function (needed, callback) {
 
 // << Other functions >>
 // Displays the chats
-const displayChats = function (chats) {
+const displayChats = function () {
+  if (local.selected !== null) { // Someone is selected by the user
+    messages.innerHTML = '' // Empty
+    for (let mess of local.data.messages) {
+      let container = document.createElement('div')
+      let text = document.createElement('p')
+      text.classList.add('text')
+      let date = document.createElement('p')
+      date.classList.add('date')
 
+      if (mess.sender === local.user.ID) { // Sent by user
+        container.classList.add('self', 'chat')
+      } else if (mess.receiver === local.user.ID) { // Sent to user
+        if (local.read.indexOf(mess.messageID) === -1) {
+          local.read.push(mess.messageID) // User read the message
+        }
+        container.classList.add('other', 'chat')
+      }
+
+      text.textContent = decodeURIComponent(mess.message).replace(/\\/g, "")
+      date.textContent = mess.time
+      container.appendChild(text)
+      container.appendChild(date)
+      messages.insertAdjacentElement('afterbegin', container) // Add to document
+    }
+  }
+}
+
+const unreadChats = function (user) {
+  var total = 0
+  for (let message of local.data.messages) {
+    // Has an unread message
+    if ((local.read.indexOf(message.messageID) === -1) && (message.sender === user)) {
+      total += 1
+    }
+  }
+  return total
 }
 
 // Displays the users
@@ -177,6 +208,12 @@ const displayUser = function (user, item) {
       }
     }
   }
+  if (user.ID !== local.user.ID) {
+    var unread = document.createElement('span')
+    unread.className = 'unread'
+    unread.textContent = `Unread [${unreadChats(user.ID)}]`
+    item.appendChild(unread)
+  }
   return item
 }
 
@@ -189,11 +226,13 @@ const displayData = function () {
   elem.className = 'self'
   elem = displayUser(local.user, elem)
   list.appendChild(elem)
+  var reselected = false
 
   for (let user of local.data.users) { // Add the connected users
     let item = document.createElement('li')
     if (local.selected === user.ID) {
       item.classList.add('selected', 'other')
+      reselected = true // Won't reset selected
     } else {
       item.className = 'other'
     }
@@ -203,7 +242,6 @@ const displayData = function () {
         this.classList.remove('selected')
         message.style.display = 'none'
         local.selected = null
-        clearInterval(local.load)
       } else { // Not selected
         let select = doc('#users li.selected')
         if (typeof(select) !== 'undefined') {
@@ -216,47 +254,56 @@ const displayData = function () {
         for (let prop of this.children) {
           if (prop.className === 'ID') {
             local.selected = prop.textContent
-            console.log(local.selected)
-            chatUser()
+            displayData() // Re-display
+            displayChats() // Display now
+            console.log('selected', local.selected)
             break
           }
         }
       }
     })
+
     // item.textContent = JSON.stringify(user)
     item = displayUser(user, item)
     list.appendChild(item)
   }
-}
 
-const chatUser = function () {
-  local.load = setInterval(function load() {
-    getData('messages', (data) => {
-      console.log(data)
-      if (data !== null) {
-        displayChats(data)
-      } else {
-
-      }
-    })
-    return load // The function executes once before being loaded with the setInterval
-  }(), 2000)
+  if (local.selected !== null) {
+    if (!reselected) { // The user was deleted
+      console.log('delete', local.selected)
+      message.style.display = 'none'
+      local.selected = null
+    }
+  }
 }
 
 const initialiseApp = function () {
   chat.style.display = 'flex'
 
+  window.onbeforeunload = function (event) {
+    event.returnValue = 'All messages will be deleted when you leave'
+    return dialogText
+  }
+
+  window.onblur = function (event) {
+    if (local.selected !== null) {
+      doc('#users .selected').click()
+    }
+  }
+
   local.refresh = setInterval(function refresh() { // Refresh
-    getData('users', (data) => {
+    getData((data) => {
       if (data !== null) {
-        local.data.users = data // Store
+        local.data.users = data.users // Store
+        local.data.messages = data.messages
         displayData()
+        displayChats()
       } else {
 
       }
     })
     return refresh // The function executes once before being loaded with the setInterval
-  }(), 10000)
+  }(), 2500)
 }
 
 // << Events >>
@@ -329,11 +376,11 @@ text.addEventListener('submit', function (event) {
   submit.disabled = true
 
   if (values.message !== null) {
-    console.log(values)
+    console.log('send', values)
     sendData('message', values, (success) => {
       submit.disabled = false
       if (success) {
-
+        text.reset() // The form
       } else {
 
       }
@@ -342,10 +389,5 @@ text.addEventListener('submit', function (event) {
 
   }
 })
-
-window.onbeforeunload = function (event) {
-  event.returnValue = 'All messages will be deleted when you leave'
-  return dialogText
-}
 
 }).call(this)

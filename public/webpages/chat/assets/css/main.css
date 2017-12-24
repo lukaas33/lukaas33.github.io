@@ -22,30 +22,42 @@ body {
       #chat #users ul li.selected {
         color: blue; }
       #chat #users ul li span {
-        display: block; }
-      #chat #users ul li .ID {
+        display: block;
         font-size: 0.75rem; }
-        #chat #users ul li .ID:before {
-          content: '#'; }
+      #chat #users ul li .name {
+        font-size: 1rem; }
+      #chat #users ul li .ID:before {
+        content: '#'; }
   #chat #message {
     width: 90vw;
     height: 100vh;
-    overflow-y: scroll;
     display: none; }
     #chat #message #messages {
       width: 90vw;
-      height: 90vh; }
+      height: 90vh;
+      overflow-y: scroll; }
+      #chat #message #messages .chat {
+        border: 1px solid black;
+        font-size: 1.25rem; }
+        #chat #message #messages .chat .date {
+          font-size: 0.75rem; }
+      #chat #message #messages .self {
+        margin-right: 60%; }
+      #chat #message #messages .other {
+        margin-left: 60%; }
     #chat #message #send {
       width: 90vw;
       height: 10vh; }
       #chat #message #send #text {
         width: 100%;
         height: 100%;
-        display: flex; }
+        display: flex;
+        font-size: 1.5rem; }
         #chat #message #send #text textarea {
           width: 90%;
-          height: 100%;
-          display: inline-block; }
+          max-height: 100%;
+          display: inline-block;
+          resize: none; }
         #chat #message #send #text input[type=submit] {
           width: 10%;
           height: 100%;
