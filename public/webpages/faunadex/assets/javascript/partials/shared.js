@@ -14,7 +14,7 @@ shared.json = {
     if (key === 'date') { // Datestring
       return new Date(value)
     } else if (key === 'text') { // Html as string
-      return $.parseHTML(value)
+      return $.parseHTML(value)[0]
     } else {
       return value
     }
@@ -99,6 +99,7 @@ shared.storage = function (name, options = null, callback = () => {}) {
               }
             }
           } else { // Create an ID
+            console.log('id')
             let unique = false
             let final = null
             while (!unique) {
@@ -111,11 +112,13 @@ shared.storage = function (name, options = null, callback = () => {}) {
               }
               final = id.join('')
               unique = true // Stop running
-              for (let index in object.content) {
-                let entry = object.content[index]
-                if (entry.id === final) {
-                  unique = false // Run again
-                  break // The for loop
+              if (object.conten.length > 0) {
+                for (let index in object.content) {
+                  let entry = object.content[index]
+                  if (entry.id === final) {
+                    unique = false // Run again
+                    break // The for loop
+                  }
                 }
               }
             }
@@ -136,9 +139,11 @@ shared.storage = function (name, options = null, callback = () => {}) {
       }
 
       localStorage.setItem(name, JSON.stringify(object, shared.json.stringify)) // Store as string
-      callback() // Finished
+      setTimeout(() => {
+        callback() // Finished
+      }, 10) // Slight delay to avoid some problems
     }
   } else {
-    	return undefined
+  	return undefined
   }
 }

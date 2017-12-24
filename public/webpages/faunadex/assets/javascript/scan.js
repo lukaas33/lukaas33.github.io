@@ -186,7 +186,14 @@ const wikipediaData = function (search, callback) {
   }).done((pages) => {
     console.log(pages)
     // Get data from this page
-    const targetPage = pages.query.search[0].pageid
+    let targetPage = null
+    for (let page of pages.query.search) {
+      if (page.title.indexOf('(disambiguation)') === -1) {
+        // First page that has content
+        targetPage = page.pageid
+        break
+      }
+    }
 
     $.ajax("https://en.wikipedia.org/w/api.php", {
       data: { // Parameters

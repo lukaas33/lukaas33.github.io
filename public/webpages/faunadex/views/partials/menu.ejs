@@ -1,21 +1,30 @@
 <%
  var menuItems = ['Home', 'Scan', 'Results', 'Achievements', 'About']
 %>
-
-<% for (var index = 0; index < menuItems.length; index++) { %>
-  <%
-    var item = menuItems[index]
-    var path = item.toLowerCase()
-    var classes  = 'menuItem'
-    if (selected === item) {
-      path = ''
-      classes = classes + ' selected'
-    }
-  %>
-  <div class="<%= classes %>">
-    <a href="<%= path %>/">
-      <img src="assets/images/icons/<%= item.toLowerCase() %>.svg"/>
-      <p><%= item %></p>
-    </a>
-  </div>
-<% } %>
+<header>
+  <button name="menu">
+    <img src="assets/images/other/logo-white.svg" alt="The app's white logo"/>
+  </button>
+  <h1>Faunadex</h1>
+</header>
+<div class="container">
+  <% for (var index = 0; index < menuItems.length; index++) { %>
+    <%
+      var item = menuItems[index]
+      var path = item.toLowerCase()
+      if (item === 'Home') {
+        path = '.'
+      }
+      var classes  = 'menuItem'
+      if (selected === item) {
+        classes = classes + ' selected'
+      }
+    %>
+    <div class="<%= classes %>">
+      <a href="<%= path %>/">
+        <img src="assets/images/icons/<%= item.toLowerCase() %>.svg"/>
+        <p><%= item %></p>
+      </a>
+    </div>
+  <% } %>
+</div>
