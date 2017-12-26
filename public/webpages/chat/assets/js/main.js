@@ -20,7 +20,8 @@ var local = {
     users: null,
     messages: null
   },
-  read: []
+  read: [],
+  scroll: true
 }
 
 // << Return functions >>
@@ -138,8 +139,14 @@ const getData = function (callback) {
   http.onreadystatechange = function () { // When done
     if (this.readyState === 4 && this.status === 200) {
       console.log('got', this.responseText)
-      if (this.responseText !== 'error') {
-        callback(JSON.parse(this.responseText)) // Ajax succesfull
+      if (this.responseText !== 'error') { // Ajax succesfull
+        callback(JSON.parse(this.responseText, function (key, value) {
+          if (key === 'time') {
+            return new Date(value)
+          } else {
+            return value
+          }
+        }))
       } else {
         callback(null)
       }
@@ -161,8 +168,13 @@ const displayChats = function () {
       let container = document.createElement('div')
       let text = document.createElement('p')
       text.classList.add('text')
-      let date = document.createElement('p')
+      let date = document.createElement('span')
       date.classList.add('date')
+
+      text.textContent = decodeURIComponent(mess.message).replace(/\\/g, "")
+      date.textContent = `${mess.time.getHours()}:${mess.time.getMinutes()}\t ${mess.time.getFullYear()}-${mess.time.getMonth() + 1}-${mess.time.getDate()}`
+      container.appendChild(text)
+      container.appendChild(date)
 
       if (mess.sender === local.user.ID) { // Sent by user
         container.classList.add('self', 'chat')
@@ -171,12 +183,12 @@ const displayChats = function () {
           local.read.push(mess.messageID) // User read the message
         }
         container.classList.add('other', 'chat')
+        let sender = document.createElement('span')
+        sender.classList.add('sender')
+        sender.textContent = `#${local.selected}`
+        container.appendChild(sender)
       }
 
-      text.textContent = decodeURIComponent(mess.message).replace(/\\/g, "")
-      date.textContent = mess.time
-      container.appendChild(text)
-      container.appendChild(date)
       messages.insertAdjacentElement('afterbegin', container) // Add to document
     }
   }
@@ -211,7 +223,7 @@ const displayUser = function (user, item) {
   if (user.ID !== local.user.ID) {
     var unread = document.createElement('span')
     unread.className = 'unread'
-    unread.textContent = `Unread [${unreadChats(user.ID)}]`
+    unread.textContent = unreadChats(user.ID)
     item.appendChild(unread)
   }
   return item
@@ -363,7 +375,7 @@ input.addEventListener('submit', function (event) {
 // Message
 text.addEventListener('submit', function (event) {
   event.preventDefault()
-  var submit = doc('#text input[name=submit]')
+  var submit = doc('#text button[name=submit]')
   var field = doc('#text textarea')
 
   var values = {

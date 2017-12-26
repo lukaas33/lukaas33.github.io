@@ -9,9 +9,11 @@
 <body>
 	<main id="register">
 		<form id="input">
+			<h2>Join the chat</h2>
+			<p>Only a name is required</p>
 			<input class="field" maxlength="64" required name="name" type="text" placeholder="Name"/><br/>
 			<select class="field" name="country">
-				<option selected value=""></option>
+				<option selected class="none" value="">Country</option>
 				<!-- Got from https://gist.github.com/soul-wish/8030172 -->
 				<option value="United States">United States</option>
 				<option value="United Kingdom">United Kingdom</option>
@@ -255,24 +257,29 @@
 				<option value="Zambia">Zambia</option>
 				<option value="Zimbabwe">Zimbabwe</option>
 			</select><br/>
-			<input class="field" name="age" min="5" max="125" type="number"/><br/>
+			<input class="field" name="age" min="5" max="125" type="number" placeholder="Age"/><br/>
 			<input name="submit" type="submit" value="Join chat"/><br/>
 		</form>
 		<p id="status"></p>
 	</main>
 	<main id="chat">
 		<div id="users">
-			<h3>Connected users</h3>
 			<ul></ul>
 		</div>
 		<div id="message">
 			<div id="messages">
-				
+
 			</div>
 			<div id="send">
 				<form id="text">
-					<textarea rows="3" cols="100" required wrap="hard" name="message" maxlength="65536" placeholder="Type your message"></textarea>
-					<input name="submit" type="submit" value="Send"/><br/>
+					<div class="container">
+						<textarea rows="3" cols="100" required wrap="hard" name="message" maxlength="65536" placeholder="Type your message"></textarea>
+					</div>
+					<div class="box">
+						<button name="submit" type="submit">
+							<img src="assets/icons/send.svg"/>
+						</button>
+					</div>
 				</form>
 			</div>
 		</div>
