@@ -18,8 +18,8 @@ $padding: $margin / 2;
 
 @keyframes slideDown {
   from {
-    -webkit-transform: translateY(-100%);
-    transform: translateY(-100%);
+    -webkit-transform: translateY(-100vh);
+    transform: translateY(-100vh);
   }
 
   to {
@@ -30,8 +30,8 @@ $padding: $margin / 2;
 
 @keyframes slideSide {
   from {
-    -webkit-transform: translateX(-100%);
-    transform: translateX(-100%);
+    -webkit-transform: translateX(-100vw);
+    transform: translateX(-100vw);
   }
 
   to {
@@ -42,8 +42,8 @@ $padding: $margin / 2;
 
 @keyframes slideUp {
   from {
-    -webkit-transform: translateY(100%);
-    transform: translateY(100%);
+    -webkit-transform: translateY(100vh);
+    transform: translateY(100vh);
   }
 
   to {
@@ -57,6 +57,27 @@ $padding: $margin / 2;
   // Edited from values at https://codepen.io/sdthornton/pen/wBZdXq
   box-shadow: 0 #{$x}px #{$blur}px rgba(0, 0, 0, .1) #{$option},
   0 #{ceil($x / 1.4)}px #{ceil($blur / 1.4)}px rgba(0, 0, 0, .2) #{$option};
+}
+
+@mixin media($size) {
+  @if $size == phone-only {
+    @media only screen and (max-width: 599px) { @content; }
+  }
+  @else if $size == tablet-portrait-up {
+    @media only screen and (min-width: 600px) { @content; }
+  }
+  @else if $size == tablet-landscape-up {
+    @media only screen and (min-width: 900px) { @content; }
+  }
+  @else if $size == desktop-up {
+    @media only screen and (min-width: 1200px) { @content; }
+  }
+  @else if $size == big-desktop-up {
+    @media only screen and (min-width: 1800px) { @content; }
+  }
+  @else {
+    @error 'Invalid argument';
+  }
 }
 
 // Classes
@@ -132,7 +153,7 @@ $padding: $margin / 2;
   @extend %button; // Is a button
   background-color: $primary-500;
   color: #fff;
-  padding: ($margin / 8) ($margin / 4);
+  padding: 0.5rem;
   text-transform: uppercase;
 }
 
@@ -143,6 +164,9 @@ $padding: $margin / 2;
 }
 
 // Main
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -150,7 +174,18 @@ $padding: $margin / 2;
 }
 
 :root {
-  font-size: 16px;
+  @include media(phone-only) {
+    font-size: 20px;
+  }
+  @include media(tablet-portrait-up) {
+    font-size: 19px;
+  }
+  @include media(tablet-landscape-up) {
+    font-size: 18px;
+  }
+  @include media(desktop-up) {
+    font-size: 16px;
+  }
 }
 
 ::selection {
@@ -158,37 +193,85 @@ $padding: $margin / 2;
   color: #fff;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   color: $grey-800;
+  font-size: 1rem;
   background-color: $grey-200;
+  font-family: 'Roboto', sans-serif;
 }
 
 #register {
-  animation-name: slideUp;
-  animation-duration: $time;
   background-color: $primary-500;
   height: 100vh;
   width: 100vw;
-  padding: 25vh 25vw;
 
-  #input {
+  @include media(phone-only) {
+    padding: 5vh 10vw;
+  }
+  @include media(tablet-portrait-up) {
+    padding: 5vh 10vw;
+  }
+  @include media(tablet-landscape-up) {
+    padding: 25vh 25vw;
+  }
+  @include media(desktop-up) {
+    padding: 25vh 25vw;
+  }
+
+  .container {
     @extend %card;
-    padding: $padding;
-    width: 50vw;
-    height: 50vh;
+    animation-name: slideUp;
+    animation-duration: $time;
 
-    h2 {
-      font-size: 2rem;
+    @include media(phone-only) {
+      width: 80vw;
+      height: 90vh;
+      padding: $padding * 2;
+    }
+    @include media(tablet-portrait-up) {
+      width: 80vw;
+      height: 90vh;
+      padding: $padding * 1.5;
+    }
+    @include media(tablet-landscape-up) {
+      width: 50vw;
+      height: 50vh;
+      padding: $padding;
+    }
+    @include media(desktop-up) {
+      width: 50vw;
+      height: 50vh;
+      padding: $padding;
     }
 
-    .field {
-      @extend %input;
-      margin-bottom: $padding / 2;
-      padding: 2rem 0 1rem 0
-    }
+    #input {
+      position: relative; // For the absolute pos
 
-    input[type=submit] {
-      @extend %normal;
+      h2 {
+        font-size: 2rem;
+      }
+
+      img {
+        height: 3.5rem;
+        width: 3.5rem;
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+
+      .field {
+        @extend %input;
+        margin-bottom: 1rem;
+        padding: 2rem 0 1rem 0
+      }
+
+      input[type=submit] {
+        @extend %normal;
+      }
     }
   }
 }
@@ -197,7 +280,23 @@ body {
   display: none;
   width: 100vw;
   height: 100vh;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-content: flex-start;
   overflow: hidden;
+
+  @include media(phone-only) {
+    flex-direction: column;
+  }
+  @include media(tablet-portrait-up) {
+    flex-direction: column;
+  }
+  @include media(tablet-landscape-up) {
+    flex-direction: row;
+  }
+  @include media(desktop-up) {
+    flex-direction: row;
+  }
 
   #users {
     @include shadow(2, 10);
@@ -205,29 +304,55 @@ body {
     animation-duration: $time;
     background-color: $grey-50;
     display: inline-block;
-    width: 15vw;
-    height: 100vh;
     overflow-y: scroll;
-    padding: $padding / 2;
+    padding: 0.5rem;
+    position: relative;
+    z-index: 100;
+
+    @include media(phone-only) {
+      width: 100vw;
+      height: 5rem;
+    }
+    @include media(tablet-portrait-up) {
+      width: 100vw;
+      height: 5rem;
+    }
+    @include media(tablet-landscape-up) {
+      width: 15vw;
+      height: 100vh;
+    }
+    @include media(desktop-up) {
+      width: 15vw;
+      height: 100vh;
+    }
 
     ul {
       list-style-type: none;
 
       li {
         cursor: pointer;
-        padding: 1rem 0.5rem;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        position: relative; // For the absolute pos
         background-color: $grey-100;
-        position: relative;
 
         &.other {
-          margin-bottom: $padding / 4;
         }
 
         &.self {
-          margin-bottom: $padding / 2;
           font-weight: bold;
-          color: $secondary-A200;
+          margin-bottom: 2rem;
+          color: $primary-500;
           cursor: pointer;
+
+          img {
+            position: absolute;
+            height: 2.5rem;
+            width: 2.5rem;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+          }
         }
 
         &.selected {
@@ -262,23 +387,43 @@ body {
       .unread {
         @extend %round;
         color: #fff;
-        position: absolute;
         width: 1.5rem;
         height: 1.5rem;
+        position: absolute;
         right: 1rem;
         top: 50%;
         transform: translateY(-50%);
         text-align: center;
         vertical-align: middle;
         line-height: 1.5rem;
+        box-shadow: 0px 0px 0px transparent; // Overwrite button class
+
+        :hover {
+          box-shadow: 0px 0px 0px transparent; // Overwrite button class
+        }
       }
     }
   }
 
   #message {
-    width: 85vw;
-    height: 100vh;
     display: none; // Start state
+    position: relative;
+    z-index: 50;
+    height: auto;
+    align-self: flex-end;
+
+    @include media(phone-only) {
+      width: 100vw;
+    }
+    @include media(tablet-portrait-up) {
+      width: 100vw;
+    }
+    @include media(tablet-landscape-up) {
+      width: 85vw;
+    }
+    @include media(desktop-up) {
+      width: 85vw;
+    }
 
     #messages {
       animation-name: slideDown;
@@ -289,28 +434,62 @@ body {
 
       .chat {
         @extend %card;
-        margin: $padding;
-        padding: $padding / 2;
+        margin: 1rem;
+        padding: 1rem;
         font-size: 1.25rem;
+
         .text {
-          white-space: pre; // Display line breaks
+          white-space: pre-wrap; // Display line breaks
+          overflow-wrap: break-word; // Long lines
+        }
+
+        span {
+          font-size: 0.75rem;
+
+          @include media(phone-only) {
+            display: block;
+          }
+          @include media(tablet-portrait-up) {
+            display: block;
+          }
+          @include media(tablet-landscape-up) {
+            display: inline-block;
+          }
+          @include media(desktop-up) {
+            display: inline-block;
+          }
+
+          &:first-child {
+            margin-top: 1.5rem;
+          }
+
+          &:last-child {
+            @include media(phone-only) {
+              margin-top: 0rem;
+            }
+            @include media(tablet-portrait-up) {
+              margin-top: 0rem;
+            }
+            @include media(tablet-landscape-up) {
+              margin-top: 1.5rem;
+            }
+            @include media(desktop-up) {
+              margin-top: 1.5rem;
+            }
+          }
         }
 
         .date {
-          margin-top: 1.5rem;
-          font-size: 0.75rem;
           padding: 0.25rem 0;
           color: $grey-600;
           white-space: pre; // Space between date and time
+          margin-right: 1rem;
         }
 
         .sender {
-          margin-top: 1.5rem;
-          margin-left: 1rem;
           background-color: $primary-300;
           color: #fff;
           padding: 0.25rem;
-          font-size: 0.75rem;
         }
       }
 
@@ -329,7 +508,7 @@ body {
       animation-name: slideUp;
       animation-duration: $time;
       width: 100%;
-      height: 10%;
+      height: 10vh;
 
       #text {
         width: 100%;
@@ -346,6 +525,7 @@ body {
 
           textarea {
             @extend %form;
+            font-family: 'roboto', sans-serif;
             background-color: $primary-400;
             font-size: 1rem;
             color: #fff;
@@ -371,9 +551,8 @@ body {
 
           button[type=submit] {
             @extend %round;
-            width: 4vw;
-            height: 4vw;
-            display: inline-block;
+            width: 5vh;
+            height: 5vh;
           }
         }
 

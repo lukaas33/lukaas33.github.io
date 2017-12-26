@@ -1,74 +1,75 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto");
 @keyframes slideDown {
   from {
-    -webkit-transform: translateY(-100%);
-    transform: translateY(-100%); }
+    -webkit-transform: translateY(-100vh);
+    transform: translateY(-100vh); }
   to {
     -webkit-transform: translateY(0);
     transform: translateY(0); } }
 
 @keyframes slideSide {
   from {
-    -webkit-transform: translateX(-100%);
-    transform: translateX(-100%); }
+    -webkit-transform: translateX(-100vw);
+    transform: translateX(-100vw); }
   to {
     -webkit-transform: translateX(0);
     transform: translateX(0); } }
 
 @keyframes slideUp {
   from {
-    -webkit-transform: translateY(100%);
-    transform: translateY(100%); }
+    -webkit-transform: translateY(100vh);
+    transform: translateY(100vh); }
   to {
     -webkit-transform: translateY(0);
     transform: translateY(0); } }
 
-#register #input, #chat #message #messages .chat {
+#register .container, #chat #message #messages .chat {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) , 0 1px 3px rgba(0, 0, 0, 0.2) ;
   -webkit-transition: 400ms ease-in-out;
   background-color: #fff;
   transition: 400ms ease-in-out; }
-  #register #input:hover, #chat #message #messages .chat:hover {
+  #register .container:hover, #chat #message #messages .chat:hover {
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1) , 0 10px 20px rgba(0, 0, 0, 0.2) ; }
 
-#register #input .field, #register #input input[type=submit], #chat #users ul .unread, #chat #message #send #text .box button[type=submit], #chat #message #send #text .container textarea {
+#register .container #input .field, #register .container #input input[type=submit], #chat #users ul .unread, #chat #message #send #text .box button[type=submit], #chat #message #send #text .container textarea {
   cursor: pointer; }
-  #register #input .field:disabled, #register #input input[type=submit]:disabled, #chat #users ul .unread:disabled, #chat #message #send #text .box button[type=submit]:disabled, #chat #message #send #text .container textarea:disabled {
+  #register .container #input .field:disabled, #register .container #input input[type=submit]:disabled, #chat #users ul .unread:disabled, #chat #message #send #text .box button[type=submit]:disabled, #chat #message #send #text .container textarea:disabled {
     cursor: default; }
-  #register #input .field:focus, #register #input input[type=submit]:focus, #chat #users ul .unread:focus, #chat #message #send #text .box button[type=submit]:focus, #chat #message #send #text .container textarea:focus, #register #input .field:active, #register #input input[type=submit]:active, #chat #users ul .unread:active, #chat #message #send #text .box button[type=submit]:active, #chat #message #send #text .container textarea:active {
+  #register .container #input .field:focus, #register .container #input input[type=submit]:focus, #chat #users ul .unread:focus, #chat #message #send #text .box button[type=submit]:focus, #chat #message #send #text .container textarea:focus, #register .container #input .field:active, #register .container #input input[type=submit]:active, #chat #users ul .unread:active, #chat #message #send #text .box button[type=submit]:active, #chat #message #send #text .container textarea:active {
     outline: none; }
 
-#register #input .field, #register #input input[type=submit], #chat #users ul .unread, #chat #message #send #text .box button[type=submit], #chat #message #send #text .container textarea {
+#register .container #input .field, #register .container #input input[type=submit], #chat #users ul .unread, #chat #message #send #text .box button[type=submit], #chat #message #send #text .container textarea {
   background-color: transparent;
   border: 0 solid transparent;
   transition: 400ms ease-in-out; }
 
-#register #input .field {
+#register .container #input .field {
   border-color: #757575;
   border-bottom-width: 1px;
   overflow: hidden;
   position: relative;
   width: 100%; }
-  #register #input .field::-webkit-input-placeholder {
+  #register .container #input .field::-webkit-input-placeholder {
     -webkit-transition: 400ms ease-in-out;
     transition: 400ms ease-in-out; }
-  #register #input .field:focus {
+  #register .container #input .field:focus {
     border-bottom-color: #ff4081; }
-    #register #input .field:focus::-webkit-input-placeholder {
+    #register .container #input .field:focus::-webkit-input-placeholder {
       color: #ff4081;
       -webkit-transform: translateY(-150%);
       font-size: .75rem;
       transform: translateY(-150%); }
 
-#register #input input[type=submit], #chat #users ul .unread, #chat #message #send #text .box button[type=submit] {
+#register .container #input input[type=submit], #chat #users ul .unread, #chat #message #send #text .box button[type=submit] {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) , 0 2px 3px rgba(0, 0, 0, 0.2) ;
   text-align: center; }
-  #register #input input[type=submit]:hover, #chat #users ul .unread:hover, #chat #message #send #text .box button[type=submit]:hover, #register #input input[type=submit]:focus, #chat #users ul .unread:focus, #chat #message #send #text .box button[type=submit]:focus {
+  #register .container #input input[type=submit]:hover, #chat #users ul .unread:hover, #chat #message #send #text .box button[type=submit]:hover, #register .container #input input[type=submit]:focus, #chat #users ul .unread:focus, #chat #message #send #text .box button[type=submit]:focus {
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1) , 0 6px 16px rgba(0, 0, 0, 0.2) ; }
 
-#register #input input[type=submit] {
+#register .container #input input[type=submit] {
   background-color: #3f51b5;
   color: #fff;
-  padding: 0.625vw 1.25vw;
+  padding: 0.5rem;
   text-transform: uppercase; }
 
 #chat #users ul .unread, #chat #message #send #text .box button[type=submit] {
@@ -80,63 +81,154 @@
   margin: 0;
   padding: 0; }
 
-:root {
-  font-size: 16px; }
+@media only screen and (max-width: 599px) {
+  :root {
+    font-size: 20px; } }
+
+@media only screen and (min-width: 600px) {
+  :root {
+    font-size: 19px; } }
+
+@media only screen and (min-width: 900px) {
+  :root {
+    font-size: 18px; } }
+
+@media only screen and (min-width: 1200px) {
+  :root {
+    font-size: 16px; } }
 
 ::selection {
   background: #ff4081;
   color: #fff; }
 
+::-webkit-scrollbar {
+  display: none; }
+
 body {
   color: #424242;
-  background-color: #eeeeee; }
+  font-size: 1rem;
+  background-color: #eeeeee;
+  font-family: 'Roboto', sans-serif; }
 
 #register {
-  animation-name: slideUp;
-  animation-duration: 400ms;
   background-color: #3f51b5;
   height: 100vh;
-  width: 100vw;
-  padding: 25vh 25vw; }
-  #register #input {
-    padding: 2.5vw;
-    width: 50vw;
-    height: 50vh; }
-    #register #input h2 {
-      font-size: 2rem; }
-    #register #input .field {
-      margin-bottom: 1.25vw;
-      padding: 2rem 0 1rem 0; }
+  width: 100vw; }
+  @media only screen and (max-width: 599px) {
+    #register {
+      padding: 5vh 10vw; } }
+  @media only screen and (min-width: 600px) {
+    #register {
+      padding: 5vh 10vw; } }
+  @media only screen and (min-width: 900px) {
+    #register {
+      padding: 25vh 25vw; } }
+  @media only screen and (min-width: 1200px) {
+    #register {
+      padding: 25vh 25vw; } }
+  #register .container {
+    animation-name: slideUp;
+    animation-duration: 400ms; }
+    @media only screen and (max-width: 599px) {
+      #register .container {
+        width: 80vw;
+        height: 90vh;
+        padding: 5vw; } }
+    @media only screen and (min-width: 600px) {
+      #register .container {
+        width: 80vw;
+        height: 90vh;
+        padding: 3.75vw; } }
+    @media only screen and (min-width: 900px) {
+      #register .container {
+        width: 50vw;
+        height: 50vh;
+        padding: 2.5vw; } }
+    @media only screen and (min-width: 1200px) {
+      #register .container {
+        width: 50vw;
+        height: 50vh;
+        padding: 2.5vw; } }
+    #register .container #input {
+      position: relative; }
+      #register .container #input h2 {
+        font-size: 2rem; }
+      #register .container #input img {
+        height: 3.5rem;
+        width: 3.5rem;
+        position: absolute;
+        top: 0;
+        right: 0; }
+      #register .container #input .field {
+        margin-bottom: 1rem;
+        padding: 2rem 0 1rem 0; }
 
 #chat {
   display: none;
   width: 100vw;
   height: 100vh;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-content: flex-start;
   overflow: hidden; }
+  @media only screen and (max-width: 599px) {
+    #chat {
+      flex-direction: column; } }
+  @media only screen and (min-width: 600px) {
+    #chat {
+      flex-direction: column; } }
+  @media only screen and (min-width: 900px) {
+    #chat {
+      flex-direction: row; } }
+  @media only screen and (min-width: 1200px) {
+    #chat {
+      flex-direction: row; } }
   #chat #users {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) , 0 2px 8px rgba(0, 0, 0, 0.2) ;
     animation-name: slideSide;
     animation-duration: 400ms;
     background-color: #fafafa;
     display: inline-block;
-    width: 15vw;
-    height: 100vh;
     overflow-y: scroll;
-    padding: 1.25vw; }
+    padding: 0.5rem;
+    position: relative;
+    z-index: 100; }
+    @media only screen and (max-width: 599px) {
+      #chat #users {
+        width: 100vw;
+        height: 5rem; } }
+    @media only screen and (min-width: 600px) {
+      #chat #users {
+        width: 100vw;
+        height: 5rem; } }
+    @media only screen and (min-width: 900px) {
+      #chat #users {
+        width: 15vw;
+        height: 100vh; } }
+    @media only screen and (min-width: 1200px) {
+      #chat #users {
+        width: 15vw;
+        height: 100vh; } }
     #chat #users ul {
       list-style-type: none; }
       #chat #users ul li {
         cursor: pointer;
-        padding: 1rem 0.5rem;
-        background-color: #f5f5f5;
-        position: relative; }
-        #chat #users ul li.other {
-          margin-bottom: 0.625vw; }
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        position: relative;
+        background-color: #f5f5f5; }
         #chat #users ul li.self {
-          margin-bottom: 1.25vw;
           font-weight: bold;
-          color: #ff4081;
+          margin-bottom: 2rem;
+          color: #3f51b5;
           cursor: pointer; }
+          #chat #users ul li.self img {
+            position: absolute;
+            height: 2.5rem;
+            width: 2.5rem;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%); }
         #chat #users ul li.selected {
           color: #ff4081; }
         #chat #users ul li span {
@@ -148,19 +240,36 @@ body {
           content: '#'; }
       #chat #users ul .unread {
         color: #fff;
-        position: absolute;
         width: 1.5rem;
         height: 1.5rem;
+        position: absolute;
         right: 1rem;
         top: 50%;
         transform: translateY(-50%);
         text-align: center;
         vertical-align: middle;
-        line-height: 1.5rem; }
+        line-height: 1.5rem;
+        box-shadow: 0px 0px 0px transparent; }
+        #chat #users ul .unread :hover {
+          box-shadow: 0px 0px 0px transparent; }
   #chat #message {
-    width: 85vw;
-    height: 100vh;
-    display: none; }
+    display: none;
+    position: relative;
+    z-index: 50;
+    height: auto;
+    align-self: flex-end; }
+    @media only screen and (max-width: 599px) {
+      #chat #message {
+        width: 100vw; } }
+    @media only screen and (min-width: 600px) {
+      #chat #message {
+        width: 100vw; } }
+    @media only screen and (min-width: 900px) {
+      #chat #message {
+        width: 85vw; } }
+    @media only screen and (min-width: 1200px) {
+      #chat #message {
+        width: 85vw; } }
     #chat #message #messages {
       animation-name: slideDown;
       animation-duration: 400ms;
@@ -168,24 +277,49 @@ body {
       height: 90%;
       overflow-y: scroll; }
       #chat #message #messages .chat {
-        margin: 2.5vw;
-        padding: 1.25vw;
+        margin: 1rem;
+        padding: 1rem;
         font-size: 1.25rem; }
         #chat #message #messages .chat .text {
-          white-space: pre; }
+          white-space: pre-wrap;
+          overflow-wrap: break-word; }
+        #chat #message #messages .chat span {
+          font-size: 0.75rem; }
+          @media only screen and (max-width: 599px) {
+            #chat #message #messages .chat span {
+              display: block; } }
+          @media only screen and (min-width: 600px) {
+            #chat #message #messages .chat span {
+              display: block; } }
+          @media only screen and (min-width: 900px) {
+            #chat #message #messages .chat span {
+              display: inline-block; } }
+          @media only screen and (min-width: 1200px) {
+            #chat #message #messages .chat span {
+              display: inline-block; } }
+          #chat #message #messages .chat span:first-child {
+            margin-top: 1.5rem; }
+          @media only screen and (max-width: 599px) {
+            #chat #message #messages .chat span:last-child {
+              margin-top: 0rem; } }
+          @media only screen and (min-width: 600px) {
+            #chat #message #messages .chat span:last-child {
+              margin-top: 0rem; } }
+          @media only screen and (min-width: 900px) {
+            #chat #message #messages .chat span:last-child {
+              margin-top: 1.5rem; } }
+          @media only screen and (min-width: 1200px) {
+            #chat #message #messages .chat span:last-child {
+              margin-top: 1.5rem; } }
         #chat #message #messages .chat .date {
-          margin-top: 1.5rem;
-          font-size: 0.75rem;
           padding: 0.25rem 0;
           color: #bdbdbd;
-          white-space: pre; }
+          white-space: pre;
+          margin-right: 1rem; }
         #chat #message #messages .chat .sender {
-          margin-top: 1.5rem;
-          margin-left: 1rem;
           background-color: #7986cb;
           color: #fff;
-          padding: 0.25rem;
-          font-size: 0.75rem; }
+          padding: 0.25rem; }
       #chat #message #messages .self {
         margin-right: 60%; }
       #chat #message #messages .other {
@@ -195,7 +329,7 @@ body {
       animation-name: slideUp;
       animation-duration: 400ms;
       width: 100%;
-      height: 10%; }
+      height: 10vh; }
       #chat #message #send #text {
         width: 100%;
         height: 100%;
@@ -208,6 +342,7 @@ body {
           justify-content: center;
           align-items: center; }
           #chat #message #send #text .container textarea {
+            font-family: 'roboto', sans-serif;
             background-color: #5c6bc0;
             font-size: 1rem;
             color: #fff;
@@ -226,6 +361,5 @@ body {
           justify-content: center;
           align-items: center; }
           #chat #message #send #text .box button[type=submit] {
-            width: 4vw;
-            height: 4vw;
-            display: inline-block; }
+            width: 5vh;
+            height: 5vh; }

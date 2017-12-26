@@ -21,7 +21,8 @@ var local = {
     messages: null
   },
   read: [],
-  scroll: true
+  scroll: true,
+  setup: false
 }
 
 // << Return functions >>
@@ -162,6 +163,15 @@ const getData = function (callback) {
 // << Other functions >>
 // Displays the chats
 const displayChats = function () {
+  var prefix = (num) => {
+    var str = String(num)
+    if (str.length === 1) {
+      return '0' + str
+    } else {
+      return str
+    }
+  }
+
   if (local.selected !== null) { // Someone is selected by the user
     messages.innerHTML = '' // Empty
     for (let mess of local.data.messages) {
@@ -171,13 +181,19 @@ const displayChats = function () {
       let date = document.createElement('span')
       date.classList.add('date')
 
+
       text.textContent = decodeURIComponent(mess.message).replace(/\\/g, "")
-      date.textContent = `${mess.time.getHours()}:${mess.time.getMinutes()}\t ${mess.time.getFullYear()}-${mess.time.getMonth() + 1}-${mess.time.getDate()}`
+      date.textContent = `${mess.time.getHours()}:${
+        prefix(mess.time.getMinutes())
+      }  ${
+        mess.time.getFullYear()}-${mess.time.getMonth() + 1}-${mess.time.getDate()
+      }`
       container.appendChild(text)
       container.appendChild(date)
 
       if (mess.sender === local.user.ID) { // Sent by user
         container.classList.add('self', 'chat')
+        messages.insertAdjacentElement('afterbegin', container) // Add to document
       } else if (mess.receiver === local.user.ID) { // Sent to user
         if (local.read.indexOf(mess.messageID) === -1) {
           local.read.push(mess.messageID) // User read the message
@@ -187,9 +203,9 @@ const displayChats = function () {
         sender.classList.add('sender')
         sender.textContent = `#${local.selected}`
         container.appendChild(sender)
+        messages.insertAdjacentElement('afterbegin', container) // Add to document
       }
 
-      messages.insertAdjacentElement('afterbegin', container) // Add to document
     }
   }
 }
@@ -231,13 +247,28 @@ const displayUser = function (user, item) {
 
 // Display the user data
 const displayData = function () {
-  var list = doc('#users ul')
-  list.innerHTML = ''
 
-  var elem = document.createElement('li')
-  elem.className = 'self'
-  elem = displayUser(local.user, elem)
-  list.appendChild(elem)
+  var list = doc('#users ul')
+  var items = doc('#users .other')
+  if (NodeList.prototype.isPrototypeOf(items)) {
+    for (let i = 0; i < items.length; i++) {
+      items[i].outerHTML = '' // To update
+    }
+  } else if (items instanceof HTMLElement) {
+    items.outerHTML = ''
+  }
+
+  if (!local.setup) {
+    var elem = document.createElement('li')
+    elem.className = 'self'
+    elem = displayUser(local.user, elem)
+    var logo = document.createElement('img')
+    logo.src = 'assets/icons/logo.svg'
+    elem.appendChild(logo)
+    list.appendChild(elem)
+    local.setup = true
+  }
+
   var reselected = false
 
   for (let user of local.data.users) { // Add the connected users
@@ -322,7 +353,6 @@ const initialiseApp = function () {
 // Input submit
 input.addEventListener('submit', function (event) {
   event.preventDefault() // I'll handle this
-  var status = document.getElementById('status')
   var submit = doc('#input input[name=submit]')
   var fields = doc('#input .field')
 
@@ -341,13 +371,13 @@ input.addEventListener('submit', function (event) {
 
     if (prop === 'name') { // Check the required value
       if (value === null) {
-        status.textContent = 'No name entered'
+        alert('No name entered')
         submit.disabled = false
         valid = false
         values = {}
         break
       } else if (value.length > 64) {
-        status.textContent = 'Invalid name'
+        alert('Invalid name')
         submit.disabled = false
         valid = false
         values = {}
@@ -363,7 +393,7 @@ input.addEventListener('submit', function (event) {
         local.user = values
         initialiseApp() // Start the app
       } else {
-        status.textContent = 'Server error'
+        alert('Server error')
         submit.disabled = false
         values = {}
       }
