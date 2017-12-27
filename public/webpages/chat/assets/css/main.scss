@@ -330,20 +330,21 @@ body {
       list-style-type: none;
 
       li {
-        cursor: pointer;
+        border-radius: 15px;
         padding: 0.5rem;
         margin-bottom: 1rem;
         position: relative; // For the absolute pos
         background-color: $grey-100;
 
         &.other {
+          cursor: pointer;
         }
 
         &.self {
           font-weight: bold;
           margin-bottom: 2rem;
           color: $primary-500;
-          cursor: pointer;
+          cursor: default;
 
           img {
             position: absolute;
@@ -364,9 +365,18 @@ body {
           font-size: 0.75rem;
         }
 
+        .tag {
+          display: inline-block;
+          margin-left: 0.5rem;
+          background-color: $secondary-A200;
+          color: #fff;
+          padding: 0.125rem; // Will have a total height of 1rem
+          border-radius: 25px;
+        }
+
         .name {
           font-size: 1rem; // Bigger
-
+          display: inline-block;
         }
 
         .ID {
@@ -380,7 +390,9 @@ body {
         }
 
         .age {
-
+          &:after {
+            content: ' years old';
+          }
         }
       }
 
@@ -534,6 +546,7 @@ body {
             padding: 0.5rem;
             display: inline-block;
             resize: none; // Not resizable
+            border-radius: 15px;
 
             &::-webkit-input-placeholder {
               color: $primary-100;

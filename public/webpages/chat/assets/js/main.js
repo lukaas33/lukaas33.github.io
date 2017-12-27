@@ -2,8 +2,8 @@
 'use strict'
 
 // << Variables >>
-// const target = 'https://general-server.herokuapp.com/chat' // Server route
-const target = 'http://localhost:5000/chat'
+const target = 'https://general-server.herokuapp.com/chat' // Server route
+// const target = 'http://localhost:5000/chat'
 
 const register = document.getElementById('register')
 const chat = document.getElementById('chat')
@@ -245,6 +245,44 @@ const displayUser = function (user, item) {
     unread.className = 'unread'
     unread.textContent = unreadChats(user.ID)
     item.appendChild(unread)
+
+    item.addEventListener('click', function (event) { // On click
+      let textarea = doc('#text textarea')
+      if (this.classList.contains('selected')) { // Already selected
+        this.classList.remove('selected')
+        message.style.display = 'none'
+
+        if (local.selected === 'chatbot') { // Return to default
+          textarea.maxlength = 65536
+        }
+
+        local.selected = null
+      } else { // Not selected
+        let select = doc('#users li.selected')
+        if (typeof(select) !== 'undefined') {
+          select.classList.remove('selected')
+        }
+        this.classList.add('selected')
+        message.style.display = 'inline-block'
+
+        // Store the id
+        for (let prop of this.children) {
+          if (prop.className === 'ID') {
+            if (prop.textContent === 'chatbot') { // Different max length
+              textarea.maxlength = 256
+            } else {
+              textarea.maxlength = 65536
+            }
+
+            local.selected = prop.textContent
+            displayData() // Re-display
+            displayChats() // Display now
+            console.log('selected', local.selected)
+            break
+          }
+        }
+      }
+    })
   }
   return item
 }
@@ -284,31 +322,12 @@ const displayData = function () {
       item.className = 'other'
     }
 
-    item.addEventListener('click', function (event) { // On click
-      if (this.classList.contains('selected')) { // Already selected
-        this.classList.remove('selected')
-        message.style.display = 'none'
-        local.selected = null
-      } else { // Not selected
-        let select = doc('#users li.selected')
-        if (typeof(select) !== 'undefined') {
-          select.classList.remove('selected')
-        }
-        this.classList.add('selected')
-        message.style.display = 'inline-block'
-
-        // Store the id
-        for (let prop of this.children) {
-          if (prop.className === 'ID') {
-            local.selected = prop.textContent
-            displayData() // Re-display
-            displayChats() // Display now
-            console.log('selected', local.selected)
-            break
-          }
-        }
-      }
-    })
+    if (user.ID === 'chatbot') {
+      let tag = document.createElement('span')
+      tag.className = 'tag'
+      tag.textContent = 'Bot'
+      item.appendChild(tag)
+    }
 
     // item.textContent = JSON.stringify(user)
     item = displayUser(user, item)

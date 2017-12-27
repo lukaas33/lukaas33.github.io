@@ -212,16 +212,18 @@ body {
     #chat #users ul {
       list-style-type: none; }
       #chat #users ul li {
-        cursor: pointer;
+        border-radius: 15px;
         padding: 0.5rem;
         margin-bottom: 1rem;
         position: relative;
         background-color: #f5f5f5; }
+        #chat #users ul li.other {
+          cursor: pointer; }
         #chat #users ul li.self {
           font-weight: bold;
           margin-bottom: 2rem;
           color: #3f51b5;
-          cursor: pointer; }
+          cursor: default; }
           #chat #users ul li.self img {
             position: absolute;
             height: 2.5rem;
@@ -234,10 +236,20 @@ body {
         #chat #users ul li span {
           display: block;
           font-size: 0.75rem; }
+        #chat #users ul li .tag {
+          display: inline-block;
+          margin-left: 0.5rem;
+          background-color: #ff4081;
+          color: #fff;
+          padding: 0.125rem;
+          border-radius: 25px; }
         #chat #users ul li .name {
-          font-size: 1rem; }
+          font-size: 1rem;
+          display: inline-block; }
         #chat #users ul li .ID:before {
           content: '#'; }
+        #chat #users ul li .age:after {
+          content: ' years old'; }
       #chat #users ul .unread {
         color: #fff;
         width: 1.5rem;
@@ -350,7 +362,8 @@ body {
             width: 95%;
             padding: 0.5rem;
             display: inline-block;
-            resize: none; }
+            resize: none;
+            border-radius: 15px; }
             #chat #message #send #text .container textarea::-webkit-input-placeholder {
               color: #c5cae9; }
         #chat #message #send #text .box {
