@@ -2,8 +2,8 @@
 'use strict'
 
 // << Variables >>
-const target = 'https://general-server.herokuapp.com/chat' // Server route
-// const target = 'http://localhost:5000/chat'
+// const target = 'https://general-server.herokuapp.com/chat' // Server route
+const target = 'http://localhost:5000/chat'
 
 const register = document.getElementById('register')
 const chat = document.getElementById('chat')
@@ -125,9 +125,11 @@ const sendData = function (sending, data, callback) {
 
   var link = null
   if (sending === 'user') {
-    link = target + '/createuser'
+    link = target + '?action=createuser'
+    // link = target + '/createuser'
   } else if (sending === 'message') {
-    link = target + '/sendmessage'
+    link = target + '?action=sendmessage'
+    // link = target + '/sendmessage'
   }
   http.open('POST', link, true) // Post request at external server
   http.setRequestHeader('Content-Type', 'application/json') // Server will expect format
@@ -154,7 +156,8 @@ const getData = function (callback) {
     }
   }
 
-  var link = `${target}/data/${local.user.ID}`
+  var link = `${target}?id=${local.user.ID}`
+  // var link = `${target}/data/${local.user.ID}`
   http.open('GET', link, true) // Post request at external server
   // http.setRequestHeader('Content-Type', 'application/json') // Server will expect format
   http.send() // Sends the request
@@ -175,37 +178,38 @@ const displayChats = function () {
   if (local.selected !== null) { // Someone is selected by the user
     messages.innerHTML = '' // Empty
     for (let mess of local.data.messages) {
-      let container = document.createElement('div')
-      let text = document.createElement('p')
-      text.classList.add('text')
-      let date = document.createElement('span')
-      date.classList.add('date')
+      if ((mess.sender === local.user.ID && mess.receiver === local.selected) || (mess.sender === local.selected  && mess.receiver === local.user.ID)) {
+        let container = document.createElement('div')
+        let text = document.createElement('p')
+        text.classList.add('text')
+        let date = document.createElement('span')
+        date.classList.add('date')
 
 
-      text.textContent = decodeURIComponent(mess.message).replace(/\\/g, "")
-      date.textContent = `${mess.time.getHours()}:${
-        prefix(mess.time.getMinutes())
-      }  ${
-        mess.time.getFullYear()}-${mess.time.getMonth() + 1}-${mess.time.getDate()
-      }`
-      container.appendChild(text)
-      container.appendChild(date)
+        text.textContent = decodeURIComponent(mess.message).replace(/\\/g, "")
+        date.textContent = `${mess.time.getHours()}:${
+          prefix(mess.time.getMinutes())
+        }  ${
+          mess.time.getFullYear()}-${mess.time.getMonth() + 1}-${mess.time.getDate()
+        }`
+        container.appendChild(text)
+        container.appendChild(date)
 
-      if (mess.sender === local.user.ID) { // Sent by user
-        container.classList.add('self', 'chat')
-        messages.insertAdjacentElement('afterbegin', container) // Add to document
-      } else if (mess.receiver === local.user.ID) { // Sent to user
-        if (local.read.indexOf(mess.messageID) === -1) {
-          local.read.push(mess.messageID) // User read the message
+        if (mess.sender === local.user.ID) { // Sent by user
+          container.classList.add('self', 'chat')
+        } else if (mess.receiver === local.user.ID) { // Sent to user
+          if (local.read.indexOf(mess.messageID) === -1) {
+            local.read.push(mess.messageID) // User read the message
+          }
+          container.classList.add('other', 'chat')
+          let sender = document.createElement('span')
+          sender.classList.add('sender')
+          sender.textContent = `#${local.selected}`
+          container.appendChild(sender)
         }
-        container.classList.add('other', 'chat')
-        let sender = document.createElement('span')
-        sender.classList.add('sender')
-        sender.textContent = `#${local.selected}`
-        container.appendChild(sender)
+
         messages.insertAdjacentElement('afterbegin', container) // Add to document
       }
-
     }
   }
 }
