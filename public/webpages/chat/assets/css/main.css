@@ -127,6 +127,7 @@ body {
     #register {
       padding: 25vh 25vw; } }
   #register .container {
+    border-radius: 5px;
     animation-name: slideUp;
     animation-duration: 400ms; }
     @media only screen and (max-width: 599px) {
@@ -212,7 +213,7 @@ body {
     #chat #users ul {
       list-style-type: none; }
       #chat #users ul li {
-        border-radius: 15px;
+        border-radius: 5px;
         padding: 0.5rem;
         margin-bottom: 1rem;
         position: relative;
@@ -238,11 +239,11 @@ body {
           font-size: 0.75rem; }
         #chat #users ul li .tag {
           display: inline-block;
-          margin-left: 0.5rem;
+          margin-left: 1rem;
           background-color: #ff4081;
           color: #fff;
-          padding: 0.125rem;
-          border-radius: 25px; }
+          padding: 0.125rem 0.5rem;
+          border-radius: 1rem; }
         #chat #users ul li .name {
           font-size: 1rem;
           display: inline-block; }
@@ -262,7 +263,7 @@ body {
         vertical-align: middle;
         line-height: 1.5rem;
         box-shadow: 0px 0px 0px transparent; }
-        #chat #users ul .unread :hover {
+        #chat #users ul .unread:hover {
           box-shadow: 0px 0px 0px transparent; }
   #chat #message {
     display: none;
@@ -289,6 +290,7 @@ body {
       height: 90%;
       overflow-y: scroll; }
       #chat #message #messages .chat {
+        border-radius: 5px;
         margin: 1rem;
         padding: 1rem;
         font-size: 1.25rem; }
@@ -362,8 +364,7 @@ body {
             width: 95%;
             padding: 0.5rem;
             display: inline-block;
-            resize: none;
-            border-radius: 15px; }
+            resize: none; }
             #chat #message #send #text .container textarea::-webkit-input-placeholder {
               color: #c5cae9; }
         #chat #message #send #text .box {

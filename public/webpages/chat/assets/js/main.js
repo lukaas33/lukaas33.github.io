@@ -2,8 +2,8 @@
 'use strict'
 
 // << Variables >>
-const target = 'https://general-server.herokuapp.com/chat' // Server route
-// const target = 'http://localhost:5000/chat'
+// const target = 'https://general-server.herokuapp.com/chat' // Server route
+const target = 'http://localhost:5000/chat'
 
 const register = document.getElementById('register')
 const chat = document.getElementById('chat')
@@ -60,29 +60,6 @@ const escape = function (value) {
     if (result === '') {
       return null // None entered
     } else {
-      result = encodeURIComponent(result) // Remove , / ? : @ & = + $ #
-      // From https://stackoverflow.com/questions/7744912/making-a-javascript-string-sql-friendly
-      result = result.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
-        switch (char) {
-          case "\0":
-            return "\\0";
-          case "\x08":
-            return "\\b";
-          case "\x09":
-            return "\\t";
-          case "\x1a":
-            return "\\z";
-          case "\n":
-            return "\\n";
-          case "\r":
-            return "\\r";
-          case "\"":
-          case "'":
-          case "\\":
-          case "%":
-            return "\\"+char
-        }
-      }) // Escape for sql
       return result
     }
   } else if (typeof(value) === 'number') {
@@ -186,7 +163,7 @@ const displayChats = function () {
         date.classList.add('date')
 
 
-        text.textContent = decodeURIComponent(mess.message).replace(/\\/g, "")
+        text.textContent = mess.message
         date.textContent = `${mess.time.getHours()}:${
           prefix(mess.time.getMinutes())
         }  ${
@@ -232,7 +209,7 @@ const displayUser = function (user, item) {
     if (value !== null && value !== 'null') { // Valid value
       let elem = document.createElement('span')
       elem.className = prop
-      elem.textContent = decodeURIComponent(value).replace(/\\/g, "")
+      elem.textContent = value
       if (prop === 'name') {
         item.insertAdjacentElement('afterbegin', elem)
       } else {
