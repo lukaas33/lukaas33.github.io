@@ -2,8 +2,8 @@
 'use strict'
 
 // << Variables >>
-// const target = 'https://general-server.herokuapp.com/chat' // Server route
-const target = 'http://localhost:5000/chat'
+const target = 'https://general-server.herokuapp.com/chat' // Server route
+// const target = 'http://localhost:5000/chat'
 
 const register = document.getElementById('register')
 const chat = document.getElementById('chat')
@@ -162,8 +162,9 @@ const displayChats = function () {
         let date = document.createElement('span')
         date.classList.add('date')
 
-
-        text.textContent = mess.message
+        let databaseText = mess.message
+        databaseText = databaseText.replace(/''/g, `'`).replace(/""/g, `"`)
+        text.textContent = databaseText
         date.textContent = `${mess.time.getHours()}:${
           prefix(mess.time.getMinutes())
         }  ${
