@@ -112,7 +112,7 @@ shared.storage = function (name, options = null, callback = () => {}) {
               }
               final = id.join('')
               unique = true // Stop running
-              if (object.conten.length > 0) {
+              if (object.content.length > 0) {
                 for (let index in object.content) {
                   let entry = object.content[index]
                   if (entry.id === final) {

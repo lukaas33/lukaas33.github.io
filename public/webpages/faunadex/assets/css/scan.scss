@@ -5,6 +5,7 @@
 @import "partials/global";
 
 .top {
+  display: none; // Start state
   position: absolute;
   background-color: grey;
   z-index: 20;
@@ -27,7 +28,8 @@
   }
 }
 
-main {
+#self {
+  display: none; // Start state
 
   .full {
     position: absolute;

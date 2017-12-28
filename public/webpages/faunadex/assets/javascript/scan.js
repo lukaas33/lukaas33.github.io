@@ -12,7 +12,9 @@ const doc = {
   accept: $('button[name=accept]'),
   save: $('button[name=save]'),
   gallery: $('input[name=gallery]'),
-  back: $('button[name=back]')
+  back: $('button[name=back]'),
+  top: $('.top'),
+  main: $('main')
 }
 
 // Other
@@ -22,6 +24,7 @@ const local = { // To this file
   result: null, // Stores the top search result
   data: null, // Stores the final object
   state: 'selecting', // Stores page state
+  animalNames: null, // Will store the object
   view: {
     width: $(window).width(),
     height: $(window).height(),
@@ -35,8 +38,30 @@ const local = { // To this file
 }
 
 // << Return functions >>
+// Search the animals
+const binarySearch = function (value) {
+  var min = 0
+  var max = local.animalNames.length - 1
+  while (true) {
+    if (min > max) { // End
+      break
+    } else {
+      let middle = Math.floor((min + max) / 2)
+      let select = local.animalNames[middle].toLowerCase()
+      if (select === value) {
+        return true // Found
+      } else if (select < value) { // a < z comparison
+        min = middle + 1
+      } else if (select > value) {
+        max = middle - 1
+      }
+    }
+  }
+  return false // Not found
+}
+
 // Sets the media constraints
-const setConstraints = function() {
+const setConstraints = function () {
   // Video input constraints TODO tweak values
   var constraints = {
     audio: false,
@@ -60,15 +85,21 @@ const setConstraints = function() {
 }
 
 // TODO Tests input
-const validateInput = (input) => {
+const validateInput = function (input) {
   return true
 }
 
-// TODO filters image recognition output for animals
-// TODO error if not animal
+// Filters image recognition output for animals
 const filterOutput = function (output) {
-  var data = output.outputs[0].data
-  var result = data.concepts[0] // The most likely guess
+  var data = output.outputs[0].data.concepts
+  var result = data[0] // The one with the highest certainty
+  for (let index in data) { // If the name is in the list, choose this result
+    let res = data[index]
+    if (binarySearch(res)) { // Binary search for it in the array
+      result = res
+      break
+    }
+  }
   return result
 }
 
@@ -100,48 +131,23 @@ const toBase64 = function (img) {
 }
 
 // << Functions >>
-// TODO he page is loaded
+// The page is loaded
 const loaded = function () {
-
+  doc.main.show()
+  doc.top.show()
 }
 
 // Filters the wikipedia text into a standard object
-const filterText = function (html) { // Asumes the Wikipedia page of an animal
-  var object = $(html.text['*'])
-  var name = html.displaytitle
-  var text = $('<div></div>') // Container object
-  var sciName = null
+const filterText = function () { // Asumes the Wikipedia page of an animal
+  var data = local.result.data.query.pages
+  var page = data[Object.keys(data)[0]] // One in the object
+  var name = page.title
+  var text = page.extract
 
-  object.find('#mw-content-text').find(':first-child')
-  object.children().each(function () {
-    if ($(this).is('p')) { // First paragraphs
-      var cleanText = $(this)
-      cleanText.find('.reference').remove() // Remove references
-      cleanText.find('a').contents().unwrap() // Change links into urls
-      text.append(cleanText[0]) // Add the stripped html
-    } else {
-      if ($(this).hasClass('infobox biota')) { // Contains scientific name
-        let result = []
+  // Source https://stackoverflow.com/questions/12059284/get-text-between-two-rounded-brackets
+  var sciName = text.match(/\(([^)]+)\)/)[1]
 
-        $(this).find('tr').each(function () { // Table rows loop
-          let cells = $(this).find('td')
-          if (cells.length) { // Exist
-            if (cells[0].textContent === 'Genus:') {
-              result[0] = $(this).find('a').text() // Genus name
-            }
-            if (cells[0].textContent === 'Species:') {
-              result[1] = $(this).find('a').text() // Species name
-            }
-          }
-        })
 
-        sciName = result.join(' ')
-
-      } else if ($(this).hasClass('toc')) { // End of intro
-        return false // Ends the jquery loop
-      }
-    }
-  })
 
   var links = { // TODO get more
     Wikipedia: `https://en.wikipedia.org/wiki/${name}`
@@ -152,7 +158,7 @@ const filterText = function (html) { // Asumes the Wikipedia page of an animal
     name: name,
     img: '#', // TODO add image path
     scientific: sciName,
-    text: text[0],
+    text: $(text)[0], // Dom object
     links: links,
     confidence: `${Math.floor(local.result.returned.value * 100)}%`,
     date: local.metadata.date,
@@ -195,14 +201,11 @@ const wikipediaData = function (search, callback) {
       }
     }
 
-    $.ajax("https://en.wikipedia.org/w/api.php", {
-      data: { // Parameters
-        action: 'parse', // Return html of site
-        format: 'json', // As json format
-        pageid: targetPage
-      }, // wikipedia page
-      dataType: 'jsonp', // Get data from outside domain
-      method: 'POST' // Http method
+    const querystring = `https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&pageids=${targetPage}`
+
+    $.ajax(querystring, {
+      dataType: 'jsonp', // Cross domain
+      method: 'GET' // Http method
     }).done((data) => {
       console.log(data)
       callback(data) // Call function with the data
@@ -210,6 +213,7 @@ const wikipediaData = function (search, callback) {
       // TODO handle error
       console.log(error)
     })
+
   }).fail((error) => {
     // TODO handle error
     console.log(error)
@@ -226,7 +230,7 @@ const processOutput = function (output) {
       returned: local.result,
       data: data
     }
-    filterText(local.result.data.parse) // Change format
+    filterText() // Change format
     displayResult()
   })
 }
@@ -349,6 +353,7 @@ const drawImg = function (img) {
 doc.image.attr('height', local.view.height)
 doc.image.attr('width', local.view.width)
 
+var toLoad = 2
 // Show camera feed in page
   // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
   // https://developers.google.com/web/updates/2015/10/media-devices
@@ -360,11 +365,27 @@ navigator.mediaDevices.getUserMedia(setConstraints()).then((stream) => {
     local.feed.height = this.videoHeight // Store value
     local.feed.width = this.videoHeight * local.view.ratio // Real width
     doc.feed[0].play() // Play feed
-    loaded() // Everthing done
+    toLoad -= 1
+    if (toLoad === 0) {
+      loaded() // Everthing done
+    }
   }
 }).catch((error) => {
   // TODO handle error
   console.log(error)
+  toLoad -= 1
+  if (toLoad === 0) {
+    loaded() // Everthing done
+  }
+})
+
+// Get the aniaml names
+$.getJSON('assets/storage/animal-names.json', function (data) {
+  local.animalNames = data.names // Store
+  toLoad -= 1
+  if (toLoad === 0) {
+    loaded() // Everthing done
+  }
 })
 
 // << Events >>
@@ -376,6 +397,17 @@ doc.save.click(function () {
   })
 })
 
+// Change sizes
+window.onresize = function (event) {
+  local.view = {
+    width: $(window).width(),
+    height: $(window).height(),
+    ratio:  $(window).width() / $(window).height() // Multiply by a height to get a width
+  }
+  doc.image.attr('height', local.view.height)
+  doc.image.attr('width', local.view.width)
+}
+
 // Accept the image
 doc.accept.click(() => {
   imageSent()
@@ -383,7 +415,7 @@ doc.accept.click(() => {
 
 // Back button event
 doc.back.click( function () {
-    goBack()
+  goBack()
 })
 
 // Camera take picture event
