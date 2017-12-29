@@ -49,7 +49,7 @@
   time = {
     time: 0,
     trackSecond: 0,
-    check: []
+    check: {}
   };
 
   time.represent = function(total) {
@@ -61,18 +61,17 @@
   };
 
   time.interval = function(timing, func) {
-    var i, target;
+    var target;
     target = time.time + (timing * 1000);
-    i = time.check.length;
-    return time.check[i] = setInterval((function(_this) {
-      return function(target, func, i) {
+    id = generate.id(time.check);
+    return time.check[id] = setInterval((function(_this) {
+      return function(target, func, id) {
         if (time.time >= target) {
-          clearInterval(time.check[i]);
-          console.log('done');
+          clearInterval(time.check[id]);
           return func();
         }
       };
-    })(this), 1000, target, func, i);
+    })(this), 1000, target, func, id);
   };
 
   check.circleOverlap = function(circle1, circle2) {
@@ -139,10 +138,13 @@
     return angle;
   };
 
-  Random.value = function(bottom, top) {
+  Random.value = function(bottom, top, use) {
     var middle, value;
+    if (use == null) {
+      use = Math.random;
+    }
     middle = top - bottom;
-    value = (Math.random() * middle) + bottom;
+    value = (use() * middle) + bottom;
     return value;
   };
 
@@ -157,7 +159,18 @@
   };
 
   Random.normal = function() {
-    return null;
+    var i, total;
+    total = ((function() {
+      var k, results;
+      results = [];
+      for (i = k = 1; k <= 6; i = ++k) {
+        results.push(Math.random());
+      }
+      return results;
+    })()).reduce(function(t, s) {
+      return t + s;
+    });
+    return total / 6;
   };
 
   generate.id = function(instances) {
@@ -350,7 +363,7 @@
       this.eat = bind(this.eat, this);
       this.die = bind(this.die, this);
       this.mitosis = bind(this.mitosis, this);
-      this.divide = bind(this.divide, this);
+      this.stop = bind(this.stop, this);
       this.goToPoint = bind(this.goToPoint, this);
       this.findTarget = bind(this.findTarget, this);
       this.chooseDirection = bind(this.chooseDirection, this);
@@ -405,12 +418,12 @@
 
     Bacteria.prototype.live = function() {
       var ref1;
-      if (this.action.current === 'dying') {
+      if (this.action.current === 'Dying') {
         this.die();
-      } else if ((ref1 = this.action.current) === 'dividing' || ref1 === 'mitosis' || ref1 === 'stopping') {
-        this.divide();
+      } else if ((ref1 = this.action.current) === 'Mitosis' || ref1 === 'Stopping') {
+
       } else {
-        if (this.action.current === 'colliding') {
+        if (this.action.current === 'Colliding') {
           this.chooseDirection();
         } else {
           this.foodNearby();
@@ -495,7 +508,7 @@
     Bacteria.prototype.move = function() {
       var acceleration, decceleration, newSpeed, ref1, speed;
       this.checkCollision();
-      if ((ref1 = this.action.current) === 'finding' || ref1 === 'stopping') {
+      if ((ref1 = this.action.current) === 'Finding' || ref1 === 'Stopping') {
         decceleration = this.decceleration.value / local.fps;
         newSpeed = Calc.combine(this.speed.current.value) - decceleration;
         this.speed.current.value = this.speed.current.value.normalize(newSpeed);
@@ -527,7 +540,7 @@
         }
         loss += (difference * 100) * this.energyLoss.min.value;
       }
-      loss *= 45;
+      loss *= 35;
       this.energyLoss.current.value = loss;
       atpSec = this.energyLoss.current.value / local.fps;
       return this.energy.value -= atpSec;
@@ -566,11 +579,11 @@
           if (target.distance === minDistance) {
             if (this.target === null) {
               this.speed.min.value = this.speed.max.value / 8;
-              this.changeAction('finding');
+              this.changeAction('Finding');
               this.decceleration.value = Calc.combine(this.speed.current.value);
             } else if (this.target.id !== target.instance.id) {
               this.speed.min.value = this.speed.max.value / 8;
-              this.changeAction('finding');
+              this.changeAction('Finding');
               this.decceleration.value = Calc.combine(this.speed.current.value);
             }
             results.push(this.target = target.instance);
@@ -586,62 +599,65 @@
 
     Bacteria.prototype.checkValues = function() {
       var ref1;
-      if (this.mass.current.value <= this.mass.min.value && this.action.current !== 'dying') {
-        return this.changeAction('dying');
+      if (this.mass.current.value <= this.mass.min.value && this.action.current !== 'Dying') {
+        return this.changeAction('Dying');
       } else if (this.mass.current.value >= this.mass.max.value) {
-        if ((ref1 = this.action.current) !== 'dividing' && ref1 !== 'mitosis' && ref1 !== 'stopping') {
-          return this.changeAction('dividing');
+        if ((ref1 = this.action.current) !== 'Mitosis' && ref1 !== 'Stopping') {
+          return this.stop();
         }
       }
     };
 
     Bacteria.prototype.checkSpeed = function() {
+      var duration;
       if (Calc.combine(this.speed.current.value) >= this.speed.max.value) {
         this.acceleration.value = new Point(0, 0);
         this.speed.current.value.normalize(this.speed.max.value);
       }
-      if (this.action.current === 'finding') {
+      if (this.action.current === 'Finding') {
         if (Calc.combine(this.speed.current.value) <= this.speed.min.value) {
           this.speed.current.value.normalize(this.speed.min.value);
           this.speed.min.value = 0;
           this.decceleration.value = 0;
-          this.changeAction('chasing');
+          this.changeAction('Chasing');
         }
       }
-      if (this.action.current === 'stopping') {
+      if (this.action.current === 'Stopping') {
         if (Calc.combine(this.speed.current.value) < 1e-9) {
           this.speed.current.value = new Point(0, 0);
           this.acceleration.value = new Point(0, 0);
           this.decceleration.value = 0;
-          if (this.action.current !== 'mitosis') {
-            this.changeAction('mitosis');
-            return time.interval(5, this.mitosis);
+          if (this.action.current !== 'Mitosis') {
+            console.log(this.id, 'start mitosis');
+            this.changeAction('Mitosis');
+            duration = this.mitosisDuration.value / 60;
+            return time.interval(duration, this.mitosis);
           }
         }
       }
     };
 
     Bacteria.prototype.checkCollision = function() {
-      var bacterium, bodyRadius, checkNotColliding, cosine, distance, impactAngle, k, len1, otherBodyRadius, ref1, speedComponent;
+      var bacterium, bodyRadius, checkNotColliding, cosine, distance, impactAngle, k, len1, otherBodyRadius, ref1, ref2, speedComponent;
       checkNotColliding = 0;
       bodyRadius = Calc.scale(this.radius.value);
       if (this.position.x + bodyRadius >= local.width) {
-        this.changeAction('colliding');
+        this.changeAction('Colliding');
         this.speed.current.value.x = 0;
         this.chooseDirection(180);
       } else if (this.position.x - bodyRadius <= 0) {
-        this.changeAction('colliding');
+        this.changeAction('Colliding');
         this.speed.current.value.x = 0;
         this.chooseDirection(0);
       } else {
         checkNotColliding += 1;
       }
       if (this.position.y + bodyRadius >= local.height) {
-        this.changeAction('colliding');
+        this.changeAction('Colliding');
         this.speed.current.value.y = 0;
         this.chooseDirection(270);
       } else if (this.position.y - bodyRadius <= 0) {
-        this.changeAction('colliding');
+        this.changeAction('Colliding');
         this.speed.current.value.y = 0;
         this.chooseDirection(90);
       } else {
@@ -654,7 +670,7 @@
           distance = bacterium.position.subtract(this.position);
           otherBodyRadius = Calc.scale(bacterium.radius.value);
           if (Calc.combine(distance) <= bodyRadius + otherBodyRadius) {
-            this.changeAction('colliding');
+            this.changeAction('Colliding');
             impactAngle = this.speed.current.value.getAngle(distance);
             cosine = Math.cos(Calc.rad(impactAngle));
             speedComponent = this.speed.current.value.multiply(cosine);
@@ -666,7 +682,10 @@
           }
         }
       }
-      if (this.action.current === 'colliding' && checkNotColliding === 2 + global.bacteria.length - 1) {
+      if (this.action.current === 'Colliding' && ((ref2 = this.action.previous) === 'Mitosis' || ref2 === 'Stopping')) {
+        this.changeAction(this.action.previous);
+      }
+      if (this.action.current === 'Colliding' && checkNotColliding === 2 + global.bacteria.length - 1) {
         return this.changeAction(this.action.previous);
       }
     };
@@ -678,11 +697,11 @@
       angle = Calc.rad(angle % 360);
       this.direction = new Point(Math.cos(angle), Math.sin(angle));
       this.startMoving();
-      return this.changeAction('wandering');
+      return this.changeAction('Wandering');
     };
 
     Bacteria.prototype.findTarget = function() {
-      if (this.action.current === 'chasing') {
+      if (this.action.current === 'Chasing') {
         this.goToPoint(this.target.position);
         return this.eat();
       }
@@ -695,17 +714,16 @@
       return this.startMoving();
     };
 
-    Bacteria.prototype.divide = function() {
+    Bacteria.prototype.stop = function() {
       var ref1;
-      console.log('frame', this.action);
-      if ((ref1 = this.action.current) !== 'mitosis' && ref1 !== 'stopping') {
-        this.changeAction('stopping');
-        return this.decceleration.value = Calc.combine(this.speed.current.value) / 1.5;
+      if ((ref1 = this.action.current) !== 'Mitosis' && ref1 !== 'Stopping') {
+        this.changeAction('Stopping');
+        return this.decceleration.value = Calc.combine(this.speed.current.value);
       }
     };
 
     Bacteria.prototype.mitosis = function() {
-      var args, index, offspring;
+      var args, chance, condition, factor, index, k, len1, offspring, ref1;
       this.energy.value /= 2;
       this.update();
       args = [this.mass.current.value, this.position.add(Calc.scale(this.radius.value) * 1.5), this.generation + 1, time.time];
@@ -728,8 +746,20 @@
           return Object(result) === result ? result : child;
         })(Caeruleus, args, function(){});
       }
+      chance = this.mutationChance * 100;
+      ref1 = ['temperature', 'concentration', 'acidity'];
+      for (k = 0, len1 = ref1.length; k < len1; k++) {
+        condition = ref1[k];
+        if (Random.chance(Math.pow(chance, -1))) {
+          console.log(offspring.id, 'mutated');
+          factor = Random.value(0, 2, Random.normal);
+          offspring.tolerance[condition].value *= factor;
+        }
+      }
       index = global.bacteria.push(offspring) - 1;
       global.bacteria[index].born();
+      html.ratio();
+      console.log(offspring, 'came into existence');
       return this.chooseDirection();
     };
 
@@ -741,6 +771,10 @@
         bacterium = ref1[index];
         if (typeof bacterium !== 'undefined') {
           if (bacterium.id === this.id) {
+            console.log(this.id, 'died');
+            if (global.interaction.selected === this.id) {
+              global.interaction.selected = null;
+            }
             global.bacteria.splice(index, 1);
             results.push(this.body.remove());
           } else {
@@ -776,6 +810,7 @@
       this.speed.max = new SciNum(this.diameter.value * 1.5, 'speed', 'm/s');
       this.energyLoss.min = new SciNum(4e5, 'energy per second', 'atp/s');
       this.viewRange = new SciNum(this.diameter.value * 2.5, 'length', 'm');
+      this.mitosisDuration = new SciNum(60 * 20, 'time', 's');
       this.mutationChance = 1 / 1000;
       this.idealConditions = {
         temperature: new SciNum(20, 'temperature', 'degrees'),
@@ -886,6 +921,25 @@
         return this.textContent = form(seconds);
       }
     });
+  };
+
+  html.ratio = function() {
+    var bacterium, caeruleus, k, len1, ratio, ref1, ref2, rubrum, total, viridis;
+    total = global.bacteria.length;
+    ref1 = [0, 0, 0], viridis = ref1[0], rubrum = ref1[1], caeruleus = ref1[2];
+    ref2 = global.bacteria;
+    for (k = 0, len1 = ref2.length; k < len1; k++) {
+      bacterium = ref2[k];
+      if (bacterium.species === 'Viridis') {
+        viridis += 1;
+      } else if (bacterium.species === 'Rubrum') {
+        rubrum += 1;
+      } else if (bacterium.species === 'Caeruleus') {
+        caeruleus += 1;
+      }
+    }
+    ratio = [viridis / total, rubrum / total, caeruleus / total];
+    return console.log('Vi, Ru, Ca', ratio);
   };
 
   html.setup = function() {
@@ -1009,8 +1063,13 @@
         if (bacterium.id === global.interaction.selected) {
           data = bacterium;
           doc.data.each(function() {
+            var value;
             if ($(this).hasClass('value')) {
-              return this.textContent = data[this.dataset.name];
+              value = data[this.dataset.name];
+              if (typeof value === 'object') {
+                value = value.current;
+              }
+              return this.textContent = value;
             }
           });
           doc.values.each(function() {
@@ -1212,7 +1271,8 @@
     }
     global.interaction.pauzed = false;
     html.setup();
-    return console.log(project.activeLayer);
+    console.log(project.activeLayer);
+    return html.clock();
   };
 
   draw = {};

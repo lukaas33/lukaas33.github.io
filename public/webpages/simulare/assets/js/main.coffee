@@ -41,7 +41,7 @@ generate = {}
 time =
   time: 0
   trackSecond: 0
-  check: []
+  check: {}
 
 # Convert period to h:m:s
 time.represent = (total) ->
@@ -54,13 +54,12 @@ time.represent = (total) ->
 # Interval function using the pauze functionality
 time.interval = (timing, func) ->
   target = time.time + (timing * 1000)
-  i = time.check.length
-  time.check[i] = setInterval((target, func, i) =>
+  id = generate.id(time.check) # To be able to reset
+  time.check[id] = setInterval((target, func, id) =>
     if time.time >= target
-      clearInterval(time.check[i])
-      console.log('done')
+      clearInterval(time.check[id])
       func()
-  , 1000, target, func, i)
+  , 1000, target, func, id)
 
 
 # Tests if the circles overlap
@@ -117,12 +116,12 @@ Calc.rad = (degrees) ->
   return angle
 
 # Returns value in range
-Random.value = (bottom, top) ->
+Random.value = (bottom, top, use = Math.random) ->
   middle = top - bottom
-  value = (Math.random() * middle) + bottom
+  value = (use() * middle) + bottom
   return value
 
-# Return true with a certain chance TODO seed random function
+# Return true with a certain chance
 Random.chance = (chance) ->
   result = Math.ceil(Math.random() * chance) # Number 1 until chance
   if result == 1 # Chance of one in chance
@@ -130,9 +129,11 @@ Random.chance = (chance) ->
   else
     return false
 
-# TODO add a normal distribution function
+# Normal distribution random numbers
+  # From https://stackoverflow.com/questions/25582882/javascript-math-random-normal-distribution-gaussian-bell-curve
 Random.normal = () ->
-  null
+  total = (Math.random() for i in [1..6]).reduce((t, s) -> t+s)
+  return total / 6
 
 # Creates unique id
 generate.id = (instances) ->
@@ -302,7 +303,7 @@ class Bacteria # Has values shared by all bacteria
     @generation = generation
     @birth = birth
 
-    # Other values TODO store as objects
+    # Other values
     @id = generate.id(global.bacteria)
     @energy = new SciNum(
       Math.round(@mass.current.value / global.constants.atpMass.value), # Number of atp molecules
@@ -345,12 +346,12 @@ class Bacteria # Has values shared by all bacteria
 
   # Continues living TODO work out energy system with traits
   live: =>
-    if @action.current == 'dying' # RIP
+    if @action.current == 'Dying' # RIP
       @die()
-    else if @action.current in ['dividing', 'mitosis', 'stopping']
-      @divide()
+    else if @action.current in ['Mitosis', 'Stopping']
+      # Do nothing in this block
     else # Normal
-      if @action.current == 'colliding' # Needs to move away
+      if @action.current == 'Colliding' # Needs to move away
         @chooseDirection()
       else
         @foodNearby()
@@ -424,7 +425,7 @@ class Bacteria # Has values shared by all bacteria
   # Starts moving
   move: =>
     @checkCollision() # Test if it can move
-    if @action.current in ['finding', 'stopping'] # Slowing down
+    if @action.current in ['Finding', 'Stopping'] # Slowing down
       # Per frame to per second
       decceleration = @decceleration.value / local.fps
       newSpeed = Calc.combine(@speed.current.value) - decceleration
@@ -465,15 +466,12 @@ class Bacteria # Has values shared by all bacteria
       # Increase the Influence of the conditions
       loss += (difference * 100) * @energyLoss.min.value
 
-    loss *= 45 # Increased to speed up things
+    loss *= 35 # Increased to speed up things
     @energyLoss.current.value = loss
 
     # Loses energy per second
     atpSec = (@energyLoss.current.value / local.fps)
     @energy.value -= atpSec
-    # # Loses mass
-    # mass = atpSec * global.constants.atpMass.value
-    # @mass.current.value -= mass
 
   # Checks if there is food nearby
   foodNearby: =>
@@ -495,13 +493,13 @@ class Bacteria # Has values shared by all bacteria
           if @target == null # First encounter
             # Will slow down until reached
             @speed.min.value = @speed.max.value / 8
-            @changeAction('finding')
+            @changeAction('Finding')
             # Slow down
             @decceleration.value = Calc.combine(@speed.current.value)
           else if @target.id != target.instance.id # New target
             # Will slow down until reached
             @speed.min.value = @speed.max.value / 8
-            @changeAction('finding')
+            @changeAction('Finding')
             # Slow down
             @decceleration.value = Calc.combine(@speed.current.value)
           @target = target.instance
@@ -510,11 +508,11 @@ class Bacteria # Has values shared by all bacteria
 
   # Check if it can divide or if it dies
   checkValues: =>
-    if @mass.current.value <= @mass.min.value and @action.current != 'dying'
-      @changeAction('dying')
+    if @mass.current.value <= @mass.min.value and @action.current != 'Dying'
+      @changeAction('Dying')
     else if @mass.current.value >= @mass.max.value
-      if @action.current not in ['dividing', 'mitosis', 'stopping'] # Not already dividing
-        @changeAction('dividing')
+      if @action.current not in ['Mitosis', 'Stopping'] # Not already dividing
+        @stop()
 
   # Checks the speed
   checkSpeed: =>
@@ -523,22 +521,24 @@ class Bacteria # Has values shared by all bacteria
       @acceleration.value = new Point(0, 0) # No acceleration
       @speed.current.value.normalize(@speed.max.value) # Reduce speed
 
-    if @action.current == 'finding' # Looking for food
+    if @action.current == 'Finding' # Looking for food
       if Calc.combine(@speed.current.value) <= @speed.min.value # Has slowed down
         # Speed reached minimum or got too low
         @speed.current.value.normalize(@speed.min.value) # Increase speed
         @speed.min.value = 0 # Reached, is reset
         @decceleration.value = 0 # Is reset
-        @changeAction('chasing')
+        @changeAction('Chasing')
 
-    if @action.current == 'stopping' # Coming to a full stop
+    if @action.current == 'Stopping' # Coming to a full stop
       if Calc.combine(@speed.current.value) < 1e-9 # Too low to see
         @speed.current.value = new Point(0, 0) # Stop completely
         @acceleration.value = new Point(0, 0) # To be sure
         @decceleration.value = 0 # Is reset
-        if @action.current != 'mitosis'
-          @changeAction('mitosis') # Next step in divison
-          time.interval(5, @mitosis)
+        if @action.current != 'Mitosis' # Double check
+          console.log(@id, 'start mitosis')
+          @changeAction('Mitosis') # Next step in divison
+          duration = @mitosisDuration.value / 60 # Changed for user experience
+          time.interval(duration, @mitosis)
 
 
   # Checks if there is a collision
@@ -548,21 +548,21 @@ class Bacteria # Has values shared by all bacteria
     bodyRadius = Calc.scale(@radius.value)
     # Check if in field
     if @position.x + bodyRadius >= local.width
-      @changeAction('colliding')
+      @changeAction('Colliding')
       @speed.current.value.x = 0
       @chooseDirection(180) # Start moving away
     else if @position.x - bodyRadius <= 0
-      @changeAction('colliding')
+      @changeAction('Colliding')
       @speed.current.value.x = 0
       @chooseDirection(0) # Start moving away
     else
       checkNotColliding += 1
     if @position.y + bodyRadius >= local.height
-      @changeAction('colliding')
+      @changeAction('Colliding')
       @speed.current.value.y = 0
       @chooseDirection(270) # Start moving away
     else if @position.y - bodyRadius <= 0
-      @changeAction('colliding')
+      @changeAction('Colliding')
       @speed.current.value.y = 0
       @chooseDirection(90) # Start moving away
     else
@@ -576,7 +576,7 @@ class Bacteria # Has values shared by all bacteria
         otherBodyRadius = Calc.scale(bacterium.radius.value)
         # If the paths are too close
         if Calc.combine(distance) <= bodyRadius + otherBodyRadius
-          @changeAction('colliding')
+          @changeAction('Colliding')
           # Angle between vectors
           impactAngle = @speed.current.value.getAngle(distance)
           # Speed in the illegal direction
@@ -589,7 +589,10 @@ class Bacteria # Has values shared by all bacteria
         else
           checkNotColliding += 1
 
-    if @action.current == 'colliding' and checkNotColliding == 2 + global.bacteria.length - 1 # Stopped colliding
+    if @action.current == 'Colliding' and @action.previous in ['Mitosis', 'Stopping'] # Action must go on
+      @changeAction(@action.previous)
+
+    if @action.current == 'Colliding' and checkNotColliding == 2 + global.bacteria.length - 1 # Stopped colliding
       @changeAction(@action.previous)
 
   # Choose a new direction default is random
@@ -598,11 +601,11 @@ class Bacteria # Has values shared by all bacteria
     # Direction as point relative to self (origin)
     @direction = new Point(Math.cos(angle), Math.sin(angle))
     @startMoving()
-    @changeAction('wandering')
+    @changeAction('Wandering')
 
   # Will go to a point until reached
   findTarget: =>
-    if @action.current == 'chasing' # After it has slowed
+    if @action.current == 'Chasing' # After it has slowed
       @goToPoint(@target.position)
       @eat() # Try to eat
 
@@ -613,15 +616,14 @@ class Bacteria # Has values shared by all bacteria
     @direction = relativePosition.normalize(1)
     @startMoving()
 
-  # Prepares for division TODO make animation
-  divide: =>
-    console.log('frame', @action)
-    if @action.current not in ['mitosis', 'stopping'] # No double
-      @changeAction('stopping')
+  # Prepares for division
+  stop: =>
+    if @action.current not in ['Mitosis', 'Stopping'] # No double
+      @changeAction('Stopping')
       # Slow to a stop
-      @decceleration.value = Calc.combine(@speed.current.value) / 1.5
+      @decceleration.value = Calc.combine(@speed.current.value)
 
-  # Divison
+  # Divison TODO make animatio
   mitosis: =>
     # Values of the current bacteria changes
     @energy.value /= 2
@@ -642,8 +644,17 @@ class Bacteria # Has values shared by all bacteria
     else if @species == 'Caeruleus'
       offspring = new Caeruleus(args...)
 
+    chance = @mutationChance * 100 # Is higher for user experience
+    for condition in ['temperature', 'concentration', 'acidity']
+      if Random.chance(chance**-1) # Mutation occurs
+        console.log(offspring.id, 'mutated')
+        factor = Random.value(0, 2, Random.normal) # Rand value with normal distribution from 0-2
+        offspring.tolerance[condition].value *= factor # Can get higher or lower
+
     index = global.bacteria.push(offspring) - 1 # Insert at the index
     global.bacteria[index].born() # It's alive!
+    html.ratio()
+    console.log(offspring, 'came into existence')
 
     @chooseDirection() # Resume activity
 
@@ -652,6 +663,9 @@ class Bacteria # Has values shared by all bacteria
     for bacterium, index in global.bacteria
       if typeof(bacterium) != 'undefined' # Can be called twice
         if bacterium.id == @id
+          console.log(@id, 'died')
+          if global.interaction.selected  == @id
+            global.interaction.selected = null # Deselect
           global.bacteria.splice(index, 1) # Stop tracking
           @body.remove()
 
@@ -661,9 +675,6 @@ class Bacteria # Has values shared by all bacteria
     if check.circleInside(@body, @target.particle)
       energy = @target.energy.value * 10 # Increased to speed up things
       @energy.value += energy
-      # Gains mass
-      # mass = energy * global.constants.atpMass.value
-      # @mass.current.value += mass
       @target.eaten() # Removes itself
       # findTarget won't be called anymore
       @target = null # Doesn't exist anymore
@@ -677,7 +688,8 @@ class Lucarium extends Bacteria # This family of bacteria has its own traits
     @speed.max = new SciNum(@diameter.value * 1.5, 'speed', 'm/s') # Speed based on body size
     @energyLoss.min = new SciNum(4e5, 'energy per second', 'atp/s')
     @viewRange = new SciNum(@diameter.value * 2.5, 'length', 'm')
-    @mutationChance = 1/1000 # Will be increased for user experience
+    @mitosisDuration = new SciNum(60 * 20, 'time', 's')
+    @mutationChance = 1/1000
     @idealConditions =
       temperature: new SciNum(20, 'temperature', 'degrees')
       acidity: new SciNum(7, 'pH', '')
@@ -761,7 +773,23 @@ html.clock = ->
       @textContent = form(seconds)
   )
 
-# TODO add function that sets up the values of the elements
+# Display the ratio between the bacteria TODO display in sidebar
+html.ratio = ->
+  total = global.bacteria.length
+  [viridis, rubrum, caeruleus] = [0, 0, 0]
+
+  for bacterium in global.bacteria
+    if bacterium.species == 'Viridis'
+      viridis += 1
+    else if bacterium.species == 'Rubrum'
+      rubrum += 1
+    else if bacterium.species == 'Caeruleus'
+      caeruleus += 1
+
+  ratio = [viridis/total, rubrum/total, caeruleus/total]
+  console.log('Vi, Ru, Ca', ratio)
+
+# sets up the values of the elements
 html.setup = ->
   # << Actions >>
   doc.conditions.each( ->
@@ -882,7 +910,10 @@ html.selected = ->
         doc.data.each( ->
           if $(@).hasClass('value')
             # Get the value from the propertyname
-            @textContent = data[@dataset.name]
+            value = data[@dataset.name]
+            if typeof(value) == 'object'
+              value = value.current
+            @textContent = value
         )
         doc.values.each( ->
           if $(@).hasClass('value')
@@ -1096,6 +1127,7 @@ simulation.run = ->
   global.interaction.pauzed = false # Unpauze time
   html.setup() # Activate document
   console.log(project.activeLayer)
+  html.clock() # Starts the time display
 
 # << Simulation functions >>
 # Groups
