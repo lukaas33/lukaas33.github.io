@@ -386,7 +386,7 @@
       this.position = position;
       this.generation = generation;
       this.birth = birth;
-      this.id = generate.id(global.bacteria);
+      this.id = generate.id(global.bacteria.concat(global.dead));
       this.energy = new SciNum(Math.round(this.mass.current.value / global.constants.atpMass.value), 'energy', 'atp');
       this.density = new SciNum(((2 / 3) * global.constants.waterDensity.value) + ((1 / 3) * (13 / 10) * global.constants.waterDensity.value), 'density', 'kg/m^3');
       this.volume = new SciNum(this.mass.current.value / this.density.value, 'volume', 'm^3');
@@ -404,6 +404,7 @@
       this.energyLoss.current = new SciNum(0, 'energy per second', 'atp/s');
       this.direction = null;
       this.target = null;
+      this.timer = null;
       this.action = {
         current: null,
         previous: null
@@ -492,7 +493,7 @@
     };
 
     Bacteria.prototype.ages = function() {
-      return setInterval((function(_this) {
+      return this.timer = setInterval((function(_this) {
         return function() {
           return _this.age.value = (time.time - _this.birth) / 1000;
         };
@@ -775,7 +776,10 @@
             if (global.interaction.selected === this.id) {
               global.interaction.selected = null;
             }
+            clearInterval(this.timer);
             global.bacteria.splice(index, 1);
+            global.dead.push(this);
+            html.ratio();
             results.push(this.body.remove());
           } else {
             results.push(void 0);
@@ -924,22 +928,28 @@
   };
 
   html.ratio = function() {
-    var bacterium, caeruleus, k, len1, ratio, ref1, ref2, rubrum, total, viridis;
+    var bacterium, ca, k, len1, ref1, ref2, ru, total, vi;
     total = global.bacteria.length;
-    ref1 = [0, 0, 0], viridis = ref1[0], rubrum = ref1[1], caeruleus = ref1[2];
+    ref1 = [0, 0, 0], vi = ref1[0], ru = ref1[1], ca = ref1[2];
     ref2 = global.bacteria;
     for (k = 0, len1 = ref2.length; k < len1; k++) {
       bacterium = ref2[k];
       if (bacterium.species === 'Viridis') {
-        viridis += 1;
+        vi += 1;
       } else if (bacterium.species === 'Rubrum') {
-        rubrum += 1;
+        ru += 1;
       } else if (bacterium.species === 'Caeruleus') {
-        caeruleus += 1;
+        ca += 1;
       }
     }
-    ratio = [viridis / total, rubrum / total, caeruleus / total];
-    return console.log('Vi, Ru, Ca', ratio);
+    return global.ratio.push({
+      time: time.time,
+      ratio: {
+        Viridis: vi / total,
+        Rubrum: ru / total,
+        Caeruleus: ca / total
+      }
+    });
   };
 
   html.setup = function() {
@@ -1013,6 +1023,9 @@
     };
     $(window).blur(function() {});
     $(window).focus(function() {});
+    window.onbeforeunload = function() {
+      return '';
+    };
     doc.start.click(function() {});
     doc.screen.click(function(event) {
       var bacterium, k, len1, location, ref1, results;

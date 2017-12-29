@@ -304,7 +304,7 @@ class Bacteria # Has values shared by all bacteria
     @birth = birth
 
     # Other values
-    @id = generate.id(global.bacteria)
+    @id = generate.id(global.bacteria.concat(global.dead)) # Unique with all bacteria, living and dead
     @energy = new SciNum(
       Math.round(@mass.current.value / global.constants.atpMass.value), # Number of atp molecules
       'energy',
@@ -331,6 +331,7 @@ class Bacteria # Has values shared by all bacteria
     @energyLoss.current = new SciNum(0, 'energy per second', 'atp/s') # Initially
     @direction = null # Stores the direction as point
     @target = null # No target yet
+    @timer = null # Stores interval
     # Tracks actions
     @action = { # Initial
       current: null,
@@ -411,7 +412,7 @@ class Bacteria # Has values shared by all bacteria
 
   # Gets older
   ages: =>
-    setInterval( =>
+    @timer = setInterval( =>
       @age.value = (time.time - @birth) / 1000
     , 1000)
 
@@ -666,7 +667,10 @@ class Bacteria # Has values shared by all bacteria
           console.log(@id, 'died')
           if global.interaction.selected  == @id
             global.interaction.selected = null # Deselect
+          clearInterval(@timer) # Stop aging
           global.bacteria.splice(index, 1) # Stop tracking
+          global.dead.push(@) # Store info
+          html.ratio()
           @body.remove()
 
   # Eat food instances
@@ -776,18 +780,23 @@ html.clock = ->
 # Display the ratio between the bacteria TODO display in sidebar
 html.ratio = ->
   total = global.bacteria.length
-  [viridis, rubrum, caeruleus] = [0, 0, 0]
+  [vi, ru, ca] = [0, 0, 0]
 
   for bacterium in global.bacteria
     if bacterium.species == 'Viridis'
-      viridis += 1
+      vi += 1
     else if bacterium.species == 'Rubrum'
-      rubrum += 1
+      ru += 1
     else if bacterium.species == 'Caeruleus'
-      caeruleus += 1
+      ca += 1
 
-  ratio = [viridis/total, rubrum/total, caeruleus/total]
-  console.log('Vi, Ru, Ca', ratio)
+  global.ratio.push( # Store the data
+    time: time.time
+    ratio:
+      Viridis: vi / total
+      Rubrum: ru / total
+      Caeruleus: ca / total
+  )
 
 # sets up the values of the elements
 html.setup = ->
@@ -865,6 +874,10 @@ html.setup = ->
   $(window).focus( ->
     # html.pause(on) # Set to off
   )
+
+  # User has to confirm in order to leave the page
+  window.onbeforeunload = ->
+    return ''
 
   # TODO add restart button event
   doc.start.click( ->
