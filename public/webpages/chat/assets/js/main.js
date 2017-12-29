@@ -159,6 +159,7 @@ const displayChats = function () {
     for (let mess of local.data.messages) {
       if ((mess.sender === local.user.ID && mess.receiver === local.selected) || (mess.sender === local.selected  && mess.receiver === local.user.ID)) {
         let container = document.createElement('div')
+        container.setAttribute('data-up', 'true')
         let text = document.createElement('p')
         text.classList.add('text')
         let date = document.createElement('span')
@@ -330,8 +331,7 @@ const initialiseApp = function () {
   chat.style.display = 'flex'
 
   window.onbeforeunload = function (event) {
-    event.returnValue = 'All messages will be deleted when you leave'
-    return dialogText
+    return ''
   }
 
   window.onblur = function (event) {

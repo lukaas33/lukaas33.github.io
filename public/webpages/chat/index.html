@@ -20,7 +20,7 @@
 		<div class="container">
 			<form id="input">
 				<h2>Join the chat</h2>
-				<p>Only a name is required</p>
+				<p>Your account will be deleted when you leave</p>
 				<img src="assets/icons/logo.svg"/>
 				<input class="field" maxlength="64" required name="name" type="text" placeholder="Name"/><br/>
 				<select class="field" name="country">
@@ -272,7 +272,7 @@
 						<button data-ripple="true" data-shade="light" name="submit" type="submit">
 							Join chat
 						</button>
-						<div class="tooltip down">
+						<div data-down="true" class="tooltip">
 							Create your temporary account
 						</div>
 					</div>
@@ -299,7 +299,7 @@
 							<img src="assets/icons/send.svg"/>
 							<span class="loader"></span>
 						</button>
-						<div class="tooltip up">
+						<div data-up="true" class="tooltip">
 							Send message
 						</div>
 					</div>
