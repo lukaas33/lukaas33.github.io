@@ -41,6 +41,7 @@ generate = {}
 time =
   time: 0
   trackSecond: 0
+  check: []
 
 # Convert period to h:m:s
 time.represent = (total) ->
@@ -49,6 +50,18 @@ time.represent = (total) ->
   minutes = Math.floor(total % 3600 / 60)
   seconds = Math.floor(total % 3600 % 60)
   return [hours, minutes, seconds]
+
+# Interval function using the pauze functionality
+time.interval = (timing, func) ->
+  target = time.time + (timing * 1000)
+  i = time.check.length
+  time.check[i] = setInterval((target, func, i) =>
+    if time.time >= target
+      clearInterval(time.check[i])
+      console.log('done')
+      func()
+  , 1000, target, func, i)
+
 
 # Tests if the circles overlap
 check.circleOverlap = (circle1, circle2) ->
@@ -283,7 +296,6 @@ class Bacteria # Has values shared by all bacteria
   # Values that need to be entered
   constructor: (mass, position, generation, birth) ->
     # Values that are initialised from arguments
-    @id = generate.id(global.bacteria)
     @mass = {}
     @mass.current = new SciNum(mass, 'mass', 'kg')
     @position = position
@@ -291,6 +303,7 @@ class Bacteria # Has values shared by all bacteria
     @birth = birth
 
     # Other values TODO store as objects
+    @id = generate.id(global.bacteria)
     @energy = new SciNum(
       Math.round(@mass.current.value / global.constants.atpMass.value), # Number of atp molecules
       'energy',
@@ -318,9 +331,10 @@ class Bacteria # Has values shared by all bacteria
     @direction = null # Stores the direction as point
     @target = null # No target yet
     # Tracks actions
-    @action = {}
-    @action.current = null # Initial
-    @action.previous = null
+    @action = { # Initial
+      current: null,
+      previous: null
+    }
 
   # Methods
   # Starts living
@@ -333,7 +347,7 @@ class Bacteria # Has values shared by all bacteria
   live: =>
     if @action.current == 'dying' # RIP
       @die()
-    else if @action.current == 'dividing'
+    else if @action.current in ['dividing', 'mitosis', 'stopping']
       @divide()
     else # Normal
       if @action.current == 'colliding' # Needs to move away
@@ -369,12 +383,12 @@ class Bacteria # Has values shared by all bacteria
   # Updates its body
   update: =>
     @checkValues()
-    @mass.current.value = @energy.value * global.constants.atpMass.value
+    @mass.current.value = @energy.value * global.constants.atpMass.value # Convert
     @volume.value = @mass.current.value / @density.value
     @diameter.value = Calc.diameter(@volume.value)
     # Change its size
     previous = @radius.value
-    @radius.value = @diameter.value / 2
+    @radius.value = @diameter.value / 2 # New value
     if @radius.value != previous
       difference = @radius.value / previous # Ratio
       @body.scale(difference)
@@ -496,14 +510,14 @@ class Bacteria # Has values shared by all bacteria
 
   # Check if it can divide or if it dies
   checkValues: =>
-    if @mass.current.value <= @mass.min.value and @action != 'dying'
+    if @mass.current.value <= @mass.min.value and @action.current != 'dying'
       @changeAction('dying')
-    else if @mass.current.value >= @mass.max.value and @action != 'dividing'
-      @changeAction('dividing')
+    else if @mass.current.value >= @mass.max.value
+      if @action.current not in ['dividing', 'mitosis', 'stopping'] # Not already dividing
+        @changeAction('dividing')
 
   # Checks the speed
   checkSpeed: =>
-    # console.log(@action, @previousAction) if global.interaction.selected == @id
     # Check if xSpeed and ySpeed together are higher than maxSpeed
     if Calc.combine(@speed.current.value) >= @speed.max.value
       @acceleration.value = new Point(0, 0) # No acceleration
@@ -520,8 +534,11 @@ class Bacteria # Has values shared by all bacteria
     if @action.current == 'stopping' # Coming to a full stop
       if Calc.combine(@speed.current.value) < 1e-9 # Too low to see
         @speed.current.value = new Point(0, 0) # Stop completely
+        @acceleration.value = new Point(0, 0) # To be sure
         @decceleration.value = 0 # Is reset
-        @changeAction(@previousAction)
+        if @action.current != 'mitosis'
+          @changeAction('mitosis') # Next step in divison
+          time.interval(5, @mitosis)
 
 
   # Checks if there is a collision
@@ -589,20 +606,48 @@ class Bacteria # Has values shared by all bacteria
       @goToPoint(@target.position)
       @eat() # Try to eat
 
-  # Go to a point TODO work out method
+  # Go to a point
   goToPoint: (point) =>
     # Set the direction
     relativePosition = @target.position.subtract(@position)
     @direction = relativePosition.normalize(1)
     @startMoving()
 
-  # Divide itself TODO work out this functionality
+  # Prepares for division TODO make animation
   divide: =>
-    @changeAction('stopping')
-    # Slow to a stop
-    @decceleration.value = Calc.combine(@speed.current.value) / 1.5
+    console.log('frame', @action)
+    if @action.current not in ['mitosis', 'stopping'] # No double
+      @changeAction('stopping')
+      # Slow to a stop
+      @decceleration.value = Calc.combine(@speed.current.value) / 1.5
 
-  # Dies TODO work out method
+  # Divison
+  mitosis: =>
+    # Values of the current bacteria changes
+    @energy.value /= 2
+    @update() # Force mass update
+
+    # Gets changed values
+    args = [
+      @mass.current.value,
+      @position.add(Calc.scale(@radius.value) * 1.5), # Outside current
+      @generation + 1,
+      time.time
+    ]
+    # Call constructor
+    if @species == 'Viridis'
+      offspring = new Viridis(args...)
+    else if @species == 'Rubrum'
+      offspring = new Rubrum(args...)
+    else if @species == 'Caeruleus'
+      offspring = new Caeruleus(args...)
+
+    index = global.bacteria.push(offspring) - 1 # Insert at the index
+    global.bacteria[index].born() # It's alive!
+
+    @chooseDirection() # Resume activity
+
+  # Dies TODO make animation
   die: =>
     for bacterium, index in global.bacteria
       if typeof(bacterium) != 'undefined' # Can be called twice
@@ -786,11 +831,11 @@ html.setup = ->
 
   # When view goes out of focus
   $(window).blur( ->
-    html.pause(off) # Set to on
+    # html.pause(off) # Set to on
   )
   # Window refocuses
   $(window).focus( ->
-    html.pause(on) # Set to off
+    # html.pause(on) # Set to off
   )
 
   # TODO add restart button event
@@ -1047,7 +1092,7 @@ simulation.start = ->
 # Runs simulation
 simulation.run = ->
   for bacterium in global.bacteria
-    bacterium.born() # Starts the bacteria
+    bacterium.born() #s Starts the bacteria
   global.interaction.pauzed = false # Unpauze time
   html.setup() # Activate document
   console.log(project.activeLayer)

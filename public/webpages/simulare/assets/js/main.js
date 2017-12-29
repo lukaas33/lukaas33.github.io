@@ -48,7 +48,8 @@
 
   time = {
     time: 0,
-    trackSecond: 0
+    trackSecond: 0,
+    check: []
   };
 
   time.represent = function(total) {
@@ -57,6 +58,21 @@
     minutes = Math.floor(total % 3600 / 60);
     seconds = Math.floor(total % 3600 % 60);
     return [hours, minutes, seconds];
+  };
+
+  time.interval = function(timing, func) {
+    var i, target;
+    target = time.time + (timing * 1000);
+    i = time.check.length;
+    return time.check[i] = setInterval((function(_this) {
+      return function(target, func, i) {
+        if (time.time >= target) {
+          clearInterval(time.check[i]);
+          console.log('done');
+          return func();
+        }
+      };
+    })(this), 1000, target, func, i);
   };
 
   check.circleOverlap = function(circle1, circle2) {
@@ -333,6 +349,7 @@
     function Bacteria(mass, position, generation, birth) {
       this.eat = bind(this.eat, this);
       this.die = bind(this.die, this);
+      this.mitosis = bind(this.mitosis, this);
       this.divide = bind(this.divide, this);
       this.goToPoint = bind(this.goToPoint, this);
       this.findTarget = bind(this.findTarget, this);
@@ -351,12 +368,12 @@
       this.changeAction = bind(this.changeAction, this);
       this.live = bind(this.live, this);
       this.born = bind(this.born, this);
-      this.id = generate.id(global.bacteria);
       this.mass = {};
       this.mass.current = new SciNum(mass, 'mass', 'kg');
       this.position = position;
       this.generation = generation;
       this.birth = birth;
+      this.id = generate.id(global.bacteria);
       this.energy = new SciNum(Math.round(this.mass.current.value / global.constants.atpMass.value), 'energy', 'atp');
       this.density = new SciNum(((2 / 3) * global.constants.waterDensity.value) + ((1 / 3) * (13 / 10) * global.constants.waterDensity.value), 'density', 'kg/m^3');
       this.volume = new SciNum(this.mass.current.value / this.density.value, 'volume', 'm^3');
@@ -374,9 +391,10 @@
       this.energyLoss.current = new SciNum(0, 'energy per second', 'atp/s');
       this.direction = null;
       this.target = null;
-      this.action = {};
-      this.action.current = null;
-      this.action.previous = null;
+      this.action = {
+        current: null,
+        previous: null
+      };
     }
 
     Bacteria.prototype.born = function() {
@@ -386,9 +404,10 @@
     };
 
     Bacteria.prototype.live = function() {
+      var ref1;
       if (this.action.current === 'dying') {
         this.die();
-      } else if (this.action.current === 'dividing') {
+      } else if ((ref1 = this.action.current) === 'dividing' || ref1 === 'mitosis' || ref1 === 'stopping') {
         this.divide();
       } else {
         if (this.action.current === 'colliding') {
@@ -566,10 +585,13 @@
     };
 
     Bacteria.prototype.checkValues = function() {
-      if (this.mass.current.value <= this.mass.min.value && this.action !== 'dying') {
+      var ref1;
+      if (this.mass.current.value <= this.mass.min.value && this.action.current !== 'dying') {
         return this.changeAction('dying');
-      } else if (this.mass.current.value >= this.mass.max.value && this.action !== 'dividing') {
-        return this.changeAction('dividing');
+      } else if (this.mass.current.value >= this.mass.max.value) {
+        if ((ref1 = this.action.current) !== 'dividing' && ref1 !== 'mitosis' && ref1 !== 'stopping') {
+          return this.changeAction('dividing');
+        }
       }
     };
 
@@ -589,8 +611,12 @@
       if (this.action.current === 'stopping') {
         if (Calc.combine(this.speed.current.value) < 1e-9) {
           this.speed.current.value = new Point(0, 0);
+          this.acceleration.value = new Point(0, 0);
           this.decceleration.value = 0;
-          return this.changeAction(this.previousAction);
+          if (this.action.current !== 'mitosis') {
+            this.changeAction('mitosis');
+            return time.interval(5, this.mitosis);
+          }
         }
       }
     };
@@ -670,8 +696,41 @@
     };
 
     Bacteria.prototype.divide = function() {
-      this.changeAction('stopping');
-      return this.decceleration.value = Calc.combine(this.speed.current.value) / 1.5;
+      var ref1;
+      console.log('frame', this.action);
+      if ((ref1 = this.action.current) !== 'mitosis' && ref1 !== 'stopping') {
+        this.changeAction('stopping');
+        return this.decceleration.value = Calc.combine(this.speed.current.value) / 1.5;
+      }
+    };
+
+    Bacteria.prototype.mitosis = function() {
+      var args, index, offspring;
+      this.energy.value /= 2;
+      this.update();
+      args = [this.mass.current.value, this.position.add(Calc.scale(this.radius.value) * 1.5), this.generation + 1, time.time];
+      if (this.species === 'Viridis') {
+        offspring = (function(func, args, ctor) {
+          ctor.prototype = func.prototype;
+          var child = new ctor, result = func.apply(child, args);
+          return Object(result) === result ? result : child;
+        })(Viridis, args, function(){});
+      } else if (this.species === 'Rubrum') {
+        offspring = (function(func, args, ctor) {
+          ctor.prototype = func.prototype;
+          var child = new ctor, result = func.apply(child, args);
+          return Object(result) === result ? result : child;
+        })(Rubrum, args, function(){});
+      } else if (this.species === 'Caeruleus') {
+        offspring = (function(func, args, ctor) {
+          ctor.prototype = func.prototype;
+          var child = new ctor, result = func.apply(child, args);
+          return Object(result) === result ? result : child;
+        })(Caeruleus, args, function(){});
+      }
+      index = global.bacteria.push(offspring) - 1;
+      global.bacteria[index].born();
+      return this.chooseDirection();
     };
 
     Bacteria.prototype.die = function() {
@@ -898,12 +957,8 @@
       draw.bottom.scale((local.width / draw.bottom.bounds.width) * 2, (local.height / draw.bottom.bounds.height) * 2);
       return draw.bottom.position = local.origin;
     };
-    $(window).blur(function() {
-      return html.pause(false);
-    });
-    $(window).focus(function() {
-      return html.pause(true);
-    });
+    $(window).blur(function() {});
+    $(window).focus(function() {});
     doc.start.click(function() {});
     doc.screen.click(function(event) {
       var bacterium, k, len1, location, ref1, results;
