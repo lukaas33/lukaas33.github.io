@@ -22,7 +22,9 @@ var local = {
   },
   read: [],
   scroll: true,
-  setup: false
+  setup: false,
+  hover: null,
+  time: 400
 }
 
 // << Return functions >>
@@ -225,6 +227,7 @@ const displayUser = function (user, item) {
     item.appendChild(unread)
 
     item.addEventListener('click', function (event) { // On click
+
       let textarea = doc('#text textarea')
       if (this.classList.contains('selected')) { // Already selected
         this.classList.remove('selected')
@@ -280,7 +283,7 @@ const displayData = function () {
 
   if (!local.setup) {
     var elem = document.createElement('li')
-    elem.className = 'self'
+    elem.classList.add('self')
     elem = displayUser(local.user, elem)
     var logo = document.createElement('img')
     logo.src = 'assets/icons/logo.svg'
@@ -293,11 +296,12 @@ const displayData = function () {
 
   for (let user of local.data.users) { // Add the connected users
     let item = document.createElement('li')
+
     if (local.selected === user.ID) {
       item.classList.add('selected', 'other')
       reselected = true // Won't reset selected
     } else {
-      item.className = 'other'
+      item.classList.add('other')
     }
 
     if (user.ID === 'chatbot') {
@@ -322,6 +326,7 @@ const displayData = function () {
 }
 
 const initialiseApp = function () {
+  register.outerHTML = ''
   chat.style.display = 'flex'
 
   window.onbeforeunload = function (event) {
@@ -342,6 +347,8 @@ const initialiseApp = function () {
         local.data.messages = data.messages
         displayData()
         displayChats()
+        let load = doc('#text .loader')
+        load.style.display = 'none'
       } else {
 
       }
@@ -354,7 +361,7 @@ const initialiseApp = function () {
 // Input submit
 input.addEventListener('submit', function (event) {
   event.preventDefault() // I'll handle this
-  var submit = doc('#input input[name=submit]')
+  var submit = doc('#input [type=submit]')
   var fields = doc('#input .field')
 
   var values = { // Store values
@@ -388,6 +395,8 @@ input.addEventListener('submit', function (event) {
   }
 
   if (valid) { // Send info
+    let load = doc('#input .loader')
+    load.style.display = 'inline-block'
     sendData('user', values, (success) => {
       if (success) {
         register.style.display = 'none'
@@ -395,6 +404,7 @@ input.addEventListener('submit', function (event) {
         initialiseApp() // Start the app
       } else {
         alert('Server error')
+        load.style.display = 'none'
         submit.disabled = false
         values = {}
       }
@@ -406,7 +416,7 @@ input.addEventListener('submit', function (event) {
 // Message
 text.addEventListener('submit', function (event) {
   event.preventDefault()
-  var submit = doc('#text button[name=submit]')
+  var submit = doc('#text [type=submit]')
   var field = doc('#text textarea')
 
   var values = {
@@ -420,17 +430,86 @@ text.addEventListener('submit', function (event) {
 
   if (values.message !== null) {
     console.log('send', values)
+    let load = doc('#text .loader')
+    load.style.display = 'inline-block'
     sendData('message', values, (success) => {
       submit.disabled = false
       if (success) {
         text.reset() // The form
       } else {
-
+        load.style.display = 'none'
       }
     })
   } else {
 
   }
 })
+
+for (let tooltip of doc('[data-tooltip]')) { // Assumes multiple
+  tooltip.addEventListener('mouseover', function (event) {
+    for (let item of tooltip.childNodes) {
+      if (item instanceof HTMLElement) {
+        if (item.classList.contains('tooltip')) { // Tooltip div
+          local.hover = setTimeout((item) => {
+            item.style.opacity = 1
+          }, local.time * 2, item)
+        }
+      }
+    }
+  })
+  tooltip.addEventListener('mouseout', function (event) {
+    for (let item of tooltip.childNodes) {
+      if (item instanceof HTMLElement) {
+        if (item.classList.contains('tooltip')) { // Tooltip div
+          clearTimeout(local.hover)
+          item.style.opacity = 0
+        }
+      }
+    }
+  })
+
+}
+
+for (let ripplebox of doc('[data-ripple]')) { // Assumes multiple
+  // Edited from https://codepen.io/lehollandaisvolant/pen/dMQXYX
+  ripplebox.addEventListener('click', function (event) {
+    for (let item of ripplebox.childNodes) {
+      if (item instanceof HTMLElement) {
+        if (item.classList.contains('ripple')) {
+          item.outerHTML = '' // Previous
+        }
+      }
+    }
+    var rect = ripplebox.getBoundingClientRect()
+    var width = rect.width
+    var height = rect.height
+
+    if (width >= height) {
+      height = width
+    } else {
+      width = height
+    }
+
+    var x = event.pageX - rect.x - width / 2
+    var y = event.pageY - rect.y - height / 2
+
+    var ripple = document.createElement('span')
+    ripple.classList.add('ripple')
+    ripplebox.appendChild(ripple)
+
+    for (let item of ripplebox.childNodes) {
+      if (item instanceof HTMLElement) {
+        if (item.classList.contains('ripple')) {
+          item.style.width = `${width}px`
+          item.style.height = `${height}px`
+          item.style.top = `${y}px`
+          item.style.left = `${x}px`
+
+          item.classList.add('effect')
+        }
+      }
+    }
+  })
+}
 
 }).call(this)

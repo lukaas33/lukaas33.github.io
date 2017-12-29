@@ -92,7 +92,7 @@
 }
 
 %tooltip {
-  @include shadow(2, 4)
+  @include shadow(2, 4);
   @include color(grey, 'background-color', 800);
   @include color(grey, 'border-color', 800);
   -webkit-transform: translateY(-110%);
@@ -124,7 +124,7 @@
 
 %button {
   @extend %form; // Is a type of form
-  @include shadow(2, 4)
+  @include shadow(2, 4);
   text-align: center; // Center horizontally
 
   &:hover,

@@ -267,7 +267,17 @@
 					<option value="Zimbabwe">Zimbabwe</option>
 				</select><br/>
 				<input class="field" name="age" min="5" max="125" type="number" placeholder="Age"/><br/>
-				<input name="submit" type="submit" value="Join chat"/><br/>
+				<div class="bottom">
+					<div data-tooltip="true" class="box">
+						<button data-ripple="true" data-shade="light" name="submit" type="submit">
+							Join chat
+						</button>
+						<div class="tooltip down">
+							Create your temporary account
+						</div>
+					</div>
+					<span class="loader"></span>
+				</div>
 			</form>
 		</div>
 	</main>
@@ -284,10 +294,14 @@
 					<div class="container">
 						<textarea rows="3" cols="100" required wrap="hard" name="message" maxlength="65536" placeholder="Type your message"></textarea>
 					</div>
-					<div class="box">
-						<button name="submit" type="submit">
+					<div data-tooltip="true" class="box">
+						<button data-ripple="true" data-shade="light" name="submit" type="submit">
 							<img src="assets/icons/send.svg"/>
+							<span class="loader"></span>
 						</button>
+						<div class="tooltip up">
+							Send message
+						</div>
 					</div>
 				</form>
 			</div>

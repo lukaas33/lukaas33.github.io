@@ -1,4 +1,12 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
+@-webkit-keyframes slideDown {
+  from {
+    -webkit-transform: translateY(-100vh);
+    transform: translateY(-100vh); }
+  to {
+    -webkit-transform: translateY(0);
+    transform: translateY(0); } }
+
 @keyframes slideDown {
   from {
     -webkit-transform: translateY(-100vh);
@@ -6,6 +14,14 @@
   to {
     -webkit-transform: translateY(0);
     transform: translateY(0); } }
+
+@-webkit-keyframes slideSide {
+  from {
+    -webkit-transform: translateX(-100vw);
+    transform: translateX(-100vw); }
+  to {
+    -webkit-transform: translateX(0);
+    transform: translateX(0); } }
 
 @keyframes slideSide {
   from {
@@ -15,6 +31,14 @@
     -webkit-transform: translateX(0);
     transform: translateX(0); } }
 
+@-webkit-keyframes slideUp {
+  from {
+    -webkit-transform: translateY(100vh);
+    transform: translateY(100vh); }
+  to {
+    -webkit-transform: translateY(0);
+    transform: translateY(0); } }
+
 @keyframes slideUp {
   from {
     -webkit-transform: translateY(100vh);
@@ -23,22 +47,58 @@
     -webkit-transform: translateY(0);
     transform: translateY(0); } }
 
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg); }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+
+@keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg); }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+
+@-webkit-keyframes ripple {
+  from {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 1; }
+  to {
+    -webkit-transform: scale(2);
+    opacity: 0;
+    transform: scale(2); } }
+
+@keyframes ripple {
+  from {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 1; }
+  to {
+    -webkit-transform: scale(2);
+    opacity: 0;
+    transform: scale(2); } }
+
 #register .container, #chat #message #messages .chat {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) , 0 1px 3px rgba(0, 0, 0, 0.2) ;
-  -webkit-transition: 400ms ease-in-out;
   background-color: #fff;
+  -webkit-transition: 400ms ease-in-out;
   transition: 400ms ease-in-out; }
   #register .container:hover, #chat #message #messages .chat:hover {
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1) , 0 10px 20px rgba(0, 0, 0, 0.2) ; }
 
-#register .container #input .field, #register .container #input input[type=submit], #chat #users ul .unread, #chat #message #send #text .box button[type=submit], #chat #message #send #text .container textarea {
+#register .container #input .field, #register .container #input .bottom [type=submit], #chat #users ul .unread, #chat #message #send #text .box [type=submit], #chat #message #send #text .container textarea {
   cursor: pointer; }
-  #register .container #input .field:disabled, #register .container #input input[type=submit]:disabled, #chat #users ul .unread:disabled, #chat #message #send #text .box button[type=submit]:disabled, #chat #message #send #text .container textarea:disabled {
+  #register .container #input .field:disabled, #register .container #input .bottom [type=submit]:disabled, #chat #users ul .unread:disabled, #chat #message #send #text .box [type=submit]:disabled, #chat #message #send #text .container textarea:disabled {
     cursor: default; }
-  #register .container #input .field:focus, #register .container #input input[type=submit]:focus, #chat #users ul .unread:focus, #chat #message #send #text .box button[type=submit]:focus, #chat #message #send #text .container textarea:focus, #register .container #input .field:active, #register .container #input input[type=submit]:active, #chat #users ul .unread:active, #chat #message #send #text .box button[type=submit]:active, #chat #message #send #text .container textarea:active {
+  #register .container #input .field:focus, #register .container #input .bottom [type=submit]:focus, #chat #users ul .unread:focus, #chat #message #send #text .box [type=submit]:focus, #chat #message #send #text .container textarea:focus, #register .container #input .field:active, #register .container #input .bottom [type=submit]:active, #chat #users ul .unread:active, #chat #message #send #text .box [type=submit]:active, #chat #message #send #text .container textarea:active {
     outline: none; }
 
-#register .container #input .field, #register .container #input input[type=submit], #chat #users ul .unread, #chat #message #send #text .box button[type=submit], #chat #message #send #text .container textarea {
+#register .container #input .field, #register .container #input .bottom [type=submit], #chat #users ul .unread, #chat #message #send #text .box [type=submit], #chat #message #send #text .container textarea {
   background-color: transparent;
   border: 0 solid transparent;
   transition: 400ms ease-in-out; }
@@ -51,7 +111,8 @@
   width: 100%; }
   #register .container #input .field::-webkit-input-placeholder {
     -webkit-transition: 400ms ease-in-out;
-    transition: 400ms ease-in-out; }
+    transition: 400ms ease-in-out;
+    color: #424242; }
   #register .container #input .field:focus {
     border-bottom-color: #ff4081; }
     #register .container #input .field:focus::-webkit-input-placeholder {
@@ -60,19 +121,19 @@
       font-size: .75rem;
       transform: translateY(-150%); }
 
-#register .container #input input[type=submit], #chat #users ul .unread, #chat #message #send #text .box button[type=submit] {
+#register .container #input .bottom [type=submit], #chat #users ul .unread, #chat #message #send #text .box [type=submit] {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) , 0 2px 3px rgba(0, 0, 0, 0.2) ;
   text-align: center; }
-  #register .container #input input[type=submit]:hover, #chat #users ul .unread:hover, #chat #message #send #text .box button[type=submit]:hover, #register .container #input input[type=submit]:focus, #chat #users ul .unread:focus, #chat #message #send #text .box button[type=submit]:focus {
+  #register .container #input .bottom [type=submit]:hover, #chat #users ul .unread:hover, #chat #message #send #text .box [type=submit]:hover, #register .container #input .bottom [type=submit]:focus, #chat #users ul .unread:focus, #chat #message #send #text .box [type=submit]:focus {
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1) , 0 6px 16px rgba(0, 0, 0, 0.2) ; }
 
-#register .container #input input[type=submit] {
+#register .container #input .bottom [type=submit] {
   background-color: #3f51b5;
   color: #fff;
-  padding: 0.5rem;
+  padding: 0.75rem;
   text-transform: uppercase; }
 
-#chat #users ul .unread, #chat #message #send #text .box button[type=submit] {
+#chat #users ul .unread, #chat #message #send #text .box [type=submit] {
   background-color: #ff4081;
   border-radius: 100%; }
 
@@ -110,6 +171,69 @@ body {
   background-color: #eeeeee;
   font-family: 'Roboto', sans-serif; }
 
+[data-tooltip=true] {
+  position: relative;
+  display: inline-block; }
+  [data-tooltip=true] .tooltip {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) , 0 2px 3px rgba(0, 0, 0, 0.2) ;
+    transition: 400ms;
+    background-color: #424242;
+    border-color: #424242;
+    border-width: 1px;
+    color: #fff;
+    opacity: 0;
+    font-size: 0.75rem;
+    padding: 0.5rem;
+    position: absolute;
+    text-align: center;
+    text-transform: uppercase; }
+    [data-tooltip=true] .tooltip::after {
+      border-color: #424242 transparent;
+      border-style: solid;
+      content: '';
+      display: block;
+      left: 50%;
+      margin-left: -0.75rem;
+      position: absolute;
+      width: 0; }
+    [data-tooltip=true] .tooltip.up {
+      top: 0; }
+      [data-tooltip=true] .tooltip.up::after {
+        border-width: 0.75rem 0.75rem 0;
+        bottom: -0.75rem; }
+    [data-tooltip=true] .tooltip.down {
+      bottom: 0; }
+      [data-tooltip=true] .tooltip.down::after {
+        border-width: 0 0.75rem 0.75rem;
+        top: -0.75rem; }
+
+[data-ripple=true] {
+  overflow: hidden;
+  position: relative; }
+  [data-ripple=true][data-shade=light] .ripple {
+    background: rgba(255, 255, 255, 0.4); }
+  [data-ripple=true][data-shade=dark] .ripple {
+    background: rgba(0, 0, 0, 0.1); }
+  [data-ripple=true] .effect {
+    -webkit-animation: ripple 400ms ease-in-out;
+    animation: ripple 400ms ease-in-out; }
+  [data-ripple=true] .ripple {
+    opacity: 0;
+    border-radius: 50%;
+    height: 0;
+    position: absolute;
+    width: 0; }
+
+.loader {
+  display: inline-block;
+  border: 0.5rem solid #ff80ab;
+  border-top: 0.5rem solid #ff4081;
+  border-radius: 50%;
+  animation-name: spin;
+  animation-duration: 800ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out; }
+
 #register {
   background-color: #3f51b5;
   height: 100vh;
@@ -127,9 +251,10 @@ body {
     #register {
       padding: 25vh 25vw; } }
   #register .container {
-    border-radius: 5px;
+    border-radius: 0.25rem;
     animation-name: slideUp;
-    animation-duration: 400ms; }
+    animation-duration: 400ms;
+    animation-timing-function: ease-in-out; }
     @media only screen and (max-width: 599px) {
       #register .container {
         width: 80vw;
@@ -163,6 +288,17 @@ body {
       #register .container #input .field {
         margin-bottom: 1rem;
         padding: 2rem 0 1rem 0; }
+      #register .container #input .bottom {
+        display: flex; }
+        #register .container #input .bottom .loader {
+          display: none;
+          height: 2.5rem;
+          width: 2.5rem; }
+        #register .container #input .bottom .tooltip {
+          width: 150%;
+          transform: translateX(-16.66667%) translateY(125%); }
+        #register .container #input .bottom [type=submit] {
+          margin-right: 1rem; }
 
 #chat {
   display: none;
@@ -188,6 +324,7 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) , 0 2px 8px rgba(0, 0, 0, 0.2) ;
     animation-name: slideSide;
     animation-duration: 400ms;
+    animation-timing-function: ease-in-out;
     background-color: #fafafa;
     display: inline-block;
     overflow-y: scroll;
@@ -213,7 +350,7 @@ body {
     #chat #users ul {
       list-style-type: none; }
       #chat #users ul li {
-        border-radius: 5px;
+        border-radius: 0.5rem;
         padding: 0.5rem;
         margin-bottom: 1rem;
         position: relative;
@@ -286,11 +423,12 @@ body {
     #chat #message #messages {
       animation-name: slideDown;
       animation-duration: 400ms;
+      animation-timing-function: ease-in-out;
       width: 100%;
       height: 90%;
       overflow-y: scroll; }
       #chat #message #messages .chat {
-        border-radius: 5px;
+        border-radius: 0.5rem;
         margin: 1rem;
         padding: 1rem;
         font-size: 1.25rem; }
@@ -333,7 +471,8 @@ body {
         #chat #message #messages .chat .sender {
           background-color: #7986cb;
           color: #fff;
-          padding: 0.25rem; }
+          padding: 0.25rem 0.5rem;
+          border-radius: 1rem; }
       #chat #message #messages .self {
         margin-right: 60%; }
       #chat #message #messages .other {
@@ -342,6 +481,7 @@ body {
       box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1) , 0 -2px 8px rgba(0, 0, 0, 0.2) ;
       animation-name: slideUp;
       animation-duration: 400ms;
+      animation-timing-function: ease-in-out;
       width: 100%;
       height: 10vh; }
       #chat #message #send #text {
@@ -368,12 +508,30 @@ body {
             #chat #message #send #text .container textarea::-webkit-input-placeholder {
               color: #c5cae9; }
         #chat #message #send #text .box {
+          position: relative;
+          z-index: 55;
           background-color: #3f51b5;
           width: 10vw;
           height: 100%;
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
+          -webkit-box-pack: center;
+          -ms-flex-pack: center;
           justify-content: center;
+          -webkit-box-align: center;
+          -ms-flex-align: center;
           align-items: center; }
-          #chat #message #send #text .box button[type=submit] {
+          #chat #message #send #text .box .tooltip {
+            -webkit-transform: translateY(-75%);
+            transform: translateY(-75%); }
+          #chat #message #send #text .box .loader {
+            position: absolute;
+            display: none;
+            top: 0;
+            left: 0;
+            height: 5vh;
+            width: 5vh; }
+          #chat #message #send #text .box [type=submit] {
             width: 5vh;
             height: 5vh; }

@@ -1,6 +1,8 @@
 (function() {
-  'use strict';
-  var disable, highLight, scrollToLoc, sendMail, setForm, setMap, setPages, switchPage, toggle;
+  -$(this).offset().left - width / 2;
+
+}).call(this);
+ sendMail, setForm, setMap, setPages, switchPage, toggle;
 
   setForm = function() {
     var $form;
