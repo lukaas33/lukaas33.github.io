@@ -15,8 +15,7 @@ local =
   fps: 30 # Standard for canvas
   scaleFactor: 1.2e6 # Scale of the animation, 1 cm : this cm
   maxInstances:
-    food: 15,
-    bacteria: 30
+    food: 30
   standard:
     mass: 1.64e-15 # Will get the average values of the species
 
@@ -352,7 +351,7 @@ class Bacteria # Has values shared by all bacteria
     else if @action.current in ['Mitosis', 'Stopping']
       # Do nothing in this block
     else # Normal
-      if @action.current == 'Colliding' # Needs to move away
+      if @action.current == 'Colliding' # Move away
         @chooseDirection()
       else
         @foodNearby()
@@ -622,7 +621,7 @@ class Bacteria # Has values shared by all bacteria
     if @action.current not in ['Mitosis', 'Stopping'] # No double
       @changeAction('Stopping')
       # Slow to a stop
-      @decceleration.value = Calc.combine(@speed.current.value)
+      @decceleration.value = Calc.combine(@speed.current.value) / 2
 
   # Divison TODO make animatio
   mitosis: =>
@@ -649,13 +648,14 @@ class Bacteria # Has values shared by all bacteria
     for condition in ['temperature', 'concentration', 'acidity']
       if Random.chance(chance**-1) # Mutation occurs
         console.log(offspring.id, 'mutated')
-        factor = Random.value(0, 2, Random.normal) # Rand value with normal distribution from 0-2
+        # Rand value with normal distribution around 1
+        factor = Random.value(0.5, 1.5, Random.normal)
         offspring.tolerance[condition].value *= factor # Can get higher or lower
 
     index = global.bacteria.push(offspring) - 1 # Insert at the index
     global.bacteria[index].born() # It's alive!
     html.ratio()
-    console.log(offspring, 'came into existence')
+    console.log(offspring.id, 'came into existence')
 
     @chooseDirection() # Resume activity
 
@@ -682,8 +682,8 @@ class Bacteria # Has values shared by all bacteria
       @target.eaten() # Removes itself
       # findTarget won't be called anymore
       @target = null # Doesn't exist anymore
-# Constructors that inherit code
 
+# Constructors that inherit code
 class Lucarium extends Bacteria # This family of bacteria has its own traits
   constructor: () ->
     super(arguments...) # Parent constructor
@@ -790,8 +790,9 @@ html.ratio = ->
     else if bacterium.species == 'Caeruleus'
       ca += 1
 
-  global.ratio.push( # Store the data
+  global.data.push( # Store the data
     time: time.time
+    population: total
     ratio:
       Viridis: vi / total
       Rubrum: ru / total
@@ -814,13 +815,13 @@ html.setup = ->
   # Update simulated time
   time.clock = setInterval( ->
     if not global.interaction.pauzed # Time is not pauzed
-      time.time += 5 # Update time
+      time.time += 10 # Update time
 
-      time.trackSecond += 5
+      time.trackSecond += 10
       if time.trackSecond > 1000 # Full simulated second
         time.trackSecond = 0 # Restart second
         simulation.feed()
-  , 5)
+  , 10)
 
   # Every full second
   time.second = setInterval( ->
@@ -1072,14 +1073,15 @@ simulation.setConstants = ->
 # Generates food
 simulation.feed = ->
   html.layer.food.activate
-
   total = global.enviroment.energy.value
   left = total # Inital
+
   # Food left to give and maximum instances not reached
   while left > 0 and global.food.length <= local.maxInstances.food
-    # A percentage of the total
-    amount = Random.value(total * 0.10, total * 0.45)
-    if amount < left * 0.90 # Spawn while higher lower than 95% of what's left
+    # Around is an equal distribution, it will be higher than that to get bigger particles
+    around = total / local.maxInstances.food
+    amount = Random.value(around * 2, around * 6)
+    if amount < (left * 0.9) # Spawn while higher lower than 90% of what's left (prevents to small spawms)
       left -= amount # Remove from what's left
     else
       amount = left # Remainder

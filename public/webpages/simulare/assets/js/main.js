@@ -12,8 +12,7 @@
     fps: 30,
     scaleFactor: 1.2e6,
     maxInstances: {
-      food: 15,
-      bacteria: 30
+      food: 30
     },
     standard: {
       mass: 1.64e-15
@@ -719,7 +718,7 @@
       var ref1;
       if ((ref1 = this.action.current) !== 'Mitosis' && ref1 !== 'Stopping') {
         this.changeAction('Stopping');
-        return this.decceleration.value = Calc.combine(this.speed.current.value);
+        return this.decceleration.value = Calc.combine(this.speed.current.value) / 2;
       }
     };
 
@@ -753,14 +752,14 @@
         condition = ref1[k];
         if (Random.chance(Math.pow(chance, -1))) {
           console.log(offspring.id, 'mutated');
-          factor = Random.value(0, 2, Random.normal);
+          factor = Random.value(0.5, 1.5, Random.normal);
           offspring.tolerance[condition].value *= factor;
         }
       }
       index = global.bacteria.push(offspring) - 1;
       global.bacteria[index].born();
       html.ratio();
-      console.log(offspring, 'came into existence');
+      console.log(offspring.id, 'came into existence');
       return this.chooseDirection();
     };
 
@@ -942,8 +941,9 @@
         ca += 1;
       }
     }
-    return global.ratio.push({
+    return global.data.push({
       time: time.time,
+      population: total,
       ratio: {
         Viridis: vi / total,
         Rubrum: ru / total,
@@ -963,14 +963,14 @@
     doc.scale.find('span').text(" 1 : " + local.scaleFactor);
     time.clock = setInterval(function() {
       if (!global.interaction.pauzed) {
-        time.time += 5;
-        time.trackSecond += 5;
+        time.time += 10;
+        time.trackSecond += 10;
         if (time.trackSecond > 1000) {
           time.trackSecond = 0;
           return simulation.feed();
         }
       }
-    }, 5);
+    }, 10);
     time.second = setInterval(function() {
       if (!global.interaction.pauzed) {
         html.clock();
@@ -1215,14 +1215,15 @@
   };
 
   simulation.feed = function() {
-    var amount, food, left, results, total;
+    var amount, around, food, left, results, total;
     html.layer.food.activate;
     total = global.enviroment.energy.value;
     left = total;
     results = [];
     while (left > 0 && global.food.length <= local.maxInstances.food) {
-      amount = Random.value(total * 0.10, total * 0.45);
-      if (amount < left * 0.90) {
+      around = total / local.maxInstances.food;
+      amount = Random.value(around * 2, around * 6);
+      if (amount < (left * 0.9)) {
         left -= amount;
       } else {
         amount = left;
