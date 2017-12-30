@@ -1,6 +1,7 @@
 <main id="data">
   <div class="container">
-    <img src="<%= data.img %>"/>
+    <!-- Image gets decompressed -->
+    <img src="<%= LZString.decompressFromUTF16(data.img) %>"/>
   </div>
   <section class="text">
     <div class="head">

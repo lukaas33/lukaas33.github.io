@@ -104,10 +104,11 @@ const filterOutput = function (output) {
 }
 
 // Returns date
-const getDate = function () { // TODO UTC and such
+const getDate = function () { // TODO UTC and stuff
   var now = new Date()
   return now
 }
+
 
 // Returns the location
 const getLocation = function (coordinates) { // TODO ask for permission and get location
@@ -147,16 +148,16 @@ const filterText = function () { // Asumes the Wikipedia page of an animal
   // Source https://stackoverflow.com/questions/12059284/get-text-between-two-rounded-brackets
   var sciName = text.match(/\(([^)]+)\)/)[1]
 
-
-
   var links = { // TODO get more
     Wikipedia: `https://en.wikipedia.org/wiki/${name}`
   }
 
+  var image = LZString.compressToUTF16(local.image)
+
   local.data = {
     // Local scope
     name: name,
-    img: '#', // TODO add image path
+    img: image, // Compressed base64
     scientific: sciName,
     text: $(text)[0], // Dom object
     links: links,
@@ -237,7 +238,6 @@ const processOutput = function (output) {
 
 // Displays the final result
 const displayResult = function () {
-  // TODO include html using EJS
   console.log(local.data)
   var card = new EJS({url: 'views/partials/result.ejs'}).render({data: local.data})
   doc.result.html(card)

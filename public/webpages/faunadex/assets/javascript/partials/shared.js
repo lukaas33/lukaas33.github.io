@@ -21,6 +21,18 @@ shared.json = {
   }
 }
 
+shared.id = function () {
+  let id = []
+  let maxCh = 122
+  let minCh = 97
+  for (let i = 0; i < 8; i++) { // Length of 8
+    let ch = Math.floor(Math.random() * (maxCh-minCh) + minCh)
+    id.push(String.fromCharCode(ch)) // Random from a-z
+  }
+
+  return id.join('')
+}
+
 // Uses getter and setters
 shared.cookie = function (name, value) {
   if (typeof(value) === 'undefined') { // Getting
@@ -99,26 +111,17 @@ shared.storage = function (name, options = null, callback = () => {}) {
               }
             }
           } else { // Create an ID
-            console.log('id')
             let unique = false
             let final = null
             while (!unique) {
-              let id = []
-              let maxCh = 122
-              let minCh = 97
-              for (let i = 0; i < 8; i++) { // Length of 8
-                let ch = Math.floor(Math.random() * (maxCh-minCh) + minCh)
-                id.push(String.fromCharCode(ch)) // Random from a-z
-              }
-              final = id.join('')
+              final = shared.id()
+
               unique = true // Stop running
-              if (object.content.length > 0) {
-                for (let index in object.content) {
-                  let entry = object.content[index]
-                  if (entry.id === final) {
-                    unique = false // Run again
-                    break // The for loop
-                  }
+              for (let index in object.content) {
+                let entry = object.content[index]
+                if (entry.id === final) {
+                  unique = false // Run again
+                  break // The for loop
                 }
               }
             }
@@ -135,13 +138,17 @@ shared.storage = function (name, options = null, callback = () => {}) {
           }
         }
       } else { // Empty
-        object.content.push(options.value) // Add to the array
+        if (options === null || typeof(options.genId) === 'undefined') { // Has an ID
+          object.content.push(options.value) // Add to the array
+        } else { // Create an Id
+          options.value.id = shared.id()
+          object.content.push(options.value) // Add to the array
+        }
+
       }
 
       localStorage.setItem(name, JSON.stringify(object, shared.json.stringify)) // Store as string
-      setTimeout(() => {
-        callback() // Finished
-      }, 10) // Slight delay to avoid some problems
+      callback() // Finished
     }
   } else {
   	return undefined
