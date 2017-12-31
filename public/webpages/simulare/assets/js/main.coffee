@@ -739,6 +739,12 @@ class Viridis extends Lucarium # TODO make different traits for the species
       acidity: new SciNum(0.15, 'pH', '')
       concentration: new SciNum(7.8, 'concentration', 'kg/m^3')
 
+    # inherit mutations
+    if @mutations.length > 0
+      for mutation in @mutations
+        if mutation.generation = @generation - 1 # Parent
+          @tolerance[mutation.condition].value = mutation.value
+
 class Rubrum extends Lucarium
   constructor: () ->
     super(arguments...) # Parent constructor

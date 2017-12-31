@@ -861,6 +861,7 @@
     extend(Viridis, superClass);
 
     function Viridis() {
+      var k, len1, mutation, ref1;
       Viridis.__super__.constructor.apply(this, arguments);
       this.species = "Viridis";
       this.taxonomicName = this.family + " " + this.species;
@@ -870,6 +871,15 @@
         acidity: new SciNum(0.15, 'pH', ''),
         concentration: new SciNum(7.8, 'concentration', 'kg/m^3')
       };
+      if (this.mutations.length > 0) {
+        ref1 = this.mutations;
+        for (k = 0, len1 = ref1.length; k < len1; k++) {
+          mutation = ref1[k];
+          if (mutation.generation = this.generation - 1) {
+            this.tolerance[mutation.condition].value = mutation.value;
+          }
+        }
+      }
     }
 
     return Viridis;
