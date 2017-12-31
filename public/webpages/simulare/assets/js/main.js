@@ -409,6 +409,7 @@
       this.age = new SciNum(0, 'time', 's');
       this.mass.max = new SciNum(1.5 * local.standard.mass, 'mass', 'kg');
       this.mass.min = new SciNum(0.35 * local.standard.mass, 'mass', 'kg');
+      this.lastDivision = new SciNum(null, 'time', 's');
       this.energyLoss = {};
       this.energyLoss.current = new SciNum(0, 'energy per second', 'atp/s');
       this.direction = null;
@@ -745,6 +746,12 @@
       var args, chance, condition, factor, index, k, len1, offspring, ref1;
       this.energy.value /= 2;
       this.update();
+      if (this.lastDivision.value === null) {
+        global.data.divisionTime.push(time.time - this.birth);
+      } else {
+        global.data.divisionTime.push(time.time - (this.lastDivision.value * 1000));
+      }
+      this.lastDivision.value = time.time / 1000;
       args = [this.mass.current.value, this.position.add(Calc.scale(this.radius.value) * 1.5), this.generation + 1, time.time, this.mutations];
       if (this.species === 'Viridis') {
         offspring = (function(func, args, ctor) {
@@ -965,7 +972,7 @@
         ca += 1;
       }
     }
-    return global.data.push({
+    return global.data.ratio.push({
       time: time.time,
       population: total,
       ratio: {

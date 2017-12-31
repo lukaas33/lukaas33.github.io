@@ -28,7 +28,10 @@ const global = {
   constants: {},
   bacteria: [], // Contains bacteria instances
   dead: [], // Stores values from dead bacteria
-  data: [], // Stores the data at different times over the simulation
+  data: {
+    ratio: [],
+    divisionTime: []
+  }, // Stores the data at different times over the simulation
   food: [] // Contains food instances
 };
 

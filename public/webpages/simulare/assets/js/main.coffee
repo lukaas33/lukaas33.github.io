@@ -327,6 +327,7 @@ class Bacteria # Has values shared by all bacteria
     # Depends on constant to avoid change
     @mass.max = new SciNum(1.5 * local.standard.mass, 'mass', 'kg')
     @mass.min = new SciNum(0.35 * local.standard.mass, 'mass', 'kg')
+    @lastDivision = new SciNum(null, 'time', 's') # Hasn't divided yet
     @energyLoss = {}
     @energyLoss.current = new SciNum(0, 'energy per second', 'atp/s') # Initially
     @direction = null # Stores the direction as point
@@ -642,6 +643,13 @@ class Bacteria # Has values shared by all bacteria
     @energy.value /= 2
     @update() # Force mass update
 
+    # Store time it took to divide
+    if @lastDivision.value == null
+      global.data.divisionTime.push(time.time - @birth)
+    else
+      global.data.divisionTime.push(time.time - (@lastDivision.value * 1000))
+    @lastDivision.value = time.time / 1000
+
     # Gets changed values
     args = [
       @mass.current.value,
@@ -810,7 +818,7 @@ html.ratio = ->
     else if bacterium.species == 'Caeruleus'
       ca += 1
 
-  global.data.push( # Store the data
+  global.data.ratio.push( # Store the data
     time: time.time
     population: total
     ratio:
