@@ -1,5 +1,6 @@
 (function() { // Global vars are local to this file
-'use strict'
+  'use strict'
+  // TODO make a way to get achievements
 
   // << Variables >>
   const doc = {

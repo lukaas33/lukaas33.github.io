@@ -389,7 +389,7 @@ $.getJSON('assets/storage/animal-names.json', function (data) {
 })
 
 // << Events >>
-doc.save.click(function () {
+doc.save.click(() => {
   // Store
   shared.storage('results', {value: local.data, genId: true}, () => {
     var newLink = window.location.href.replace('scan', 'results')
@@ -398,7 +398,7 @@ doc.save.click(function () {
 })
 
 // Change sizes
-window.onresize = function (event) {
+window.onresize = (event) => {
   local.view = {
     width: $(window).width(),
     height: $(window).height(),
@@ -414,12 +414,12 @@ doc.accept.click(() => {
 })
 
 // Back button event
-doc.back.click( function () {
+doc.back.click(() => {
   goBack()
 })
 
 // Camera take picture event
-doc.take.click(() => {
+doc.take.click(function () {
   var video = doc.feed[0]
   video.pause() // User sees current frame
   // Get the video frame
