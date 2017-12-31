@@ -1,0 +1,13 @@
+<li data-id="<%= data.id %>" class="achievement">
+  <a href="achievements/?id=<%= data.id %>">
+    <div class="content">
+      <% if (data.got) { %>
+        <img src="assets/images/icons/checked.svg"/>
+      <% } else { %>
+        <img src="assets/images/icons/unchecked.svg"/>
+      <% } %>
+      <p class="title"><%= data.name %></p>
+      <p class="description"><%= data.description %></p>
+    </div>
+  </a>
+</li>
