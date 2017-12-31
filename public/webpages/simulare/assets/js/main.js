@@ -358,7 +358,16 @@
   })();
 
   Bacteria = (function() {
-    function Bacteria(mass, position, generation, birth) {
+    function Bacteria(mass, position, generation, birth, mutations) {
+      if (generation == null) {
+        generation = 1;
+      }
+      if (birth == null) {
+        birth = 0;
+      }
+      if (mutations == null) {
+        mutations = [];
+      }
       this.eat = bind(this.eat, this);
       this.die = bind(this.die, this);
       this.mitosis = bind(this.mitosis, this);
@@ -385,6 +394,7 @@
       this.position = position;
       this.generation = generation;
       this.birth = birth;
+      this.mutations = mutations;
       this.id = generate.id(global.bacteria.concat(global.dead));
       this.energy = new SciNum(Math.round(this.mass.current.value / global.constants.atpMass.value), 'energy', 'atp');
       this.density = new SciNum(((2 / 3) * global.constants.waterDensity.value) + ((1 / 3) * (13 / 10) * global.constants.waterDensity.value), 'density', 'kg/m^3');
@@ -526,23 +536,32 @@
     };
 
     Bacteria.prototype.loseEnergy = function() {
-      var atpSec, condition, difference, k, len1, loss, ref1, value;
+      var atpSec, condition, current, difference, factor, k, len1, loss, range, ref1;
       loss = this.energyLoss.min.value;
       ref1 = ['temperature', 'concentration', 'acidity'];
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         condition = ref1[k];
-        value = global.enviroment[condition];
-        difference = Math.abs(value - this.idealConditions[condition].value);
+        current = global.enviroment[condition].value;
+        difference = Math.abs(current - this.idealConditions[condition].value);
         if (difference >= this.tolerance[condition].value) {
           difference -= this.tolerance[condition].value;
         } else {
           difference = 0;
         }
-        loss += (difference * 100) * this.energyLoss.min.value;
+        range = global.enviroment.ranges[condition][1] - global.enviroment.ranges[condition][0];
+        factor = difference / range;
+        if (condition === 'concentration') {
+          factor /= 2;
+        }
+        factor *= 3;
+        if (factor !== 0) {
+          loss *= factor;
+        }
       }
-      loss *= 35;
+      loss = Math.floor(loss);
       this.energyLoss.current.value = loss;
-      atpSec = this.energyLoss.current.value / local.fps;
+      loss *= 40;
+      atpSec = loss / local.fps;
       return this.energy.value -= atpSec;
     };
 
@@ -726,7 +745,7 @@
       var args, chance, condition, factor, index, k, len1, offspring, ref1;
       this.energy.value /= 2;
       this.update();
-      args = [this.mass.current.value, this.position.add(Calc.scale(this.radius.value) * 1.5), this.generation + 1, time.time];
+      args = [this.mass.current.value, this.position.add(Calc.scale(this.radius.value) * 1.5), this.generation + 1, time.time, this.mutations];
       if (this.species === 'Viridis') {
         offspring = (function(func, args, ctor) {
           ctor.prototype = func.prototype;
@@ -754,6 +773,11 @@
           console.log(offspring.id, 'mutated');
           factor = Random.value(0.5, 1.5, Random.normal);
           offspring.tolerance[condition].value *= factor;
+          offspring.mutations.push({
+            generation: offspring.generation,
+            condition: condition,
+            value: offspring.tolerance[condition].value
+          });
         }
       }
       index = global.bacteria.push(offspring) - 1;
@@ -835,9 +859,9 @@
       this.taxonomicName = this.family + " " + this.species;
       this.color = '#4caf50';
       this.tolerance = {
-        temperature: new SciNum(2.5, 'temperature', '&deg;C'),
-        acidity: new SciNum(0.25, 'pH', ''),
-        concentration: new SciNum(2, 'concentration', 'kg/m^3')
+        temperature: new SciNum(2, 'temperature', '&deg;C'),
+        acidity: new SciNum(0.15, 'pH', ''),
+        concentration: new SciNum(7.8, 'concentration', 'kg/m^3')
       };
     }
 
@@ -854,9 +878,9 @@
       this.taxonomicName = this.family + " " + this.species;
       this.color = '#f44336';
       this.tolerance = {
-        temperature: new SciNum(5, 'temperature', '&deg;C'),
-        acidity: new SciNum(0.25, 'pH', ''),
-        concentration: new SciNum(0.5, 'concentration', 'kg/m^3')
+        temperature: new SciNum(10, 'temperature', '&deg;C'),
+        acidity: new SciNum(0.15, 'pH', ''),
+        concentration: new SciNum(1.56, 'concentration', 'kg/m^3')
       };
     }
 
@@ -873,9 +897,9 @@
       this.taxonomicName = this.family + " " + this.species;
       this.color = '#2196f3';
       this.tolerance = {
-        temperature: new SciNum(2.5, 'temperature', '&deg;C'),
-        acidity: new SciNum(0.25, 'pH', ''),
-        concentration: new SciNum(2, 'concentration', 'kg/m^3')
+        temperature: new SciNum(2, 'temperature', '&deg;C'),
+        acidity: new SciNum(0.75, 'pH', ''),
+        concentration: new SciNum(1.56, 'concentration', 'kg/m^3')
       };
     }
 
@@ -1089,7 +1113,7 @@
             var ref2, representation, scinum;
             if ($(this).hasClass('value')) {
               scinum = data[this.dataset.name];
-              if ((ref2 = this.dataset.name) === 'mass' || ref2 === 'speed') {
+              if ((ref2 = this.dataset.name) === 'mass' || ref2 === 'speed' || ref2 === 'energyLoss') {
                 scinum = scinum.current;
               }
               representation = scinum.represent();
@@ -1195,9 +1219,9 @@
   simulation.createLife = function() {
     console.log("Creating life");
     html.layer.bacteria.activate();
-    global.bacteria[0] = new Viridis(local.standard.mass, local.center, 1, 0);
-    global.bacteria[1] = new Rubrum(local.standard.mass, local.center.subtract(100, 0), 1, 0);
-    return global.bacteria[2] = new Caeruleus(local.standard.mass, local.center.add(100, 0), 1, 0);
+    global.bacteria[0] = new Viridis(local.standard.mass, local.center);
+    global.bacteria[1] = new Rubrum(local.standard.mass, local.center.subtract(100, 0));
+    return global.bacteria[2] = new Caeruleus(local.standard.mass, local.center.add(100, 0));
   };
 
   simulation.setConstants = function() {

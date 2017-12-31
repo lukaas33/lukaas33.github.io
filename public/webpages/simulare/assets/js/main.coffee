@@ -294,13 +294,14 @@ class Food
 # Bacteria constructors
 class Bacteria # Has values shared by all bacteria
   # Values that need to be entered
-  constructor: (mass, position, generation, birth) ->
+  constructor: (mass, position, generation = 1, birth = 0, mutations = []) ->
     # Values that are initialised from arguments
     @mass = {}
     @mass.current = new SciNum(mass, 'mass', 'kg')
     @position = position
     @generation = generation
     @birth = birth
+    @mutations = mutations # Stores the mutations since generation 1
 
     # Other values
     @id = generate.id(global.bacteria.concat(global.dead)) # Unique with all bacteria, living and dead
@@ -455,22 +456,34 @@ class Bacteria # Has values shared by all bacteria
     # Influence of conditions
     for condition in ['temperature', 'concentration', 'acidity']
       # Get the difference between the value and ideal value
-      value = global.enviroment[condition]
-      difference = Math.abs(value - @idealConditions[condition].value)
+      current = global.enviroment[condition].value
+      difference = Math.abs(current - @idealConditions[condition].value)
+
       # Each species has a different tolerance
       if difference >= @tolerance[condition].value
         difference -= @tolerance[condition].value
       else
         difference = 0
 
-      # Increase the Influence of the conditions
-      loss += (difference * 100) * @energyLoss.min.value
+      # All conditions will have similar effects
+      range = global.enviroment.ranges[condition][1] - global.enviroment.ranges[condition][0]
+      factor = (difference / range)
+      if condition == 'concentration'
+        factor /= 2 # Same energy effect as other enviroment factors
 
-    loss *= 35 # Increased to speed up things
+      factor *= 3 # Increase the effect of enviroment factors
+
+      # The difference influences the loss of energy
+      if factor != 0
+        loss *= factor
+
+    loss = Math.floor(loss)
+
     @energyLoss.current.value = loss
+    loss *= 40 # Increased to speed up things
 
     # Loses energy per second
-    atpSec = (@energyLoss.current.value / local.fps)
+    atpSec = (loss / local.fps)
     @energy.value -= atpSec
 
   # Checks if there is food nearby
@@ -634,7 +647,8 @@ class Bacteria # Has values shared by all bacteria
       @mass.current.value,
       @position.add(Calc.scale(@radius.value) * 1.5), # Outside current
       @generation + 1,
-      time.time
+      time.time,
+      @mutations
     ]
     # Call constructor
     if @species == 'Viridis'
@@ -651,6 +665,12 @@ class Bacteria # Has values shared by all bacteria
         # Rand value with normal distribution around 1
         factor = Random.value(0.5, 1.5, Random.normal)
         offspring.tolerance[condition].value *= factor # Can get higher or lower
+
+        offspring.mutations.push( # Mutaion info
+          generation: offspring.generation,
+          condition: condition,
+          value: offspring.tolerance[condition].value
+        )
 
     index = global.bacteria.push(offspring) - 1 # Insert at the index
     global.bacteria[index].born() # It's alive!
@@ -707,9 +727,9 @@ class Viridis extends Lucarium # TODO make different traits for the species
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
     @color = '#4caf50'
     @tolerance =
-      temperature: new SciNum(2.5, 'temperature', '&deg;C')
-      acidity: new SciNum(0.25, 'pH', '')
-      concentration: new SciNum(2, 'concentration', 'kg/m^3')
+      temperature: new SciNum(2, 'temperature', '&deg;C')
+      acidity: new SciNum(0.15, 'pH', '')
+      concentration: new SciNum(7.8, 'concentration', 'kg/m^3')
 
 class Rubrum extends Lucarium
   constructor: () ->
@@ -719,9 +739,9 @@ class Rubrum extends Lucarium
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
     @color = '#f44336'
     @tolerance =
-      temperature: new SciNum(5, 'temperature', '&deg;C')
-      acidity: new SciNum(0.25, 'pH', '')
-      concentration: new SciNum(0.5, 'concentration', 'kg/m^3')
+      temperature: new SciNum(10, 'temperature', '&deg;C')
+      acidity: new SciNum(0.15, 'pH', '')
+      concentration: new SciNum(1.56, 'concentration', 'kg/m^3')
 
 class Caeruleus extends Lucarium
   constructor: () ->
@@ -731,9 +751,9 @@ class Caeruleus extends Lucarium
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
     @color = '#2196f3'
     @tolerance =
-      temperature: new SciNum(2.5, 'temperature', '&deg;C')
-      acidity: new SciNum(0.25, 'pH', '')
-      concentration: new SciNum(2, 'concentration', 'kg/m^3')
+      temperature: new SciNum(2, 'temperature', '&deg;C')
+      acidity: new SciNum(0.75, 'pH', '')
+      concentration: new SciNum(1.56, 'concentration', 'kg/m^3')
 
 # << Document functions >>
 # Groups
@@ -933,7 +953,7 @@ html.selected = ->
           if $(@).hasClass('value')
             # TODO edit values before displaying
             scinum = data[@dataset.name]
-            if @dataset.name in ['mass', 'speed']
+            if @dataset.name in ['mass', 'speed', 'energyLoss']
               scinum = scinum.current
 
             representation = scinum.represent()
@@ -1017,21 +1037,15 @@ simulation.createLife = ->
 
   global.bacteria[0] = new Viridis(
     local.standard.mass,
-    local.center,
-    1,
-    0
+    local.center
   )
   global.bacteria[1] = new Rubrum(
     local.standard.mass,
-    local.center.subtract(100, 0),
-    1,
-    0
+    local.center.subtract(100, 0)
   )
   global.bacteria[2] = new Caeruleus(
     local.standard.mass,
-    local.center.add(100, 0),
-    1,
-    0
+    local.center.add(100, 0)
   )
 
 # Set up the constants
