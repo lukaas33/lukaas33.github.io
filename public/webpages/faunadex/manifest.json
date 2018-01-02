@@ -1,11 +1,25 @@
 {
-  "name": "Faunadex",
-  "short_name": "Faunadex",
-  "display": "standalone",
-  "start_url": "",
-  "serviceworker": {
-    "src": "serviceworker.js",
-    "scope": "./",
-    "use_cache": true
-  }
+    "name": "Faunadex",
+    "short_name": "Faunadex",
+    "icons": [
+        {
+            "src": "assets/images/favicon/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/images/favicon/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#d32f2f",
+    "background_color": "#d32f2f",
+    "display": "standalone",
+    "Start_url": "/webpages/faunadex",
+    "serviceworker": {
+      "src": "serviceworker.js",
+      "scope": "/webpages/faunadex",
+      "use_cache": true
+    }
 }

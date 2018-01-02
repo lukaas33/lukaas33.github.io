@@ -3,8 +3,18 @@
 <head>
   <!-- Appdata -->
   <meta charset="UTF-8"/>
-  <!-- Same root as index -->
-  <base href="../"/>
+  <base href="../"/> <!-- Same root as index -->
+  <title>Faunadex - Results</title>
+  <meta name="description" content="Discover the world of animals with this scanning app.">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="assets/images/favicon/safari-pinned-tab.svg" color="#d32f2f">
+  <link rel="shortcut icon" href="assets/images/favicon/favicon.ico">
+  <meta name="msapplication-config" content="assets/images/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#d32f2f">
   <!-- Javascript -->
   <script src="assets/javascript/libraries/ejs.js"></script> <!-- Template engine -->
   <script src="assets/javascript/libraries/jquery.js"></script> <!-- DOM interaction -->
@@ -31,9 +41,7 @@
   <!-- Page setup -->
   <script>
     var menu = new EJS({url: 'views/partials/menu.ejs'}).render({selected: 'Results'})
-    var appData = new EJS({url: 'views/partials/appdata.ejs'}).render({name: 'Results'})
     $('#menu').html(menu) // Add menu
-    $('meta[charset=UTF-8]').after(appData) // Add the app data
   </script>
 </body>
 </html>

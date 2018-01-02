@@ -481,7 +481,7 @@ class Bacteria # Has values shared by all bacteria
     loss = Math.floor(loss)
 
     @energyLoss.current.value = loss
-    loss *= 40 # Increased to speed up things
+    loss *= 30 # Increased to speed up things
 
     # Loses energy per second
     atpSec = (loss / local.fps)
@@ -1105,7 +1105,7 @@ simulation.feed = ->
   left = total # Inital
 
   # Food left to give and maximum instances not reached
-  while left > 0 and global.food.length <= local.maxInstances.food
+  while left > 0 and global.food.length < local.maxInstances.food
     # Around is an equal distribution, it will be higher than that to get bigger particles
     around = total / local.maxInstances.food
     amount = Random.value(around * 2, around * 6)

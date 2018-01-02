@@ -561,7 +561,7 @@
       }
       loss = Math.floor(loss);
       this.energyLoss.current.value = loss;
-      loss *= 40;
+      loss *= 30;
       atpSec = loss / local.fps;
       return this.energy.value -= atpSec;
     };
@@ -1261,7 +1261,7 @@
     total = global.enviroment.energy.value;
     left = total;
     results = [];
-    while (left > 0 && global.food.length <= local.maxInstances.food) {
+    while (left > 0 && global.food.length < local.maxInstances.food) {
       around = total / local.maxInstances.food;
       amount = Random.value(around * 2, around * 6);
       if (amount < (left * 0.9)) {
