@@ -16,8 +16,8 @@
   <meta name="msapplication-config" content="assets/images/favicon/browserconfig.xml">
   <meta name="theme-color" content="#d32f2f">
   <!-- Javascript -->
-  <script src="assets/javascript/libraries/ejs.js"></script> <!-- Template engine -->
-  <script src="assets/javascript/libraries/jquery.js"></script> <!-- DOM interaction -->
+  <script defer src="assets/javascript/libraries/ejs.js"></script> <!-- Template engine -->
+  <script defer src="assets/javascript/libraries/jquery.js"></script> <!-- DOM interaction -->
   <script defer src="assets/javascript/app.js"></script>
   <script defer src="assets/javascript/partials/shared.js"></script>
   <script defer src="assets/javascript/libraries/clarifai.min.js"></script> <!-- API functionality -->
@@ -50,10 +50,5 @@
       <button class="control" name="save"><img src="assets/images/icons/store.svg"/></button>
     </main>
   </div>
-  <!-- Page setup -->
-  <script>
-    var appData = new EJS({url: 'views/partials/appdata.ejs'}).render({name: 'Scan'})
-    $('meta[charset=UTF-8]').after(appData) // Add the app data
-  </script>
 </body>
 </html>

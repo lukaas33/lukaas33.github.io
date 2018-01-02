@@ -16,8 +16,8 @@
   <meta name="msapplication-config" content="assets/images/favicon/browserconfig.xml">
   <meta name="theme-color" content="#d32f2f">
   <!-- Javascript -->
-  <script src="assets/javascript/libraries/ejs.js"></script> <!-- Template engine -->
-  <script src="assets/javascript/libraries/jquery.js"></script> <!-- DOM interaction -->
+  <script defer src="assets/javascript/libraries/ejs.js"></script> <!-- Template engine -->
+  <script defer src="assets/javascript/libraries/jquery.js"></script> <!-- DOM interaction -->
   <script defer src="assets/javascript/app.js"></script>
   <script defer src="assets/javascript/partials/shared.js"></script>
   <script defer src="assets/javascript/about.js"></script> <!-- Will load content -->
@@ -27,16 +27,50 @@
   <link href="assets/css/menu.css" media="screen" rel="stylesheet"/>
 </head>
 <body>
-  <nav id="menu" data-state="collapsed"></nav>
+  <nav id="menu" data-state="collapsed">
+    <header>
+      <button name="menu">
+        <img src="assets/images/other/logo-color.svg" alt="The app's logo">
+      </button>
+      <h1>Faunadex</h1>
+    </header>
+    <div class="container">
+        <div class="menuItem">
+          <a href="./">
+            <img src="assets/images/icons/home.svg">
+            <p>Home</p>
+          </a>
+        </div>
+        <div class="menuItem">
+          <a href="scan/">
+            <img src="assets/images/icons/scan.svg">
+            <p>Scan</p>
+          </a>
+        </div>
+        <div class="menuItem">
+          <a href="results/">
+            <img src="assets/images/icons/results.svg">
+            <p>Results</p>
+          </a>
+        </div>
+        <div class="menuItem">
+          <a href="achievements/">
+            <img src="assets/images/icons/achievements.svg">
+            <p>Achievements</p>
+          </a>
+        </div>
+        <div class="menuItem selected">
+          <a href="about/">
+            <img src="assets/images/icons/about.svg">
+            <p>About</p>
+          </a>
+        </div>
+    </div>
+  </nav>
   <div class="page">
     <div id="loader"></div>
     <main>
     </main>
   </div>
-  <!-- Page setup -->
-  <script>
-    var menu = new EJS({url: 'views/partials/menu.ejs'}).render({selected: 'About'})
-    $('#menu').html(menu) // Add menu
-  </script>
 </body>
 </html>
