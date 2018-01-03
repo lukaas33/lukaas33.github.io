@@ -23,32 +23,32 @@
   appearance: none;
   border-radius: 1rem; }
 
-#start .intro .screen {
+#start .intro .screen, #cards .card {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2);
   background-color: #FAFAFA;
   transition: 400ms ease-in-out; }
-  #start .intro .screen:hover {
+  #start .intro .screen:hover, #cards .card:hover {
     box-shadow: 0px 14px 28px rgba(0, 0, 0, 0.1), 0px 10px 19px rgba(0, 0, 0, 0.2); }
 
-#start .intro .screen:last-child .container .slider, #start .intro .screen .continue button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
+#start .intro .screen:last-child .container .slider, #start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
   cursor: pointer; }
-  #start .intro .screen:last-child .container .slider:disabled, #start .intro .screen .continue button:disabled, #start .intro .screen:last-child .container .slider:disabled::-webkit-slider-thumb {
+  #start .intro .screen:last-child .container .slider:disabled, #start .intro .screen .continue button:disabled, #menu .indicator button:disabled, #menu .items .item button:disabled, #sidebar .info #priority .restart button:disabled, #start .intro .screen:last-child .container .slider:disabled::-webkit-slider-thumb {
     cursor: default; }
-  #start .intro .screen:last-child .container .slider:focus, #start .intro .screen .continue button:focus, #start .intro .screen:last-child .container .slider:focus::-webkit-slider-thumb, #start .intro .screen:last-child .container .slider:active, #start .intro .screen .continue button:active, #start .intro .screen:last-child .container .slider:active::-webkit-slider-thumb {
+  #start .intro .screen:last-child .container .slider:focus, #start .intro .screen .continue button:focus, #menu .indicator button:focus, #menu .items .item button:focus, #sidebar .info #priority .restart button:focus, #start .intro .screen:last-child .container .slider:focus::-webkit-slider-thumb, #start .intro .screen:last-child .container .slider:active, #start .intro .screen .continue button:active, #menu .indicator button:active, #menu .items .item button:active, #sidebar .info #priority .restart button:active, #start .intro .screen:last-child .container .slider:active::-webkit-slider-thumb {
     outline: none; }
 
-#start .intro .screen .continue button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
+#start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
   background-color: transparent;
   border: 0 solid transparent;
   transition: 400ms ease-in-out; }
 
-#start .intro .screen .continue button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
+#start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2);
   text-align: center; }
-  #start .intro .screen .continue button:hover, #start .intro .screen:last-child .container .slider:hover::-webkit-slider-thumb, #start .intro .screen .continue button:focus, #start .intro .screen:last-child .container .slider:focus::-webkit-slider-thumb {
+  #start .intro .screen .continue button:hover, #menu .indicator button:hover, #menu .items .item button:hover, #sidebar .info #priority .restart button:hover, #start .intro .screen:last-child .container .slider:hover::-webkit-slider-thumb, #start .intro .screen .continue button:focus, #menu .indicator button:focus, #menu .items .item button:focus, #sidebar .info #priority .restart button:focus, #start .intro .screen:last-child .container .slider:focus::-webkit-slider-thumb {
     box-shadow: 0px 8px 22px rgba(0, 0, 0, 0.1), 0px 6px 15px rgba(0, 0, 0, 0.2); }
 
-#start .intro .screen .continue button {
+#start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button {
   background-color: #00BCD4;
   border-radius: 100%; }
 
@@ -65,7 +65,9 @@ body {
   font-family: 'Orbitron', sans-serif;
   font-size: 1rem;
   color: #424242;
-  pointer-events: none; }
+  height: 100%;
+  width: 100%;
+  overflow: hidden; }
 
 ::selection {
   color: #fff;
@@ -81,10 +83,11 @@ body {
   #start .intro .screen {
     height: 100%;
     position: absolute;
-    width: 100%;
-    pointer-events: auto; }
+    width: 100%; }
     #start .intro .screen:first-child {
       z-index: 70; }
+      #start .intro .screen:first-child p {
+        line-height: initial; }
     #start .intro .screen:last-child {
       z-index: 60; }
       #start .intro .screen:last-child p {
@@ -120,12 +123,12 @@ body {
         font-weight: normal;
         font-size: 2rem; }
     #start .intro .screen .continue button {
-      width: 3rem;
-      height: 3rem;
       bottom: 10%;
       position: absolute;
       right: 0;
-      transform: translateX(50%); }
+      transform: translateX(50%);
+      width: 3rem;
+      height: 3rem; }
       #start .intro .screen .continue button img {
         width: 2rem;
         margin: 0.5rem; }
@@ -145,72 +148,114 @@ body {
   position: relative;
   width: 80vw; }
   #field #screen {
-    pointer-events: all; }
+    z-index: 10; }
 
 #menu {
+  margin: 1vw;
   display: flex;
-  left: 0;
   position: absolute;
-  top: 0;
-  pointer-events: auto; }
+  left: 0;
+  top: 0; }
   #menu[data-state='collapse'] .items {
     display: block; }
     #menu[data-state='collapse'] .items .item {
       left: 0;
       position: absolute;
-      top: 0; }
+      top: 0;
+      padding: 0.5rem; }
   #menu[data-state='expand'] .items {
-    display: flex; }
+    display: flex;
+    margin-left: 0.5rem; }
     #menu[data-state='expand'] .items .item {
-      position: relative; }
+      position: relative;
+      padding: 0.5rem 0.25rem; }
   #menu .indicator {
     position: relative;
     z-index: 90; }
+    #menu .indicator button {
+      width: 3rem;
+      height: 3rem; }
+      #menu .indicator button img {
+        width: 2rem;
+        margin: 0.5rem; }
   #menu .items .item {
     display: inline-block;
     z-index: 85; }
+    #menu .items .item button {
+      background-color: #EEEEEE;
+      width: 2rem;
+      height: 2rem; }
+      #menu .items .item button img {
+        width: 1rem;
+        margin: 0.5rem; }
 
 #cards {
-  pointer-events: auto;
+  margin: 1vw;
   position: absolute;
   right: 0;
   top: 0;
   width: 20%; }
   #cards .card {
-    background-color: white;
+    padding: 0.75rem;
     height: auto;
     position: relative;
     width: 100%; }
 
 #sidebar {
+  box-shadow: -4px 0px 8px rgba(0, 0, 0, 0.1), -2.66667px 0px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 20;
+  background-color: #FAFAFA;
   height: 100vh;
-  width: 20vw;
-  pointer-events: auto; }
+  width: 20vw; }
   #sidebar header {
-    background-color: green;
+    background-color: #009688;
     height: 10%;
     width: 100%; }
     #sidebar header h1 {
-      color: white; }
+      color: #fff;
+      font-weight: normal;
+      font-size: 2rem;
+      margin-left: 1rem; }
     #sidebar header img {
-      height: 60%;
+      height: 50%;
       width: auto; }
   #sidebar .info {
     height: 90%;
     position: relative;
     text-align: center; }
+    #sidebar .info h4 {
+      font-weight: normal;
+      font-size: 1.25rem; }
     #sidebar .info #priority {
+      position: relative;
       height: 15%;
       width: 100%; }
       #sidebar .info #priority .status {
+        margin: 1vw;
         height: 8vh;
         width: 100%; }
         #sidebar .info #priority .status .clock p {
-          font-size: 1.5rem; }
+          font-size: 2rem; }
         #sidebar .info #priority .status .chart {
+          margin-left: 1.5rem;
+          border-radius: 50%;
           height: 5vh;
-          width: 5vh; }
+          width: 5vh;
+          background: #EEEEEE; }
+      #sidebar .info #priority .restart {
+        left: 0;
+        position: absolute;
+        top: 25%; }
+        #sidebar .info #priority .restart button {
+          transform: translateX(-50%) translateY(-50%);
+          width: 3rem;
+          height: 3rem; }
+          #sidebar .info #priority .restart button img {
+            width: 2rem;
+            margin: 0.5rem; }
     #sidebar .info #enviroment {
+      margin: 1vw;
       height: 30%; }
       #sidebar .info #enviroment .text {
         height: 20%; }
@@ -225,6 +270,7 @@ body {
             display: block;
             width: 100%; }
     #sidebar .info #bacteria {
+      margin: 1vw;
       height: 55%; }
       #sidebar .info #bacteria[data-content='true'] .empty {
         display: none; }
@@ -246,7 +292,3 @@ body {
           #sidebar .info #bacteria .content div table {
             height: 100%;
             width: 100%; }
-    #sidebar .info .restart {
-      left: 0;
-      position: absolute;
-      top: 0; }

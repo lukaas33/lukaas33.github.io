@@ -17,10 +17,13 @@
       height: 100%;
       position: absolute;
       width: 100%;
-      pointer-events: auto; // Can be clicked
 
       &:first-child {
         z-index: 70;
+
+        p {
+          line-height: initial; // Fixes normalize.css getting in my way
+        }
       }
 
       &:last-child {
@@ -93,12 +96,12 @@
 
         button {
           @extend %round;
-          width: 3rem;
-          height: 3rem;
           bottom: 10%;
           position: absolute;
           right: 0; // Right side of card
           transform: translateX(50%); // Half of itself over the edge
+          width: 3rem;
+          height: 3rem;
 
           img {
             width: 2rem;
@@ -127,16 +130,16 @@
   width: 80vw;
 
   #screen {
-    pointer-events: all; // Can be clicked
+    z-index: 10;
   }
 }
 
 #menu {
+  margin: $margin-standard;
   display: flex; // Children are next to each other
-  left: 0;
   position: absolute;
+  left: 0;
   top: 0;
-  pointer-events: auto; // Can be clicked
 
   &[data-state='collapse'] { // Menu state is set to collapse
     .items {
@@ -146,6 +149,7 @@
         left: 0;
         position: absolute; // Above each other
         top: 0;
+        padding: 0.5rem; // Center button
       }
     }
   }
@@ -153,9 +157,11 @@
   &[data-state='expand'] { // Menu state is set to expand
     .items {
       display: flex; // Children are next to each other
+      margin-left: 0.5rem;
 
       .item {
         position: relative; // Z-index applies
+        padding: 0.5rem 0.25rem; // Center button
       }
     }
   }
@@ -163,25 +169,50 @@
   .indicator {
     position: relative; // Z-index applies
     z-index: 90; // Above items
+
+    button {
+      @extend %round;
+      width: 3rem;
+      height: 3rem;
+
+      img {
+        width: 2rem;
+        margin: 0.5rem;
+      }
+    }
   }
 
   .items {
     .item {
       display: inline-block; // Next to each other
       z-index: 85;
+
+
+      button {
+        @extend %round;
+        background-color: $grey-200; // Overwrite
+        width: 2rem;
+        height: 2rem;
+
+        img {
+          width: 1rem;
+          margin: 0.5rem;
+        }
+      }
     }
   }
 }
 
 #cards {
-  pointer-events: auto; // Can be clicked
+  margin: $margin-standard;
   position: absolute;
   right: 0;
   top: 0;
   width: 20%; // Of field
 
   .card {
-    background-color: white;
+    @extend %card;
+    padding: $padding-standard / 2;
     height: auto;
     position: relative; // Z-index will apply
     width: 100%; // Of cards
@@ -205,22 +236,28 @@
 }
 
 #sidebar {
+  @include shadow(0, 8, -4);
+  position: relative; // Z-index applies
+  z-index: 20;
+  background-color: $grey-50;
   height: 100vh;
   width: 20vw;
-  pointer-events: auto; // Can be clicked
 
   header {
     @extend %center-complete; // Center children on both axis
-    background-color: green;
+    background-color: $primary-500;
     height: 10%; // Of sidebar height
     width: 100%;
 
     h1 {
-      color: white;
+      color: #fff;
+      font-weight: normal;
+      font-size: 2rem;
+      margin-left: 1rem; // From image
     }
 
     img {
-      height: 60%; // Of header height
+      height: 50%; // Of header height
       width: auto;
     }
   }
@@ -234,30 +271,59 @@
 
     }
 
+    h4 {
+      font-weight: normal;
+      font-size: 1.25rem;
+    }
+
     #priority {
+      position: relative; // Absolute children placed with this
       height: 15%; // Of sidebar
       width: 100%;
 
       .status {
+        margin: $margin-standard; // This box's padding
         @extend %center-complete; // Center children on both axis
         height: 8vh;
         width: 100%;
 
         .clock {
           p {
-            font-size: 1.5rem; // Based on base fontsize
+            font-size: 2rem; // Based on base fontsize
           }
         }
 
         .chart {
+          margin-left: 1.5rem;
+          border-radius: 50%;
           height: 5vh;
           width: 5vh;
+          background: $grey-200
+        }
+      }
+
+      .restart {
+        left: 0;
+        position: absolute;
+        top: 25%; // Of priority container
+
+        button {
+          @extend %round;
+          transform: translateX(-50%) translateY(-50%); // Center over fold
+          width: 3rem;
+          height: 3rem;
+
+          img {
+            width: 2rem;
+            margin: 0.5rem;
+          }
         }
       }
 
     }
 
     #enviroment {
+      margin: $margin-standard; // Can't use sidebar padding
       height: 30%; // Of sidebar
 
       .text {
@@ -282,6 +348,7 @@
     }
 
     #bacteria {
+      margin: $margin-standard; // Can't use sidebar padding
       height: 55%; // Of sidebar
 
       &[data-content='true'] { // There is content
@@ -355,12 +422,6 @@
           }
         }
       }
-    }
-
-    .restart {
-      left: 0;
-      position: absolute;
-      top: 0;
     }
   }
 }

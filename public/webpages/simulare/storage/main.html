@@ -51,6 +51,9 @@
         </svg>
       </div>
       <p id="scale">Scale:<span></span></p>
+      <div class="restart">
+        <button name="restart"><img alt="A reset icon" src="assets/images/icons/ic_refresh_white_24px.svg"/></button>
+      </div>
     </div>
     <section class="part" id="enviroment">
       <div class="text">
@@ -58,7 +61,6 @@
         <br/>
       </div>
       <div class="content">
-        <!-- TODO work out these bars -->
         <div class="data">
           <p>Temperature</p>
           <meter data-name="temperature"></meter>
@@ -71,7 +73,6 @@
           <p>Toxin concentration</p>
           <meter data-name="concentration"></meter>
         </div>
-        <br/>
         <div class="data">
           <p>Energy per second</p>
           <meter data-name="energy"></meter>
@@ -84,7 +85,7 @@
         <br/>
       </div>
       <div class="empty">
-        <p>No bacteria selected</p>
+        <p><em>No bacteria selected</em></p>
       </div>
       <div class="content">
         <div>
@@ -148,8 +149,5 @@
         </div>
       </div>
     </section>
-    <div class="restart">
-      <button name="restart"><img alt="A reset icon" src="assets/images/icons/ic_refresh_white_24px.svg"/></button>
-    </div>
   </div>
 </div>
