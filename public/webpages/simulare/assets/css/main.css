@@ -121,7 +121,8 @@ body {
       #start .intro .screen .text h2 {
         text-align: center;
         font-weight: normal;
-        font-size: 2rem; }
+        font-size: 2rem;
+        color: #616161; }
     #start .intro .screen .continue button {
       bottom: 10%;
       position: absolute;
@@ -236,6 +237,7 @@ body {
         height: 8vh;
         width: 100%; }
         #sidebar .info #priority .status .clock p {
+          color: #616161;
           font-size: 2rem; }
         #sidebar .info #priority .status .chart {
           margin-left: 1.5rem;
@@ -243,7 +245,10 @@ body {
           height: 5vh;
           width: 5vh;
           background: #EEEEEE; }
+      #sidebar .info #priority #scale {
+        color: #616161; }
       #sidebar .info #priority .restart {
+        display: none;
         left: 0;
         position: absolute;
         top: 25%; }
