@@ -51,29 +51,29 @@
           <h2>Start screen 2</h2>
           <br/>
           <form>
-            <div class="value">
-              <p>Temperature</p>
-              <span class="limit">0 <span class="unit">&deg;C</span></span>
+            <p>Temperature</p>
+            <div class="container">
+              <span class="limit"><span class="value">0</span> <span class="unit">&deg;C</span></span>
               <input type="range" name="temperature" data-unit="&deg;C" step="4" min="0" max="40" value="20" class="slider">
-              <span class="limit">40 <span class="unit">&deg;C</span></span>
+              <span class="limit"><span class="value">40</span> <span class="unit">&deg;C</span></span>
             </div>
-            <div class="value">
-              <p>Acidity</p>
+            <p>Acidity</p>
+            <div class="container">
               <span class="limit">5.5</span>
               <input type="range" name="acidity" data-unit="" step="0.30" min="5.5" max="8.5" value="7.0" class="slider">
               <span class="limit">8.5</span>
             </div>
-            <div class="value">
-              <p>Toxin concentration</p>
-              <span class="limit">0 <span class="unit">kg/m^3</span></span>
+            <p>Toxin concentration</p>
+            <div class="container">
+              <span class="limit"><span class="value">0</span> <span class="unit"><span class="fraction"><span class="top">kg</span><span class="bottom">m<sup>3</sup></span></span></span></span>
               <input type="range" name="concentration" data-unit="kg/m^3" step="1.56" min="0" max="15.6" value="0" class="slider">
-              <span class="limit">15.6 <span class="unit">kg/m^3</span></span>
+              <span class="limit"><span class="value">15.6</span> <span class="unit"><span class="fraction"><span class="top">kg</span><span class="bottom">m<sup>3</sup></span></span></span></span>
             </div>
-            <div class="value">
-              <p>Energy</p>
-              <span class="limit">6e7 <span class="unit">ATP/s</span></span>
+            <p>Energy</p>
+            <div class="container">
+              <span class="limit"><span class="value">6e7</span> <span class="unit"><span class="fraction"><span class="top">ATP</span><span class="bottom">s</span></span></span></span>
               <input type="range" name="energy" data-unit="atp/s" min="6.0e7" step="9.8e6" max="1.58e8" value="1.58e8" class="slider">
-              <span class="limit">1.6e8 <span class="unit">ATP/s</span></span>
+              <span class="limit"><span class="value">1.6e8</span> <span class="unit"><span class="fraction"><span class="top">ATP</span><span class="bottom">s</span></span></span></span>
             </div>
           </form>
         </section>

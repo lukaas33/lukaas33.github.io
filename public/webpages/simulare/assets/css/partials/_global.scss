@@ -5,8 +5,22 @@
   padding: 0;
 }
 
+:root {
+  font-size: 16px; // Base font-size. Rem unit based on this
+}
+
 body {
   font-family: 'Orbitron', sans-serif; // Applies to everything
   font-size: 1rem; // Defaults to base font-size
-  pointer-events: none; // Won't block the clicking on the canvas
+  color: $grey-800; // Standard text color
+  pointer-events: none; // Some elements unclickable
+}
+
+::selection {
+  color: #fff;
+  background: $secondary-A700;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }

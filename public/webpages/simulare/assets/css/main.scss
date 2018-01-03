@@ -1,10 +1,10 @@
 // The main stylesheet for the site
 
 // Import shared code
-@import 'partials/global';
 @import 'partials/variables';
-@import 'partials/classes';
 @import 'partials/mixins';
+@import 'partials/classes';
+@import 'partials/global';
 
 #start {
   .intro {
@@ -13,10 +13,11 @@
     width: 40vw;
 
     .screen {
-      background-color: white;
+      @extend %card;
       height: 100%;
       position: absolute;
       width: 100%;
+      pointer-events: auto; // Can be clicked
 
       &:first-child {
         z-index: 70;
@@ -25,30 +26,84 @@
       &:last-child {
         z-index: 60;
 
-        form {
-          pointer-events: auto; // Can be clicked
+        p {
+          text-align: center;
+          margin-top: 1.25rem;
+          margin-bottom: 0.75rem;
         }
 
-        .value {
+        .container {
+          @extend %fill-row;
+          width: 100%;
+
+          .limit {
+            color: $grey-600;
+
+            .value {
+            }
+          }
+
+          .fraction {
+            @extend %fraction;
+          }
 
           .slider {
+            @extend %bar;
+            width: 65%; // Of the text
+            height: 2rem;
 
+            &[name=acidity] {
+              background: $blue-500;
+            }
+            &[name=concentration] {
+              background: $green-500;
+            }
+            &[name=temperature] {
+              background: $red-500;
+            }
+            &[name=energy] {
+              background: $amber-500;
+            }
 
+            // Found the needed rules at https://www.w3schools.com/howto/howto_js_rangeslider.asp
+            &::-webkit-slider-thumb {
+              -webkit-appearance: none; // Override default look
+              appearance: none;
+              @extend %button;
+              width: 2.5rem;
+              height: 2.5rem;
+              border-radius: 50%;
+              background: $grey-200;
+            }
           }
         }
       }
 
+      .text {
+        padding: $padding-standard;
+
+        h2 {
+          text-align: center;
+          font-weight: normal;
+          font-size: 2rem;
+        }
+      }
+
       .continue {
-        pointer-events: auto; // Can be clicked
 
         button {
-          background-color: orange;
-          border: 0;
-          border-radius: 100%;
+          @extend %round;
+          width: 3rem;
+          height: 3rem;
           bottom: 10%;
           position: absolute;
           right: 0; // Right side of card
           transform: translateX(50%); // Half of itself over the edge
+
+          img {
+            width: 2rem;
+            margin: 0.5rem;
+          }
         }
       }
     }
@@ -292,19 +347,7 @@
 
                 .unit {
                   .fraction {
-                    display: inline-block;
-                    vertical-align: middle;
-                    text-align: center;
-                    padding: 0 5px;
-
-                    .top, .bottom {
-                      padding: 0 5px;
-                    }
-
-                    .bottom {
-                      border-top: 1px solid #000;
-                      display: block;
-                    }
+                    @extend %fraction;
                   }
                 }
               }

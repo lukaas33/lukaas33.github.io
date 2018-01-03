@@ -1,44 +1,134 @@
+#sidebar header, #sidebar .info #priority .status {
+  align-items: center;
+  display: flex;
+  justify-content: center; }
+
+#start .intro .screen:last-child .container {
+  display: flex;
+  justify-content: space-between; }
+
+#start .intro .screen:last-child .container .fraction, #sidebar .info #bacteria .content div table.values .value .unit .fraction {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  padding: 0 5px; }
+  #start .intro .screen:last-child .container .fraction .top, #sidebar .info #bacteria .content div table.values .value .unit .fraction .top, #start .intro .screen:last-child .container .fraction .bottom, #sidebar .info #bacteria .content div table.values .value .unit .fraction .bottom {
+    padding: 0 5px; }
+  #start .intro .screen:last-child .container .fraction .bottom, #sidebar .info #bacteria .content div table.values .value .unit .fraction .bottom {
+    border-top: 1px solid #000;
+    display: block; }
+
+#start .intro .screen:last-child .container .slider {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 1rem; }
+
+#start .intro .screen {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2);
+  background-color: #FAFAFA;
+  transition: 400ms ease-in-out; }
+  #start .intro .screen:hover {
+    box-shadow: 0px 14px 28px rgba(0, 0, 0, 0.1), 0px 10px 19px rgba(0, 0, 0, 0.2); }
+
+#start .intro .screen:last-child .container .slider, #start .intro .screen .continue button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
+  cursor: pointer; }
+  #start .intro .screen:last-child .container .slider:disabled, #start .intro .screen .continue button:disabled, #start .intro .screen:last-child .container .slider:disabled::-webkit-slider-thumb {
+    cursor: default; }
+  #start .intro .screen:last-child .container .slider:focus, #start .intro .screen .continue button:focus, #start .intro .screen:last-child .container .slider:focus::-webkit-slider-thumb, #start .intro .screen:last-child .container .slider:active, #start .intro .screen .continue button:active, #start .intro .screen:last-child .container .slider:active::-webkit-slider-thumb {
+    outline: none; }
+
+#start .intro .screen .continue button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
+  background-color: transparent;
+  border: 0 solid transparent;
+  transition: 400ms ease-in-out; }
+
+#start .intro .screen .continue button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2);
+  text-align: center; }
+  #start .intro .screen .continue button:hover, #start .intro .screen:last-child .container .slider:hover::-webkit-slider-thumb, #start .intro .screen .continue button:focus, #start .intro .screen:last-child .container .slider:focus::-webkit-slider-thumb {
+    box-shadow: 0px 8px 22px rgba(0, 0, 0, 0.1), 0px 6px 15px rgba(0, 0, 0, 0.2); }
+
+#start .intro .screen .continue button {
+  background-color: #00BCD4;
+  border-radius: 100%; }
+
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   margin: 0;
   padding: 0; }
 
+:root {
+  font-size: 16px; }
+
 body {
   font-family: 'Orbitron', sans-serif;
   font-size: 1rem;
+  color: #424242;
   pointer-events: none; }
 
-#sidebar header, #sidebar .info #priority .status {
-  align-items: center;
-  display: flex;
-  justify-content: center; }
+::selection {
+  color: #fff;
+  background: #00B8D4; }
+
+::-webkit-scrollbar {
+  display: none; }
 
 #start .intro {
   height: 40vw;
   position: relative;
   width: 40vw; }
   #start .intro .screen {
-    background-color: white;
     height: 100%;
     position: absolute;
-    width: 100%; }
+    width: 100%;
+    pointer-events: auto; }
     #start .intro .screen:first-child {
       z-index: 70; }
     #start .intro .screen:last-child {
       z-index: 60; }
-      #start .intro .screen:last-child form {
-        pointer-events: auto; }
-    #start .intro .screen .continue {
-      pointer-events: auto; }
-      #start .intro .screen .continue button {
-        background-color: orange;
-        border: 0;
-        border-radius: 100%;
-        bottom: 10%;
-        position: absolute;
-        right: 0;
-        transform: translateX(50%); }
+      #start .intro .screen:last-child p {
+        text-align: center;
+        margin-top: 1.25rem;
+        margin-bottom: 0.75rem; }
+      #start .intro .screen:last-child .container {
+        width: 100%; }
+        #start .intro .screen:last-child .container .limit {
+          color: #757575; }
+        #start .intro .screen:last-child .container .slider {
+          width: 65%;
+          height: 2rem; }
+          #start .intro .screen:last-child .container .slider[name=acidity] {
+            background: #2196F3; }
+          #start .intro .screen:last-child .container .slider[name=concentration] {
+            background: #4CAF50; }
+          #start .intro .screen:last-child .container .slider[name=temperature] {
+            background: #F44336; }
+          #start .intro .screen:last-child .container .slider[name=energy] {
+            background: #FFC107; }
+          #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: #EEEEEE; }
+    #start .intro .screen .text {
+      padding: 1.5rem; }
+      #start .intro .screen .text h2 {
+        text-align: center;
+        font-weight: normal;
+        font-size: 2rem; }
+    #start .intro .screen .continue button {
+      width: 3rem;
+      height: 3rem;
+      bottom: 10%;
+      position: absolute;
+      right: 0;
+      transform: translateX(50%); }
+      #start .intro .screen .continue button img {
+        width: 2rem;
+        margin: 0.5rem; }
 
 #overlay {
   background-color: rgba(0, 0, 0, 0.5);
@@ -156,16 +246,6 @@ body {
           #sidebar .info #bacteria .content div table {
             height: 100%;
             width: 100%; }
-            #sidebar .info #bacteria .content div table.values .value .unit .fraction {
-              display: inline-block;
-              vertical-align: middle;
-              text-align: center;
-              padding: 0 5px; }
-              #sidebar .info #bacteria .content div table.values .value .unit .fraction .top, #sidebar .info #bacteria .content div table.values .value .unit .fraction .bottom {
-                padding: 0 5px; }
-              #sidebar .info #bacteria .content div table.values .value .unit .fraction .bottom {
-                border-top: 1px solid #000;
-                display: block; }
     #sidebar .info .restart {
       left: 0;
       position: absolute;

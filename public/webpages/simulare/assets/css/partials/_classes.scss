@@ -1,5 +1,92 @@
+
+// Flexbox classes
 %center-complete {
   align-items: center; // Children centered vertically
   display: flex; // Display children next to each other
   justify-content: center; // Children centered horizonally
+}
+
+%fill-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+// Styling classes
+%fraction {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  padding: 0 5px;
+
+  .top, .bottom {
+    padding: 0 5px;
+  }
+
+  .bottom {
+    border-top: 1px solid #000;
+    display: block;
+  }
+}
+
+%bar {
+  @extend %click;
+  -webkit-appearance: none;  // Override default CSS styles
+  appearance: none;
+  border-radius: 1rem;
+}
+
+// From old projects
+%card {
+  @include shadow(2, 4);
+  background-color: $grey-50;
+  transition: $animation;
+
+  &:hover {
+    @include shadow(14, 28)
+  }
+}
+
+%click {
+  cursor: pointer; // Can be clicked
+
+  &:disabled {
+    cursor: default; // Can't be clicked
+  }
+
+  &:focus,
+  &:active {
+    outline: none;
+  }
+}
+
+%form {
+  @extend %click;
+  background-color: transparent; // Hides default background
+  border: 0 solid transparent; // Hides border
+  transition: $animation;
+}
+
+%button {
+  @extend %form; // Is a type of form
+  @include shadow(2, 4);
+  text-align: center; // Center horizontally
+
+  &:hover,
+  &:focus {
+    @include shadow(8, 22)
+  }
+}
+
+%normal {
+  @extend %button; // Is a button
+  background-color: $primary-500;
+  color: #fff;
+  padding: 0.75rem;
+  text-transform: uppercase;
+}
+
+%round {
+  @extend %button; // Is a button
+  background-color: $secondary-500;
+  border-radius: 100%; // Round
 }

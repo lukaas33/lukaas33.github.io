@@ -1,10 +1,10 @@
 // This file is optimised for speed as it styles the loading page
 
 // Import shared code
-@import 'partials/global';
 @import 'partials/variables';
-@import 'partials/classes';
 @import 'partials/mixins';
+@import 'partials/global';
+@import 'partials/classes';
 
 // TODO use colors and standard padding
 // TODO create classes for shared values
@@ -22,14 +22,14 @@
 
 #loading,
 #start {
-  background-color: green;
+  background-color: $primary-600;
 }
 
 #loading {
   z-index: 80; // Highest page
 
   .circle {
-    background-color: white;
+    background-color: $grey-50;
     border-radius: 100%;
     height: 30vw;
     position: relative; // Absolute will be relative to this parent
@@ -38,13 +38,26 @@
     z-index: 100;
 
     img {
-      height: 15%;
+      height: 20%;
       margin-top: 20%;
     }
 
     .text {
-      height: 45%;
+      height: 40%;
       margin: 10% 0;
+
+
+      h1 {
+        font-weight: normal;
+        font-size: 2.75rem;
+        color: $grey-600;
+      }
+
+      h4 {
+        font-weight: normal;
+        font-size: 1.5rem;
+        color: $grey-500;
+      }
     }
   }
 
@@ -57,7 +70,7 @@
     // From: https://css-tricks.com/how-to-make-charts-with-svg/ and https://www.w3schools.com/graphics/svg_circle.asp
     .chart {
       border-radius: 50%;
-      fill: green;
+      fill: $primary-400;
       height: 100%;
       transform: rotate(-90deg);
       width: 100%;
@@ -67,7 +80,7 @@
       r: 50%; // Fill parent
       cx: 50%; // Centered in parent
       cy: 50%; // Centered in parent
-      stroke: blue;
+      stroke: $primary-500;
       stroke-dasharray: 0, (100% * 3.14); // Circumference of the circle (Pi * diameter)
       stroke-width: 50%; // Fill itself
       transition: $time;
@@ -86,7 +99,7 @@
 }
 
 #home {
-  background-color: white;
+  background-color: $grey-200;
   display: none;
   z-index: 0; // Lowest page
 }
