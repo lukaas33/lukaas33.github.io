@@ -2,12 +2,13 @@
   'use strict'
   // << Variables >>
   const doc = {
-    overview: $('#overview'),
+    overview: $('#overview .box'),
     result: $('#result')
   }
 
   const local = {
-    results: shared.storage('results') // Get the results
+    results: shared.storage('results').reverse() // Can do this because data is entered in chronological order
+    // results: shared.storage('results').sort(shared.sort('date')) // Get the results in sorted order
   }
 
   // << Functions >>

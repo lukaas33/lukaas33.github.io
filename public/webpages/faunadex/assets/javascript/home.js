@@ -6,5 +6,23 @@
 
 (function() { // Global vars are local to this file
   'use strict'
-  // TODO add the loading of data here
+
+  // << Variables >>
+  const doc = {
+    results: $('#results .box')
+  }
+
+  const local = {
+    results: shared.storage('results').reverse() // Can do this because data is entered in chronological order
+  }
+  local.results = local.results.slice(0, 4) // First 4
+
+  // << Actions >>
+  if (typeof(local.results) !== 'undefined') { // Exist
+    for (let result of local.results) {
+      let thumbnail = new EJS({url: 'views/partials/thumbnail.ejs'}).render({data: result})
+      doc.results.append(thumbnail) // Add html to doc
+    }
+  }
+
 }).call(this)

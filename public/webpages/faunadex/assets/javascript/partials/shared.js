@@ -1,6 +1,21 @@
 'use strict'
 const shared = {} // No naming confict between files
 
+// Sort object
+  // https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript
+shared.sort = function (property) {
+  var sortOrder = 1;
+   if(property[0] === "-") {
+       sortOrder = -1;
+       property = property.substr(1);
+   }
+   return function (a,b) {
+       var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+       if (property )
+       return result * sortOrder;
+   }
+}
+
 // Convertion options
 shared.json = {
   stringify: (key, value) => {

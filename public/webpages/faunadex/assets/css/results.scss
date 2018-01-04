@@ -11,45 +11,55 @@
 
 #overview {
   padding: $margin-standard / 2;
-  display: flex; // All cards visible
-  flex-direction: row;
-  flex-wrap: wrap;
+}
 
-  .thumbnail {
-    margin: $margin-standard / 2; // Space
-    @extend %card;
+#results {
+  
+}
 
-    $perrow: 2;
-    $width: (100vw - ($perrow * $margin-standard) - $margin-standard) / $perrow;
-    width: $width;
+#overview, // Applies to two pages
+#results {
+  .box {
+    display: flex; // All cards visible
+    flex-direction: row;
+    flex-wrap: wrap;
 
-    .container {
-      width: 100%;
-      height: $width; // 1:1
+    .thumbnail {
+      margin: $margin-standard / 2; // Space
+      @extend %card;
 
-      a {
-        display: block;
+      $perrow: 2;
+      $width: (100vw - ($perrow * $margin-standard) - $margin-standard) / $perrow;
+      width: $width;
+
+      .container {
         width: 100%;
-        height: 100%;
-        position: relative; // Z-index
-        z-index: 80; // Below menu
-        overflow: hidden;
+        height: $width; // 1:1
 
-        img {
-          @extend %fill;
+        a {
+          display: block;
+          width: 100%;
+          height: 100%;
+          position: relative; // Z-index
+          z-index: 80; // Below menu
+          overflow: hidden;
+
+          img {
+            @extend %fill;
+          }
         }
       }
-    }
 
-    .text {
-      padding: $padding-standard;
+      .text {
+        padding: $padding-standard;
 
-      p {
-        &:first-child {
+        p {
+          &:first-child {
 
-        }
-        &:last-child {
-          font-size: 0.75rem;
+          }
+          &:last-child {
+            font-size: 0.75rem;
+          }
         }
       }
     }
