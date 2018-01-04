@@ -9,16 +9,60 @@
 @import "partials/menu";
 
 .page {
-  padding-top: $menu-height; // Menu doesn't cover content
-  padding: $padding-standard * 2;
+  margin-top: $menu-height; // Menu doesn't cover content
+
+  main {
+    padding: $padding-standard * 2;
+  }
 
   .content {
     @extend %card;
-    margin: $margin-standard 0;
+    margin-bottom: $margin-standard;
+  }
+
+  .title {
+    text-align: center;
+    font-weight: normal;
   }
 
   #scan {
+    .content {
+      background-color: $primary-700;
+    }
 
+    a {
+      display: block;
+      position: relative; // For absolute children
+      width: 100%;
+      height: 100%;
+
+      .preview {
+        @extend %fill;
+      }
+
+      .over {
+        position: absolute;
+        top: 0;
+        height: 20%;
+        width: 20%;
+        border-radius: 100%;
+        background-color: $primary-800;
+        margin: 5%;
+        padding: 5%;
+
+        &:first-of-type {
+          left: 0;
+        }
+        &:last-of-type {
+          right: 0;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
   }
 
   #results {

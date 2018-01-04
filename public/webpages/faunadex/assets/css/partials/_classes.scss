@@ -1,16 +1,10 @@
 
 
 %fill {
-  // https://stackoverflow.com/questions/36949747/make-video-fit-100-with-any-screen-resolution
-  position: absolute;
-  min-height: 100%; // Fill
-  min-width: 100%;
-  max-height: 100%;
-  height: auto; // Don't strech element
-  width: auto;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  display: block; // Remove whitespace
 }
 
 // From old projects

@@ -5,19 +5,22 @@
 @import "partials/global";
 @import "partials/menu";
 
+.page {
+  margin-top: $menu-height;
+}
+
 #overview {
-  padding-top: $menu-height;
+  padding: $margin-standard / 2;
   display: flex; // All cards visible
   flex-direction: row;
   flex-wrap: wrap;
 
   .thumbnail {
-    margin-left: $margin-standard; // Same effect as padding on parent and works with all cards
-    margin-top: $margin-standard;
+    margin: $margin-standard / 2; // Space
     @extend %card;
 
     $perrow: 2;
-    $width: (100vw - ($perrow * 2 * $margin-standard)) / $perrow;
+    $width: (100vw - ($perrow * $margin-standard) - $margin-standard) / $perrow;
     width: $width;
 
     .container {
@@ -28,7 +31,7 @@
         display: block;
         width: 100%;
         height: 100%;
-        position: relative; // For absolute children
+        position: relative; // Z-index
         z-index: 80; // Below menu
         overflow: hidden;
 

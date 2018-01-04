@@ -93,10 +93,16 @@ const validateInput = function (input) {
 const filterOutput = function (output) {
   var data = output.outputs[0].data.concepts
   var result = data[0] // The one with the highest certainty
+
   for (let index in data) { // If the name is in the list, choose this result
     let res = data[index]
+    if (res in ['people', 'man', 'woman', 'portrait', 'human', 'child', 'adult']) {
+      result = 'human' // Different names for human (common result)
+      break
+    }
+
     if (binarySearch(res)) { // Binary search for it in the array
-      result = res
+      result = res // Change
       break
     }
   }
@@ -314,18 +320,18 @@ const imageTaken = function () {
   const img = new Image() // Canavas needs html image element
   img.src = local.image
   img.onload = () => { // Image needs to load before displaying
-    drawImg(img)
+    drawImg(img, img.width, img.height)
   }
   doc.feed.hide()
   doc.image.show()
   imageSelected()
 }
 
-const drawImg = function (img) {
+const drawImg = function (img, w, h) {
   var size = { // Get from img
-    height: img.height,
-    width: img.width,
-    ratio: img.height / img.width
+    height: h,
+    width: w,
+    ratio: h / w
   }
   var height = 0 // Initial
   var width = 0
@@ -419,11 +425,16 @@ doc.back.click(() => {
 doc.take.click(function () {
   var video = doc.feed[0]
   video.pause() // User sees current frame
+  var w = video.videoWidth
+  var h = video.videoHeight
   // Get the video frame
-    // http://cwestblog.com/2017/05/03/javascript-snippet-get-video-frame-as-an-image/
-  local.context.drawImage(video, 0, 0) // Display to get frame
+  doc.image[0].height = h // No whitespace
+  doc.image[0].width = w
+  local.context.drawImage(video, 0, 0)
   local.image = doc.image[0].toDataURL() // Store frame as image
   // Clear canvas
+  doc.image[0].width = local.view.width
+  doc.image[0].height = local.view.height
   local.context.clearRect(0, 0, local.view.width, local.view.height)
   imageSelected()
 })
