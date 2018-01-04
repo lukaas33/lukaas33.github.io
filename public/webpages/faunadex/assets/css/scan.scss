@@ -38,6 +38,7 @@
       z-index: 0; // Below all buttons
       // Display feed fullscreen
         // https://stackoverflow.com/questions/36949747/make-video-fit-100-with-any-screen-resolution
+      background-color: grey; // If empty
       min-height: 100%; // Fill main
       min-width: 100%;
       height: auto; // Don't strech element

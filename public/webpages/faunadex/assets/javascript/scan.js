@@ -319,32 +319,24 @@ const imageTaken = function () {
 const drawImg = function (img) {
   var size = { // Get from img
     height: img.height,
-    width: img.width
+    width: img.width,
+    ratio: img.height / img.width
   }
-  var height, width = 0 // Initial
-  var startHeight, startWidth = 0 // Initial
+  var height = 0 // Initial
+  var width = 0
+  var startHeight = 0 // Initial
+  var startWidth = 0
 
-  // Image ratio
-  if (size.width >= size.height) {
-    // Center the image
-    startHeight = (local.view.height - size.height) / 2
-    // Values
-    width = local.view.width
-    height = size.height
-  } else {
-    // Center the image
-    startWidth = (local.view.width - size.width) / 2
-    // Values
-    width = size.width
-    height = local.view.height
-  }
-  // Image does not fit on screen
-  if (size.width > local.view.width || size.height > local.view.height) {
-    // TODO handle it
-  }
+  width = local.view.width // Scaled
+  height = local.view.width * size.ratio // Scaled
+
+  startHeight = (local.view.height - height) / 2 // Center
+
+  console.log(0, 0, size.width, size.height, startWidth, startHeight, width, height)
   // Display the image in canvas
   local.context.drawImage(
-    img, 0, 0, width, height, startWidth, startHeight, width, height
+    img, 0, 0, size.width, size.height, // All of the image
+    startWidth, startHeight, width, height // Displayed here
   )
 }
 
