@@ -3,10 +3,54 @@
 @import "partials/mixins";
 @import "partials/classes";
 @import "partials/global";
+@import "partials/menu";
 
-// TODO style pages
 #overview {
-  
+  padding-top: $menu-height;
+  display: flex; // All cards visible
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  .thumbnail {
+    margin-left: $margin-standard; // Same effect as padding on parent and works with all cards
+    margin-top: $margin-standard;
+    @extend %card;
+
+    $perrow: 2;
+    $width: (100vw - ($perrow * 2 * $margin-standard)) / $perrow;
+    width: $width;
+
+    .container {
+      width: 100%;
+      height: $width; // 1:1
+
+      a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: relative; // For absolute children
+        z-index: 80; // Below menu
+        overflow: hidden;
+
+        img {
+          @extend %fill;
+        }
+      }
+    }
+
+    .text {
+      padding: $padding-standard;
+
+      p {
+        &:first-child {
+
+        }
+        &:last-child {
+          font-size: 0.75rem;
+        }
+      }
+    }
+  }
 }
 
 #result {

@@ -1,0 +1,108 @@
+$menu-height: 3rem;
+
+#menu {
+  position: fixed;
+  z-index: 90;
+  top: 0;
+  width: 100%;
+
+  &[data-state=collapsed] {
+    .container {
+      left: -100%;
+    }
+    .overlay {
+      display: none;
+    }
+  }
+  &[data-state=extended] {
+    .container {
+      left: 0;
+    }
+    .overlay {
+      display: block;
+    }
+  }
+
+  .container {
+    @include shadow(0, 8, 4);
+    position: absolute;
+    top: 100%; // bottom of the menu
+    background-color: $grey-50;
+    padding: $padding-standard;
+    padding-right: $padding-standard * 3;
+    height: 100vh; // Overflow will be hidden
+    z-index: 95;
+
+    .menuItem {
+      margin-bottom: $padding-standard * 2;
+
+        a {
+          line-height: 1.5rem;
+          display: block;
+        }
+
+        img {
+          vertical-align: middle;
+          display: inline-block;
+          height: 100%;
+          margin-right: 1rem;
+        }
+
+        p {
+          display: inline-block;
+          vertical-align: middle;
+        }
+
+    }
+
+  }
+
+  .overlay {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.35);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 90;
+  }
+
+  header {
+    @include shadow(2, 6);
+    position: relative; // Apply z-index
+    height: $menu-height;
+    background-color: $primary-700;
+    width: 100%;
+    padding: $padding-standard;
+    z-index: 100;
+
+    $size: $menu-height - ($padding-standard * 2);
+
+    button {
+      @extend %round;
+      background-color: $primary-800;
+      height: $size;
+      width: $size;
+      float: left;
+
+      img {
+        width: 100%;
+        width: 100%;
+      }
+    }
+
+    h1 {
+      margin-left: $size + ($padding-standard * 3); // Distance
+      display: block;
+      font-size: 1.75rem;
+      text-transform: uppercase;
+      color: #fff;
+      font-weight: normal;
+    }
+  }
+}
+//
+// .page {
+//   position: relative; // Apply Z-index
+//   z-index: 80; // below menu
+// }

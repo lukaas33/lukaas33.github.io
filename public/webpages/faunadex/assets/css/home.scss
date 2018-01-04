@@ -6,5 +6,22 @@
 @import "partials/mixins";
 @import "partials/classes";
 @import "partials/global";
+@import "partials/menu";
 
-// TODO style pages
+.page {
+  padding-top: $menu-height; // Menu doesn't cover content
+  padding: $padding-standard * 2;
+
+  .content {
+    @extend %card;
+    margin: $margin-standard 0;
+  }
+
+  #scan {
+
+  }
+
+  #results {
+
+  }
+}
