@@ -426,6 +426,7 @@ doc.take.click(function () {
 // When a new file is entered
   // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL
 doc.gallery.change(function (event) {
+  console.log('input', event.target.files)
   if (validateInput(event.target.files)) {
     const reader = new FileReader() // Can read the image
     reader.onload = function (event) {
