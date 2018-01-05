@@ -113,7 +113,7 @@ data.set = function (entering, complete = () => {}) {
   const upsert = function (document, collection, callback = () => {}) {
     var query = {title: document.title} // Title is unique
     var current = data.database.collection(collection)
-    current.updateOne(query, document, {upsert: true}, function (error, result) {
+    current.updateOne(query, {$set: document}, {upsert: true}, function (error, result) {
       if (error) {
         console.log('# Database entry')
         throw error
@@ -218,7 +218,7 @@ mongoClient.connect(process.env.MONGODB_URI, function (error, database) { // Con
     console.log('# Database connect')
     throw error
   }
-  data.database = database
+  data.database = database.db(process.env.DB_NAME)
   data.set() // Database sync without entering new data
   console.log('Database connection established')
 })
