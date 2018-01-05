@@ -1,4 +1,9 @@
-
+%label {
+  font-family: 'roboto-mono', monospace;
+  text-transform: uppercase;
+  font-weight: normal;
+  text-align: center; // Center horizontally
+}
 
 %fill {
   height: 100%;
@@ -53,7 +58,6 @@
 %button {
   @extend %form; // Is a type of form
   @include shadow(2, 4);
-  text-align: center; // Center horizontally
 
   &:hover,
   &:focus {
@@ -63,9 +67,9 @@
 
 %button-normal {
   @extend %button; // Is a button
+  @extend %label;
   color: #fff;
   padding: $padding-standard;
-  text-transform: uppercase;
 }
 
 %button-round {

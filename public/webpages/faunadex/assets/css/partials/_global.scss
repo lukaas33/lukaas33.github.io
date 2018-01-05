@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
 
 * {
   box-sizing: border-box;
@@ -37,4 +38,8 @@ hr {
 
 main {
   overflow-y: scroll; // All main content
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @extend %label;
 }

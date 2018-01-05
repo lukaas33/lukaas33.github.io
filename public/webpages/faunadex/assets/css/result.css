@@ -1,9 +1,16 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
+@import url("https://fonts.googleapis.com/css?family=Roboto+Mono");
 @keyframes fadeIn {
   from {
     opacity: 0; }
   to {
     opacity: 1; } }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'roboto-mono', monospace;
+  text-transform: uppercase;
+  font-weight: normal;
+  text-align: center; }
 
 #data .container .banner {
   height: 100%;
@@ -79,11 +86,9 @@ main {
       #data .text .head .headers {
         display: inline-block; }
         #data .text .head .headers h3 {
-          font-size: 1.6rem;
-          font-weight: normal; }
+          font-size: 1.6rem; }
         #data .text .head .headers h5 {
-          font-size: 1.2rem;
-          font-weight: normal; }
+          font-size: 1.2rem; }
           #data .text .head .headers h5 b {
             font-weight: normal; }
       #data .text .head .accuracy {
