@@ -373,7 +373,6 @@
       this.mitosis = bind(this.mitosis, this);
       this.stop = bind(this.stop, this);
       this.goToPoint = bind(this.goToPoint, this);
-      this.findTarget = bind(this.findTarget, this);
       this.chooseDirection = bind(this.chooseDirection, this);
       this.checkCollision = bind(this.checkCollision, this);
       this.checkSpeed = bind(this.checkSpeed, this);
@@ -443,9 +442,12 @@
               this.chooseDirection();
             }
           } else {
-            this.findTarget();
+            if (this.action.current === 'Chasing') {
+              this.goToPoint(this.target.position);
+            }
           }
         }
+        this.eat();
         this.loseEnergy();
       }
       this.move();
@@ -720,13 +722,6 @@
       return this.changeAction('Wandering');
     };
 
-    Bacteria.prototype.findTarget = function() {
-      if (this.action.current === 'Chasing') {
-        this.goToPoint(this.target.position);
-        return this.eat();
-      }
-    };
-
     Bacteria.prototype.goToPoint = function(point) {
       var relativePosition;
       relativePosition = this.target.position.subtract(this.position);
@@ -738,7 +733,7 @@
       var ref1;
       if ((ref1 = this.action.current) !== 'Mitosis' && ref1 !== 'Stopping') {
         this.changeAction('Stopping');
-        return this.decceleration.value = Calc.combine(this.speed.current.value) / 2;
+        return this.decceleration.value = Calc.combine(this.speed.current.value) / 5;
       }
     };
 
@@ -823,11 +818,13 @@
 
     Bacteria.prototype.eat = function() {
       var energy;
-      if (check.circleInside(this.body, this.target.particle)) {
-        energy = this.target.energy.value * 10;
-        this.energy.value += energy;
-        this.target.eaten();
-        return this.target = null;
+      if (this.target !== null) {
+        if (check.circleInside(this.body, this.target.particle)) {
+          energy = this.target.energy.value * 10;
+          this.energy.value += energy;
+          this.target.eaten();
+          return this.target = null;
+        }
       }
     };
 

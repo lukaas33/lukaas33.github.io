@@ -361,7 +361,9 @@ class Bacteria # Has values shared by all bacteria
           # With a chance of 1/x, change direction
           @chooseDirection() if Random.chance(25)
         else # Food is near
-          @findTarget() # Go get food
+          if @action.current == 'Chasing' # After it has slowed
+            @goToPoint(@target.position)
+      @eat() # Will try to eat
       @loseEnergy()
     @move()
     @update()
@@ -617,12 +619,6 @@ class Bacteria # Has values shared by all bacteria
     @startMoving()
     @changeAction('Wandering')
 
-  # Will go to a point until reached
-  findTarget: =>
-    if @action.current == 'Chasing' # After it has slowed
-      @goToPoint(@target.position)
-      @eat() # Try to eat
-
   # Go to a point
   goToPoint: (point) =>
     # Set the direction
@@ -635,7 +631,7 @@ class Bacteria # Has values shared by all bacteria
     if @action.current not in ['Mitosis', 'Stopping'] # No double
       @changeAction('Stopping')
       # Slow to a stop
-      @decceleration.value = Calc.combine(@speed.current.value) / 2
+      @decceleration.value = Calc.combine(@speed.current.value) / 5 # Low because speed is already low
 
   # Divison TODO make animatio
   mitosis: =>
@@ -703,13 +699,14 @@ class Bacteria # Has values shared by all bacteria
 
   # Eat food instances
   eat: =>
-    # Inside it
-    if check.circleInside(@body, @target.particle)
-      energy = @target.energy.value * 10 # Increased to speed up things
-      @energy.value += energy
-      @target.eaten() # Removes itself
-      # findTarget won't be called anymore
-      @target = null # Doesn't exist anymore
+    if @target != null
+      # Inside it
+      if check.circleInside(@body, @target.particle)
+        energy = @target.energy.value * 10 # Increased to speed up things
+        @energy.value += energy
+        @target.eaten() # Removes itself
+        # findTarget won't be called anymore
+        @target = null # Doesn't exist anymore
 
 # Constructors that inherit code
 class Lucarium extends Bacteria # This family of bacteria has its own traits
