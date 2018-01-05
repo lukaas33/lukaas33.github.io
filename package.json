@@ -24,13 +24,13 @@
     "compression": "^1.7.1",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
-    "express-minify": "^0.2.0",
+    "express-minify": "^1.0.0",
     "formidable": "^1.1.1",
     "fs": "0.0.1-security",
     "helmet": "^3.9.0",
-    "mailgun-js": "^0.13.1",
+    "mailgun-js": "^0.14.1",
     "marked": "^0.3.7",
-    "mongodb": "^2.2.33"
+    "mongodb": "^3.0.1"
   },
   "engines": {
     "node": "6.10.3",
