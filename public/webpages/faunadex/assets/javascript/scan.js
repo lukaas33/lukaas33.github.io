@@ -96,12 +96,14 @@ const filterOutput = function (output) {
 
   for (let index in data) { // If the name is in the list, choose this result
     let res = data[index]
-    if (res in ['people', 'man', 'woman', 'portrait', 'human', 'child', 'adult']) {
-      result = 'human' // Different names for human (common result)
+    console.log('checking', res)
+    if (['people', 'man', 'woman', 'portrait', 'human', 'child', 'adult'].includes(res.name)) {
+      res.name = 'human'
+      result = res // Different names for human (common result)
       break
     }
 
-    if (binarySearch(res)) { // Binary search for it in the array
+    if (binarySearch(res.name)) { // Binary search for it in the array
       result = res // Change
       break
     }
@@ -119,9 +121,9 @@ const getDate = function () { // TODO UTC and stuff
 // Returns the location
 const getLocation = function (coordinates) { // TODO ask for permission and get location
   if (coordinates) {
-    return 1000000
+    return {long: 51.523782, lat: -0.158480}
   } else {
-    return "street"
+    return "221B Baker Street, London, United Kingdom"
   }
 }
 
@@ -253,6 +255,8 @@ const displayResult = function () {
   var card = new EJS({url: 'views/partials/result.ejs'}).render({data: local.data})
   doc.result.html(card)
   doc.result.show()
+  doc.feed.show() // Behind card
+  doc.feed[0].play()
   doc.back.parents('.top').show()
   doc.save.show()
   local.state = 'result' // Change behaviour of back
