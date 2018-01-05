@@ -25,6 +25,7 @@ $menu-height: 3rem;
 
   .container {
     @include shadow(0, 8, 4);
+    transition: $animation;
     position: absolute;
     top: 100%; // bottom of the menu
     background-color: $grey-50;
@@ -35,32 +36,41 @@ $menu-height: 3rem;
 
     .menuItem {
       margin-bottom: $padding-standard * 2;
+      color: $grey-700;
 
-        a {
-          line-height: 1.5rem;
-          display: block;
+      &.selected {
+        color: $secondary-A400;
+
+        svg {
+          fill: $secondary-A400;
         }
+      }
 
-        img {
-          vertical-align: middle;
-          display: inline-block;
-          height: 100%;
-          margin-right: 1rem;
-        }
+      a {
+        line-height: 1.5rem;
+        display: block;
+      }
 
-        p {
-          display: inline-block;
-          vertical-align: middle;
-        }
+      svg {
+        fill: $grey-700;
+        vertical-align: middle;
+        display: inline-block;
+        height: 100%;
+        margin-right: 1rem;
+      }
 
+      p {
+        display: inline-block;
+        vertical-align: middle;
+      }
     }
-
   }
 
   .overlay {
+    animation: fadeIn $animation;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: rgba(0, 0, 0, 0.45);
     position: fixed;
     top: 0;
     left: 0;
@@ -79,7 +89,7 @@ $menu-height: 3rem;
     $size: $menu-height - ($padding-standard * 2);
 
     button {
-      @extend %round;
+      @extend %button-round;
       background-color: $primary-800;
       height: $size;
       width: $size;
@@ -96,7 +106,7 @@ $menu-height: 3rem;
       display: block;
       font-size: 1.75rem;
       text-transform: uppercase;
-      color: #fff;
+      color: $primary-50;
       font-weight: normal;
     }
   }

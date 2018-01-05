@@ -1,6 +1,11 @@
 'use strict'
 const shared = {} // No naming confict between files
 
+
+shared.var = {
+  time: 400
+}
+
 // Sort object
   // https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript
 shared.sort = function (property) {
