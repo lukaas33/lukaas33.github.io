@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
+@import url("https://fonts.googleapis.com/css?family=Noto+Sans");
 @-webkit-keyframes slideDown {
   from {
     -webkit-transform: translateY(-100vh);
@@ -165,11 +166,15 @@
 ::-webkit-scrollbar {
   display: none; }
 
+@font-face {
+  font-family: 'emoticon';
+  src: url("NotoColorEmoji.ttf") format("truetype"); }
+
 body {
   color: #424242;
   font-size: 1rem;
   background-color: #eeeeee;
-  font-family: 'Roboto', sans-serif; }
+  font-family: 'noto sans', sans-serif; }
 
 [data-tooltip=true] {
   position: relative;
@@ -517,6 +522,8 @@ body {
         width: 100%;
         height: 100%;
         display: flex; }
+        #chat #message #send #text .emoticon {
+          font-family: 'emoticon'; }
         #chat #message #send #text .container {
           background-color: #3f51b5;
           width: 90vw;
