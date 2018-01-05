@@ -37,46 +37,67 @@
     </header>
     <div class="overlay"></div>
     <div class="container">
-        <div class="menuItem">
-          <a href="./">
-            <img src="assets/images/icons/home.svg">
-            <p>Home</p>
-          </a>
-        </div>
-        <div class="menuItem">
-          <a href="scan/">
-            <img src="assets/images/icons/scan.svg">
-            <p>Scan</p>
-          </a>
-        </div>
-        <div class="menuItem selected">
-          <a href="results/">
-            <img src="assets/images/icons/results.svg">
-            <p>Results</p>
-          </a>
-        </div>
-        <!-- <div class="menuItem">
-          <a href="achievements/">
-            <img src="assets/images/icons/achievements.svg">
-            <p>Achievements</p>
-          </a>
-        </div>
-        <div class="menuItem">
-          <a href="about/">
-            <img src="assets/images/icons/about.svg">
-            <p>About</p>
-          </a>
-        </div> -->
+      <div class="menuItem">
+        <a href="./">
+          <!-- Inline svg so I can change the color -->
+          <svg fill="#424242" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            <path d="M0 0h24v24H0z" fill="none"/>
+          </svg>
+          <p>Home</p>
+        </a>
+      </div>
+      <div class="menuItem">
+        <a href="scan/">
+          <svg fill="#424242" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="3.2"/>
+            <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+            <path d="M0 0h24v24H0z" fill="none"/>
+          </svg>
+          <p>Scan</p>
+        </a>
+      </div>
+      <div class="menuItem selected">
+        <a href="results/">
+          <svg fill="#424242" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
+          </svg>
+          <p>Results</p>
+        </a>
+      </div>
+      <!-- <div class="menuItem">
+        <a href="achievements/">
+          <svg fill="#424242" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+            <path d="M0 0h24v24H0z" fill="none"/>
+          </svg>
+          <p>Achievements</p>
+        </a>
+      </div>
+      <div class="menuItem">
+        <a href="about/">
+          <svg fill="#424242" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/>
+          </svg>
+          <p>About</p>
+        </a>
+      </div> -->
     </div>
   </nav>
   <div class="page">
     <div id="loader"></div>
     <main id="overview">
       <div class="box">
+        <!-- Dynamic content -->
       </div>
     </main>
     <main id="result">
-
+      <button name="back"><img src="assets/images/icons/back.svg"/></button>
+      <div class="box">
+        <!-- Dynamic content -->
+      </div>
     </main>
   </div>
 </body>

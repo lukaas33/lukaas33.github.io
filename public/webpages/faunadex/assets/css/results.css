@@ -1,4 +1,10 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
+@keyframes fadeIn {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+
 #overview .box .thumbnail .container a img,
 #results .box .thumbnail .container a img {
   height: 100%;
@@ -15,25 +21,25 @@
   #results .box .thumbnail:hover {
     box-shadow: 0px 14px 28px rgba(0, 0, 0, 0.1), 0px 10px 19px rgba(0, 0, 0, 0.2); }
 
-#menu header button {
+#menu header button, #result button[name=back] {
   cursor: pointer; }
-  #menu header button:disabled {
+  #menu header button:disabled, #result button[name=back]:disabled {
     cursor: default; }
-  #menu header button:focus, #menu header button:active {
+  #menu header button:focus, #result button[name=back]:focus, #menu header button:active, #result button[name=back]:active {
     outline: none; }
 
-#menu header button {
+#menu header button, #result button[name=back] {
   background-color: transparent;
   border: 0 solid transparent;
   transition: 400ms ease-in-out; }
 
-#menu header button {
+#menu header button, #result button[name=back] {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2);
   text-align: center; }
-  #menu header button:hover, #menu header button:focus {
+  #menu header button:hover, #result button[name=back]:hover, #menu header button:focus, #result button[name=back]:focus {
     box-shadow: 0px 8px 22px rgba(0, 0, 0, 0.1), 0px 6px 15px rgba(0, 0, 0, 0.2); }
 
-#menu header button {
+#menu header button, #result button[name=back] {
   border-radius: 100%; }
 
 * {
@@ -42,7 +48,9 @@
   padding: 0; }
 
 :root {
-  font-size: 18px; }
+  font-size: 18px;
+  height: 100%;
+  width: 100%; }
 
 body {
   overflow: auto;
@@ -50,10 +58,12 @@ body {
   height: 100%;
   font-size: 1rem;
   font-family: 'roboto', sans-serif;
-  background-color: #EEEEEE; }
+  background-color: #EEEEEE;
+  position: relative; }
 
 a {
-  text-decoration: none; }
+  text-decoration: none;
+  color: inherit; }
 
 hr {
   border: 0;
@@ -80,6 +90,7 @@ main {
     display: block; }
   #menu .container {
     box-shadow: 4px 0px 8px rgba(0, 0, 0, 0.1), 2.66667px 0px 6px rgba(0, 0, 0, 0.2);
+    transition: 400ms ease-in-out;
     position: absolute;
     top: 100%;
     background-color: #FAFAFA;
@@ -88,11 +99,17 @@ main {
     height: 100vh;
     z-index: 95; }
     #menu .container .menuItem {
-      margin-bottom: 1rem; }
+      margin-bottom: 1rem;
+      color: #616161; }
+      #menu .container .menuItem.selected {
+        color: #00E676; }
+        #menu .container .menuItem.selected svg {
+          fill: #00E676; }
       #menu .container .menuItem a {
         line-height: 1.5rem;
         display: block; }
-      #menu .container .menuItem img {
+      #menu .container .menuItem svg {
+        fill: #616161;
         vertical-align: middle;
         display: inline-block;
         height: 100%;
@@ -101,9 +118,10 @@ main {
         display: inline-block;
         vertical-align: middle; }
   #menu .overlay {
+    animation: fadeIn 400ms ease-in-out;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: rgba(0, 0, 0, 0.45);
     position: fixed;
     top: 0;
     left: 0;
@@ -129,14 +147,29 @@ main {
       display: block;
       font-size: 1.75rem;
       text-transform: uppercase;
-      color: #fff;
+      color: #FFEBEE;
       font-weight: normal; }
 
+#result {
+  display: none; }
+  #result button[name=back] {
+    position: absolute;
+    z-index: 115;
+    top: 0;
+    bottom: 0;
+    margin: 5vw; }
+
 .page {
-  margin-top: 3rem; }
+  padding-top: 3rem; }
 
 #overview {
+  width: 100%;
+  height: 100%;
   padding: 2.5vw; }
+
+#results {
+  width: 100%;
+  height: 100%; }
 
 #overview .box,
 #results .box {
@@ -165,6 +198,3 @@ main {
       #overview .box .thumbnail .text p:last-child,
       #results .box .thumbnail .text p:last-child {
         font-size: 0.75rem; }
-
-#result {
-  display: none; }

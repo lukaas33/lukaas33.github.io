@@ -8,6 +8,8 @@
 
 :root {
   font-size: 18px; // Rem is based on this
+  height: 100%; // For the body
+  width: 100%;
 }
 
 body {
@@ -17,10 +19,12 @@ body {
   font-size: 1rem;
   font-family: 'roboto', sans-serif;
   background-color: $grey-200;
+  position: relative; // Main level for absolute to be positioned against
 }
 
 a {
   text-decoration: none;
+  color: inherit;
 }
 
 hr {

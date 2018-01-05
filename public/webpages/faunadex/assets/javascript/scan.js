@@ -147,16 +147,19 @@ const loaded = function () {
 }
 
 // Filters the wikipedia text into a standard object
-const filterText = function () { // Assumes the Wikipedia page of an animal
+const filterText = function () {
   var data = local.result.data.query.pages
   var page = data[Object.keys(data)[0]] // One property in the object
   var name = page.title
   var text = page.extract
 
+  // Get sciName, assumes all pages start like: human (homo sapiens)
   var sciName = null
   try {
     // Source https://stackoverflow.com/questions/12059284/get-text-between-two-rounded-brackets
-    sciName = text.match(/\(([^)]+)\)/)[1]
+    sciName = text.match(/\(([^)]+)\)/)[1].split(',')[0] // Store the taxonomic name
+    // Source https://stackoverflow.com/questions/4292468/javascript-regex-remove-text-between-parentheses
+    text = text.replace(/ *\([^)]*\) */, "") // remove in the main text
   } catch (error) {
     // No () in this article
   }

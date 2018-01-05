@@ -9,10 +9,10 @@
 @import "partials/menu";
 
 .page {
-  margin-top: $menu-height; // Menu doesn't cover content
+  padding-top: $menu-height; // Menu doesn't cover content
 
   main {
-    padding: $padding-standard * 2;
+    padding: $margin-standard / 2;
   }
 
   .content {
@@ -23,6 +23,7 @@
   .title {
     text-align: center;
     font-weight: normal;
+    margin-bottom: 1rem;
   }
 
   #scan {

@@ -1,31 +1,109 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+@keyframes fadeIn {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+
+#data .container .banner {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  display: block; }
+
+#data .text .head {
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+
+#data {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2);
+  background-color: #FAFAFA;
+  transition: 400ms ease-in-out; }
+  #data:hover {
+    box-shadow: 0px 14px 28px rgba(0, 0, 0, 0.1), 0px 10px 19px rgba(0, 0, 0, 0.2); }
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0; }
 
 :root {
-  font-size: 18px; }
+  font-size: 18px;
+  height: 100%;
+  width: 100%; }
 
 body {
-  overflow: hidden;
+  overflow: auto;
   width: 100%;
   height: 100%;
   font-size: 1rem;
-  background-color: #EEEEEE; }
+  font-family: 'roboto', sans-serif;
+  background-color: #EEEEEE;
+  position: relative; }
 
 a {
-  text-decoration: none; }
+  text-decoration: none;
+  color: inherit; }
 
-#data .container {
-  height: 25vh; }
-  #data .container .text {
-    height: 75vh; }
-    #data .container .text .head {
-      height: 5vh; }
-    #data .container .text .body {
-      height: 45vh;
-      overflow-y: scroll; }
-    #data .container .text .meta {
-      height: 15vh; }
-    #data .container .text .links {
-      height: 10vh; }
+hr {
+  border: 0;
+  height: 0;
+  border-top: 1px solid #BDBDBD;
+  margin-top: 1rem;
+  margin-bottom: 1rem; }
+
+main {
+  overflow-y: scroll; }
+
+#data {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll; }
+  #data .container {
+    height: 40vh;
+    width: 100%; }
+  #data .text {
+    width: 100%;
+    overflow-y: scroll;
+    padding: 0.5rem; }
+    #data .text .head {
+      justify-content: space-between; }
+      #data .text .head .headers {
+        display: inline-block; }
+        #data .text .head .headers h3 {
+          font-size: 1.6rem;
+          font-weight: normal; }
+        #data .text .head .headers h5 {
+          font-size: 1.2rem;
+          font-weight: normal; }
+          #data .text .head .headers h5 b {
+            font-weight: normal; }
+      #data .text .head .accuracy {
+        color: #fff;
+        padding: 0.5rem;
+        text-transform: uppercase;
+        background-color: #D32F2F;
+        float: right;
+        font-size: 0.75rem; }
+    #data .text .meta .item {
+      display: flex;
+      align-items: center;
+      height: 1.5rem; }
+      #data .text .meta .item img {
+        height: 1.5rem;
+        margin-right: 0.75rem;
+        display: inline-block; }
+      #data .text .meta .item span a {
+        color: inherit; }
+    #data .text .links ul a {
+      color: #00E676; }
+      #data .text .links ul a:visited {
+        color: #00C853; }

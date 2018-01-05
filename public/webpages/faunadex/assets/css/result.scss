@@ -4,29 +4,99 @@
 @import "partials/classes";
 @import "partials/global";
 
-// TODO style pages
 #data {
+  @extend %card;
+  position: absolute; // Z-index applies
+  top: 0;
+  left: 0;
+  z-index: 110; // Above menu
+  display: flex; // Dynamic sizes for the children
+  flex-direction: column;
+  justify-content: flex-start; // Above
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+
   .container {
-    height: 25vh;
+    height: 40vh; // Needs to be fixed
+    width: 100%;
 
-    .text {
-      height: 75vh;
+    .banner {
+      @extend %fill;
+    }
+  }
 
-      .head {
-        height: 5vh;
+  .text {
+    width: 100%;
+    overflow-y: scroll;
+    padding: $padding-standard;
+
+    .head {
+      @extend %center-flex;
+      justify-content: space-between; // Different than extended class
+
+      .headers {
+        display: inline-block;
+
+        h3 {
+          font-size: 1.6rem;
+          font-weight: normal;
+        }
+
+        h5 {
+          font-size:  1.2rem;
+          font-weight: normal;
+
+          b {
+            font-weight: normal; // Overwrite possible <b>
+          }
+        }
       }
 
-      .body {
-        height: 45vh;
-        overflow-y: scroll;
+      .accuracy {
+        color: #fff;
+        padding: $padding-standard;
+        text-transform: uppercase;
+        background-color: $primary-700;
+        float: right; // It works ¯\_(ツ)_/¯
+        font-size: 0.75rem;
       }
 
-      .meta {
-        height: 15vh;
-      }
+    }
 
-      .links {
-        height: 10vh;
+    .body {
+      // Just use default text style
+    }
+
+    .meta {
+      .item {
+        display: flex;// I game up on elegant solutions to line up text with an image
+        align-items: center;
+        height: 1.5rem;
+
+        img {
+          height: 1.5rem;
+          margin-right: 0.75rem;
+          display: inline-block;
+        }
+
+        span {
+          a {
+            color: inherit;
+          }
+        }
+      }
+    }
+
+    .links {
+      ul {
+        a {
+          color: $secondary-A400;
+
+          &:visited {
+            color: $secondary-A700;
+          }
+        }
       }
     }
   }

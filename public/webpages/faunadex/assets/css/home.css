@@ -1,4 +1,10 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
+@keyframes fadeIn {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+
 .page #scan a .preview {
   height: 100%;
   width: 100%;
@@ -39,7 +45,9 @@
   padding: 0; }
 
 :root {
-  font-size: 18px; }
+  font-size: 18px;
+  height: 100%;
+  width: 100%; }
 
 body {
   overflow: auto;
@@ -47,10 +55,12 @@ body {
   height: 100%;
   font-size: 1rem;
   font-family: 'roboto', sans-serif;
-  background-color: #EEEEEE; }
+  background-color: #EEEEEE;
+  position: relative; }
 
 a {
-  text-decoration: none; }
+  text-decoration: none;
+  color: inherit; }
 
 hr {
   border: 0;
@@ -77,6 +87,7 @@ main {
     display: block; }
   #menu .container {
     box-shadow: 4px 0px 8px rgba(0, 0, 0, 0.1), 2.66667px 0px 6px rgba(0, 0, 0, 0.2);
+    transition: 400ms ease-in-out;
     position: absolute;
     top: 100%;
     background-color: #FAFAFA;
@@ -85,11 +96,17 @@ main {
     height: 100vh;
     z-index: 95; }
     #menu .container .menuItem {
-      margin-bottom: 1rem; }
+      margin-bottom: 1rem;
+      color: #616161; }
+      #menu .container .menuItem.selected {
+        color: #00E676; }
+        #menu .container .menuItem.selected svg {
+          fill: #00E676; }
       #menu .container .menuItem a {
         line-height: 1.5rem;
         display: block; }
-      #menu .container .menuItem img {
+      #menu .container .menuItem svg {
+        fill: #616161;
         vertical-align: middle;
         display: inline-block;
         height: 100%;
@@ -98,9 +115,10 @@ main {
         display: inline-block;
         vertical-align: middle; }
   #menu .overlay {
+    animation: fadeIn 400ms ease-in-out;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: rgba(0, 0, 0, 0.45);
     position: fixed;
     top: 0;
     left: 0;
@@ -126,18 +144,19 @@ main {
       display: block;
       font-size: 1.75rem;
       text-transform: uppercase;
-      color: #fff;
+      color: #FFEBEE;
       font-weight: normal; }
 
 .page {
-  margin-top: 3rem; }
+  padding-top: 3rem; }
   .page main {
-    padding: 1rem; }
+    padding: 2.5vw; }
   .page .content {
     margin-bottom: 5vw; }
   .page .title {
     text-align: center;
-    font-weight: normal; }
+    font-weight: normal;
+    margin-bottom: 1rem; }
   .page #scan .content {
     background-color: #D32F2F; }
   .page #scan a {

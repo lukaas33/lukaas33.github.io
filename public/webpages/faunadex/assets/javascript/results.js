@@ -46,6 +46,10 @@
     // showRes() // Show
   })
 
+  // TODO add the sorting options
+
+  // TODO add the text to speech
+
   doc.back.click(function (event) {
     location.assign(location.href.split('?id=')[0]) // overview
   })

@@ -7,6 +7,18 @@
   display: block; // Remove whitespace
 }
 
+%center-self {
+  position: relative;
+  top: 50%; // Of parent width
+  transform: translateY(-50%); // Of own width
+}
+
+%center-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 // From old projects
 %card {
   @include shadow(2, 4);
@@ -49,15 +61,14 @@
   }
 }
 
-%normal {
+%button-normal {
   @extend %button; // Is a button
-  background-color: $primary-500;
   color: #fff;
-  padding: 0.75rem;
+  padding: $padding-standard;
   text-transform: uppercase;
 }
 
-%round {
+%button-round {
   @extend %button; // Is a button
   border-radius: 100%; // Round
 }
