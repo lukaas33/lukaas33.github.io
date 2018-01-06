@@ -139,9 +139,9 @@ const toBase64 = function (img) {
 // << Functions >>
 // The page is loaded
 const loaded = function () {
+  beginState() // Sometimes the code doesn't reset after redirects or something like that
   doc.loader.hide()
   doc.main.show()
-  doc.top.show()
 }
 
 // Filters the wikipedia text into a standard object
@@ -286,25 +286,24 @@ const imageSelected = function () {
   local.state = 'selected' // Change behaviour of back
 }
 
+const beginState = () => {
+  // Buttons
+  doc.top.show()
+  doc.accept.hide()
+  doc.save.hide()
+  doc.take.show()
+  // Screens
+  doc.image.hide()
+  doc.result.hide()
+  doc.feed.show()
+
+  doc.feed[0].play()
+  local.state = 'selecting' // Revert to previous screen
+}
 const goBack = function () {
   // The begin state of the site Will always work because hiding a hidden object won't do anything
-  const beginState = () => {
-    // Buttons
-    doc.gallery.parents('.top').show()
-    doc.accept.hide()
-    doc.save.hide()
-    doc.take.show()
-    // Screens
-    doc.image.hide()
-    doc.result.hide()
-    doc.feed.show()
-
-    doc.feed[0].play()
-    local.state = 'selecting' // Revert to previous screen
-  }
-
   if (local.state === 'selecting') {
-    let home = window.location.href.replace('scan/', '')
+    location.href = location.href.replace('scan/', '')
     // window.history.back() // Previous page
   } else if (local.state === 'selected') {
     local.image = null
@@ -357,116 +356,120 @@ const drawImg = function (img, w, h) {
   )
 }
 
-// << Actions >>
-// Canvas size can't be via css
-doc.image.attr('height', local.view.height)
-doc.image.attr('width', local.view.width)
+$(window).on('load', () => {
+  // << Actions >>
+  // Canvas size can't be via css
+  doc.image.attr('height', local.view.height)
+  doc.image.attr('width', local.view.width)
 
-var toLoad = 2
-// Show camera feed in page
-  // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-  // https://developers.google.com/web/updates/2015/10/media-devices
-navigator.mediaDevices.getUserMedia(setConstraints()).then((stream) => {
-  // Add feed to video
-  var video = doc.feed[0]
-  video.srcObject = stream // Add media stream to video element
+  var toLoad = 2
+  // Show camera feed in page
+    // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+    // https://developers.google.com/web/updates/2015/10/media-devices
+  navigator.mediaDevices.getUserMedia(setConstraints()).then((stream) => {
+    // Add feed to video
+    var video = doc.feed[0]
+    video.srcObject = stream // Add media stream to video element
 
-  video.onloadedmetadata = (event) => {
-    var ratio = video.videoHeight / video.videoWidth
-    video.height = local.view.height
-    video.width = local.view.height / ratio
-    doc.feed[0].play() // Play feed
+    video.onloadedmetadata = (event) => {
+      var ratio = video.videoHeight / video.videoWidth
+      video.height = local.view.height
+      video.width = local.view.height / ratio
+      doc.feed[0].play() // Play feed
+      toLoad -= 1
+      if (toLoad === 0) {
+        loaded() // Everthing done
+      }
+    }
+  }).catch((error) => {
+    // TODO handle error
+    console.log(error)
     toLoad -= 1
     if (toLoad === 0) {
       loaded() // Everthing done
     }
-  }
-}).catch((error) => {
-  // TODO handle error
-  console.log(error)
-  toLoad -= 1
-  if (toLoad === 0) {
-    loaded() // Everthing done
-  }
-})
+  })
 
-// Get the aniaml names
-$.getJSON('assets/storage/animal-names.json', function (data) {
-  local.animalNames = data.names // Store
-  toLoad -= 1
-  if (toLoad === 0) {
-    loaded() // Everthing done
-  }
-})
+  // Get the aniaml names
+  $.getJSON('assets/storage/animal-names.json', function (data) {
+    local.animalNames = data.names // Store
+    toLoad -= 1
+    if (toLoad === 0) {
+      loaded() // Everthing done
+    }
+  })
 
-// << Events >>
-doc.save.click(() => {
-  // Store
-  shared.storage('results', {value: local.data, genId: true}, () => {
-    var newLink = window.location.href.replace('scan', 'results')
-    window.location.href = newLink // Redirect, behaviour similar to clicking a link
+  // << Events >>
+  doc.save.click(() => {
+    // Store
+    shared.storage('results', {value: local.data, genId: true}, () => {
+      var newLink = window.location.href.replace('scan', 'results')
+      window.location.href = newLink // Redirect, behaviour similar to clicking a link
+    })
+  })
+
+  // Change sizes
+  window.onresize = (event) => {
+    local.view = {
+      width: $(window).width(),
+      height: $(window).height(),
+      ratio:  $(window).width() / $(window).height() // Multiply by a height to get a width
+    }
+    doc.image.attr('height', local.view.height)
+    doc.image.attr('width', local.view.width)
+  }
+
+  // Accept the image
+  doc.accept.click(() => {
+    imageSent()
+  })
+
+  // Back button event
+  doc.back.on('click', () => {
+    console.log('back')
+    goBack()
+  })
+
+  // Camera take picture event
+  doc.take.click(function () {
+    var video = doc.feed[0]
+    video.pause() // User sees current frame
+    var w = video.videoWidth
+    var h = video.videoHeight
+    // Get the video frame
+    doc.image[0].height = h // No whitespace
+    doc.image[0].width = w
+    local.context.drawImage(video, 0, 0)
+    local.image = doc.image[0].toDataURL() // Store frame as image
+    // Clear canvas
+    doc.image[0].width = local.view.width
+    doc.image[0].height = local.view.height
+    local.context.clearRect(0, 0, local.view.width, local.view.height)
+    imageSelected()
+  })
+
+  doc.feed.on('touchmove', function (event) {
+    event.preventDefault() // I have not found a css way to do this
+  })
+
+  // When a new file is entered
+    // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL
+  doc.gallery.change(function (event) {
+    console.log('input', event.target.files)
+    if (validateInput(event.target.files)) {
+      const reader = new FileReader() // Can read the image
+      reader.onload = function (event) {
+        if (typeof(event.target.result) === 'string') {
+          local.image = event.target.result // Saved as dataUrl in variable
+          imageTaken()
+        } else {
+          throw Error("Input wasn't processed")
+        }
+      }
+
+      reader.readAsDataURL(event.target.files[0]) // Read the image as a dataUrl
+    }
   })
 })
 
-// Change sizes
-window.onresize = (event) => {
-  local.view = {
-    width: $(window).width(),
-    height: $(window).height(),
-    ratio:  $(window).width() / $(window).height() // Multiply by a height to get a width
-  }
-  doc.image.attr('height', local.view.height)
-  doc.image.attr('width', local.view.width)
-}
-
-// Accept the image
-doc.accept.click(() => {
-  imageSent()
-})
-
-// Back button event
-doc.back.click(() => {
-  goBack()
-})
-
-// Camera take picture event
-doc.take.click(function () {
-  var video = doc.feed[0]
-  video.pause() // User sees current frame
-  var w = video.videoWidth
-  var h = video.videoHeight
-  // Get the video frame
-  doc.image[0].height = h // No whitespace
-  doc.image[0].width = w
-  local.context.drawImage(video, 0, 0)
-  local.image = doc.image[0].toDataURL() // Store frame as image
-  // Clear canvas
-  doc.image[0].width = local.view.width
-  doc.image[0].height = local.view.height
-  local.context.clearRect(0, 0, local.view.width, local.view.height)
-  imageSelected()
-})
-
-doc.feed.bind('touchmove', function (event) {
-  event.preventDefault() // I have not found a css way to do this
-})
-
-// When a new file is entered
-  // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL
-doc.gallery.change(function (event) {
-  console.log('input', event.target.files)
-  if (validateInput(event.target.files)) {
-    const reader = new FileReader() // Can read the image
-    reader.onload = function (event) {
-      if (typeof(event.target.result) === 'string') {
-        local.image = event.target.result // Saved as dataUrl in variable
-        imageTaken()
-      } else {
-        throw Error("Input wasn't processed")
-      }
-    }
-
-    reader.readAsDataURL(event.target.files[0]) // Read the image as a dataUrl
-  }
-})
 }).call(this)

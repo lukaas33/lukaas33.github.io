@@ -9,11 +9,6 @@
 // @import "partials/menu";
 
 .page {
-  main {
-    padding: $margin-standard / 2;
-    display: none;
-  }
-
   .content {
     @extend %card;
     margin-bottom: $margin-standard;

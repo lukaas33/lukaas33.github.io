@@ -140,17 +140,16 @@ hr {
   display: none;
   width: 100%;
   height: 100%;
-  position: absolute; }
+  position: absolute;
+  background-color: #212121; }
   #self .full {
     position: absolute;
     animation: fadeIn 400ms ease-in-out; }
     #self .full#feed {
-      z-index: 0;
-      margin-left: -50vw; }
+      z-index: 0; }
     #self .full#image {
       display: none;
-      z-index: 10;
-      background-color: #212121; }
+      z-index: 10; }
     #self .full#result {
       display: none;
       z-index: 15;

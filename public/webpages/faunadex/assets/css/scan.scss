@@ -47,6 +47,7 @@
   width: 100%;
   height: 100%;
   position: absolute;
+  background-color: $grey-900;
 
   .full {
     position: absolute;
@@ -54,13 +55,11 @@
 
     &#feed {
       z-index: 0; // Below all buttons
-      margin-left: -50vw;// Center video
     }
 
     &#image {
       display: none; // Initial
       z-index: 10; // Above video feed
-      background-color: $grey-900;
     }
 
     &#result {

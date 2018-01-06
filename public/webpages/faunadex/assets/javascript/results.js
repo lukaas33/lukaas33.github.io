@@ -1,31 +1,32 @@
 (function() { // Global vars are local to this file
-  'use strict'
-  // << Variables >>
-  const doc = {
-    overview: $('#overview'),
-    result: $('#result'),
-    back: $('#result button[name=back]'),
-    menu: $('#menu'),
-    loader: $('#loader')
-  }
+'use strict'
+// << Variables >>
+const doc = {
+  overview: $('#overview'),
+  result: $('#result'),
+  back: $('#result button[name=back]'),
+  menu: $('#menu'),
+  loader: $('#loader')
+}
 
-  const local = {
-    results: shared.storage('results').reverse() // Can do this because data is entered in chronological order
-    // results: shared.storage('results').sort(shared.sort('date')) // Get the results in sorted order
-  }
+const local = {
+  results: shared.storage('results').reverse() // Can do this because data is entered in chronological order
+  // results: shared.storage('results').sort(shared.sort('date')) // Get the results in sorted order
+}
 
-  // << Functions >>
-  const showRes = function () {
-    var id = location.href.split('?id=')[1]
-    for (let result of local.results) {
-      if (result.id === id) {
-        let card = new EJS({url: 'views/partials/result.ejs'}).render({data: result})
-        $('#result').find('.box').html(card)
-        break
-      }
+// << Functions >>
+const showRes = function () {
+  var id = location.href.split('?id=')[1]
+  for (let result of local.results) {
+    if (result.id === id) {
+      let card = new EJS({url: 'views/partials/result.ejs'}).render({data: result})
+      $('#result').find('.box').html(card)
+      break
     }
   }
+}
 
+$(window).on('load', () => {
   // << Actions >>
   console.log(location.href)
   if (location.href.indexOf('?id=') !== -1) { // Parameter
@@ -47,7 +48,7 @@
   doc.display =  $('.thumbnail .display') // Add reference to created
   doc.display.click(function (event) {
     event.preventDefault() // No ordinary link
-    location.assign(this.href) // Normal behaviour
+    location.href = this.href // Normal behaviour
 
     // window.history.pushState('', '', this.href) // No redirect
     // showRes() // Show
@@ -58,7 +59,8 @@
   // TODO add the text to speech
 
   doc.back.click(function (event) {
-    location.assign(location.href.split('?id=')[0]) // overview
+    location.href = location.href.split('?id=')[0] // overview
     // window.history.back() // Previous page
   })
+})
 }).call(this)

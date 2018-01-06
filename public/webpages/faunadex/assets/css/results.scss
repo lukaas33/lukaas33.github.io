@@ -5,10 +5,6 @@
 @import "partials/global";
 @import "partials/menu";
 
-.page {
-  padding-top: $menu-height;
-}
-
 #result {
   display: none;
   background-color: $grey-200;
@@ -32,14 +28,15 @@
 
 
 #overview {
+  position: absolute;
   width: 100%;
   height: 100%;
   padding: $margin-standard / 2;
   display: none;
+  margin-top: $menu-height;
 }
 
-#overview, // Applies to two pages
-#results {
+#overview { // Applies to two pages
   .box {
     display: flex; // All cards visible
     flex-direction: row;

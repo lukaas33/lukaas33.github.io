@@ -48,21 +48,18 @@
   font-weight: normal;
   text-align: center; }
 
-#overview .box .thumbnail .container a img,
-#results .box .thumbnail .container a img {
+#overview .box .thumbnail .container a img {
   height: 100%;
   width: 100%;
   object-fit: cover;
   display: block; }
 
-#overview .box .thumbnail,
-#results .box .thumbnail {
+#overview .box .thumbnail {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2);
   background-color: #FAFAFA;
   animation: slideUp 400ms ease-in-out;
   transition: 400ms ease-in-out; }
-  #overview .box .thumbnail:hover,
-  #results .box .thumbnail:hover {
+  #overview .box .thumbnail:hover {
     box-shadow: 0px 14px 28px rgba(0, 0, 0, 0.1), 0px 10px 19px rgba(0, 0, 0, 0.2); }
 
 #menu header button, #result button[name=back] {
@@ -202,9 +199,6 @@ hr {
       color: #fff;
       font-weight: normal; }
 
-.page {
-  padding-top: 3rem; }
-
 #result {
   display: none;
   background-color: #EEEEEE;
@@ -223,35 +217,31 @@ hr {
     margin: 5vw; }
 
 #overview {
+  position: absolute;
   width: 100%;
   height: 100%;
   padding: 2.5vw;
-  display: none; }
+  display: none;
+  margin-top: 3rem; }
 
-#overview .box,
-#results .box {
+#overview .box {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap; }
-  #overview .box .thumbnail,
-  #results .box .thumbnail {
+  #overview .box .thumbnail {
     margin: 2.5vw;
     width: 42.5vw; }
-    #overview .box .thumbnail .container,
-    #results .box .thumbnail .container {
+    #overview .box .thumbnail .container {
       width: 100%;
       height: 42.5vw; }
-      #overview .box .thumbnail .container a,
-      #results .box .thumbnail .container a {
+      #overview .box .thumbnail .container a {
         display: block;
         width: 100%;
         height: 100%;
         position: relative;
         z-index: 80;
         overflow: hidden; }
-    #overview .box .thumbnail .text,
-    #results .box .thumbnail .text {
+    #overview .box .thumbnail .text {
       padding: 0.5rem; }
-      #overview .box .thumbnail .text p:last-child,
-      #results .box .thumbnail .text p:last-child {
+      #overview .box .thumbnail .text p:last-child {
         font-size: 0.75rem; }

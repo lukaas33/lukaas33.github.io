@@ -62,7 +62,6 @@ const urlsToCache = [
 
 // Perform install steps
 self.addEventListener('install', function (event) {
-  debugger // Use the debugger
   event.waitUntil(
     caches.open(cacheName).then((cache) => {
       console.log('Opened cache')
