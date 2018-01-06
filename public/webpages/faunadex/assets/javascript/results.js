@@ -32,17 +32,15 @@
     showRes() // Show
     doc.loader.hide()
     doc.result.show()
-    console.log('hey 1')
   } else {
     if (typeof(local.results) !== 'undefined') { // Exist
       for (let result of local.results) {
         let thumbnail = new EJS({url: 'views/partials/thumbnail.ejs'}).render({data: result})
         doc.overview.find('.box').append(thumbnail) // Add html to doc
       }
-      doc.loader.hide()
-      doc.overview.css({display: 'block'}) // Can't use show() for some reason
-      console.log('hey 2')
     }
+    doc.loader.hide()
+    doc.overview.css({display: 'block'}) // Can't use show() for some reason
   }
 
   // << Events >>
@@ -60,7 +58,7 @@
   // TODO add the text to speech
 
   doc.back.click(function (event) {
-    // location.assign(location.href.split('?id=')[0]) // overview
-    window.history.back() // Previous page
+    location.assign(location.href.split('?id=')[0]) // overview
+    // window.history.back() // Previous page
   })
 }).call(this)

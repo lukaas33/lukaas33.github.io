@@ -304,8 +304,8 @@ const goBack = function () {
   }
 
   if (local.state === 'selecting') {
-    // let home = window.location.href.replace('scan/', '')
-    window.history.back() // Previous page
+    let home = window.location.href.replace('scan/', '')
+    // window.history.back() // Previous page
   } else if (local.state === 'selected') {
     local.image = null
     // Clear canvas

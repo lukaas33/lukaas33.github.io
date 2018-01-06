@@ -25,8 +25,8 @@
       let thumbnail = new EJS({url: 'views/partials/thumbnail.ejs'}).render({data: result})
       doc.results.append(thumbnail) // Add html to doc
     }
-    doc.loader.hide()
-    doc.main.css({display: 'block'}) // Can't use show() for some reason
   }
+  doc.loader.hide()
+  doc.main.css({display: 'block'}) // Can't use show() for some reason
 
 }).call(this)
