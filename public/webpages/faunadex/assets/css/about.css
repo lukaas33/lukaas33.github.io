@@ -22,6 +22,14 @@
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg); } }
 
+@keyframes slideDown {
+  from {
+    -webkit-transform: translateY(-100vh);
+    transform: translateY(-100vh); }
+  to {
+    -webkit-transform: translateY(0);
+    transform: translateY(0); } }
+
 .page #loader {
   display: inline-block;
   border-radius: 50%;
@@ -29,10 +37,10 @@
   animation-duration: 800ms;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
-  height: 10vw;
-  width: 10vw;
-  border: 25vw solid #D32F2F;
-  border-top: 2vw solid #F44336; }
+  height: 25vw;
+  width: 25vw;
+  border: 5vw solid #E0E0E0;
+  border-top: 5vw solid #D32F2F; }
 
 #menu header h1 {
   font-family: 'roboto-mono', monospace;

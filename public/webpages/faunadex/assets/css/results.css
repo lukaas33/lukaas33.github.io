@@ -131,8 +131,7 @@ hr {
   position: fixed;
   z-index: 90;
   top: 0;
-  width: 100%;
-  animation: slideDown 400ms ease-in-out; }
+  width: 100%; }
   #menu[data-state=collapsed] .container {
     left: -100%; }
   #menu[data-state=collapsed] .overlay {

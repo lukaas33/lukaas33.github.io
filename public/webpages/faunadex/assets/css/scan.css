@@ -146,7 +146,6 @@ hr {
     animation: fadeIn 400ms ease-in-out; }
     #self .full#feed {
       z-index: 0;
-      background-color: grey;
       margin-left: -50vw; }
     #self .full#image {
       display: none;
