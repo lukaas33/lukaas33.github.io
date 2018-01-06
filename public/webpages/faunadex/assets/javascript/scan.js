@@ -94,7 +94,7 @@ const filterOutput = function (output) {
   for (let index in data) { // If the name is in the list, choose this result
     let res = data[index]
     console.log('checking', res)
-    if (['people', 'man', 'woman', 'portrait', 'human', 'child', 'adult'].includes(res.name)) {
+    if (['person', 'people', 'man', 'woman', 'portrait', 'human', 'child', 'adult'].includes(res.name)) {
       res.name = 'human'
       result = res // Different names for human (common result)
       break
@@ -155,9 +155,16 @@ const filterText = function () {
   var sciName = null
   try {
     // Source https://stackoverflow.com/questions/12059284/get-text-between-two-rounded-brackets
-    sciName = text.match(/\(([^)]+)\)/)[1].split(',')[0] // Store the taxonomic name
+    sciName = text.match(/\(([^)]+)\)/)[1]// Store the taxonomic name
     // Source https://stackoverflow.com/questions/4292468/javascript-regex-remove-text-between-parentheses
     text = text.replace(/ *\([^)]*\) */, ' ') // remove in the main text
+
+    sciName = sciName.split(',')[0] // If like: (homo sapiens, ssp. homo sapiens sapiens)
+
+    let name = sciName.split('or')[1] // If like: (Felis silvestris catus or Felis catus) / (or Selachii)
+    if (typeof(name) === 'string') {
+      sciName = name.trim()
+    }
   } catch (error) {
     // No () in this article
   }
