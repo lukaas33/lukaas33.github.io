@@ -102,11 +102,12 @@ $menu-height: 3rem;
     }
 
     h1 {
-      margin-left: $size + ($padding-standard * 3); // Distance
-      display: block;
+      @extend %label;
+      display: inline-block; // Not centered
+      margin-left: ($padding-standard * 2); // Distance
       font-size: 1.75rem;
       text-transform: uppercase;
-      color: $primary-50;
+      color: #fff;
       font-weight: normal;
     }
   }

@@ -5,14 +5,13 @@
 @import "partials/variables";
 @import "partials/mixins";
 @import "partials/classes";
-@import "partials/global";
-@import "partials/menu";
+// @import "partials/global"; // Imported in results
+// @import "partials/menu";
 
 .page {
-  padding-top: $menu-height; // Menu doesn't cover content
-
   main {
     padding: $margin-standard / 2;
+    display: none;
   }
 
   .content {
@@ -21,12 +20,16 @@
   }
 
   .title {
+    @extend %label;
+    color: $grey-700;
     margin-bottom: 1rem;
+    margin-top: 0.5rem;
   }
 
   #scan {
     .content {
       background-color: $primary-700;
+      animation: slideDown $animation; // Different from the others
     }
 
     a {

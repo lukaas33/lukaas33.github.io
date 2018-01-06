@@ -14,7 +14,8 @@ const doc = {
   gallery: $('input[name=gallery]'),
   back: $('button[name=back]'),
   top: $('.top'),
-  main: $('main')
+  main: $('main'),
+  loader: $('#loader')
 }
 
 // Other
@@ -29,10 +30,6 @@ const local = { // To this file
     width: $(window).width(),
     height: $(window).height(),
     ratio:  $(window).width() / $(window).height() // Multiply by a height to get a width
-  },
-  feed: { // Will store real feed dimentions
-    width: undefined,
-    height: undefined
   },
   context: doc.image[0].getContext('2d') // Used to draw on the canvas
 }
@@ -142,6 +139,7 @@ const toBase64 = function (img) {
 // << Functions >>
 // The page is loaded
 const loaded = function () {
+  doc.loader.hide()
   doc.main.show()
   doc.top.show()
 }
@@ -159,7 +157,7 @@ const filterText = function () {
     // Source https://stackoverflow.com/questions/12059284/get-text-between-two-rounded-brackets
     sciName = text.match(/\(([^)]+)\)/)[1].split(',')[0] // Store the taxonomic name
     // Source https://stackoverflow.com/questions/4292468/javascript-regex-remove-text-between-parentheses
-    text = text.replace(/ *\([^)]*\) */, "") // remove in the main text
+    text = text.replace(/ *\([^)]*\) */, ' ') // remove in the main text
   } catch (error) {
     // No () in this article
   }
@@ -259,6 +257,7 @@ const displayResult = function () {
   doc.result.html(card)
   doc.result.show()
   doc.feed.show() // Behind card
+  doc.image.hide()
   doc.feed[0].play()
   doc.back.parents('.top').show()
   doc.save.show()
@@ -305,8 +304,8 @@ const goBack = function () {
   }
 
   if (local.state === 'selecting') {
-    let home = window.location.href.replace('scan/', '')
-    window.location.href = home
+    // let home = window.location.href.replace('scan/', '')
+    window.history.back() // Previous page
   } else if (local.state === 'selected') {
     local.image = null
     // Clear canvas
@@ -369,11 +368,13 @@ var toLoad = 2
   // https://developers.google.com/web/updates/2015/10/media-devices
 navigator.mediaDevices.getUserMedia(setConstraints()).then((stream) => {
   // Add feed to video
-  doc.feed[0].srcObject = stream // Add media stream to video element
+  var video = doc.feed[0]
+  video.srcObject = stream // Add media stream to video element
 
-  doc.feed[0].onloadedmetadata = (event) => {
-    local.feed.height = this.videoHeight // Store value
-    local.feed.width = this.videoHeight * local.view.ratio // Real width
+  video.onloadedmetadata = (event) => {
+    var ratio = video.videoHeight / video.videoWidth
+    video.height = local.view.height
+    video.width = local.view.height / ratio
     doc.feed[0].play() // Play feed
     toLoad -= 1
     if (toLoad === 0) {
@@ -444,6 +445,10 @@ doc.take.click(function () {
   doc.image[0].height = local.view.height
   local.context.clearRect(0, 0, local.view.width, local.view.height)
   imageSelected()
+})
+
+doc.feed.bind('touchmove', function (event) {
+  event.preventDefault() // I have not found a css way to do this
 })
 
 // When a new file is entered

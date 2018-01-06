@@ -54,3 +54,39 @@ $grey-900: #212121;
       opacity: 1
     }
 }
+
+@keyframes slideUp {
+  from {
+    -webkit-transform: translateY(100vh);
+    transform: translateY(100vh);
+  }
+
+  to {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+    from {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+
+    to {
+      -webkit-transform: rotate(360deg);
+              transform: rotate(360deg);
+    }
+}
+
+@keyframes slideDown {
+  from {
+    -webkit-transform: translateY(-100vh);
+    transform: translateY(-100vh);
+  }
+
+  to {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}

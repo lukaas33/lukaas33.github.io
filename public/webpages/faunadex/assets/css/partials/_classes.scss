@@ -1,3 +1,16 @@
+%loader {
+  display: inline-block;
+  border-radius: 50%;
+  animation-name: spin;
+  animation-duration: $time * 2;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  height: 25vw;
+  width: 25vw;
+  border: 5vw solid $grey-300;
+  border-top: 5vw solid $primary-700;
+}
+
 %label {
   font-family: 'roboto-mono', monospace;
   text-transform: uppercase;
@@ -28,6 +41,7 @@
 %card {
   @include shadow(2, 4);
   background-color: $grey-50;
+  animation: slideUp $animation;
   transition: $animation;
 
   &:hover {

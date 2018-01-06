@@ -6,7 +6,7 @@
   <base href="../"/> <!-- Same root as index -->
   <title>Faunadex - Scan</title>
   <meta name="description" content="Discover the world of animals with this scanning app.">
-  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=0">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon/favicon-32x32.png">
@@ -33,8 +33,10 @@
     <button name="back"><img src="assets/images/icons/back.svg"/></button>
   </div>
   <div class="top">
-    <input name="gallery" type="file" multiple="false" accept="image/*"/>
-    <img src="assets/images/icons/gallery.svg"/>
+    <label class="styling">
+      <input name="gallery" type="file" multiple="false" accept="image/*"/>
+      <img src="assets/images/icons/gallery.svg"/>
+    </label>
   </div>
   <div class="page">
     <div id="loader"></div>

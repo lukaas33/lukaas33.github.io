@@ -1,28 +1,92 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
+@import url("https://fonts.googleapis.com/css?family=Roboto+Mono");
 @keyframes fadeIn {
   from {
     opacity: 0; }
   to {
     opacity: 1; } }
 
-#self .full#feed {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-  display: block; }
+@keyframes slideUp {
+  from {
+    -webkit-transform: translateY(100vh);
+    transform: translateY(100vh); }
+  to {
+    -webkit-transform: translateY(0);
+    transform: translateY(0); } }
+
+@keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg); }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+
+@keyframes slideDown {
+  from {
+    -webkit-transform: translateY(-100vh);
+    transform: translateY(-100vh); }
+  to {
+    -webkit-transform: translateY(0);
+    transform: translateY(0); } }
+
+.page #loader {
+  display: inline-block;
+  border-radius: 50%;
+  animation-name: spin;
+  animation-duration: 800ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  height: 25vw;
+  width: 25vw;
+  border: 5vw solid #E0E0E0;
+  border-top: 5vw solid #D32F2F; }
+
+.top button,
+.top .styling, #self .control {
+  cursor: pointer; }
+  .top button:disabled,
+  .top .styling:disabled, #self .control:disabled {
+    cursor: default; }
+  .top button:focus,
+  .top .styling:focus, #self .control:focus, .top button:active,
+  .top .styling:active, #self .control:active {
+    outline: none; }
+
+.top button,
+.top .styling, #self .control {
+  background-color: transparent;
+  border: 0 solid transparent;
+  transition: 400ms ease-in-out; }
+
+.top button,
+.top .styling, #self .control {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2); }
+  .top button:hover,
+  .top .styling:hover, #self .control:hover, .top button:focus,
+  .top .styling:focus, #self .control:focus {
+    box-shadow: 0px 8px 22px rgba(0, 0, 0, 0.1), 0px 6px 15px rgba(0, 0, 0, 0.2); }
+
+.top button,
+.top .styling, #self .control {
+  border-radius: 100%; }
 
 * {
   box-sizing: border-box;
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0); }
 
 :root {
   font-size: 18px;
   height: 100%;
   width: 100%; }
 
+::selection {
+  color: #fff;
+  background-color: #00E676; }
+
 body {
-  overflow: auto;
   width: 100%;
   height: 100%;
   font-size: 1rem;
@@ -41,44 +105,66 @@ hr {
   margin-top: 1rem;
   margin-bottom: 1rem; }
 
-main {
-  overflow-y: scroll; }
+.page {
+  overflow-y: scroll;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100%; }
 
 .top {
   display: none;
   position: absolute;
-  background-color: grey;
   z-index: 20;
-  width: 5vw;
-  height: 5vw; }
+  animation: slideDown 400ms ease-in-out;
+  width: 10vw;
+  height: 10vw;
+  margin: 10vw 5vw; }
+  .top button,
+  .top .styling {
+    background-color: #F5F5F5;
+    width: 100%;
+    height: 100%; }
   .top:nth-child(1) {
     left: 0; }
   .top:nth-child(2) {
     right: 0; }
+    .top:nth-child(2) input[name=gallery] {
+      display: none; }
+    .top:nth-child(2) .styling {
+      display: flex;
+      justify-content: center; }
 
 #self {
-  display: none; }
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: absolute; }
   #self .full {
-    position: absolute; }
+    position: absolute;
+    animation: fadeIn 400ms ease-in-out; }
     #self .full#feed {
       z-index: 0;
-      background-color: grey; }
+      background-color: grey;
+      margin-left: -50vw; }
     #self .full#image {
       display: none;
       z-index: 10;
-      background-color: black; }
+      background-color: #212121; }
     #self .full#result {
       display: none;
       z-index: 15;
-      margin: 10vw;
-      width: calc(100% - 15vw);
-      height: calc(100% - 15vw); }
-      #self .full#result .text {
-        padding: 1rem; }
+      width: 100%;
+      height: 100%; }
+      #self .full#result #data {
+        transform: scale(0.8); }
   #self .control {
+    animation: slideUp 400ms ease-in-out;
+    background-color: #00E676;
     width: 20vw;
     height: 20vw;
-    background-color: grey;
+    margin-bottom: 5vw;
     position: absolute;
     bottom: 0;
     left: 40vw; }
@@ -91,3 +177,6 @@ main {
     #self .control[name=save] {
       display: none;
       z-index: 20; }
+    #self .control img {
+      height: 8vw;
+      width: 8vw; }

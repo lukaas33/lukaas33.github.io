@@ -7,65 +7,89 @@
 .top {
   display: none; // Start state
   position: absolute;
-  background-color: grey;
   z-index: 20;
-  width: 5vw;
-  height: 5vw;
+  animation: slideDown $animation;
+
+  $size: 10vw;
+  width: $size;
+  height: $size;
+  $margin: ($margin-standard * 2) - ($size / 2);
+  margin: $margin * 2 $margin; // Corner of card
+
+  button,
+  .styling {
+    @extend %button-round;
+    background-color: $grey-100;
+    width: 100%;
+    height: 100%;
+  }
 
   &:nth-child(1) {
     left: 0;
-
-    button[name=back] {
-
-    }
   }
   &:nth-child(2) {
     right: 0;
 
     input[name=gallery] {
+      display: none; // Can be clicked via label.styling
+    }
 
+    .styling {
+      display: flex;
+      justify-content: center;
     }
   }
 }
 
+
 #self {
   display: none; // Start state
+  width: 100%;
+  height: 100%;
+  position: absolute;
 
   .full {
     position: absolute;
+    animation: fadeIn $animation;
 
     &#feed {
       z-index: 0; // Below all buttons
       background-color: grey; // If empty
-      // Display feed fullscreen
-      @extend %fill;
+      margin-left: -50vw;// Center video
     }
 
     &#image {
       display: none; // Initial
       z-index: 10; // Above video feed
-      background-color: black;
+      background-color: $grey-900;
     }
 
     &#result {
       display: none; // Initial
       z-index: 15; // Above image
-      margin: $margin-standard * 2; // Will not cover complete screen
-      width: calc(100% - #{$margin-standard * 3}); // Holy shit, it actually worked
-      height: calc(100% - #{$margin-standard * 3});
+      width: 100%;
+      height: 100%;
 
-      .text {
-        padding: $padding-standard * 2; // Increase here
+      // width: calc(100% - #{$margin-standard * 2}); // This actually worked! (needed for a previous solution)
+      // height: calc(100% - #{$margin-standard * 2});
+      // padding: $margin-standard * 2; // Will not cover complete screen
+
+      #data {
+        transform: scale(0.8); // Decrease in size
       }
     }
   }
 
   .control {
     $width: 20vw;
+    animation: slideUp $animation;
 
+    @extend %button-round;
+    background-color: $secondary-A400;
     width: $width;
     height: $width;
-    background-color: grey;
+    margin-bottom: $margin-standard; // Over card
+
     position: absolute;
     bottom: 0;
     left: 50vw - ($width / 2); // Center
@@ -81,6 +105,11 @@
     &[name=save] {
       display: none;
       z-index: 20;
+    }
+
+    img {
+      height: $width / 2.5;
+      width: $width / 2.5;
     }
   }
 }
