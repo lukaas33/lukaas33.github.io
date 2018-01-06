@@ -120,7 +120,7 @@ hr {
   animation: slideDown 400ms ease-in-out;
   width: 10vw;
   height: 10vw;
-  margin: 10vw 5vw; }
+  margin: 5vw; }
   .top button,
   .top .styling {
     background-color: #F5F5F5;

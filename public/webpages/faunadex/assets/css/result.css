@@ -66,11 +66,14 @@
       #data .text .head .headers {
         display: inline-block; }
         #data .text .head .headers h3 {
-          font-size: 1.6rem; }
+          font-size: 1.6rem;
+          font-weight: normal; }
         #data .text .head .headers h5 {
-          font-size: 1.2rem; }
-          #data .text .head .headers h5 b {
-            font-weight: normal; }
+          font-size: 1.2rem;
+          font-weight: normal; }
+          #data .text .head .headers h5 b, #data .text .head .headers h5 i {
+            font-weight: normal;
+            font-style: normal; }
       #data .text .head .accuracy {
         color: #fff;
         padding: 0.5rem;

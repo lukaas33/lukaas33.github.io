@@ -14,7 +14,7 @@
   width: $size;
   height: $size;
   $margin: ($margin-standard * 2) - ($size / 2);
-  margin: $margin * 2 $margin; // Corner of card
+  margin: $margin; // Corner of card
 
   button,
   .styling {
@@ -73,7 +73,7 @@
       // padding: $margin-standard * 2; // Will not cover complete screen
 
       #data {
-        transform: scale(0.8); // Decrease in size
+        transform: scale(0.80); // Decrease in size
       }
     }
   }
