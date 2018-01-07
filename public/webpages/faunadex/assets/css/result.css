@@ -52,8 +52,7 @@
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
-  width: 100%;
-  overflow-y: scroll; }
+  width: 100%; }
   #data .container {
     height: 40vh;
     width: 100%; }
@@ -62,7 +61,8 @@
     overflow-y: scroll;
     padding: 0.5rem; }
     #data .text .head {
-      justify-content: space-between; }
+      justify-content: space-between;
+      padding-top: 0.5rem; }
       #data .text .head .headers {
         display: inline-block; }
         #data .text .head .headers h3 {
@@ -91,7 +91,9 @@
         display: inline-block; }
       #data .text .meta .item span a {
         color: inherit; }
-    #data .text .links ul a {
-      color: #00E676; }
-      #data .text .links ul a:visited {
-        color: #00C853; }
+    #data .text .links {
+      padding-bottom: 0.5rem; }
+      #data .text .links ul a {
+        color: #00E676; }
+        #data .text .links ul a:visited {
+          color: #00C853; }

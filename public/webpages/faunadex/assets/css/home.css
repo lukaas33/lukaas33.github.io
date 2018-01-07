@@ -48,7 +48,7 @@
   .page .content:hover {
     box-shadow: 0px 14px 28px rgba(0, 0, 0, 0.1), 0px 10px 19px rgba(0, 0, 0, 0.2); }
 
-.page .content {
+.page section {
   margin-bottom: 5vw; }
 
 .page .title {

@@ -9,9 +9,12 @@
 // @import "partials/menu";
 
 .page {
+  section {
+    margin-bottom: $margin-standard;
+  }
+
   .content {
     @extend %card;
-    margin-bottom: $margin-standard;
   }
 
   .title {

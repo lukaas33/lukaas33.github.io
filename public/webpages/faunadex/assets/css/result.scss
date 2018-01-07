@@ -12,7 +12,6 @@
   justify-content: flex-start; // Above
   height: 100%;
   width: 100%;
-  overflow-y: scroll;
 
   .container {
     height: 40vh; // Needs to be fixed
@@ -31,6 +30,7 @@
     .head {
       @extend %center-flex;
       justify-content: space-between; // Different than extended class
+      padding-top:  0.5rem;
 
       .headers {
         display: inline-block;
@@ -87,6 +87,8 @@
     }
 
     .links {
+      padding-bottom:  0.5rem;
+
       ul {
         a {
           color: $secondary-A400;

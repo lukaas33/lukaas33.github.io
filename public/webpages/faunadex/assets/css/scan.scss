@@ -67,13 +67,14 @@
       z-index: 15; // Above image
       width: 100%;
       height: 100%;
+      background-color: $grey-200; // Visible if card too small
+      transform: scale(0.8); // Decrease in size
 
       // width: calc(100% - #{$margin-standard * 2}); // This actually worked! (needed for a previous solution)
       // height: calc(100% - #{$margin-standard * 2});
       // padding: $margin-standard * 2; // Will not cover complete screen
 
       #data {
-        transform: scale(0.80); // Decrease in size
       }
     }
   }

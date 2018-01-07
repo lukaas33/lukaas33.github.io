@@ -154,9 +154,9 @@ hr {
       display: none;
       z-index: 15;
       width: 100%;
-      height: 100%; }
-      #self .full#result #data {
-        transform: scale(0.8); }
+      height: 100%;
+      background-color: #EEEEEE;
+      transform: scale(0.8); }
   #self .control {
     animation: slideUp 400ms ease-in-out;
     background-color: #00E676;
