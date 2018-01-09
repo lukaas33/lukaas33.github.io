@@ -178,14 +178,27 @@ class SciNum
   # Change unit to html markup
   unitNotation: (string) =>
     html = null
+
     if string.indexOf('/') != -1 # Is a fraction
       parts = string.split('/')
-      html = $('<span></span>').addClass('fraction')
-      html.append($('<span></span>').addClass('top').html(parts[0]))
-      html.append($('<span></span>').addClass('bottom').html(parts[1]))
-      html = html[0] # As dom object
+      dom = $('<span></span>').addClass('fraction')
+
+      dom.append( # Recursion, will add fraction html if present
+        $('<span></span>').addClass('top').append(@unitNotation(parts[0]))
+      )
+      dom.append(
+        $('<span></span>').addClass('bottom').append(@unitNotation(parts[1]))
+      )
+      html = dom[0] # As dom object
+    else if string.indexOf('^') != -1 # Has an exponent
+      parts = string.split('^')
+      dom = $('<span></span>')
+      dom.append($('<span></span>').html(parts[0]))
+      dom.append($('<sup></sup>').html(parts[1]))
+      html =  dom[0] # As dom object
     else
       html = $('<span></span>').html(string)[0] # dom object
+
     return html
 
   # Changes unit to be more friendly
@@ -828,18 +841,22 @@ html.ratio = ->
     else if bacterium.species == species[2]
       vi += 1
 
+  all = [ru / total, ca / total, vi / total]
+
   global.data.ratio.push( # Store the data
     time: time.time
     population: total
     ratio:
-      Rubrum: ru / total
-      Caeruleus: ca / total
-      Viridis: vi / total
+      Rubrum: all[0]
+      Caeruleus: all[1]
+      Viridis: all[2]
   )
+
+  doc.ratio.next().text("Ratio #{Math.round(all[0] * 100)}:#{Math.round(all[1] * 100)}:#{Math.round(all[2] * 100)}")
 
   circle = Math.round(Math.PI * 100) # Circumference of circle
   at = 0
-  for percentage, index in [ru / total, ca / total, vi / total]
+  for percentage, index in all
     number = (percentage * circle) # Part of the circle
     htmlClass = species[index].toLowerCase()
     pie = doc.ratio.find(".#{htmlClass}") # Class in html
@@ -855,13 +872,16 @@ html.setup = ->
     # Worked with meter-element, progress min is always 0
     # $(@).attr('min', range[0])
 
-    val = global.enviroment[@dataset.name].value
-    # TODO add to tooltip
+    condition = global.enviroment[@dataset.name]
+    val = condition.value
     range = global.enviroment.ranges[@dataset.name]
     relative = (val - range[0]) / (range[1] - range[0]) # Out of one
 
     $(@).attr('max', 1)
     $(@).attr('value', relative)
+
+    repr = condition.represent()
+    $(@).next().html(Math.round(repr.value) + ' ').append(repr.unit) # Add to tooltip
   )
 
   doc.scale.find('span').text(" 1 : #{local.scaleFactor}")
@@ -1174,11 +1194,15 @@ simulation.start = ->
   input.each( ->
     # Initial value
     global.enviroment[@name] = new SciNum(Number(@value), @name, @dataset.unit)
+    $(@).next().next().text(@value) # Value in tooltip
+
     # Update the variables on change
     $(@).change ->
       value = Number(@value) # Is recieved as string
       global.enviroment[@name] = new SciNum(value, @name, @dataset.unit)
+      $(@).next().next().text(@value) # Value in tooltip
   )
+
 
   $("#loading").hide() # Hide loading screen
 

@@ -26,3 +26,67 @@ body {
 ::-webkit-scrollbar {
   display: none;
 }
+
+// Tooltips
+body { // Create scope for variables
+  $color: $grey-100;
+  $text: $padding-standard / 2;
+
+  [data-tooltip] { // The box
+    &:hover {
+      .tooltip {
+        display: block;
+      }
+    }
+
+    .tooltip {
+      @include shadow(2, 4);
+      // Have to use different argument for transform, can't use the mixin
+      // @include centerOver(x);
+      left: 50%;
+      z-index: 200; // Above everything
+
+      position: absolute;
+      padding: $text;
+      background-color: $color;
+      text-align: center;
+      text-transform: uppercase;
+      display: none; // Won't appear when hovering over empty space
+
+      &::after {
+        @include centerOver(x);
+
+
+        content: '';
+        position: absolute;
+        border-width: $text;
+        border-style: solid;
+
+      }
+    }
+  }
+
+  [data-tooltip='up'] {
+    .tooltip {
+      transform: translateX(-50%) translateY(-100%);
+      top: -($text / 2); // ignore padding
+
+      &::after {
+        bottom: -($text * 2); // Ignore padding
+        border-color: $color transparent transparent transparent; // Triangle
+      }
+    }
+  }
+
+  [data-tooltip='down'] {
+    .tooltip {
+      transform: translateX(-50%) translateY(100%);
+      bottom: -($text / 2); // ignore padding
+
+      &::after {
+        top: -($text * 2); // Ignore padding
+        border-color: transparent transparent $color transparent; // Triangle
+      }
+    }
+  }
+}

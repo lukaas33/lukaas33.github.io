@@ -22,6 +22,41 @@ body {
 ::-webkit-scrollbar {
   display: none; }
 
+body [data-tooltip]:hover .tooltip {
+  display: block; }
+
+body [data-tooltip] .tooltip {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2);
+  left: 50%;
+  z-index: 200;
+  position: absolute;
+  padding: 0.75rem;
+  background-color: #F5F5F5;
+  text-align: center;
+  text-transform: uppercase;
+  display: none; }
+  body [data-tooltip] .tooltip::after {
+    left: 50%;
+    transform: translateX(-50%);
+    content: '';
+    position: absolute;
+    border-width: 0.75rem;
+    border-style: solid; }
+
+body [data-tooltip='up'] .tooltip {
+  transform: translateX(-50%) translateY(-100%);
+  top: -0.375rem; }
+  body [data-tooltip='up'] .tooltip::after {
+    bottom: -1.5rem;
+    border-color: #F5F5F5 transparent transparent transparent; }
+
+body [data-tooltip='down'] .tooltip {
+  transform: translateX(-50%) translateY(100%);
+  bottom: -0.375rem; }
+  body [data-tooltip='down'] .tooltip::after {
+    top: -1.5rem;
+    border-color: transparent transparent #F5F5F5 transparent; }
+
 #loading .progress .pie {
   r: 50%;
   cx: 50%;

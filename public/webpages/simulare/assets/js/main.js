@@ -221,14 +221,20 @@
     };
 
     SciNum.prototype.unitNotation = function(string) {
-      var html, parts;
+      var dom, html, parts;
       html = null;
       if (string.indexOf('/') !== -1) {
         parts = string.split('/');
-        html = $('<span></span>').addClass('fraction');
-        html.append($('<span></span>').addClass('top').html(parts[0]));
-        html.append($('<span></span>').addClass('bottom').html(parts[1]));
-        html = html[0];
+        dom = $('<span></span>').addClass('fraction');
+        dom.append($('<span></span>').addClass('top').append(this.unitNotation(parts[0])));
+        dom.append($('<span></span>').addClass('bottom').append(this.unitNotation(parts[1])));
+        html = dom[0];
+      } else if (string.indexOf('^') !== -1) {
+        parts = string.split('^');
+        dom = $('<span></span>');
+        dom.append($('<span></span>').html(parts[0]));
+        dom.append($('<sup></sup>').html(parts[1]));
+        html = dom[0];
       } else {
         html = $('<span></span>').html(string)[0];
       }
@@ -975,7 +981,7 @@
   };
 
   html.ratio = function() {
-    var amount, at, bacterium, ca, circle, htmlClass, index, k, l, len1, len2, number, percentage, pie, ref1, ref2, ref3, results, ru, species, total, vi;
+    var all, amount, at, bacterium, ca, circle, htmlClass, index, k, l, len1, len2, number, percentage, pie, ref1, ref2, results, ru, species, total, vi;
     total = global.bacteria.length;
     species = ['Rubrum', 'Caeruleus', 'Viridis'];
     ref1 = [0, 0, 0], vi = ref1[0], ru = ref1[1], ca = ref1[2];
@@ -990,21 +996,22 @@
         vi += 1;
       }
     }
+    all = [ru / total, ca / total, vi / total];
     global.data.ratio.push({
       time: time.time,
       population: total,
       ratio: {
-        Rubrum: ru / total,
-        Caeruleus: ca / total,
-        Viridis: vi / total
+        Rubrum: all[0],
+        Caeruleus: all[1],
+        Viridis: all[2]
       }
     });
+    doc.ratio.next().text("Ratio " + (Math.round(all[0] * 100)) + ":" + (Math.round(all[1] * 100)) + ":" + (Math.round(all[2] * 100)));
     circle = Math.round(Math.PI * 100);
     at = 0;
-    ref3 = [ru / total, ca / total, vi / total];
     results = [];
-    for (index = l = 0, len2 = ref3.length; l < len2; index = ++l) {
-      percentage = ref3[index];
+    for (index = l = 0, len2 = all.length; l < len2; index = ++l) {
+      percentage = all[index];
       number = percentage * circle;
       htmlClass = species[index].toLowerCase();
       pie = doc.ratio.find("." + htmlClass);
@@ -1017,12 +1024,15 @@
 
   html.setup = function() {
     doc.conditions.each(function() {
-      var range, relative, val;
-      val = global.enviroment[this.dataset.name].value;
+      var condition, range, relative, repr, val;
+      condition = global.enviroment[this.dataset.name];
+      val = condition.value;
       range = global.enviroment.ranges[this.dataset.name];
       relative = (val - range[0]) / (range[1] - range[0]);
       $(this).attr('max', 1);
-      return $(this).attr('value', relative);
+      $(this).attr('value', relative);
+      repr = condition.represent();
+      return $(this).next().html(Math.round(repr.value) + ' ').append(repr.unit);
     });
     doc.scale.find('span').text(" 1 : " + local.scaleFactor);
     time.clock = setInterval(function() {
@@ -1329,10 +1339,12 @@
     input = doc.start.find(".slider");
     input.each(function() {
       global.enviroment[this.name] = new SciNum(Number(this.value), this.name, this.dataset.unit);
+      $(this).next().next().text(this.value);
       return $(this).change(function() {
         var value;
         value = Number(this.value);
-        return global.enviroment[this.name] = new SciNum(value, this.name, this.dataset.unit);
+        global.enviroment[this.name] = new SciNum(value, this.name, this.dataset.unit);
+        return $(this).next().next().text(this.value);
       });
     });
     return $("#loading").hide();

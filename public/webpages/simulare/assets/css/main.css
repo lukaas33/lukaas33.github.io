@@ -15,14 +15,14 @@
   display: flex;
   justify-content: space-between; }
 
-#start .intro .screen:last-child .container .fraction, #sidebar .info #bacteria .content div table.values .value .unit .fraction {
+#start .intro .screen:last-child .container .fraction, #sidebar .info #enviroment .content .data .tooltip .fraction, #sidebar .info #bacteria .content div table.values .value .unit .fraction {
   display: inline-block;
   vertical-align: middle;
   text-align: center;
   padding: 0 5px; }
-  #start .intro .screen:last-child .container .fraction .top, #sidebar .info #bacteria .content div table.values .value .unit .fraction .top, #start .intro .screen:last-child .container .fraction .bottom, #sidebar .info #bacteria .content div table.values .value .unit .fraction .bottom {
+  #start .intro .screen:last-child .container .fraction .top, #sidebar .info #enviroment .content .data .tooltip .fraction .top, #sidebar .info #bacteria .content div table.values .value .unit .fraction .top, #start .intro .screen:last-child .container .fraction .bottom, #sidebar .info #enviroment .content .data .tooltip .fraction .bottom, #sidebar .info #bacteria .content div table.values .value .unit .fraction .bottom {
     padding: 0 5px; }
-  #start .intro .screen:last-child .container .fraction .bottom, #sidebar .info #bacteria .content div table.values .value .unit .fraction .bottom {
+  #start .intro .screen:last-child .container .fraction .bottom, #sidebar .info #enviroment .content .data .tooltip .fraction .bottom, #sidebar .info #bacteria .content div table.values .value .unit .fraction .bottom {
     border-top: 1px solid #000;
     display: block; }
 
@@ -60,30 +60,6 @@
   background-color: #00BCD4;
   border-radius: 100%; }
 
-* {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0; }
-
-:root {
-  font-size: 16px; }
-
-body {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1rem;
-  color: #424242;
-  height: 100%;
-  width: 100%;
-  overflow: hidden; }
-
-::selection {
-  color: #fff;
-  background: #00B8D4; }
-
-::-webkit-scrollbar {
-  display: none; }
-
 #start .intro {
   height: 40vw;
   position: relative;
@@ -103,7 +79,8 @@ body {
         margin-top: 1.25rem;
         margin-bottom: 0.75rem; }
       #start .intro .screen:last-child .container {
-        width: 100%; }
+        width: 100%;
+        position: relative; }
         #start .intro .screen:last-child .container .limit {
           color: #757575; }
         #start .intro .screen:last-child .container .slider {
@@ -131,16 +108,17 @@ body {
         font-weight: normal;
         font-size: 2rem;
         color: #616161; }
-    #start .intro .screen .continue button {
-      bottom: 10%;
+    #start .intro .screen .continue {
       position: absolute;
-      right: 0;
       transform: translateX(50%);
-      width: 3rem;
-      height: 3rem; }
-      #start .intro .screen .continue button img {
-        width: 2rem;
-        margin: 0.5rem; }
+      right: 0;
+      bottom: 10%; }
+      #start .intro .screen .continue button {
+        width: 3rem;
+        height: 3rem; }
+        #start .intro .screen .continue button img {
+          width: 2rem;
+          margin: 0.5rem; }
 
 #overlay {
   background-color: rgba(0, 0, 0, 0.5);
@@ -178,6 +156,8 @@ body {
     #menu[data-state='expand'] .items .item {
       position: relative;
       padding: 0.5rem 0.25rem; }
+      #menu[data-state='expand'] .items .item .tooltip {
+        font-size: 0.75rem; }
   #menu .indicator {
     position: relative;
     z-index: 90; }
@@ -218,7 +198,7 @@ body {
     #cards .card:nth-child(3) {
       top: 1.5rem;
       z-index: 13; }
-    #cards .card:nth-child(n + 3) {
+    #cards .card:nth-child(n + 4) {
       top: 2.25rem;
       z-index: 12; }
 
@@ -265,6 +245,8 @@ body {
           margin: 0rem 1.5rem;
           color: #616161;
           font-size: 2rem; }
+        #sidebar .info #priority .status .container .box {
+          position: relative; }
         #sidebar .info #priority .status .container .chart {
           border-radius: 50%;
           height: 5vh;
@@ -306,6 +288,8 @@ body {
         height: 2rem; }
         #sidebar .info #enviroment .content .data:not(:last-child) {
           margin-bottom: 0.75rem; }
+        #sidebar .info #enviroment .content .data .tooltip {
+          font-size: 0.75rem; }
         #sidebar .info #enviroment .content .data p,
         #sidebar .info #enviroment .content .data progress {
           position: absolute;

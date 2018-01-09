@@ -1,8 +1,8 @@
 <!-- Content of the main page -->
 <div id="overlay">
   <!-- TODO work out these cards -->
-  <div class="information"></div>
-  <div class="cards"></div>
+  <div class="full information"></div>
+  <div class="full cards"></div>
 </div>
 <div id="field">
   <div data-state="collapse" id="menu">
@@ -10,26 +10,33 @@
       <button name="menu"><img class="icon" alt="A menu indicator icon" src="assets/images/icons/ic_menu_white_24px.svg"/></button>
     </div>
     <div class="items">
-      <div class="item">
+      <div data-tooltip="down" class="item">
         <button name="volume"><img class="icon" alt="A volume icon striked through" src="assets/images/icons/ic_volume_up_black_24px.svg"/></button>
+        <div class="tooltip">Toggle music</div>
       </div>
-      <div class="item">
+      <div data-tooltip="down" class="item">
         <button name="pause"><img class="icon" alt="A pause icon" src="assets/images/icons/ic_pause_black_24px.svg"/></button>
+        <div class="tooltip">Control the time</div>
       </div>
-      <div class="item">
+      <div data-tooltip="down" class="item">
         <button name="cards"><img class="icon" alt="An empty speach bubble" src="assets/images/icons/ic_chat_black_24px.svg"/></button>
+        <div class="tooltip">Toggle infocards</div>
       </div>
-      <div class="item">
+      <div data-tooltip="down" class="item">
         <button name="view"><img class="icon" alt="An icon of a stack of cards with a bookmark" src="assets/images/icons/ic_collections_bookmark_black_24px.svg"/></button>
+        <div class="tooltip">See all infocards</div>
       </div>
-      <div class="item">
+      <div data-tooltip="down" class="item">
         <button name="info"><img class="icon" alt="An info icon" src="assets/images/icons/ic_info_outline_black_24px.svg"/></button>
+        <div class="tooltip">About this site</div>
       </div>
     </div>
   </div>
   <div id="cards">
     <div class="card">example</div>
     <div class="card">example 2</div>
+    <div class="card">example 3</div>
+    <div class="card">example 4</div>
   </div>
   <canvas data-paper-resize data-paper-keepalive id="screen"></canvas>
 </div>
@@ -47,7 +54,7 @@
               <span class="hour"></span>:<span class="minute"></span>:<span class="second"></span>
             </p>
           </div>
-          <div tooltip="true" class="box">
+          <div data-tooltip="up" class="box">
             <svg class="chart">
               <circle class="pie viridis"/>
               <circle class="pie caeruleus"/>
@@ -70,21 +77,25 @@
         <br/>
       </div>
       <div class="content">
-        <div class="data">
+        <div data-tooltip="up" class="data">
           <p>Temperature</p>
           <progress data-name="temperature"></progress>
+          <div class="tooltip"></div>
         </div>
-        <div class="data">
+        <div data-tooltip="up" class="data">
           <p>Acidity</p>
           <progress data-name="acidity"></progress>
+          <div class="tooltip"></div>
         </div>
-        <div class="data">
+        <div data-tooltip="up" class="data">
           <p>Toxin concentration</p>
           <progress data-name="concentration"></progress>
+          <div class="tooltip"></div>
         </div>
-        <div class="data">
+        <div data-tooltip="up" class="data">
           <p>Energy per second</p>
           <progress data-name="energy"></progress>
+          <div class="tooltip"></div>
         </div>
       </div>
     </section>

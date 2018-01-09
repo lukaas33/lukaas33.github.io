@@ -4,7 +4,7 @@
 @import 'partials/variables';
 @import 'partials/mixins';
 @import 'partials/classes';
-@import 'partials/global';
+// @import 'partials/global';
 
 #start {
   .intro {
@@ -38,6 +38,7 @@
         .container {
           @extend %fill-row;
           width: 100%;
+          position: relative;
 
           .limit {
             color: $grey-600;
@@ -94,13 +95,13 @@
       }
 
       .continue {
+        position: absolute;
+        transform: translateX(50%); // Half of itself over the edge
+        right: 0; // Right side of card
+        bottom: 10%;
 
         button {
           @extend %round;
-          bottom: 10%;
-          position: absolute;
-          right: 0; // Right side of card
-          transform: translateX(50%); // Half of itself over the edge
           width: 3rem;
           height: 3rem;
 
@@ -123,6 +124,12 @@
   top: 0;
   width: 100vw;
   z-index: 100; // Above everything
+
+  .full {
+    .cards {
+      
+    }
+  }
 }
 
 #field {
@@ -163,6 +170,10 @@
       .item {
         position: relative; // Z-index applies
         padding: 0.5rem 0.25rem; // Center button
+
+        .tooltip {
+          font-size: 0.75rem;
+        }
       }
     }
   }
@@ -234,7 +245,7 @@
       z-index: 13;
     }
 
-    &:nth-child(n + 3) { // Other children
+    &:nth-child(n + 4) { // Other children
       top: $padding * 3;
       z-index: 12;
     }
@@ -311,6 +322,10 @@
             }
           }
 
+          .box {
+            position: relative;
+          }
+
           .chart {
             border-radius: 50%;
             height: 5vh;
@@ -385,6 +400,14 @@
 
           &:not(:last-child) { // All but the last
             margin-bottom: $padding-standard / 2;
+          }
+
+          .tooltip {
+            font-size: 0.75rem;
+
+            .fraction {
+              @extend %fraction;
+            }
           }
 
           p,

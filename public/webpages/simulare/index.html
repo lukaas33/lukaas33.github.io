@@ -44,8 +44,11 @@
             Aliquam tempor nisi ac sapien aliquet mattis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent faucibus odio nibh, sit amet malesuada nisi sodales sed. Curabitur imperdiet mauris diam, in pulvinar libero feugiat ac. Quisque imperdiet lobortis blandit. Aenean sed varius neque. Aliquam vitae ultricies nulla. Ut hendrerit eu nulla nec semper. In luctus, est ultricies bibendum varius, diam sem eleifend arcu, ut consectetur lacus risus vitae quam.
           </p>
         </section>
-        <div class="continue">
+        <div data-tooltip="up" class="continue">
           <button name="continue"><img class="icon" alt="An arrow to the right" src="assets/images/icons/ic_arrow_forward_white_24px.svg"/></button>
+          <div class="tooltip">
+            Set the conditions for the experiment
+          </div>
         </div>
       </div>
       <div class="screen">
@@ -54,33 +57,58 @@
           <br/>
           <form>
             <p>Temperature</p>
-            <div class="container">
-              <span class="limit"><span class="value">0</span> <span class="unit">&deg;C</span></span>
+            <div data-tooltip="up" class="container">
+              <span class="limit">
+                <span class="value">0</span> <span class="unit">&deg;C</span>
+              </span>
               <input type="range" name="temperature" data-unit="&deg;C" step="4" min="0" max="40" value="20" class="slider">
-              <span class="limit"><span class="value">40</span> <span class="unit">&deg;C</span></span>
+              <span class="limit">
+                <span class="value">40</span> <span class="unit">&deg;C</span>
+              </span>
+              <div class="tooltip"></div>
             </div>
             <p>Acidity</p>
-            <div class="container">
+            <div data-tooltip="up" class="container">
               <span class="limit">5.5</span>
               <input type="range" name="acidity" data-unit="" step="0.30" min="5.5" max="8.5" value="7.0" class="slider">
               <span class="limit">8.5</span>
+              <div class="tooltip"></div>
             </div>
             <p>Toxin concentration</p>
-            <div class="container">
-              <span class="limit"><span class="value">0</span> <span class="unit"><span class="fraction"><span class="top">kg</span><span class="bottom">m<sup>3</sup></span></span></span></span>
+            <div data-tooltip="up" class="container">
+              <span class="limit">
+                <span class="value">0</span> <span class="unit"><span class="fraction">
+                  <span class="top">kg</span><span class="bottom">m<sup>3</sup></span>
+                </span></span>
+              </span>
               <input type="range" name="concentration" data-unit="kg/m^3" step="1.56" min="0" max="15.6" value="0" class="slider">
-              <span class="limit"><span class="value">15.6</span> <span class="unit"><span class="fraction"><span class="top">kg</span><span class="bottom">m<sup>3</sup></span></span></span></span>
+              <span class="limit">
+                <span class="value">15.6</span> <span class="unit">
+                  <span class="fraction"><span class="top">kg</span><span class="bottom">m<sup>3</sup></span>
+                </span></span>
+              </span>
+              <div class="tooltip"></div>
             </div>
             <p>Energy</p>
-            <div class="container">
-              <span class="limit"><span class="value">6e7</span> <span class="unit"><span class="fraction"><span class="top">ATP</span><span class="bottom">s</span></span></span></span>
+            <div data-tooltip="up" class="container">
+              <span class="limit">
+                <span class="value">6e7</span> <span class="unit">
+                  <span class="fraction"><span class="top">ATP</span><span class="bottom">s</span></span>
+                </span>
+              </span>
               <input type="range" name="energy" data-unit="atp/s" min="6.0e7" step="9.8e6" max="1.58e8" value="1.58e8" class="slider">
-              <span class="limit"><span class="value">1.6e8</span> <span class="unit"><span class="fraction"><span class="top">ATP</span><span class="bottom">s</span></span></span></span>
+              <span class="limit">
+                <span class="value">1.6e8</span> <span class="unit">
+                  <span class="fraction"><span class="top">ATP</span><span class="bottom">s</span>
+                </span></span>
+              </span>
+              <div class="tooltip"></div>
             </div>
           </form>
         </section>
-        <div class="continue">
+        <div data-tooltip="up" class="continue">
           <button name="start"><img class="icon" alt="A play icon" src="assets/images/icons/ic_play_arrow_white_24px.svg"/></button>
+          <div class="tooltip">Start the experiment</div>
         </div>
       </div>
     </div>
