@@ -22,6 +22,14 @@ body {
 ::-webkit-scrollbar {
   display: none; }
 
+#loading .progress .pie {
+  r: 50%;
+  cx: 50%;
+  cy: 50%;
+  stroke-dasharray: 0, 314%;
+  stroke-width: 100%;
+  transition: 400ms; }
+
 #loading,
 #start,
 #home {
@@ -75,13 +83,7 @@ body {
       transform: rotate(-90deg);
       width: 100%; }
     #loading .progress .pie {
-      r: 50%;
-      cx: 50%;
-      cy: 50%;
-      stroke: #009688;
-      stroke-dasharray: 0, 314%;
-      stroke-width: 50%;
-      transition: 400ms; }
+      stroke: #009688; }
 
 #start {
   z-index: 50; }

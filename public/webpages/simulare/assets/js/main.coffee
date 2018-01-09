@@ -30,6 +30,7 @@ doc.data = doc.bacteria.find('.data tr td')
 doc.values = doc.bacteria.find('.values tr td')
 doc.conditions = doc.enviroment.find('progress')
 doc.clock = doc.priority.find('.clock p span')
+doc.ratio = doc.priority.find('.chart')
 
 # << Return functions >>
 # Groups
@@ -816,24 +817,36 @@ html.clock = ->
 # Display the ratio between the bacteria TODO display in sidebar
 html.ratio = ->
   total = global.bacteria.length
+  species = ['Rubrum', 'Caeruleus', 'Viridis']
   [vi, ru, ca] = [0, 0, 0]
 
   for bacterium in global.bacteria
-    if bacterium.species == 'Viridis'
-      vi += 1
-    else if bacterium.species == 'Rubrum'
+    if bacterium.species == species[0]
       ru += 1
-    else if bacterium.species == 'Caeruleus'
+    else if bacterium.species == species[1]
       ca += 1
+    else if bacterium.species == species[2]
+      vi += 1
 
   global.data.ratio.push( # Store the data
     time: time.time
     population: total
     ratio:
-      Viridis: vi / total
       Rubrum: ru / total
       Caeruleus: ca / total
+      Viridis: vi / total
   )
+
+  circle = Math.round(Math.PI * 100) # Circumference of circle
+  at = 0
+  for percentage, index in [ru / total, ca / total, vi / total]
+    number = (percentage * circle) # Part of the circle
+    htmlClass = species[index].toLowerCase()
+    pie = doc.ratio.find(".#{htmlClass}") # Class in html
+
+    amount = at + number
+    at += number
+    pie.css('strokeDasharray', "#{amount}%, #{circle}%")
 
 # sets up the values of the elements
 html.setup = ->
@@ -994,10 +1007,6 @@ html.selected = ->
         break # End loop
   else # No selected
     doc.bacteria.attr('data-content', false)
-
-# TODO add function that displays the ratio
-html.pie = ->
-  null
 
 # Pauses the simulation
 html.pause = (change = global.interaction.pauzed) ->
@@ -1181,6 +1190,7 @@ simulation.run = ->
   html.setup() # Activate document
   console.log(project.activeLayer)
   html.clock() # Starts the time display
+  html.ratio() # Display inital ratio
   global.interaction.audio.play() # Starts music
 
 # << Simulation functions >>

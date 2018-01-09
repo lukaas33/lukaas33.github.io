@@ -37,6 +37,8 @@
 
   doc.clock = doc.priority.find('.clock p span');
 
+  doc.ratio = doc.priority.find('.chart');
+
   Calc = {};
 
   Random = {};
@@ -973,29 +975,44 @@
   };
 
   html.ratio = function() {
-    var bacterium, ca, k, len1, ref1, ref2, ru, total, vi;
+    var amount, at, bacterium, ca, circle, htmlClass, index, k, l, len1, len2, number, percentage, pie, ref1, ref2, ref3, results, ru, species, total, vi;
     total = global.bacteria.length;
+    species = ['Rubrum', 'Caeruleus', 'Viridis'];
     ref1 = [0, 0, 0], vi = ref1[0], ru = ref1[1], ca = ref1[2];
     ref2 = global.bacteria;
     for (k = 0, len1 = ref2.length; k < len1; k++) {
       bacterium = ref2[k];
-      if (bacterium.species === 'Viridis') {
-        vi += 1;
-      } else if (bacterium.species === 'Rubrum') {
+      if (bacterium.species === species[0]) {
         ru += 1;
-      } else if (bacterium.species === 'Caeruleus') {
+      } else if (bacterium.species === species[1]) {
         ca += 1;
+      } else if (bacterium.species === species[2]) {
+        vi += 1;
       }
     }
-    return global.data.ratio.push({
+    global.data.ratio.push({
       time: time.time,
       population: total,
       ratio: {
-        Viridis: vi / total,
         Rubrum: ru / total,
-        Caeruleus: ca / total
+        Caeruleus: ca / total,
+        Viridis: vi / total
       }
     });
+    circle = Math.round(Math.PI * 100);
+    at = 0;
+    ref3 = [ru / total, ca / total, vi / total];
+    results = [];
+    for (index = l = 0, len2 = ref3.length; l < len2; index = ++l) {
+      percentage = ref3[index];
+      number = percentage * circle;
+      htmlClass = species[index].toLowerCase();
+      pie = doc.ratio.find("." + htmlClass);
+      amount = at + number;
+      at += number;
+      results.push(pie.css('strokeDasharray', amount + "%, " + circle + "%"));
+    }
+    return results;
   };
 
   html.setup = function() {
@@ -1162,10 +1179,6 @@
     } else {
       return doc.bacteria.attr('data-content', false);
     }
-  };
-
-  html.pie = function() {
-    return null;
   };
 
   html.pause = function(change) {
@@ -1336,6 +1349,7 @@
     html.setup();
     console.log(project.activeLayer);
     html.clock();
+    html.ratio();
     return global.interaction.audio.play();
   };
 

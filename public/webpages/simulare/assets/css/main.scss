@@ -255,16 +255,18 @@
     height: 10%; // Of sidebar height
     width: 100%;
 
+    $size: 2rem;
+
     h1 {
       color: #fff;
       font-weight: normal;
-      font-size: 1.75rem;
+      font-size: $size;
       margin-left: 1rem; // From image
     }
 
     img {
-      height: 45%; // Of header height
-      width: auto;
+      height: $size * 1.5; // Of header height
+      width: $size * 1.5;
     }
   }
 
@@ -314,6 +316,24 @@
             height: 5vh;
             width: 5vh;
             background-color: $grey-300;
+            transform: rotate(-90deg);
+
+            .pie {
+              @extend %pie;
+              fill: transparent;
+
+              &.rubrum {
+                stroke: $red-500;
+              }
+
+              &.caeruleus {
+                stroke: $blue-500;
+              }
+
+              &.viridis {
+                stroke: $green-500;
+              }
+            }
           }
         }
       }
@@ -359,10 +379,13 @@
         .data {
           width: 100%; // Of enviroment
           position: relative; // For absolute children
-          margin-bottom: $padding-standard / 2;
 
           $size: 2rem;
           height: $size;
+
+          &:not(:last-child) { // All but the last
+            margin-bottom: $padding-standard / 2;
+          }
 
           p,
           progress {

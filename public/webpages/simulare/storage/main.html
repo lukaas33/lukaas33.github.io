@@ -47,12 +47,19 @@
               <span class="hour"></span>:<span class="minute"></span>:<span class="second"></span>
             </p>
           </div>
-          <svg class="chart">
+          <div tooltip="true" class="box">
+            <svg class="chart">
+              <circle class="pie viridis"/>
+              <circle class="pie caeruleus"/>
+              <circle class="pie rubrum"/>
+            </svg>
+            <div class="tooltip">
 
-          </svg>
+            </div>
+          </div>
         </div>
       </div>
-      <p id="scale">Scale:<span></span></p>
+      <p id="scale">Scale<span></span></p>
       <div class="restart">
         <button name="restart"><img alt="A reset icon" src="assets/images/icons/ic_refresh_white_24px.svg"/></button>
       </div>
@@ -87,7 +94,7 @@
         <br/>
       </div>
       <div class="empty">
-        <p>No bacteria selected</p>
+        <p>No bacteria is selected</p>
       </div>
       <div class="content">
         <div>

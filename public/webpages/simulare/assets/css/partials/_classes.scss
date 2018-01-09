@@ -1,4 +1,15 @@
 
+// Svg
+%pie {
+  // From: https://css-tricks.com/how-to-make-charts-with-svg/ and https://www.w3schools.com/graphics/svg_circle.asp
+  r: 50%; // Fill parent
+  cx: 50%; // Centered in parent
+  cy: 50%; // Centered in parent
+  stroke-dasharray: 0, (100% * 3.14); // Circumference of the circle (Pi * diameter)
+  stroke-width: 100%; // Fill itself
+  transition: $time;
+}
+
 // Flexbox classes
 %center-complete {
   align-items: center; // Children centered vertically
