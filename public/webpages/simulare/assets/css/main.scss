@@ -216,7 +216,7 @@
     $padding: $padding-standard / 2;
     padding: $padding;
     height: auto;
-    position: relative; // Z-index will apply
+    position: absolute;
     width: 100%; // Of cards
 
     &:nth-child(1) { // First card
@@ -258,12 +258,12 @@
     h1 {
       color: #fff;
       font-weight: normal;
-      font-size: 2rem;
+      font-size: 1.75rem;
       margin-left: 1rem; // From image
     }
 
     img {
-      height: 50%; // Of header height
+      height: 45%; // Of header height
       width: auto;
     }
   }
@@ -274,8 +274,13 @@
     text-align: center;
 
     .part {
+      position: relative; // Absolute children placed with this
       margin: $margin-standard; // This box's padding
-      border-top: 1px solid $grey-400;
+
+      &:not(:first-child) { // All but the first
+        border-top: 2px solid $grey-300;
+        padding-top: $padding-standard / 2;
+      }
     }
 
     h4 {
@@ -284,35 +289,37 @@
     }
 
     #priority {
-      position: relative; // Absolute children placed with this
-      height: 15%; // Of sidebar
-      width: 100%;
 
       .status {
-        @extend %center-complete; // Center children on both axis
-        background-color: $grey-300;
-        border-radius: 1rem;
+        @extend %center-complete; // Center child on both axis
         height: 8vh;
-        width: 100%;
+        margin-bottom: $padding-standard / 2;
 
-        .clock {
-          p {
-            color: $grey-700;
-            font-size: 2rem; // Based on base fontsize
-          }
-        }
-
-        .chart {
-          margin-left: 1.5rem;
-          border-radius: 50%;
-          height: 5vh;
-          width: 5vh;
+        .container {
+          @extend %center-complete; // Center children on both axis
           background-color: $grey-200;
+          border-radius: 2.5rem;
+          padding: $padding-standard / 2;
+
+          .clock {
+            p {
+              margin: 0rem 1.5rem;
+              color: $grey-700;
+              font-size: 2rem; // Based on base fontsize
+            }
+          }
+
+          .chart {
+            border-radius: 50%;
+            height: 5vh;
+            width: 5vh;
+            background-color: $grey-300;
+          }
         }
       }
 
       #scale {
-        color: $grey-700;
+        color: $grey-500;
       }
 
       .restart {
@@ -339,8 +346,6 @@
     }
 
     #enviroment {
-      height: 30%; // Of sidebar
-
       .text {
         height: 20%; // Of enviroment
       }
@@ -354,50 +359,81 @@
         .data {
           width: 100%; // Of enviroment
           position: relative; // For absolute children
-          $size: 1rem;
+          margin-bottom: $padding-standard / 2;
+
+          $size: 2rem;
+          height: $size;
 
           p,
-          meter {
+          progress {
             position: absolute;
             top: 0;
           }
 
           p {
             color: #fff;
-            line-height: 1rem;
-            vertical-align: middle;
+            line-height: $size;
+            vertical-align: middle; // Middle of bar
+            z-index: 26; // Above bar
+            padding-left: $padding-standard;
+            font-size: 0.75rem;
+            font-style: bold;
           }
 
-          meter {
-            height: 1rem;
+          progress { // switched from meter because this is easier to style
+            @extend %bar;
+            z-index: 25;
+            height: $size;
             display: block; // Fill line
             width: 100%; // Of enviroment
-            -webkit-appearance: none; // Reset
 
-            &::-webkit-meter-bar {
-              background-color: $grey-200;
+            &::-webkit-progress-bar {
+              -webkit-appearance: inherit;
+              border-radius: 1rem;
+            }
+
+            &::-webkit-progress-value {
+              -webkit-appearance: inherit;
+              border-radius: 1rem;
             }
 
             &[data-name=temperature] {
-              &::-webkit-meter-optimum-value {
-                background-color: $red-500;
+              &::-webkit-progress-bar {
+                background: $red-700;
+              }
+
+              &::-webkit-progress-value {
+                background: $red-500;
               }
             }
 
             &[data-name=acidity] {
-              &::-webkit-meter-optimum-value {
-                background-color: $blue-500;
+              &::-webkit-progress-bar {
+                background: $blue-700;
+              }
+
+              &::-webkit-progress-value {
+                background: $blue-500;
               }
             }
 
             &[data-name=concentration] {
-              &::-webkit-meter-optimum-value {
-                background-color: $green-500;
+              &::-webkit-progress-bar {
+                background: $green-700;
+              }
+
+              &::-webkit-progress-value {
+                -webkit-appearance: inherit;
+                background: $green-500;
               }
             }
 
             &[data-name=energy] {
-              &::-webkit-meter-optimum-value {
+              &::-webkit-progress-bar {
+                background: $amber-700;
+              }
+
+              &::-webkit-progress-value {
                 background-color: $amber-500;
               }
             }
@@ -407,8 +443,6 @@
     }
 
     #bacteria {
-      height: 55%; // Of sidebar
-
       &[data-content='true'] { // There is content
         .empty {
           display: none;
@@ -456,14 +490,41 @@
           table {
             height: 100%; // Of container div
             width: 100%; // Of content
+            background-color: $grey-200;
+            padding: $padding-standard / 4;
+            // border-collapse: collapse;
+
+            tr {
+              height: 2rem;
+
+              &:not(:first-child) {
+                td { // Tr can't have one
+                  border-top: 1px solid $grey-300;
+                }
+              }
+
+              td {
+                padding: $padding-standard / 4; // Adds to table
+              }
+            }
+
+            .name {
+              text-align: left;
+              color: $grey-600;
+            }
+
+            .value {
+            	text-align: right;
+              color: $grey-700;
+            }
 
             &.data {
+              margin-bottom: $padding-standard / 2;
+
             }
 
             &.values {
-              .name {
 
-              }
 
               .value {
                 .number {
@@ -471,6 +532,8 @@
                 }
 
                 .unit {
+                  font-style: italic;
+
                   .fraction {
                     @extend %fraction;
                   }

@@ -41,14 +41,16 @@
   <div class="info">
     <div class="part" id="priority">
       <div class="status">
-        <div class="clock">
-          <p>
-            <span class="hour"></span>:<span class="minute"></span>:<span class="second"></span>
-          </p>
-        </div>
-        <svg class="chart">
+        <div class="container">
+          <div class="clock">
+            <p>
+              <span class="hour"></span>:<span class="minute"></span>:<span class="second"></span>
+            </p>
+          </div>
+          <svg class="chart">
 
-        </svg>
+          </svg>
+        </div>
       </div>
       <p id="scale">Scale:<span></span></p>
       <div class="restart">
@@ -63,19 +65,19 @@
       <div class="content">
         <div class="data">
           <p>Temperature</p>
-          <meter data-name="temperature"></meter>
+          <progress data-name="temperature"></progress>
         </div>
         <div class="data">
           <p>Acidity</p>
-          <meter data-name="acidity"></meter>
+          <progress data-name="acidity"></progress>
         </div>
         <div class="data">
           <p>Toxin concentration</p>
-          <meter data-name="concentration"></meter>
+          <progress data-name="concentration"></progress>
         </div>
         <div class="data">
           <p>Energy per second</p>
-          <meter data-name="energy"></meter>
+          <progress data-name="energy"></progress>
         </div>
       </div>
     </section>
@@ -85,7 +87,7 @@
         <br/>
       </div>
       <div class="empty">
-        <p><em>No bacteria selected</em></p>
+        <p>No bacteria selected</p>
       </div>
       <div class="content">
         <div>
