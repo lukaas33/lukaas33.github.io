@@ -11,7 +11,8 @@ const global = {
     pauzed: true,
     sound: true,
     cards: true,
-    selected: null // Selected instance
+    selected: null, // Selected instance
+    audio: null
   },
   enviroment: { // Enviroment variables, are filled via input elements
     temperature: null,
@@ -65,7 +66,7 @@ const global = {
   }
 
   // Tracks loaded files
-  var total = 9
+  var total = 10
   var toLoad = total // Initial value
   // Updates loaded files
   const loaded = function (file) {
@@ -130,5 +131,15 @@ const global = {
     load('assets/css/main.css', 'css', () => {
       loaded('css')
     })
+
+    // Load the background music
+    global.interaction.audio = document.createElement('audio')
+    global.interaction.audio.setAttribute('src', 'storage/background-music.mp3') // Source: https://youtu.be/cyfpt4LpNAA
+    global.interaction.audio.load()
+    // global.interaction.audio.addEventListener("load", () => { // Done
+    global.interaction
+      global.interaction.audio.play()
+      loaded('music')
+    }, true)
   }
 }).call(this)

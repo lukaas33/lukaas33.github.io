@@ -213,25 +213,30 @@
 
   .card {
     @extend %card;
-    padding: $padding-standard / 2;
+    $padding: $padding-standard / 2;
+    padding: $padding;
     height: auto;
     position: relative; // Z-index will apply
     width: 100%; // Of cards
 
     &:nth-child(1) { // First card
-
+      top: 0;
+      z-index: 15;
     }
 
     &:nth-child(2) { // Second card
-
+      top: $padding;
+      z-index: 14;
     }
 
     &:nth-child(3) { // Third card
-
+      top: $padding * 2;
+      z-index: 13;
     }
 
     &:nth-child(n + 3) { // Other children
-
+      top: $padding * 3;
+      z-index: 12;
     }
   }
 }
@@ -269,7 +274,8 @@
     text-align: center;
 
     .part {
-
+      margin: $margin-standard; // This box's padding
+      border-top: 1px solid $grey-400;
     }
 
     h4 {
@@ -283,8 +289,9 @@
       width: 100%;
 
       .status {
-        margin: $margin-standard; // This box's padding
         @extend %center-complete; // Center children on both axis
+        background-color: $grey-300;
+        border-radius: 1rem;
         height: 8vh;
         width: 100%;
 
@@ -300,7 +307,7 @@
           border-radius: 50%;
           height: 5vh;
           width: 5vh;
-          background: $grey-200
+          background-color: $grey-200;
         }
       }
 
@@ -311,7 +318,7 @@
       .restart {
         // DISABLED: doesn't serve enough purpose
         display: none;
-        
+
         left: 0;
         position: absolute;
         top: 25%; // Of priority container
@@ -332,7 +339,6 @@
     }
 
     #enviroment {
-      margin: $margin-standard; // Can't use sidebar padding
       height: 30%; // Of sidebar
 
       .text {
@@ -347,17 +353,60 @@
 
         .data {
           width: 100%; // Of enviroment
+          position: relative; // For absolute children
+          $size: 1rem;
+
+          p,
+          meter {
+            position: absolute;
+            top: 0;
+          }
+
+          p {
+            color: #fff;
+            line-height: 1rem;
+            vertical-align: middle;
+          }
 
           meter {
+            height: 1rem;
             display: block; // Fill line
             width: 100%; // Of enviroment
+            -webkit-appearance: none; // Reset
+
+            &::-webkit-meter-bar {
+              background-color: $grey-200;
+            }
+
+            &[data-name=temperature] {
+              &::-webkit-meter-optimum-value {
+                background-color: $red-500;
+              }
+            }
+
+            &[data-name=acidity] {
+              &::-webkit-meter-optimum-value {
+                background-color: $blue-500;
+              }
+            }
+
+            &[data-name=concentration] {
+              &::-webkit-meter-optimum-value {
+                background-color: $green-500;
+              }
+            }
+
+            &[data-name=energy] {
+              &::-webkit-meter-optimum-value {
+                background-color: $amber-500;
+              }
+            }
           }
         }
       }
     }
 
     #bacteria {
-      margin: $margin-standard; // Can't use sidebar padding
       height: 55%; // Of sidebar
 
       &[data-content='true'] { // There is content
