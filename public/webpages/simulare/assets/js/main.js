@@ -33,7 +33,7 @@
 
   doc.values = doc.bacteria.find('.values tr td');
 
-  doc.conditions = doc.enviroment.find('meter');
+  doc.conditions = doc.enviroment.find('progress');
 
   doc.clock = doc.priority.find('.clock p span');
 
@@ -234,7 +234,7 @@
     };
 
     SciNum.prototype.represent = function() {
-      var converted, hours, k, len1, minutes, newValue, prefix, ref1, ref2, seconds, set, unit, value;
+      var converted, form, hours, k, len1, minutes, newValue, prefix, ref1, ref2, seconds, set, unit, value;
       set = global.constants.prefixes;
       unit = this.unit;
       value = this.value;
@@ -250,8 +250,16 @@
         converted = new SciNum(value, this.quantity, this.unitNotation(unit));
       } else {
         if (unit === 's') {
+          form = function(number) {
+            var string;
+            string = String(number);
+            if (string.length === 1) {
+              string = "0" + string;
+            }
+            return string;
+          };
           ref1 = time.represent(this.value), hours = ref1[0], minutes = ref1[1], seconds = ref1[2];
-          converted = new SciNum(hours + ":" + minutes + ":" + seconds, this.quantity, null);
+          converted = new SciNum((form(hours)) + ":" + (form(minutes)) + ":" + (form(seconds)), this.quantity, null);
         } else {
           if (Math.abs(value) < 1) {
             set = set.lower;
@@ -992,11 +1000,12 @@
 
   html.setup = function() {
     doc.conditions.each(function() {
-      var range;
-      $(this).attr('value', global.enviroment[this.dataset.name].value);
+      var range, relative, val;
+      val = global.enviroment[this.dataset.name].value;
       range = global.enviroment.ranges[this.dataset.name];
-      $(this).attr('min', range[0]);
-      return $(this).attr('max', range[1]);
+      relative = (val - range[0]) / (range[1] - range[0]);
+      $(this).attr('max', 1);
+      return $(this).attr('value', relative);
     });
     doc.scale.find('span').text(" 1 : " + local.scaleFactor);
     time.clock = setInterval(function() {
@@ -1182,9 +1191,11 @@
     icon = doc.menu.find("button[name=volume] img");
     if (change) {
       global.interaction.sound = false;
+      global.interaction.audio.pause();
       return icon.attr('src', 'assets/images/icons/ic_volume_off_black_24px.svg');
     } else {
       global.interaction.sound = true;
+      global.interaction.audio.play();
       return icon.attr('src', 'assets/images/icons/ic_volume_up_black_24px.svg');
     }
   };
@@ -1324,7 +1335,8 @@
     global.interaction.pauzed = false;
     html.setup();
     console.log(project.activeLayer);
-    return html.clock();
+    html.clock();
+    return global.interaction.audio.play();
   };
 
   draw = {};

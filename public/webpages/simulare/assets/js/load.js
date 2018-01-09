@@ -134,11 +134,12 @@ const global = {
 
     // Load the background music
     global.interaction.audio = document.createElement('audio')
-    global.interaction.audio.setAttribute('src', 'storage/background-music.mp3') // Source: https://youtu.be/cyfpt4LpNAA
+    global.interaction.audio.setAttribute('src', 'storage/music-gas.mp3') // Source: https://youtu.be/NvG-jqGsWSk
+    // global.interaction.audio.setAttribute('src', 'storage/music-cell.mp3') // Source: https://youtu.be/cyfpt4LpNAA
+    global.interaction.audio.loop = true
     global.interaction.audio.load()
-    // global.interaction.audio.addEventListener("load", () => { // Done
-    global.interaction
-      global.interaction.audio.play()
+
+    global.interaction.audio.addEventListener('canplaythrough', () => { // Done
       loaded('music')
     }, true)
   }

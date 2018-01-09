@@ -28,7 +28,7 @@ doc.menuItems = doc.menu.find('.item button')
 doc.menuButton = doc.menu.find('.indicator button')
 doc.data = doc.bacteria.find('.data tr td')
 doc.values = doc.bacteria.find('.values tr td')
-doc.conditions = doc.enviroment.find('meter')
+doc.conditions = doc.enviroment.find('progress')
 doc.clock = doc.priority.find('.clock p span')
 
 # << Return functions >>
@@ -205,8 +205,13 @@ class SciNum
       converted = new SciNum(value, @quantity, @unitNotation(unit))
     else
       if unit == 's' # Different common notation
+        form = (number) ->
+          string = String(number)
+          if string.length == 1
+            string = "0#{string}"
+          return string
         [hours, minutes, seconds] = time.represent(@value)
-        converted = new SciNum("#{hours}:#{minutes}:#{seconds}", @quantity, null)
+        converted = new SciNum("#{form(hours)}:#{form(minutes)}:#{form(seconds)}", @quantity, null)
       else
         if Math.abs(value) < 1 # Low numbers
           set = set.lower
@@ -834,10 +839,16 @@ html.ratio = ->
 html.setup = ->
   # << Actions >>
   doc.conditions.each( ->
-    $(@).attr('value', global.enviroment[@dataset.name].value)
+    # Worked with meter-element, progress min is always 0
+    # $(@).attr('min', range[0])
+
+    val = global.enviroment[@dataset.name].value
+    # TODO add to tooltip
     range = global.enviroment.ranges[@dataset.name]
-    $(@).attr('min', range[0])
-    $(@).attr('max', range[1])
+    relative = (val - range[0]) / (range[1] - range[0]) # Out of one
+
+    $(@).attr('max', 1)
+    $(@).attr('value', relative)
   )
 
   doc.scale.find('span').text(" 1 : #{local.scaleFactor}")
@@ -1003,9 +1014,11 @@ html.sound = (change = global.interaction.sound) ->
   icon = doc.menu.find("button[name=volume] img")
   if change # Unpauze
     global.interaction.sound = false
+    global.interaction.audio.pause()
     icon.attr('src', 'assets/images/icons/ic_volume_off_black_24px.svg')
   else # Pauze
     global.interaction.sound = true
+    global.interaction.audio.play()
     icon.attr('src', 'assets/images/icons/ic_volume_up_black_24px.svg')
 
 # Toggle the card system
@@ -1168,6 +1181,7 @@ simulation.run = ->
   html.setup() # Activate document
   console.log(project.activeLayer)
   html.clock() # Starts the time display
+  global.interaction.audio.play() # Starts music
 
 # << Simulation functions >>
 # Groups
