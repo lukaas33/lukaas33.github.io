@@ -1,8 +1,16 @@
 <!-- Content of the main page -->
-<div id="overlay">
-  <!-- TODO work out these cards -->
-  <div class="full information"></div>
-  <div class="full cards"></div>
+<div data-close id="overlay">
+  <div class="container">
+    <!-- TODO work out these cards -->
+    <div data-close class="full information">
+      <button name="close"><img src="assets/images/icons/ic_close_black_24px.svg" alt="A cross icon"></button>
+      <div class="text"></div>
+    </div>
+    <div data-close class="full cards">
+      <button name="close"><img src="assets/images/icons/ic_close_black_24px.svg" alt="A cross icon"></button>
+      <div class="text"></div>
+    </div>
+  </div>
 </div>
 <div id="field">
   <div data-state="collapse" id="menu">
@@ -33,10 +41,42 @@
     </div>
   </div>
   <div id="cards">
-    <div class="card">example</div>
-    <div class="card">example 2</div>
-    <div class="card">example 3</div>
-    <div class="card">example 4</div>
+    <div data-clear class="card">
+      <button name="clear"><img src="assets/images/icons/ic_close_black_24px.svg" alt="A cross icon"></button>
+      <div class="text">
+        example
+      </div>
+    </div>
+    <div data-clear class="card">
+      <button name="clear"><img src="assets/images/icons/ic_close_black_24px.svg" alt="A cross icon"></button>
+      <div class="text">
+        example 2
+      </div>
+    </div>
+    <div data-clear class="card">
+      <button name="clear"><img src="assets/images/icons/ic_close_black_24px.svg" alt="A cross icon"></button>
+      <div class="text">
+        example 3
+      </div>
+    </div>
+    <div data-clear class="card">
+      <button name="clear"><img src="assets/images/icons/ic_close_black_24px.svg" alt="A cross icon"></button>
+      <div class="text">
+        example 4
+      </div>
+    </div>
+    <div data-clear class="card">
+      <button name="clear"><img src="assets/images/icons/ic_close_black_24px.svg" alt="A cross icon"></button>
+      <div class="text">
+        example 5
+      </div>
+    </div>
+    <div data-clear class="card">
+      <button name="clear"><img src="assets/images/icons/ic_close_black_24px.svg" alt="A cross icon"></button>
+      <div class="text">
+        example 6
+      </div>
+    </div>
   </div>
   <canvas data-paper-resize data-paper-keepalive id="screen"></canvas>
 </div>
@@ -61,7 +101,7 @@
               <circle class="pie rubrum"/>
             </svg>
             <div class="tooltip">
-
+              <!-- Will be filled -->
             </div>
           </div>
         </div>
@@ -79,21 +119,25 @@
       <div class="content">
         <div data-tooltip="up" class="data">
           <p>Temperature</p>
+          <!-- attributes will be entered -->
           <progress data-name="temperature"></progress>
           <div class="tooltip"></div>
         </div>
         <div data-tooltip="up" class="data">
           <p>Acidity</p>
+          <!-- attributes will be entered -->
           <progress data-name="acidity"></progress>
           <div class="tooltip"></div>
         </div>
         <div data-tooltip="up" class="data">
           <p>Toxin concentration</p>
+          <!-- attributes will be entered -->
           <progress data-name="concentration"></progress>
           <div class="tooltip"></div>
         </div>
         <div data-tooltip="up" class="data">
           <p>Energy per second</p>
+          <!-- attributes will be entered -->
           <progress data-name="energy"></progress>
           <div class="tooltip"></div>
         </div>
@@ -104,10 +148,12 @@
         <h4>Bacteria</h4>
         <br/>
       </div>
-      <div class="empty">
+      <div data-tooltip="up" class="empty">
         <p>No bacteria is selected</p>
+        <div class="tooltip">Click on a bacteria to select it</div>
       </div>
       <div class="content">
+        <!-- Tables will be filled -->
         <div>
           <table class="data">
             <tr>

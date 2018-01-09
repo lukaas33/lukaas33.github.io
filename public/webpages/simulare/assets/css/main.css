@@ -6,7 +6,7 @@
   stroke-width: 100%;
   transition: 400ms; }
 
-#sidebar header, #sidebar .info #priority .status, #sidebar .info #priority .status .container {
+#overlay .container, #sidebar header, #sidebar .info #priority .status, #sidebar .info #priority .status .container {
   align-items: center;
   display: flex;
   justify-content: center; }
@@ -31,21 +31,21 @@
   appearance: none;
   border-radius: 1rem; }
 
-#start .intro .screen, #cards .card {
+#start .intro .screen, #overlay .full, #cards .card {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2);
   background-color: #FAFAFA;
   transition: 400ms ease-in-out; }
-  #start .intro .screen:hover, #cards .card:hover {
+  #start .intro .screen:hover, #overlay .full:hover, #cards .card:hover {
     box-shadow: 0px 14px 28px rgba(0, 0, 0, 0.1), 0px 10px 19px rgba(0, 0, 0, 0.2); }
 
-#start .intro .screen:last-child .container .slider, #sidebar .info #enviroment .content .data progress, #start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
+#start .intro .screen:last-child .container .slider, #sidebar .info #enviroment .content .data progress, #start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb, #overlay .full button[name=close], #cards .card button[name=clear] {
   cursor: pointer; }
-  #start .intro .screen:last-child .container .slider:disabled, #sidebar .info #enviroment .content .data progress:disabled, #start .intro .screen .continue button:disabled, #menu .indicator button:disabled, #menu .items .item button:disabled, #sidebar .info #priority .restart button:disabled, #start .intro .screen:last-child .container .slider:disabled::-webkit-slider-thumb {
+  #start .intro .screen:last-child .container .slider:disabled, #sidebar .info #enviroment .content .data progress:disabled, #start .intro .screen .continue button:disabled, #menu .indicator button:disabled, #menu .items .item button:disabled, #sidebar .info #priority .restart button:disabled, #start .intro .screen:last-child .container .slider:disabled::-webkit-slider-thumb, #overlay .full button[name=close]:disabled, #cards .card button[name=clear]:disabled {
     cursor: default; }
-  #start .intro .screen:last-child .container .slider:focus, #sidebar .info #enviroment .content .data progress:focus, #start .intro .screen .continue button:focus, #menu .indicator button:focus, #menu .items .item button:focus, #sidebar .info #priority .restart button:focus, #start .intro .screen:last-child .container .slider:focus::-webkit-slider-thumb, #start .intro .screen:last-child .container .slider:active, #sidebar .info #enviroment .content .data progress:active, #start .intro .screen .continue button:active, #menu .indicator button:active, #menu .items .item button:active, #sidebar .info #priority .restart button:active, #start .intro .screen:last-child .container .slider:active::-webkit-slider-thumb {
+  #start .intro .screen:last-child .container .slider:focus, #sidebar .info #enviroment .content .data progress:focus, #start .intro .screen .continue button:focus, #menu .indicator button:focus, #menu .items .item button:focus, #sidebar .info #priority .restart button:focus, #start .intro .screen:last-child .container .slider:focus::-webkit-slider-thumb, #overlay .full button[name=close]:focus, #cards .card button[name=clear]:focus, #start .intro .screen:last-child .container .slider:active, #sidebar .info #enviroment .content .data progress:active, #start .intro .screen .continue button:active, #menu .indicator button:active, #menu .items .item button:active, #sidebar .info #priority .restart button:active, #start .intro .screen:last-child .container .slider:active::-webkit-slider-thumb, #overlay .full button[name=close]:active, #cards .card button[name=clear]:active {
     outline: none; }
 
-#start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb {
+#start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb, #overlay .full button[name=close], #cards .card button[name=clear] {
   background-color: transparent;
   border: 0 solid transparent;
   transition: 400ms ease-in-out; }
@@ -59,6 +59,11 @@
 #start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button {
   background-color: #00BCD4;
   border-radius: 100%; }
+
+#overlay .full button[name=close], #cards .card button[name=clear] {
+  position: absolute;
+  top: 0;
+  right: 0; }
 
 #start .intro {
   height: 40vw;
@@ -121,17 +126,32 @@
           margin: 0.5rem; }
 
 #overlay {
-  background-color: rgba(0, 0, 0, 0.5);
   display: none;
-  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  height: 100%;
   left: 0;
   position: absolute;
   top: 0;
-  width: 100vw;
+  width: 100%;
   z-index: 100; }
+  #overlay .container {
+    width: 100%;
+    height: 100%; }
+  #overlay .full {
+    padding: 1.5rem;
+    position: relative;
+    z-index: 110;
+    display: none;
+    width: 80%;
+    height: 80%; }
+    #overlay .full .text {
+      width: 100%;
+      height: 100%; }
+    #overlay .full button[name=close] {
+      margin: 1.5rem; }
 
 #field {
-  height: 100vh;
+  height: 100%;
   position: relative;
   width: 80vw; }
   #field #screen {
@@ -142,7 +162,11 @@
   display: flex;
   position: absolute;
   left: 0;
-  top: 0; }
+  top: 0;
+  transition: 400ms ease-in-out;
+  opacity: 0.65; }
+  #menu:hover {
+    opacity: 1; }
   #menu[data-state='collapse'] .items {
     display: block; }
     #menu[data-state='collapse'] .items .item {
@@ -183,12 +207,18 @@
   position: absolute;
   right: 0;
   top: 0;
-  width: 20%; }
+  width: 20%;
+  transition: 400ms ease-in-out;
+  opacity: 0.5; }
+  #cards:hover {
+    opacity: 1; }
   #cards .card {
     padding: 0.75rem;
-    height: auto;
     position: absolute;
-    width: 100%; }
+    width: 100%;
+    line-height: 1.1rem;
+    height: 12.5rem;
+    overflow-y: scroll; }
     #cards .card:nth-child(1) {
       top: 0;
       z-index: 15; }
@@ -198,16 +228,18 @@
     #cards .card:nth-child(3) {
       top: 1.5rem;
       z-index: 13; }
-    #cards .card:nth-child(n + 4) {
-      top: 2.25rem;
+    #cards .card:nth-child(n + 3) {
+      top: 1.5rem;
       z-index: 12; }
+    #cards .card button[name=clear] {
+      margin: 0.75rem; }
 
 #sidebar {
   box-shadow: -4px 0px 8px rgba(0, 0, 0, 0.1), -2.66667px 0px 6px rgba(0, 0, 0, 0.2);
   position: relative;
   z-index: 20;
   background-color: #FAFAFA;
-  height: 100vh;
+  height: 100%;
   width: 20vw; }
   #sidebar header {
     background-color: #009688;
@@ -235,7 +267,6 @@
       font-weight: normal;
       font-size: 1.25rem; }
     #sidebar .info #priority .status {
-      height: 8vh;
       margin-bottom: 0.75rem; }
       #sidebar .info #priority .status .container {
         background-color: #EEEEEE;
@@ -252,7 +283,8 @@
           height: 5vh;
           width: 5vh;
           background-color: #E0E0E0;
-          transform: rotate(-90deg); }
+          transform: rotate(-90deg);
+          margin-right: 0.5rem; }
           #sidebar .info #priority .status .container .chart .pie {
             fill: transparent; }
             #sidebar .info #priority .status .container .chart .pie.rubrum {
@@ -343,6 +375,8 @@
     #sidebar .info #bacteria .empty,
     #sidebar .info #bacteria .content {
       height: 90%; }
+    #sidebar .info #bacteria .empty {
+      position: relative; }
     #sidebar .info #bacteria .content {
       flex-wrap: wrap; }
       #sidebar .info #bacteria .content div {

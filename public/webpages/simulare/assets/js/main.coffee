@@ -21,9 +21,12 @@ local =
 
 
 # Get elements with these id's
-for id in ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority', 'scale']
+for id in ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority', 'scale', 'overlay']
   doc[id] = $("##{id}")
 # Store these selections
+doc.body = $('body')
+doc.close = $('[data-close] button[name=close]')
+doc.clear = $('[data-clear] button[name=clear]')
 doc.menuItems = doc.menu.find('.item button')
 doc.menuButton = doc.menu.find('.indicator button')
 doc.data = doc.bacteria.find('.data tr td')
@@ -793,8 +796,8 @@ html.layer = {}
 
 # Sets the size variables
 html.setSize = ->
-  width = doc.field.width()
-  height = doc.field.height()
+  width = doc.body.width() * 0.8 # 80 vw
+  height = doc.body.height()
   # Local variables
   local.width = width
   local.height = height
@@ -852,7 +855,8 @@ html.ratio = ->
       Viridis: all[2]
   )
 
-  doc.ratio.next().text("Ratio #{Math.round(all[0] * 100)}:#{Math.round(all[1] * 100)}:#{Math.round(all[2] * 100)}")
+  # As text in tooltip
+  doc.ratio.next().text("Ratio #{Math.round(all[2] * 100)}:#{Math.round(all[1] * 100)}:#{Math.round(all[0] * 100)}")
 
   circle = Math.round(Math.PI * 100) # Circumference of circle
   at = 0
@@ -955,9 +959,19 @@ html.setup = ->
   window.onbeforeunload = ->
     return ''
 
-  # TODO add restart button event
-  doc.start.click( ->
+  # # TODO add restart button event
+  # doc.start.click( ->
+  #
+  # )
 
+  # General close button event
+  doc.close.click( ->
+    $(@).parents('[data-close]').hide()
+  )
+
+  # General clear button event
+  doc.clear.click( ->
+    $(@).parents('[data-clear]').remove()
   )
 
   # Click events check if bacteria is clicked
@@ -976,6 +990,13 @@ html.setup = ->
     html.menu()
   )
 
+  doc.overlay.find('.container').click((event) ->
+    console.log(event)
+    if event.target == @ # Won't fire when the card is clicked
+      html.showFull(true)
+
+  )
+
   # The menu events TODO work out these events
   doc.menuItems.each( ->
     $(@).click ->
@@ -983,8 +1004,8 @@ html.setup = ->
         when "volume" then html.sound()
         when "pause" then html.pause()
         when "cards" then html.cardsToggle()
-        when "view" then null
-        when "info" then null
+        when "view" then html.showFull(false, 'information')
+        when "info" then html.showFull(false, 'cards')
   )
 
 # Updates infopanel
@@ -1061,6 +1082,16 @@ html.cardsToggle = (change = global.interaction.cards) ->
     global.interaction.cards = true
     doc.cards.show()
     icon.attr('src', 'assets/images/icons/ic_chat_black_24px.svg')
+
+html.showFull = (hide, htmlClass) ->
+  if hide
+    doc.overlay.find('.full').hide()
+    doc.overlay.hide()
+  else
+    card = doc.overlay.find(".#{htmlClass}")
+    card.show()
+    doc.overlay.show()
+
 
 html.menu = (change = doc.menu.attr('data-state')) ->
   icon = doc.menuButton.find('img')

@@ -19,11 +19,17 @@
     }
   };
 
-  ref = ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority', 'scale'];
+  ref = ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority', 'scale', 'overlay'];
   for (j = 0, len = ref.length; j < len; j++) {
     id = ref[j];
     doc[id] = $("#" + id);
   }
+
+  doc.body = $('body');
+
+  doc.close = $('[data-close] button[name=close]');
+
+  doc.clear = $('[data-clear] button[name=clear]');
 
   doc.menuItems = doc.menu.find('.item button');
 
@@ -945,8 +951,8 @@
 
   html.setSize = function() {
     var height, width;
-    width = doc.field.width();
-    height = doc.field.height();
+    width = doc.body.width() * 0.8;
+    height = doc.body.height();
     local.width = width;
     local.height = height;
     local.center = new Point(width / 2, height / 2);
@@ -1006,7 +1012,7 @@
         Viridis: all[2]
       }
     });
-    doc.ratio.next().text("Ratio " + (Math.round(all[0] * 100)) + ":" + (Math.round(all[1] * 100)) + ":" + (Math.round(all[2] * 100)));
+    doc.ratio.next().text("Ratio " + (Math.round(all[2] * 100)) + ":" + (Math.round(all[1] * 100)) + ":" + (Math.round(all[0] * 100)));
     circle = Math.round(Math.PI * 100);
     at = 0;
     results = [];
@@ -1100,7 +1106,12 @@
     window.onbeforeunload = function() {
       return '';
     };
-    doc.start.click(function() {});
+    doc.close.click(function() {
+      return $(this).parents('[data-close]').hide();
+    });
+    doc.clear.click(function() {
+      return $(this).parents('[data-clear]').remove();
+    });
     doc.screen.click(function(event) {
       var bacterium, k, len1, location, ref1, results;
       location = new Point(event.pageX, event.pageY);
@@ -1122,6 +1133,12 @@
     doc.menuButton.click(function() {
       return html.menu();
     });
+    doc.overlay.find('.container').click(function(event) {
+      console.log(event);
+      if (event.target === this) {
+        return html.showFull(true);
+      }
+    });
     return doc.menuItems.each(function() {
       return $(this).click(function() {
         switch (this.name) {
@@ -1132,9 +1149,9 @@
           case "cards":
             return html.cardsToggle();
           case "view":
-            return null;
+            return html.showFull(false, 'information');
           case "info":
-            return null;
+            return html.showFull(false, 'cards');
         }
       });
     });
@@ -1237,6 +1254,18 @@
       global.interaction.cards = true;
       doc.cards.show();
       return icon.attr('src', 'assets/images/icons/ic_chat_black_24px.svg');
+    }
+  };
+
+  html.showFull = function(hide, htmlClass) {
+    var card;
+    if (hide) {
+      doc.overlay.find('.full').hide();
+      return doc.overlay.hide();
+    } else {
+      card = doc.overlay.find("." + htmlClass);
+      card.show();
+      return doc.overlay.show();
     }
   };
 

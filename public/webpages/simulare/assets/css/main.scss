@@ -116,24 +116,52 @@
 }
 
 #overlay {
-  background-color: rgba(0, 0, 0, .5);
   display: none;
-  height: 100vh;
+  background-color: rgba(0, 0, 0, .75);
+  height: 100%;
   left: 0;
   position: absolute;
   top: 0;
-  width: 100vw;
-  z-index: 100; // Above everything
+  width: 100%;
+  z-index: 100; // Above the screen
+
+  .container {
+    @extend %center-complete;
+    width: 100%;
+    height: 100%;
+  }
 
   .full {
-    .cards {
-      
+    @extend %card;
+    padding: $padding-standard;
+    position: relative; // Z-index applies
+    z-index: 110;
+    display: none;
+    width: 80%;
+    height: 80%;
+
+    &.cards {
+
+    }
+
+    &.information {
+
+    }
+
+    .text {
+      width: 100%; // Minus padding
+      height: 100%;
+    }
+
+    button[name=close] {
+      @extend %close;
+      margin: $padding-standard;
     }
   }
 }
 
 #field {
-  height: 100vh;
+  height: 100%;
   position: relative; // Absolute children relative to this
   width: 80vw;
 
@@ -148,6 +176,13 @@
   position: absolute;
   left: 0;
   top: 0;
+
+  transition: $animation;
+  opacity: 0.65; // Can see field
+
+  &:hover {
+    opacity: 1;
+  }
 
   &[data-state='collapse'] { // Menu state is set to collapse
     .items {
@@ -221,14 +256,25 @@
   right: 0;
   top: 0;
   width: 20%; // Of field
+  transition: $animation;
+  opacity: 0.5; // Can see field
+
+  &:hover {
+    opacity: 1;
+  }
 
   .card {
     @extend %card;
     $padding: $padding-standard / 2;
     padding: $padding;
-    height: auto;
     position: absolute;
     width: 100%; // Of cards
+
+    // Cards need to have the same height
+    $line-height: 1.1rem;
+    line-height: $line-height;
+    height: ($line-height * 10) + $padding * 2; // 10 lines of text
+    overflow-y: scroll;
 
     &:nth-child(1) { // First card
       top: 0;
@@ -245,9 +291,14 @@
       z-index: 13;
     }
 
-    &:nth-child(n + 4) { // Other children
-      top: $padding * 3;
+    &:nth-child(n + 3) { // Other children
+      top: $padding * 2;
       z-index: 12;
+    }
+
+    button[name=clear] {
+      @extend %close;
+      margin: $padding;
     }
   }
 }
@@ -257,7 +308,7 @@
   position: relative; // Z-index applies
   z-index: 20;
   background-color: $grey-50;
-  height: 100vh;
+  height: 100%;
   width: 20vw;
 
   header {
@@ -305,7 +356,6 @@
 
       .status {
         @extend %center-complete; // Center child on both axis
-        height: 8vh;
         margin-bottom: $padding-standard / 2;
 
         .container {
@@ -332,6 +382,7 @@
             width: 5vh;
             background-color: $grey-300;
             transform: rotate(-90deg);
+            margin-right: 0.5rem;
 
             .pie {
               @extend %pie;
@@ -518,20 +569,15 @@
         height: 90%; // Of enviroment
       }
 
+      .empty {
+        position: relative; // For absolute children
+      }
+
       .content {
         flex-wrap: wrap; // Items are displayed beneath each other in row flex
 
         div {
           width: 100%;
-
-          // TODO fix this
-          // &:first-child {
-          //   flex-grow: 1; // Stretch ratio with other element is 2:3
-          // }
-          //
-          // &:last-child {
-          //   flex-grow: 1.5; // Stretch ratio with other element is 2:3
-          // }
 
           table {
             height: 100%; // Of container div

@@ -15,7 +15,7 @@
 #start,
 #home {
   @extend %center-complete; // Center children on both axis
-  height: 100vh;
+  height: 100%;
   position: absolute; // Z-index will apply
   width: 100vw;
 }
