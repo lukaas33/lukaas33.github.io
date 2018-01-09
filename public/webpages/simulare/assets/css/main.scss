@@ -381,12 +381,12 @@
             height: 5vh;
             width: 5vh;
             background-color: $grey-300;
+            fill: $grey-300; // Fallback
             transform: rotate(-90deg);
             margin-right: 0.5rem;
 
             .pie {
               @extend %pie;
-              fill: transparent;
 
               &.rubrum {
                 stroke: $red-500;

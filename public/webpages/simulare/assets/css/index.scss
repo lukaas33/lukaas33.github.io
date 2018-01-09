@@ -67,7 +67,8 @@
 
     .chart {
       border-radius: 50%;
-      fill: $primary-400;
+      background-color: $primary-400;
+      fill: $primary-400; // Fallback
       height: 100%;
       transform: rotate(-90deg);
       width: 100%;
