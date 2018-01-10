@@ -27,6 +27,7 @@ const global = {
       energy: [6e7, 1.58e8],
     }
   },
+  colors: {},
   constants: {},
   bacteria: [], // Contains bacteria instances
   dead: [], // Stores values from dead bacteria
@@ -67,7 +68,7 @@ const global = {
   }
 
   // Tracks loaded files
-  var total = 10
+  var total = 11
   var toLoad = total // Initial value
   // Updates loaded files
   const loaded = function (file) {
@@ -103,6 +104,11 @@ const global = {
       $.getJSON('storage/theory.json', (data) => {
         global.theory = data.content
         loaded('theory')
+      })
+      // Load data into global variable
+      $.getJSON('storage/colors.json', (data) => {
+        global.colors = data.colors
+        loaded('colors')
       })
       // Load html into an element, will be hidden
       $('#home').load('storage/main.html', () => {

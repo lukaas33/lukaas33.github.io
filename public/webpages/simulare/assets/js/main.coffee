@@ -302,7 +302,7 @@ class Food
       @position = Point.random().multiply(range)
       @particle.position = @position # Update
     # @particle.visible = true # Draw
-    @particle.fillColor = 'yellow'
+    @particle.fillColor = global.colors.amber[500]
     html.layer.food.addChild(@particle) # Add to layer
 
   # Update location
@@ -757,7 +757,7 @@ class Viridis extends Lucarium # TODO make different traits for the species
     # Values that are initialised
     @species = "Viridis"
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
-    @color = '#4caf50'
+    @color = global.colors.green[500]
     @tolerance =
       temperature: new SciNum(2, 'temperature', '&deg;C')
       acidity: new SciNum(0.15, 'pH', '')
@@ -775,7 +775,7 @@ class Rubrum extends Lucarium
     # Values that are initialised
     @species = "Rubrum"
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
-    @color = '#f44336'
+    @color = global.colors.red[500]
     @tolerance =
       temperature: new SciNum(10, 'temperature', '&deg;C')
       acidity: new SciNum(0.15, 'pH', '')
@@ -787,7 +787,7 @@ class Caeruleus extends Lucarium
     # Values that are initialised
     @species = "Caeruleus"
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
-    @color = '#2196f3'
+    @color = global.colors.blue[500]
     @tolerance =
       temperature: new SciNum(2, 'temperature', '&deg;C')
       acidity: new SciNum(0.75, 'pH', '')
@@ -1315,7 +1315,7 @@ draw.background = ->
 
   # Background objects TODO add more and style them
   draw.bottom = new Path.Rectangle(local.origin, local.size)
-  draw.bottom.fillColor = 'grey'
+  draw.bottom.fillColor = global.colors.grey[400]
   html.layer.background.addChild(draw.bottom)
 
   draw.bubbles = []
@@ -1326,7 +1326,7 @@ draw.background = ->
 
   for value, index in bubbleValues # Every value
     draw.bubbles[index] = new Path.Circle(value.position, value.size / 2)
-    draw.bubbles[index].fillColor = 'darkgrey'
+    draw.bubbles[index].fillColor = global.colors.grey[500]
   html.layer.background.addChildren(draw.bubbles)
 
 # Checks if loading is done

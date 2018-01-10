@@ -353,7 +353,7 @@
         this.position = Point.random().multiply(range);
         this.particle.position = this.position;
       }
-      this.particle.fillColor = 'yellow';
+      this.particle.fillColor = global.colors.amber[500];
       return html.layer.food.addChild(this.particle);
     };
 
@@ -884,7 +884,7 @@
       Viridis.__super__.constructor.apply(this, arguments);
       this.species = "Viridis";
       this.taxonomicName = this.family + " " + this.species;
-      this.color = '#4caf50';
+      this.color = global.colors.green[500];
       this.tolerance = {
         temperature: new SciNum(2, 'temperature', '&deg;C'),
         acidity: new SciNum(0.15, 'pH', ''),
@@ -912,7 +912,7 @@
       Rubrum.__super__.constructor.apply(this, arguments);
       this.species = "Rubrum";
       this.taxonomicName = this.family + " " + this.species;
-      this.color = '#f44336';
+      this.color = global.colors.red[500];
       this.tolerance = {
         temperature: new SciNum(10, 'temperature', '&deg;C'),
         acidity: new SciNum(0.15, 'pH', ''),
@@ -931,7 +931,7 @@
       Caeruleus.__super__.constructor.apply(this, arguments);
       this.species = "Caeruleus";
       this.taxonomicName = this.family + " " + this.species;
-      this.color = '#2196f3';
+      this.color = global.colors.blue[500];
       this.tolerance = {
         temperature: new SciNum(2, 'temperature', '&deg;C'),
         acidity: new SciNum(0.75, 'pH', ''),
@@ -1467,7 +1467,7 @@
     var bubbleValues, index, k, len1, value;
     html.layer.background.activate();
     draw.bottom = new Path.Rectangle(local.origin, local.size);
-    draw.bottom.fillColor = 'grey';
+    draw.bottom.fillColor = global.colors.grey[400];
     html.layer.background.addChild(draw.bottom);
     draw.bubbles = [];
     bubbleValues = [
@@ -1482,7 +1482,7 @@
     for (index = k = 0, len1 = bubbleValues.length; k < len1; index = ++k) {
       value = bubbleValues[index];
       draw.bubbles[index] = new Path.Circle(value.position, value.size / 2);
-      draw.bubbles[index].fillColor = 'darkgrey';
+      draw.bubbles[index].fillColor = global.colors.grey[500];
     }
     return html.layer.background.addChildren(draw.bubbles);
   };
