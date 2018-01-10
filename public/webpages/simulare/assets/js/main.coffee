@@ -145,7 +145,7 @@ generate.id = (instances) ->
 
   while not unique
     result = []
-    for i in [0..9] # Length of 10
+    for i in [0..4] # Length of 5
       charcode = Random.value(65, 91) # A-Z
       result.push(String.fromCharCode(charcode)) # Add the string
     string = result.join('') # As string
@@ -196,8 +196,13 @@ class SciNum
     else if string.indexOf('^') != -1 # Has an exponent
       parts = string.split('^')
       dom = $('<span></span>')
-      dom.append($('<span></span>').html(parts[0]))
-      dom.append($('<sup></sup>').html(parts[1]))
+
+      dom.append($('<span></span>').html(
+        parts[0]
+      ))
+      dom.append($('<sup></sup>').html(
+        parts[1]
+      ))
       html =  dom[0] # As dom object
     else
       html = $('<span></span>').html(string)[0] # dom object
@@ -214,7 +219,7 @@ class SciNum
     value = Calc.combine(value) if value instanceof Point # vector
 
     # Exeptions
-    if unit == 'kg' # Base of gram is at kilograms
+    if unit == 'kg' # Base of gram is at kilograms, something to do with the French revolution
       unit = 'g'
       newValue *= 1000
 
@@ -960,16 +965,37 @@ html.setup = ->
     return ''
 
   # Keyboard shortcuts
+  disabled = false
   $(document).keypress((event) ->
-    console.log('key', event.which)
+    console.log('Key', event.which)
     if global.interaction.started
-      switch event.which
-        when 32, 112 # space, p
-          html.pause()
-        when 27, 13 # shift, enter
-          html.menu()
-        when 109, 45 # m, -
-          html.sound()
+      if not disabled # Isn't animating
+
+        switch event.which
+          when 120 # x
+            doc.clear.click()
+          when 114 # r
+            simulation.selectRand()
+          when 109, 13 # m, enter
+            html.menu()
+          when 105 # i
+            html.showFull(false, 'information')
+          when 99 # c
+            html.showFull(false, 'cards')
+          when 116 # t
+            html.menu(false) # Also open
+            html.cardsToggle()
+          when 115, 45 # s, -
+            html.menu(false) # Also open
+            html.sound()
+          when 32, 112 # space, p
+            html.menu(false) # Also open
+            html.pause()
+
+        disabled = true
+        setTimeout( -> # Wait
+          disabled = false
+        , global.interaction.time)
   )
 
   # # TODO add restart button event
@@ -1259,6 +1285,13 @@ simulation.start = ->
 
 
   $("#loading").hide() # Hide loading screen
+
+simulation.selectRand = ->
+  choice = Math.floor(Random.value(0, global.bacteria.length))
+  if global.bacteria[choice].id != global.interaction.selected # No talready selected
+    global.bacteria[choice].select()
+  else
+    simulation.selectRand() # Recurse
 
 # Runs simulation
 simulation.run = ->

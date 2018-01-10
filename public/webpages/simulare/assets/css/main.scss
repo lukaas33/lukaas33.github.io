@@ -180,7 +180,8 @@
   transition: $animation;
   opacity: 0.65; // Can see field
 
-  &:hover {
+  &:hover,
+  &:focus {
     opacity: 1;
   }
 
@@ -275,6 +276,7 @@
     line-height: $line-height;
     height: ($line-height * 10) + $padding * 2; // 10 lines of text
     overflow-y: scroll;
+    overflow-x: visible; // Tooltip
 
     &:nth-child(1) { // First card
       top: 0;
@@ -469,12 +471,12 @@
 
           p {
             color: #fff;
+            opacity: 0.9;
             line-height: $size;
             vertical-align: middle; // Middle of bar
             z-index: 26; // Above bar
             padding-left: $padding-standard;
-            font-size: 0.75rem;
-            font-style: bold;
+            font-size: 0.85rem;
           }
 
           progress { // switched from meter because this is easier to style
