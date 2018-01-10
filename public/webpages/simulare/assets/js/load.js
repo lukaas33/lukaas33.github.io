@@ -139,15 +139,58 @@ const global = {
       loaded('css')
     })
 
-    // Load the background music
-    global.interaction.audio = document.createElement('audio')
-    global.interaction.audio.setAttribute('src', 'storage/music-gas.mp3') // Source: https://youtu.be/NvG-jqGsWSk
-    // global.interaction.audio.setAttribute('src', 'storage/music-cell.mp3') // Source: https://youtu.be/cyfpt4LpNAA
-    global.interaction.audio.loop = true
-    global.interaction.audio.load()
+    const playMusic = function () {
+      var track = global.interaction.music[at]
+      global.interaction.audio.setAttribute('src', track.path)
 
-    global.interaction.audio.addEventListener('canplaythrough', () => { // Done
-      loaded('music')
-    }, true)
+      global.interaction.audio.addEventListener('canplaythrough', () => { // Done
+        if (global.interaction.sound && !global.interaction.pauzed) {
+          console.log('Track', at)
+          document.getElementById("music").innerHTML = `<a target="_blank" href="${track.source}"><em>${track.name}</em> by ${track.artist}</a>` 
+          global.interaction.audio.play()
+        } else {
+          loaded('music')
+        }
+      }, true)
+
+      global.interaction.audio.onended = () => {
+        at += 1
+        at %= (global.interaction.music.length - 1)
+        playMusic()
+      }
+
+      global.interaction.audio.load()
+    }
+
+    global.interaction.audio = document.createElement('audio')
+    global.interaction.music = [
+      {
+        path: "storage/gas-microscopic.mp3",
+        source: "https://youtu.be/NvG-jqGsWSk",
+        name: "Microscopic",
+        artist: "Gas"
+      },
+      {
+        path: "storage/hanszimmer-planetearth.mp3",
+        source: "https://youtu.be/qpgvmHBpatA",
+        name: "Planet Earth II",
+        artist: "Hans Zimmer"
+      },
+      {
+        path: "storage/cell-underyourmind.mp3",
+        source: "https://youtu.be/cyfpt4LpNAA",
+        name: "Under your mind",
+        artist: "Cell"
+      },
+      {
+        path: "storage/carbonbasedlifeforms-supersede.mp3",
+        source: "https://youtu.be/7p4uAxXyaQ0",
+        name: "Supersede",
+        artist: "Carbon Based Lifeforms"
+      }
+    ]
+    // Load the first track of background music
+    var at = 0
+    playMusic()
   }
 }).call(this)

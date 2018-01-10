@@ -19,7 +19,7 @@
     }
   };
 
-  ref = ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority', 'scale', 'overlay'];
+  ref = ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority', 'scale', 'overlay', 'music'];
   for (j = 0, len = ref.length; j < len; j++) {
     id = ref[j];
     doc[id] = $("#" + id);
@@ -1458,7 +1458,8 @@
     console.log(project.activeLayer);
     html.clock();
     html.ratio();
-    return global.interaction.audio.play();
+    global.interaction.audio.play();
+    return global.interaction.audio.currentTime = 0;
   };
 
   draw = {};

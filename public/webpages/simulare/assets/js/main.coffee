@@ -21,7 +21,7 @@ local =
 
 
 # Get elements with these id's
-for id in ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority', 'scale', 'overlay']
+for id in ['start', 'home', 'screen', 'field', 'menu', 'sidebar', 'cards', 'enviroment', 'bacteria', 'priority', 'scale', 'overlay', 'music']
   doc[id] = $("##{id}")
 # Store these selections
 doc.body = $('body')
@@ -1288,7 +1288,7 @@ simulation.start = ->
 
 simulation.selectRand = ->
   choice = Math.floor(Random.value(0, global.bacteria.length))
-  if global.bacteria[choice].id != global.interaction.selected # No talready selected
+  if global.bacteria[choice].id != global.interaction.selected # Not already selected
     global.bacteria[choice].select()
   else
     simulation.selectRand() # Recurse
@@ -1304,6 +1304,7 @@ simulation.run = ->
   html.clock() # Starts the time display
   html.ratio() # Display inital ratio
   global.interaction.audio.play() # Starts music
+  global.interaction.audio.currentTime = 0
 
 # << Simulation functions >>
 # Groups

@@ -115,6 +115,19 @@
   }
 }
 
+#music {
+  @extend %click;
+  padding: $padding-standard / 2;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
 #overlay {
   display: none;
   background-color: rgba(0, 0, 0, .75);
