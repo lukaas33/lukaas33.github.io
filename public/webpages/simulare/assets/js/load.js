@@ -12,7 +12,8 @@ const global = {
     sound: true,
     cards: true,
     selected: null, // Selected instance
-    audio: null
+    audio: null,
+    started: false
   },
   enviroment: { // Enviroment variables, are filled via input elements
     temperature: null,

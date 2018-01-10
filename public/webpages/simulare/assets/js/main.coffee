@@ -959,6 +959,19 @@ html.setup = ->
   window.onbeforeunload = ->
     return ''
 
+  # Keyboard shortcuts
+  $(document).keypress((event) ->
+    console.log('key', event.which)
+    if global.interaction.started
+      switch event.which
+        when 32, 112 # space, p
+          html.pause()
+        when 27, 13 # shift, enter
+          html.menu()
+        when 109, 45 # m, -
+          html.sound()
+  )
+
   # # TODO add restart button event
   # doc.start.click( ->
   #
@@ -1210,16 +1223,26 @@ simulation.setup = (callback) ->
 # Starts simulation
 simulation.start = ->
   console.log "Loaded completely"
+  names = ["continue", "start"]
 
   # Add events to elements
   doc.start.find(".screen:first").show() # Show first screen
-  doc.start.find("button[name=continue]").click ->
+  doc.start.find("button[name=#{names[0]}]").click ->
     doc.start.find(".screen:first").hide() # Hide first screen
     doc.start.find(".screen:last").show() # Show second screen
-  doc.start.find("button[name=start]").click ->
+  doc.start.find("button[name=#{names[1]}]").click ->
     doc.start.hide() # Hide complete screen
     doc.home.css(display: 'flex')
     simulation.run()
+
+  at = 0
+  $(document).keypress((event) ->
+    if not global.interaction.started
+      switch event.which
+        when 32, 13 # Space, enter
+          doc.start.find("button[name=#{names[at]}]").click() # Trigger click
+          at += 1
+  )
 
   input = doc.start.find(".slider")
   input.each( ->
@@ -1242,6 +1265,7 @@ simulation.run = ->
   for bacterium in global.bacteria
     bacterium.born() #s Starts the bacteria
   global.interaction.pauzed = false # Unpauze time
+  global.interaction.started = true
   html.setup() # Activate document
   console.log(project.activeLayer)
   html.clock() # Starts the time display
