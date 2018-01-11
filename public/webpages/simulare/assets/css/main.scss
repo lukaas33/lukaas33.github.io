@@ -10,10 +10,11 @@
   .intro {
     height: 40vw;
     position: relative; // Absolute will be relative to this parent
-    width: 40vw;
+    width: 55vw;
 
     .screen {
       @extend %card;
+
       height: 100%;
       position: absolute;
       width: 100%;
@@ -85,12 +86,17 @@
 
       .text {
         padding: $padding-standard;
+        overflow-y: scroll;
 
         h2 {
           text-align: center;
           font-weight: normal;
           font-size: 2rem;
           color: $grey-700;
+        }
+
+        ul {
+          list-style-type: none;
         }
       }
 
@@ -125,6 +131,15 @@
   a {
     text-decoration: none;
     color: inherit;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    img {
+      height: 1rem;
+      vertical-align: middle;
+    }
   }
 }
 

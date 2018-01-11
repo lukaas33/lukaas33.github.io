@@ -146,7 +146,7 @@ const global = {
       global.interaction.audio.addEventListener('canplaythrough', () => { // Done
         if (global.interaction.sound && !global.interaction.pauzed) {
           console.log('Track', at)
-          document.getElementById("music").innerHTML = `<a target="_blank" href="${track.source}"><em>${track.name}</em> by ${track.artist}</a>` 
+          document.getElementById("music").innerHTML = `<a target="_blank" href="${track.source}"><img src="assets/images/icons/ic_music_note_black_24px.svg"/><em>${track.name}</em> - by ${track.artist}</a>` 
           global.interaction.audio.play()
         } else {
           loaded('music')

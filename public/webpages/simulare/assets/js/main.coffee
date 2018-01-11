@@ -983,13 +983,13 @@ html.setup = ->
           when 99 # c
             html.showFull(false, 'cards')
           when 116 # t
-            html.menu(false) # Also open
+            html.menu(true) # Also open
             html.cardsToggle()
           when 115, 45 # s, -
-            html.menu(false) # Also open
+            html.menu(true) # Also open
             html.sound()
           when 32, 112 # space, p
-            html.menu(false) # Also open
+            html.menu(true) # Also open
             html.pause()
 
         disabled = true

@@ -1130,17 +1130,17 @@
               html.showFull(false, 'cards');
               break;
             case 116:
-              html.menu(false);
+              html.menu(true);
               html.cardsToggle();
               break;
             case 115:
             case 45:
-              html.menu(false);
+              html.menu(true);
               html.sound();
               break;
             case 32:
             case 112:
-              html.menu(false);
+              html.menu(true);
               html.pause();
           }
           disabled = true;
