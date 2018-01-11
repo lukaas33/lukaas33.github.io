@@ -220,8 +220,10 @@
     }
 
     SciNum.prototype.notation = function(number) {
-      var string;
-      number = number.toFixed(3);
+      var needed, string;
+      string = Math.round(number).toString();
+      needed = 3 - string.length;
+      number = number.toFixed(needed);
       string = number.toString();
       return string;
     };
@@ -585,7 +587,7 @@
       }
       loss = Math.floor(loss);
       this.energyLoss.current.value = loss;
-      loss *= 30;
+      loss *= 45;
       atpSec = loss / local.fps;
       return this.energy.value -= atpSec;
     };

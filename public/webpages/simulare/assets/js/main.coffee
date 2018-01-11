@@ -174,7 +174,9 @@ class SciNum
 
   # Change number notation as string
   notation: (number) =>
-    number = number.toFixed(3)
+    string = Math.round(number).toString()
+    needed = 3 - string.length
+    number = number.toFixed(needed) # Always 3 digits
     string = number.toString()
     return string
 
@@ -510,7 +512,7 @@ class Bacteria # Has values shared by all bacteria
     loss = Math.floor(loss)
 
     @energyLoss.current.value = loss
-    loss *= 30 # Increased to speed up things
+    loss *= 45 # Increased to speed up things
 
     # Loses energy per second
     atpSec = (loss / local.fps)
