@@ -36,11 +36,11 @@
   #start .intro .screen:hover, #overlay .full:hover, #cards .card:hover {
     box-shadow: 0px 14px 28px rgba(0, 0, 0, 0.1), 0px 10px 19px rgba(0, 0, 0, 0.2); }
 
-#start .intro .screen:last-child .container .slider, #sidebar .info #enviroment .content .data progress, #start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb, #overlay .full button[name=close], #cards .card button[name=clear], #music {
+#start .intro .screen:last-child .container .slider, #sidebar .info #enviroment .content .data progress, #start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb, #overlay .full button[name=close], #cards .card button[name=clear] {
   cursor: pointer; }
-  #start .intro .screen:last-child .container .slider:disabled, #sidebar .info #enviroment .content .data progress:disabled, #start .intro .screen .continue button:disabled, #menu .indicator button:disabled, #menu .items .item button:disabled, #sidebar .info #priority .restart button:disabled, #start .intro .screen:last-child .container .slider:disabled::-webkit-slider-thumb, #overlay .full button[name=close]:disabled, #cards .card button[name=clear]:disabled, #music:disabled {
+  #start .intro .screen:last-child .container .slider:disabled, #sidebar .info #enviroment .content .data progress:disabled, #start .intro .screen .continue button:disabled, #menu .indicator button:disabled, #menu .items .item button:disabled, #sidebar .info #priority .restart button:disabled, #start .intro .screen:last-child .container .slider:disabled::-webkit-slider-thumb, #overlay .full button[name=close]:disabled, #cards .card button[name=clear]:disabled {
     cursor: default; }
-  #start .intro .screen:last-child .container .slider:focus, #sidebar .info #enviroment .content .data progress:focus, #start .intro .screen .continue button:focus, #menu .indicator button:focus, #menu .items .item button:focus, #sidebar .info #priority .restart button:focus, #start .intro .screen:last-child .container .slider:focus::-webkit-slider-thumb, #overlay .full button[name=close]:focus, #cards .card button[name=clear]:focus, #music:focus, #start .intro .screen:last-child .container .slider:active, #sidebar .info #enviroment .content .data progress:active, #start .intro .screen .continue button:active, #menu .indicator button:active, #menu .items .item button:active, #sidebar .info #priority .restart button:active, #start .intro .screen:last-child .container .slider:active::-webkit-slider-thumb, #overlay .full button[name=close]:active, #cards .card button[name=clear]:active, #music:active {
+  #start .intro .screen:last-child .container .slider:focus, #sidebar .info #enviroment .content .data progress:focus, #start .intro .screen .continue button:focus, #menu .indicator button:focus, #menu .items .item button:focus, #sidebar .info #priority .restart button:focus, #start .intro .screen:last-child .container .slider:focus::-webkit-slider-thumb, #overlay .full button[name=close]:focus, #cards .card button[name=clear]:focus, #start .intro .screen:last-child .container .slider:active, #sidebar .info #enviroment .content .data progress:active, #start .intro .screen .continue button:active, #menu .indicator button:active, #menu .items .item button:active, #sidebar .info #priority .restart button:active, #start .intro .screen:last-child .container .slider:active::-webkit-slider-thumb, #overlay .full button[name=close]:active, #cards .card button[name=clear]:active {
     outline: none; }
 
 #start .intro .screen .continue button, #menu .indicator button, #menu .items .item button, #sidebar .info #priority .restart button, #start .intro .screen:last-child .container .slider::-webkit-slider-thumb, #overlay .full button[name=close], #cards .card button[name=clear] {
@@ -106,7 +106,8 @@
             background: #EEEEEE; }
     #start .intro .screen .text {
       padding: 1.5rem;
-      overflow-y: scroll; }
+      overflow-y: scroll;
+      height: 100%; }
       #start .intro .screen .text h2 {
         text-align: center;
         font-weight: normal;
@@ -125,20 +126,6 @@
         #start .intro .screen .continue button img {
           width: 2rem;
           margin: 0.5rem; }
-
-#music {
-  padding: 0.75rem;
-  position: absolute;
-  bottom: 0;
-  left: 0; }
-  #music a {
-    text-decoration: none;
-    color: inherit; }
-    #music a:hover {
-      text-decoration: underline; }
-    #music a img {
-      height: 1rem;
-      vertical-align: middle; }
 
 #overlay {
   display: none;
@@ -168,7 +155,10 @@
 #field {
   height: 100%;
   position: relative;
-  width: 80vw; }
+  width: 80vw;
+  background-image: url("../images/field.png");
+  background-repeat: no-repeat;
+  background-size: cover; }
   #field #screen {
     z-index: 10; }
 
@@ -418,3 +408,10 @@
             margin-bottom: 0.75rem; }
           #sidebar .info #bacteria .content div table.values .value .unit {
             font-style: italic; }
+
+#music {
+  display: block !important;
+  transition: 400ms ease-in-out;
+  opacity: 0.5; }
+  #music:hover {
+    opacity: 1; }

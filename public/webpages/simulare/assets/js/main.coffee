@@ -998,14 +998,17 @@ html.setup = ->
     # Scale these
     scalePositions(global.bacteria)
     scalePositions(global.food)
-    scalePositions(draw.bubbles)
+
+    # Background
+    # scalePositions(draw.bubbles)
+    # scalePositions(draw.spots)
 
     # Scale by a factor of intended width / real width
-    draw.bottom.scale( # Don't know why times 2 but it works, don't touch it
-      (local.width / draw.bottom.bounds.width) * 2,
-      (local.height / draw.bottom.bounds.height) * 2
-    )
-    draw.bottom.position = local.origin # Rectangle is updated
+    # draw.bottom.scale( # Don't know why times 2 but it works, don't touch it
+    #   (local.width / draw.bottom.bounds.width) * 2,
+    #   (local.height / draw.bottom.bounds.height) * 2
+    # )
+    # draw.bottom.position = local.origin # Rectangle is updated
 
   # When view goes out of focus
   $(window).blur( ->
@@ -1054,11 +1057,6 @@ html.setup = ->
         , global.interaction.time)
   )
 
-  # # TODO add restart button event
-  # doc.start.click( ->
-  #
-  # )
-
   # General close button event
   doc.close.click( ->
     $(@).parents('[data-close]').hide()
@@ -1092,7 +1090,7 @@ html.setup = ->
 
   )
 
-  # The menu events TODO work out these events
+  # The menu events
   doc.menuItems.each( ->
     $(@).click ->
       switch @name # Different name attributes
@@ -1122,7 +1120,7 @@ html.selected = ->
         )
         doc.values.each( ->
           if $(@).hasClass('value')
-            # TODO edit values before displaying
+
             scinum = data[@dataset.name]
             if @dataset.name in ['mass', 'speed', 'energyLoss']
               scinum = scinum.current
@@ -1291,13 +1289,13 @@ simulation.setup = (callback) ->
   html.setSize() # Initial value
 
   # Paper.js layers
-  html.layer.background = new Layer()
+  # html.layer.background = new Layer()
   html.layer.food = new Layer()
   html.layer.bacteria = new Layer()
 
   simulation.setConstants()
 
-  draw.background()
+  # draw.background() # Using different system now
   simulation.createLife()
 
   callback()
@@ -1324,6 +1322,8 @@ simulation.start = ->
         when 32, 13 # Space, enter
           doc.start.find("button[name=#{names[at]}]").click() # Trigger click
           at += 1
+        when 115, 45 # s, -
+          html.sound()
   )
 
   input = doc.start.find(".slider")
@@ -1359,31 +1359,84 @@ simulation.run = ->
   console.log(project.activeLayer)
   html.clock() # Starts the time display
   html.ratio() # Display inital ratio
-  global.interaction.audio.play() # Starts music
-  global.interaction.audio.currentTime = 0
 
 # << Simulation functions >>
 # Groups
 draw = {}
 
-# Draws the background
+# Draws the background (Not called anymore)
 draw.background = ->
   html.layer.background.activate()
 
-  # Background objects TODO add more and style them
+  # Background objects
   draw.bottom = new Path.Rectangle(local.origin, local.size)
-  draw.bottom.fillColor = global.colors.grey[400]
+  draw.bottom.fillColor = global.colors.grey[600]
   html.layer.background.addChild(draw.bottom)
 
-  draw.bubbles = []
-  bubbleValues = [ # Th info for the bubbles
-    {position: [350, 200], size: 200}
-    {position: [600, 700], size: 100}
+  draw.spots = []
+  spotValues = [ # The info for the darker spots
+    {position: [35, 30], size: 5}
+    {position: [35, 30], size: 5}
+    {position: [55, 25], size: 6.5}
+    {position: [20, 80], size: 8}
+    {position: [85, 25], size: 6}
+    {position: [55, 75], size: 5.5}
+    {position: [65, 65], size: 7.5}
+    {position: [75, 70], size: 4.5}
+    {position: [90, 100], size: 5}
+    {position: [10, 25], size: 6}
+    {position: [35, 5], size: 7}
+    {position: [100, 45], size: 8.5}
+    {position: [5, 65], size: 6.5}
   ]
 
-  for value, index in bubbleValues # Every value
-    draw.bubbles[index] = new Path.Circle(value.position, value.size / 2)
-    draw.bubbles[index].fillColor = global.colors.grey[500]
+  for value in spotValues # Every value
+    spot = new Path.Circle([ # Values are percentages of the view
+      value.position[0] * local.width / 100,
+      value.position[1] * local.height / 100],
+      value.size * local.width / 100
+    )
+    # Gradient effect isn't working
+    # spot.style =
+      # fillColor: # Gradient
+      #   gradient:
+      #     stops: [[global.colors.grey[800], 0.15], [global.colors.grey[700], 0.5], [global.colors.grey[600], 1]]
+      #     radial: true
+      #   origin: spot.position
+      #   destination: spot.bounds.rightCenter
+    spot.fillColor = global.colors.grey[700] # Plain color :(
+    draw.spots.push(spot)
+
+  html.layer.background.addChildren(draw.spots)
+
+  draw.bubbles = []
+  bubbleValues = [ # The info for the bubbles
+    {position: [35, 20], size: 2}
+    {position: [60, 70], size: 3}
+    {position: [90, 20], size: 4}
+    {position: [10, 80], size: 2.5}
+    {position: [55, 55], size: 3}
+    {position: [5, 10], size: 3}
+    {position: [80, 85], size: 3}
+    {position: [30, 90], size: 3}
+    {position: [25, 45], size: 2}
+    {position: [75, 55], size: 2}
+    {position: [65, 15], size: 3.5}
+  ]
+
+  for value in bubbleValues # Every value
+    bubble = new Path.Circle([ # Values are percentages of the view
+      value.position[0] * local.width / 100,
+      value.position[1] * local.height / 100],
+      value.size * local.width / 100
+    )
+    bubble.style =
+      fillColor: global.colors.grey[400]
+      strokeColor: global.colors.grey[800]
+      strokeWidth: 2
+    bubble.opacity = 0.35
+    draw.bubbles.push(bubble)
+
   html.layer.background.addChildren(draw.bubbles)
 
 # Checks if loading is done

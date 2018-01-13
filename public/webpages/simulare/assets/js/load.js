@@ -67,6 +67,35 @@ const global = {
     }
   }
 
+  // Music player
+  const playMusic = function (at = Math.floor(Math.random() * global.interaction.music.length)) {
+    var track = global.interaction.music[at]
+    global.interaction.audio.setAttribute('src', track.path)
+
+    global.interaction.audio.addEventListener('canplaythrough', () => { // Done
+      if (global.interaction.started) {
+        console.log('Track', at)
+      } else {
+        loaded('music')
+      }
+      var display = document.getElementById("music")
+      display.innerHTML = `<a data-tooltip="up" target="_blank" href="${track.source}">
+        <img src="assets/images/icons/ic_music_note_black_24px.svg"/>
+        <em>${track.name}</em> - by ${track.artist}
+        <div class="tooltip">Listen on Youtube</div>
+      </a>`
+      global.interaction.audio.play()
+    }, true)
+
+    global.interaction.audio.onended = () => {
+      at += 1
+      at %= (global.interaction.music.length - 1)
+      playMusic(at) // Play next
+    }
+
+    global.interaction.audio.load()
+  }
+
   // Tracks loaded files
   var total = 11
   var toLoad = total // Initial value
@@ -139,29 +168,6 @@ const global = {
       loaded('css')
     })
 
-    const playMusic = function () {
-      var track = global.interaction.music[at]
-      global.interaction.audio.setAttribute('src', track.path)
-
-      global.interaction.audio.addEventListener('canplaythrough', () => { // Done
-        if (global.interaction.started) {
-          console.log('Track', at)
-          document.getElementById("music").innerHTML = `<a target="_blank" href="${track.source}"><img src="assets/images/icons/ic_music_note_black_24px.svg"/><em>${track.name}</em> - by ${track.artist}</a>`
-          global.interaction.audio.play()
-        } else {
-          loaded('music')
-        }
-      }, true)
-
-      global.interaction.audio.onended = () => {
-        at += 1
-        at %= (global.interaction.music.length - 1)
-        playMusic()
-      }
-
-      global.interaction.audio.load()
-    }
-
     global.interaction.audio = document.createElement('audio')
     global.interaction.music = [
       {
@@ -190,7 +196,6 @@ const global = {
       }
     ]
     // Load a random first track of background music
-    var at = Math.floor(Math.random() * global.interaction.music.length)
     playMusic()
   }
 }).call(this)

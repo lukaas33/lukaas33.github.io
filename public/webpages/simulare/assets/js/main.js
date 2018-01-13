@@ -1152,10 +1152,7 @@
         return results;
       };
       scalePositions(global.bacteria);
-      scalePositions(global.food);
-      scalePositions(draw.bubbles);
-      draw.bottom.scale((local.width / draw.bottom.bounds.width) * 2, (local.height / draw.bottom.bounds.height) * 2);
-      return draw.bottom.position = local.origin;
+      return scalePositions(global.food);
     };
     $(window).blur(function() {});
     $(window).focus(function() {});
@@ -1440,11 +1437,9 @@
     paper.install(window);
     paper.setup(doc.screen[0]);
     html.setSize();
-    html.layer.background = new Layer();
     html.layer.food = new Layer();
     html.layer.bacteria = new Layer();
     simulation.setConstants();
-    draw.background();
     simulation.createLife();
     return callback();
   };
@@ -1473,6 +1468,9 @@
           case 13:
             doc.start.find("button[name=" + names[at] + "]").click();
             return at += 1;
+          case 115:
+          case 45:
+            return html.sound();
         }
       }
     });
@@ -1512,33 +1510,114 @@
     html.setup();
     console.log(project.activeLayer);
     html.clock();
-    html.ratio();
-    global.interaction.audio.play();
-    return global.interaction.audio.currentTime = 0;
+    return html.ratio();
   };
 
   draw = {};
 
   draw.background = function() {
-    var bubbleValues, index, k, len1, value;
+    var bubble, bubbleValues, k, l, len1, len2, spot, spotValues, value;
     html.layer.background.activate();
     draw.bottom = new Path.Rectangle(local.origin, local.size);
-    draw.bottom.fillColor = global.colors.grey[400];
+    draw.bottom.fillColor = global.colors.grey[600];
     html.layer.background.addChild(draw.bottom);
+    draw.spots = [];
+    spotValues = [
+      {
+        position: [35, 30],
+        size: 5
+      }, {
+        position: [35, 30],
+        size: 5
+      }, {
+        position: [55, 25],
+        size: 6.5
+      }, {
+        position: [20, 80],
+        size: 8
+      }, {
+        position: [85, 25],
+        size: 6
+      }, {
+        position: [55, 75],
+        size: 5.5
+      }, {
+        position: [65, 65],
+        size: 7.5
+      }, {
+        position: [75, 70],
+        size: 4.5
+      }, {
+        position: [90, 100],
+        size: 5
+      }, {
+        position: [10, 25],
+        size: 6
+      }, {
+        position: [35, 5],
+        size: 7
+      }, {
+        position: [100, 45],
+        size: 8.5
+      }, {
+        position: [5, 65],
+        size: 6.5
+      }
+    ];
+    for (k = 0, len1 = spotValues.length; k < len1; k++) {
+      value = spotValues[k];
+      spot = new Path.Circle([value.position[0] * local.width / 100, value.position[1] * local.height / 100], value.size * local.width / 100);
+      spot.fillColor = global.colors.grey[700];
+      draw.spots.push(spot);
+    }
+    html.layer.background.addChildren(draw.spots);
     draw.bubbles = [];
     bubbleValues = [
       {
-        position: [350, 200],
-        size: 200
+        position: [35, 20],
+        size: 2
       }, {
-        position: [600, 700],
-        size: 100
+        position: [60, 70],
+        size: 3
+      }, {
+        position: [90, 20],
+        size: 4
+      }, {
+        position: [10, 80],
+        size: 2.5
+      }, {
+        position: [55, 55],
+        size: 3
+      }, {
+        position: [5, 10],
+        size: 3
+      }, {
+        position: [80, 85],
+        size: 3
+      }, {
+        position: [30, 90],
+        size: 3
+      }, {
+        position: [25, 45],
+        size: 2
+      }, {
+        position: [75, 55],
+        size: 2
+      }, {
+        position: [65, 15],
+        size: 3.5
       }
     ];
-    for (index = k = 0, len1 = bubbleValues.length; k < len1; index = ++k) {
-      value = bubbleValues[index];
-      draw.bubbles[index] = new Path.Circle(value.position, value.size / 2);
-      draw.bubbles[index].fillColor = global.colors.grey[500];
+    for (l = 0, len2 = bubbleValues.length; l < len2; l++) {
+      value = bubbleValues[l];
+      bubble = new Path.Circle([value.position[0] * local.width / 100, value.position[1] * local.height / 100], value.size * local.width / 100);
+      bubble.style = {
+        fillColor: global.colors.grey[400],
+        strokeColor: global.colors.grey[800],
+        strokeWidth: 2
+      };
+      bubble.opacity = 0.35;
+      draw.bubbles.push(bubble);
     }
     return html.layer.background.addChildren(draw.bubbles);
   };

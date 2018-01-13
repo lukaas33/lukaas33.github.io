@@ -87,6 +87,7 @@
       .text {
         padding: $padding-standard;
         overflow-y: scroll;
+        height: 100%;
 
         h2 {
           text-align: center;
@@ -117,28 +118,6 @@
           }
         }
       }
-    }
-  }
-}
-
-#music {
-  @extend %click;
-  padding: $padding-standard / 2;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-
-  a {
-    text-decoration: none;
-    color: inherit;
-
-    &:hover {
-      text-decoration: underline;
-    }
-
-    img {
-      height: 1rem;
-      vertical-align: middle;
     }
   }
 }
@@ -192,6 +171,9 @@
   height: 100%;
   position: relative; // Absolute children relative to this
   width: 80vw;
+  background-image: url('../images/field.png'); // Not generating the background anymore
+  background-repeat: no-repeat;
+  background-size: cover;
 
   #screen {
     z-index: 10;
@@ -667,5 +649,15 @@
         }
       }
     }
+  }
+}
+
+#music {
+  display: block !important; // Overwrite
+  transition: $animation;
+  opacity: 0.5; // Can see field
+
+  &:hover {
+    opacity: 1;
   }
 }

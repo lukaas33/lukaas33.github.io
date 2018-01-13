@@ -97,3 +97,34 @@
   display: none;
   z-index: 0; // Lowest page
 }
+
+#background {
+  display: none;
+}
+
+#music {
+  @extend %click;
+  display: none;
+  padding: $padding-standard / 4;
+  margin: $padding-standard / 4;
+  position: absolute;
+  z-index: 95;
+  bottom: 0;
+  left: 0;
+  background-color: $grey-200;
+
+
+  a {
+    text-decoration: none;
+    color: inherit;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    img {
+      height: 1rem;
+      vertical-align: middle;
+    }
+  }
+}
