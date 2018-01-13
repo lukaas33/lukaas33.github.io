@@ -52,8 +52,8 @@ const global = {
       link.media = 'screen'
       link.rel = 'stylesheet'
 
-      // Insert into dom at correct placc
-      document.getElementsByTagName('link')[0].insertAdjacentElement('afterend', link)
+      // Insert into dom
+        document.getElementsByTagName('head')[0].appendChild(link)
     } else {
       let script = document.createElement('script')
       script.async = true // Will load asynchronously
@@ -62,8 +62,8 @@ const global = {
         callback()
       }
 
-      // Insert into dom at correct place
-      document.getElementsByTagName('script')[0].insertAdjacentElement('afterend', script)
+      // Insert into dom
+      document.getElementsByTagName('head')[0].appendChild(script)
     }
   }
 
