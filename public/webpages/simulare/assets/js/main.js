@@ -353,9 +353,9 @@
     };
 
     Food.prototype.display = function() {
-      var colorcode, range;
-      range = local.size;
-      this.position = Point.random().multiply(range);
+      var colorcode;
+      this.position = Point.random().multiply(local.size.multiply(0.9));
+      this.position = this.position.add(local.size.multiply(0.05));
       this.particle = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
       while (!this.isLegal()) {
         this.position = Point.random().multiply(range);
@@ -493,7 +493,7 @@
     };
 
     Bacteria.prototype.display = function() {
-      var all, colorcode, dot, dotOther, dotnumber, k, legal, len1, main, point, radius, range;
+      var all, colorcode, dot, dotnumber, legal, main, point, radius, range;
       radius = Math.round(Calc.scale(this.radius.value));
       main = new Path.Circle(this.position.round(), radius);
       main.style = {
@@ -510,18 +510,11 @@
           point = Point.random();
           point = point.multiply(range);
           point = point.add(main.bounds.topLeft);
-          dot = new Path.Circle(point.round(), Math.floor(Random.value(radius / 7, radius / 4)));
+          dot = new Path.Circle(point.round(), Math.floor(Random.value(radius / 6, radius / 4)));
           if (check.circleInside(main, dot)) {
             legal = true;
-            for (k = 0, len1 = all.length; k < len1; k++) {
-              dotOther = all[k];
-              if (check.circleOverlap(dot, dotOther)) {
-                legal = false;
-                break;
-              }
-            }
             if (legal) {
-              colorcode = Random.choose([400, 600, 700, 800]);
+              colorcode = Random.choose([300, 400, 600, 700, 800]);
               dot.fillColor = this.color[colorcode];
               all.push(dot);
               break;
@@ -636,7 +629,7 @@
       }
       loss = Math.floor(loss);
       this.energyLoss.current.value = loss;
-      loss *= 40;
+      loss *= 35;
       atpSec = loss / local.fps;
       return this.energy.value -= atpSec;
     };
@@ -840,13 +833,13 @@
           return Object(result) === result ? result : child;
         })(Caeruleus, args, function(){});
       }
-      chance = this.mutationChance * 100;
+      chance = this.mutationChance * 85;
       ref1 = ['temperature', 'concentration', 'acidity'];
       for (k = 0, len1 = ref1.length; k < len1; k++) {
         condition = ref1[k];
         if (Random.chance(Math.pow(chance, -1))) {
           console.log(offspring.id, 'mutated');
-          factor = Random.value(0.5, 1.5, Random.normal);
+          factor = Random.value(0.25, 1.75, Random.normal);
           offspring.tolerance[condition].value *= factor;
           offspring.mutations.push({
             generation: offspring.generation,
@@ -1500,6 +1493,7 @@
 
   simulation.run = function() {
     var bacterium, k, len1, ref1;
+    console.log('Start simulation');
     ref1 = global.bacteria;
     for (k = 0, len1 = ref1.length; k < len1; k++) {
       bacterium = ref1[k];
@@ -1625,6 +1619,7 @@
   isLoaded = setInterval(function() {
     if (global.interaction.loaded) {
       clearInterval(isLoaded);
+      console.log('Start main js');
       return simulation.setup(function() {
         return simulation.start();
       });

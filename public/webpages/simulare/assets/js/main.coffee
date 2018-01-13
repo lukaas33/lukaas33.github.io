@@ -297,8 +297,8 @@ class Food
   # Creates the particle
   display: =>
     # Random location in field
-    range = local.size
-    @position = Point.random().multiply(range) # Initial
+    @position = Point.random().multiply(local.size.multiply(0.9)) # Initial
+    @position = @position.add(local.size.multiply(0.05)) # Avoid edges on all sides
     # Canvas object
     @particle = new Path.Circle(
       @position.round(),
@@ -437,18 +437,18 @@ class Bacteria # Has values shared by all bacteria
 
         dot = new Path.Circle(
           point.round(),
-          Math.floor(Random.value(radius / 7, radius / 4))
+          Math.floor(Random.value(radius / 6, radius / 4))
         )
 
         # Legal position
         if check.circleInside(main, dot)
           legal = true
-          for dotOther in all
-            if check.circleOverlap(dot, dotOther)
-              legal = false
-              break # For loop
+          # for dotOther in all # Can't overlap with other dots
+          #   if check.circleOverlap(dot, dotOther)
+          #     legal = false
+          #     break # For loop
           if legal
-            colorcode = Random.choose([400, 600, 700, 800])
+            colorcode = Random.choose([300, 400, 600, 700, 800])
             dot.fillColor = @color[colorcode]
             all.push(dot)
             break # While
@@ -563,7 +563,7 @@ class Bacteria # Has values shared by all bacteria
     loss = Math.floor(loss)
 
     @energyLoss.current.value = loss
-    loss *= 40 # Increased to speed up things
+    loss *= 35 # Increased to speed up things
 
     # Loses energy per second
     atpSec = (loss / local.fps)
@@ -742,12 +742,12 @@ class Bacteria # Has values shared by all bacteria
     else if @species == 'Caeruleus'
       offspring = new Caeruleus(args...)
 
-    chance = @mutationChance * 100 # Is higher for user experience
+    chance = @mutationChance * 85 # Is higher for user experience
     for condition in ['temperature', 'concentration', 'acidity']
       if Random.chance(chance**-1) # Mutation occurs
         console.log(offspring.id, 'mutated')
         # Rand value with normal distribution around 1
-        factor = Random.value(0.5, 1.5, Random.normal)
+        factor = Random.value(0.25, 1.75, Random.normal)
         offspring.tolerance[condition].value *= factor # Can get higher or lower
 
         offspring.mutations.push( # Mutaion info
@@ -1302,7 +1302,7 @@ simulation.setup = (callback) ->
 
 # Starts simulation
 simulation.start = ->
-  console.log "Loaded completely"
+  console.log("Loaded completely")
   names = ["continue", "start"]
 
   # Add events to elements
@@ -1351,6 +1351,7 @@ simulation.selectRand = ->
 
 # Runs simulation
 simulation.run = ->
+  console.log('Start simulation')
   for bacterium in global.bacteria
     bacterium.born() #s Starts the bacteria
   global.interaction.pauzed = false # Unpauze time
@@ -1444,6 +1445,7 @@ isLoaded = setInterval( ->
   if global.interaction.loaded
     # << Actions >>
     clearInterval(isLoaded) # End itself from rechecking
+    console.log('Start main js')
     simulation.setup( ->
       simulation.start()
     )

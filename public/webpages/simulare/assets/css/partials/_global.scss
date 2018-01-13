@@ -58,8 +58,6 @@ body { // Create scope for variables
 
       &::after {
         @include centerOver(x);
-
-
         content: '';
         position: absolute;
         border-width: $text;
