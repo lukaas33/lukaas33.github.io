@@ -169,30 +169,31 @@ const global = {
     })
 
     global.interaction.audio = document.createElement('audio')
-    global.interaction.music = [
-      {
+    global.interaction.music = [{
         path: "storage/gas-microscopic.mp3",
         source: "https://youtu.be/NvG-jqGsWSk",
         name: "Microscopic",
         artist: "Gas"
-      },
-      {
+      },  {
         path: "storage/hanszimmer-planetearth.mp3",
         source: "https://youtu.be/qpgvmHBpatA",
         name: "Planet Earth II",
         artist: "Hans Zimmer"
-      },
-      {
+      },  {
         path: "storage/cell-underyourmind.mp3",
         source: "https://youtu.be/cyfpt4LpNAA",
         name: "Under your mind",
         artist: "Cell"
-      },
-      {
+      },  {
         path: "storage/carbonbasedlifeforms-supersede.mp3",
         source: "https://youtu.be/7p4uAxXyaQ0",
         name: "Supersede",
         artist: "Carbon Based Lifeforms"
+      },  {
+        path: "storage/johnwilliams-jurassicpark.mp3",
+        source: "https://youtu.be/zHalXjs0cDA",
+        name: "Jurassic Park",
+        artist: "John Williams"
       }
     ]
     // Load a random first track of background music
