@@ -144,9 +144,9 @@ const global = {
       global.interaction.audio.setAttribute('src', track.path)
 
       global.interaction.audio.addEventListener('canplaythrough', () => { // Done
-        if (global.interaction.sound && !global.interaction.pauzed) {
+        if (global.interaction.started) {
           console.log('Track', at)
-          document.getElementById("music").innerHTML = `<a target="_blank" href="${track.source}"><img src="assets/images/icons/ic_music_note_black_24px.svg"/><em>${track.name}</em> - by ${track.artist}</a>` 
+          document.getElementById("music").innerHTML = `<a target="_blank" href="${track.source}"><img src="assets/images/icons/ic_music_note_black_24px.svg"/><em>${track.name}</em> - by ${track.artist}</a>`
           global.interaction.audio.play()
         } else {
           loaded('music')
@@ -189,8 +189,8 @@ const global = {
         artist: "Carbon Based Lifeforms"
       }
     ]
-    // Load the first track of background music
-    var at = 0
+    // Load a random first track of background music
+    var at = Math.floor(Math.random() * global.interaction.music.length)
     playMusic()
   }
 }).call(this)

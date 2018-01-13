@@ -155,6 +155,12 @@
     return value;
   };
 
+  Random.choose = function(array) {
+    var item;
+    item = array[Math.floor(Math.random() * array.length)];
+    return item;
+  };
+
   Random.chance = function(chance) {
     var result;
     result = Math.ceil(Math.random() * chance);
@@ -347,7 +353,7 @@
     };
 
     Food.prototype.display = function() {
-      var range;
+      var colorcode, range;
       range = local.size;
       this.position = Point.random().multiply(range);
       this.particle = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
@@ -355,7 +361,8 @@
         this.position = Point.random().multiply(range);
         this.particle.position = this.position;
       }
-      this.particle.fillColor = global.colors.amber[500];
+      colorcode = Random.choose([400, 600, 500, 700]);
+      this.particle.fillColor = global.colors.amber[colorcode];
       return html.layer.food.addChild(this.particle);
     };
 
@@ -486,9 +493,51 @@
     };
 
     Bacteria.prototype.display = function() {
-      this.body = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
-      this.body.fillColor = this.color;
+      var all, colorcode, dot, dotOther, dotnumber, k, legal, len1, main, point, radius, range;
+      radius = Math.round(Calc.scale(this.radius.value));
+      main = new Path.Circle(this.position.round(), radius);
+      main.style = {
+        fillColor: this.color[500],
+        strokeColor: this.color[700],
+        strokeWidth: 3
+      };
+      main.name = 'main';
+      range = main.bounds.bottomRight.subtract(main.bounds.topLeft);
+      all = [];
+      dotnumber = 4 + this.mutations.length;
+      while (dotnumber > 0) {
+        while (true) {
+          point = Point.random();
+          point = point.multiply(range);
+          point = point.add(main.bounds.topLeft);
+          dot = new Path.Circle(point.round(), Math.floor(Random.value(radius / 7, radius / 4)));
+          if (check.circleInside(main, dot)) {
+            legal = true;
+            for (k = 0, len1 = all.length; k < len1; k++) {
+              dotOther = all[k];
+              if (check.circleOverlap(dot, dotOther)) {
+                legal = false;
+                break;
+              }
+            }
+            if (legal) {
+              colorcode = Random.choose([400, 600, 700, 800]);
+              dot.fillColor = this.color[colorcode];
+              all.push(dot);
+              break;
+            } else {
+              dot.remove();
+            }
+          } else {
+            dot.remove();
+          }
+        }
+        dotnumber -= 1;
+      }
+      all.unshift(main);
+      this.body = new Group(all);
       this.body.name = this.id;
+      this.body.opacity = 0.7;
       return html.layer.bacteria.addChild(this.body);
     };
 
@@ -511,7 +560,7 @@
       var bacterium, k, len1, ref1;
       if (global.interaction.selected === this.id) {
         global.interaction.selected = null;
-        return this.body.selected = false;
+        return this.body.children.main.selected = false;
       } else {
         if (global.interaction.selected !== null) {
           ref1 = global.bacteria;
@@ -524,7 +573,7 @@
           }
         }
         global.interaction.selected = this.id;
-        return this.body.selected = true;
+        return this.body.children.main.selected = true;
       }
     };
 
@@ -587,7 +636,7 @@
       }
       loss = Math.floor(loss);
       this.energyLoss.current.value = loss;
-      loss *= 45;
+      loss *= 40;
       atpSec = loss / local.fps;
       return this.energy.value -= atpSec;
     };
@@ -844,7 +893,7 @@
       var energy;
       if (this.target !== null) {
         if (check.circleInside(this.body, this.target.particle)) {
-          energy = this.target.energy.value * 10;
+          energy = this.target.energy.value * 8;
           this.energy.value += energy;
           this.target.eaten();
           return this.target = null;
@@ -886,7 +935,7 @@
       Viridis.__super__.constructor.apply(this, arguments);
       this.species = "Viridis";
       this.taxonomicName = this.family + " " + this.species;
-      this.color = global.colors.green[500];
+      this.color = global.colors.green;
       this.tolerance = {
         temperature: new SciNum(2, 'temperature', '&deg;C'),
         acidity: new SciNum(0.15, 'pH', ''),
@@ -914,7 +963,7 @@
       Rubrum.__super__.constructor.apply(this, arguments);
       this.species = "Rubrum";
       this.taxonomicName = this.family + " " + this.species;
-      this.color = global.colors.red[500];
+      this.color = global.colors.red;
       this.tolerance = {
         temperature: new SciNum(10, 'temperature', '&deg;C'),
         acidity: new SciNum(0.15, 'pH', ''),
@@ -933,7 +982,7 @@
       Caeruleus.__super__.constructor.apply(this, arguments);
       this.species = "Caeruleus";
       this.taxonomicName = this.family + " " + this.species;
-      this.color = global.colors.blue[500];
+      this.color = global.colors.blue;
       this.tolerance = {
         temperature: new SciNum(2, 'temperature', '&deg;C'),
         acidity: new SciNum(0.75, 'pH', ''),
@@ -993,18 +1042,22 @@
     total = global.bacteria.length;
     species = ['Rubrum', 'Caeruleus', 'Viridis'];
     ref1 = [0, 0, 0], vi = ref1[0], ru = ref1[1], ca = ref1[2];
-    ref2 = global.bacteria;
-    for (k = 0, len1 = ref2.length; k < len1; k++) {
-      bacterium = ref2[k];
-      if (bacterium.species === species[0]) {
-        ru += 1;
-      } else if (bacterium.species === species[1]) {
-        ca += 1;
-      } else if (bacterium.species === species[2]) {
-        vi += 1;
+    if (total > 0) {
+      ref2 = global.bacteria;
+      for (k = 0, len1 = ref2.length; k < len1; k++) {
+        bacterium = ref2[k];
+        if (bacterium.species === species[0]) {
+          ru += 1;
+        } else if (bacterium.species === species[1]) {
+          ca += 1;
+        } else if (bacterium.species === species[2]) {
+          vi += 1;
+        }
       }
+      all = [ru / total, ca / total, vi / total];
+    } else {
+      all = [0, 0, 0];
     }
-    all = [ru / total, ca / total, vi / total];
     global.data.ratio.push({
       time: time.time,
       population: total,

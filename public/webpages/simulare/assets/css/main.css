@@ -295,6 +295,7 @@
         #sidebar .info #priority .status .container .box {
           position: relative; }
         #sidebar .info #priority .status .container .chart {
+          border: 2px solid #BDBDBD;
           border-radius: 50%;
           height: 5vh;
           width: 5vh;

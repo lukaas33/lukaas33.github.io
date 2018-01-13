@@ -124,6 +124,11 @@ Random.value = (bottom, top, use = Math.random) ->
   value = (use() * middle) + bottom
   return value
 
+# Choose from array
+Random.choose = (array) ->
+  item = array[Math.floor(Math.random() * array.length)]
+  return item
+
 # Return true with a certain chance
 Random.chance = (chance) ->
   result = Math.ceil(Math.random() * chance) # Number 1 until chance
@@ -291,7 +296,7 @@ class Food
 
   # Creates the particle
   display: =>
-    # Random location in field, not near the edges
+    # Random location in field
     range = local.size
     @position = Point.random().multiply(range) # Initial
     # Canvas object
@@ -303,8 +308,9 @@ class Food
     while not @isLegal() # Choose position again
       @position = Point.random().multiply(range)
       @particle.position = @position # Update
-    # @particle.visible = true # Draw
-    @particle.fillColor = global.colors.amber[500]
+
+    colorcode = Random.choose([400, 600, 500, 700])
+    @particle.fillColor = global.colors.amber[colorcode]
     html.layer.food.addChild(@particle) # Add to layer
 
   # Update location
@@ -403,15 +409,60 @@ class Bacteria # Has values shared by all bacteria
       @action.previous = @action.current
       @action.current = action
 
-  # Creates a body TODO the colors and style of the bacteria
+  # Creates a body
   display: =>
     # Body at instance's location
-    @body = new Path.Circle(
+    radius = Math.round(Calc.scale(@radius.value))
+    main = new Path.Circle(
       @position.round(),
-      Math.round(Calc.scale(@radius.value))
+      radius
     )
-    @body.fillColor = @color
+
+    main.style =
+      fillColor: @color[500]
+      strokeColor: @color[700]
+      strokeWidth: 3
+    main.name = 'main' # In group
+
+    range = main.bounds.bottomRight.subtract(main.bounds.topLeft) # Container
+    all = []
+    dotnumber = 4 + @mutations.length # Mutations influence appearance
+
+    while dotnumber > 0
+      while true # Do unitl correct
+        # Random location within parent
+        point = Point.random()
+        point = point.multiply(range)
+        point = point.add(main.bounds.topLeft)
+
+        dot = new Path.Circle(
+          point.round(),
+          Math.floor(Random.value(radius / 7, radius / 4))
+        )
+
+        # Legal position
+        if check.circleInside(main, dot)
+          legal = true
+          for dotOther in all
+            if check.circleOverlap(dot, dotOther)
+              legal = false
+              break # For loop
+          if legal
+            colorcode = Random.choose([400, 600, 700, 800])
+            dot.fillColor = @color[colorcode]
+            all.push(dot)
+            break # While
+          else
+            dot.remove()
+        else
+          dot.remove()
+      dotnumber -= 1
+
+    all.unshift(main)
+    @body = new Group(all) # Dots will group with parent
     @body.name = @id # In paper.js layer
+    @body.opacity = 0.7
+
     html.layer.bacteria.addChild(@body)
 
   # Updates its body
@@ -432,7 +483,7 @@ class Bacteria # Has values shared by all bacteria
   select: =>
     if global.interaction.selected == @id
       global.interaction.selected = null # Deselect
-      @body.selected = false # Changes appearance
+      @body.children.main.selected = false # Changes appearance
     else # Other bacteria is selected
       if global.interaction.selected != null
         for bacterium in global.bacteria
@@ -440,7 +491,7 @@ class Bacteria # Has values shared by all bacteria
             bacterium.body.selected = false # Deselect current
             break # End loop
       global.interaction.selected = @id
-      @body.selected = true # Changes appearance
+      @body.children.main.selected = true # Changes appearance
 
   # Gets older
   ages: =>
@@ -512,7 +563,7 @@ class Bacteria # Has values shared by all bacteria
     loss = Math.floor(loss)
 
     @energyLoss.current.value = loss
-    loss *= 45 # Increased to speed up things
+    loss *= 40 # Increased to speed up things
 
     # Loses energy per second
     atpSec = (loss / local.fps)
@@ -731,7 +782,7 @@ class Bacteria # Has values shared by all bacteria
     if @target != null
       # Inside it
       if check.circleInside(@body, @target.particle)
-        energy = @target.energy.value * 10 # Increased to speed up things
+        energy = @target.energy.value * 8 # Increased to speed up things
         @energy.value += energy
         @target.eaten() # Removes itself
         # findTarget won't be called anymore
@@ -759,7 +810,7 @@ class Viridis extends Lucarium # TODO make different traits for the species
     # Values that are initialised
     @species = "Viridis"
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
-    @color = global.colors.green[500]
+    @color = global.colors.green
     @tolerance =
       temperature: new SciNum(2, 'temperature', '&deg;C')
       acidity: new SciNum(0.15, 'pH', '')
@@ -777,7 +828,7 @@ class Rubrum extends Lucarium
     # Values that are initialised
     @species = "Rubrum"
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
-    @color = global.colors.red[500]
+    @color = global.colors.red
     @tolerance =
       temperature: new SciNum(10, 'temperature', '&deg;C')
       acidity: new SciNum(0.15, 'pH', '')
@@ -789,7 +840,7 @@ class Caeruleus extends Lucarium
     # Values that are initialised
     @species = "Caeruleus"
     @taxonomicName = "#{@family} #{@species}" # Super has to be called first
-    @color = global.colors.blue[500]
+    @color = global.colors.blue
     @tolerance =
       temperature: new SciNum(2, 'temperature', '&deg;C')
       acidity: new SciNum(0.75, 'pH', '')
@@ -843,15 +894,18 @@ html.ratio = ->
   species = ['Rubrum', 'Caeruleus', 'Viridis']
   [vi, ru, ca] = [0, 0, 0]
 
-  for bacterium in global.bacteria
-    if bacterium.species == species[0]
-      ru += 1
-    else if bacterium.species == species[1]
-      ca += 1
-    else if bacterium.species == species[2]
-      vi += 1
+  if total > 0
+    for bacterium in global.bacteria
+      if bacterium.species == species[0]
+        ru += 1
+      else if bacterium.species == species[1]
+        ca += 1
+      else if bacterium.species == species[2]
+        vi += 1
 
-  all = [ru / total, ca / total, vi / total]
+    all = [ru / total, ca / total, vi / total]
+  else
+    all = [0, 0, 0]
 
   global.data.ratio.push( # Store the data
     time: time.time
