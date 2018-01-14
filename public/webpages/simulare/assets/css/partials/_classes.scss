@@ -44,6 +44,13 @@
   border-radius: 1rem;
 }
 
+%text-style {
+  a {
+    text-decoration: none;
+    color: $secondary-A700;
+  }
+}
+
 %card {
   @include shadow(2, 4);
   background-color: $grey-50;

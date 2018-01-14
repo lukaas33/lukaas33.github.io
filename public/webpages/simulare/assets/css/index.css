@@ -161,8 +161,6 @@ body [data-tooltip='down'] .tooltip {
   #music a {
     text-decoration: none;
     color: inherit; }
-    #music a:hover {
-      text-decoration: underline; }
     #music a img {
       height: 1rem;
       vertical-align: middle; }

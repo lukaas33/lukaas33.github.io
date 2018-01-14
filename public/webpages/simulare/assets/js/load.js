@@ -9,8 +9,8 @@ const global = {
     time: 400, // Standard animation time
     loaded: false,
     pauzed: true,
-    sound: true,
-    cards: true,
+    sound: true, // TODO save in cookie
+    cards: true, // TODO save in cookie
     selected: null, // Selected instance
     audio: null,
     started: false
@@ -67,13 +67,13 @@ const global = {
     }
   }
 
-  // Music player
+  // Music player, needs to be here to preload the music
   const playMusic = function (at = Math.floor(Math.random() * global.interaction.music.length)) {
     var track = global.interaction.music[at]
     global.interaction.audio.setAttribute('src', track.path)
 
     global.interaction.audio.addEventListener('canplaythrough', () => { // Done
-      if (global.interaction.started) {
+      if (global.interaction.loaded) {
         console.log('Track', at)
       } else {
         loaded('music')
@@ -170,27 +170,27 @@ const global = {
 
     global.interaction.audio = document.createElement('audio')
     global.interaction.music = [{
-        path: "storage/gas-microscopic.mp3",
+        path: "assets/music/gas-microscopic.mp3",
         source: "https://youtu.be/NvG-jqGsWSk",
         name: "Microscopic",
         artist: "Gas"
       },  {
-        path: "storage/hanszimmer-planetearth.mp3",
+        path: "assets/music/hanszimmer-planetearth.mp3",
         source: "https://youtu.be/qpgvmHBpatA",
         name: "Planet Earth II",
         artist: "Hans Zimmer"
       },  {
-        path: "storage/cell-underyourmind.mp3",
+        path: "assets/music/cell-underyourmind.mp3",
         source: "https://youtu.be/cyfpt4LpNAA",
         name: "Under your mind",
         artist: "Cell"
       },  {
-        path: "storage/carbonbasedlifeforms-supersede.mp3",
+        path: "assets/music/carbonbasedlifeforms-supersede.mp3",
         source: "https://youtu.be/7p4uAxXyaQ0",
         name: "Supersede",
         artist: "Carbon Based Lifeforms"
       },  {
-        path: "storage/johnwilliams-jurassicpark.mp3",
+        path: "assets/music/johnwilliams-jurassicpark.mp3",
         source: "https://youtu.be/zHalXjs0cDA",
         name: "Jurassic Park",
         artist: "John Williams"
