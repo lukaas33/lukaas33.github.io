@@ -306,7 +306,8 @@ class Food
     )
 
     while not @isLegal() # Choose position again
-      @position = Point.random().multiply(range)
+      @position = Point.random().multiply(local.size.multiply(0.9))
+      @position = @position.add(local.size.multiply(0.05)) # Avoid edges on all sides
       @particle.position = @position # Update
 
     colorcode = Random.choose([400, 600, 500, 700])

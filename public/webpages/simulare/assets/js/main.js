@@ -358,7 +358,8 @@
       this.position = this.position.add(local.size.multiply(0.05));
       this.particle = new Path.Circle(this.position.round(), Math.round(Calc.scale(this.radius.value)));
       while (!this.isLegal()) {
-        this.position = Point.random().multiply(range);
+        this.position = Point.random().multiply(local.size.multiply(0.9));
+        this.position = this.position.add(local.size.multiply(0.05));
         this.particle.position = this.position;
       }
       colorcode = Random.choose([400, 600, 500, 700]);
