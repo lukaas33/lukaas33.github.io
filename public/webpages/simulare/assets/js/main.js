@@ -1238,9 +1238,9 @@
             return html.pause();
           case "cards":
             return html.cardsToggle();
-          case "view":
-            return html.showFull(false, 'information');
           case "info":
+            return html.showFull(false, 'information');
+          case "view":
             return html.showFull(false, 'cards');
         }
       });

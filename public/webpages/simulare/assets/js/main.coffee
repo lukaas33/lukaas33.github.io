@@ -382,7 +382,7 @@ class Bacteria # Has values shared by all bacteria
     @ages()
     @chooseDirection()
 
-  # Continues living TODO work out energy system with traits
+  # Continues living
   live: =>
     if @action.current == 'Dying' # RIP
       @die()
@@ -534,7 +534,7 @@ class Bacteria # Has values shared by all bacteria
     # Change position
     @position = @position.add(speed)
 
-  # Loses energy TODO calculate the energy loss with traits
+  # Loses energy
   loseEnergy: =>
     loss = @energyLoss.min.value
     # Influence of conditions
@@ -714,7 +714,7 @@ class Bacteria # Has values shared by all bacteria
       # Slow to a stop
       @decceleration.value = Calc.combine(@speed.current.value) / 5 # Low because speed is already low
 
-  # Divison TODO make animatio
+  # Divison TODO make animation
   mitosis: =>
     # Values of the current bacteria changes
     @energy.value /= 2
@@ -805,7 +805,7 @@ class Lucarium extends Bacteria # This family of bacteria has its own traits
       acidity: new SciNum(7, 'pH', '')
       concentration: new SciNum(0, 'concentration', 'M')
 
-class Viridis extends Lucarium # TODO make different traits for the species
+class Viridis extends Lucarium
   constructor: () ->
     super(arguments...) # Parent constructor
     # Values that are initialised
@@ -889,7 +889,7 @@ html.clock = ->
       @textContent = form(seconds)
   )
 
-# Display the ratio between the bacteria TODO display in sidebar
+# Display the ratio between the bacteria
 html.ratio = ->
   total = global.bacteria.length
   species = ['Rubrum', 'Caeruleus', 'Viridis']
@@ -1098,8 +1098,8 @@ html.setup = ->
         when "volume" then html.sound()
         when "pause" then html.pause()
         when "cards" then html.cardsToggle()
-        when "view" then html.showFull(false, 'information')
-        when "info" then html.showFull(false, 'cards')
+        when "info" then html.showFull(false, 'information')
+        when "view" then html.showFull(false, 'cards')
   )
 
 # Updates infopanel
