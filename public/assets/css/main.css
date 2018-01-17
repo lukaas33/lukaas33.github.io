@@ -368,22 +368,26 @@ nav {
           display: inline-block;
           height: 100%;
           width: 100%; }
-          @media only screen and (max-width: 599px) {
-            nav ul li:last-child a .material-icons {
-              font-size: 3vh;
-              margin-top: 1vh; } }
-          @media only screen and (min-width: 600px) {
-            nav ul li:last-child a .material-icons {
-              font-size: 2vh;
-              margin-top: 0; } }
-          @media only screen and (min-width: 900px) {
-            nav ul li:last-child a .material-icons {
-              font-size: 2vh;
-              margin-top: 0; } }
-          @media only screen and (min-width: 1200px) {
-            nav ul li:last-child a .material-icons {
-              font-size: 2vh;
-              margin-top: 0; } }
+          nav ul li:last-child a .material-icons {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%); }
+            @media only screen and (max-width: 599px) {
+              nav ul li:last-child a .material-icons {
+                font-size: 3vh;
+                margin-top: 1vh; } }
+            @media only screen and (min-width: 600px) {
+              nav ul li:last-child a .material-icons {
+                font-size: 2vh;
+                margin-top: 0; } }
+            @media only screen and (min-width: 900px) {
+              nav ul li:last-child a .material-icons {
+                font-size: 2vh;
+                margin-top: 0; } }
+            @media only screen and (min-width: 1200px) {
+              nav ul li:last-child a .material-icons {
+                font-size: 2vh;
+                margin-top: 0; } }
 
 header {
   background-color: #00bcd4 ;
@@ -519,6 +523,8 @@ main {
     main .part#about .card .text .tagline {
       color: #616161 ;
       font-size: 1.2rem; }
+    main .part#about .card .text::selection del {
+      text-decoration-color: #fff !important; }
   main #experience .card .text .head {
     cursor: pointer; }
     main #experience .card .text .head .tag {
@@ -676,7 +682,7 @@ main {
         transition: 400ms ease-in-out;
         width: 100%; }
         main #portfolio .page .container .preview span:hover {
-          background-color: rgba(0, 0, 0, 0.15); }
+          background-color: rgba(0, 0, 0, 0.35); }
           main #portfolio .page .container .preview span:hover .tags {
             opacity: 1; }
         main #portfolio .page .container .preview span .tags {

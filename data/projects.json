@@ -7,7 +7,7 @@
       "end": "2017-04-24"
     },
     "media": "/webpages/solaris/",
-    "description": "This is a project I have been wanting to do for a while. I made an [illustration](https://plus.google.com/+LucasvanOsenbruggen/posts/DVXyfR85kPQ) of the solar system some time before and wanted to make something more interactive.\n\n\nI learned a lot about using the _html canvas_ and making animations via _paper.js_."
+    "description": "This is a project I have been wanting to do for a while. I made an [illustration](https://plus.google.com/+LucasvanOsenbruggen/posts/DVXyfR85kPQ) of the solar system some time before and wanted to make something more interactive."
   },  {
     "title": "Profile picture",
     "tags": ["profile picture", "personal", "Lucas", "illustration", "flat", "shadow", "logo", "vector graphics"],
@@ -47,27 +47,7 @@
       "end": "2017-02-26"
     },
     "media": "/webpages/boarding/",
-    "description": "This was my concept for a boarding screen for Android. It was my first project with a clear deadline and one where I used HTML for a design instead of an image.\n\n\nIt was part of a design challenge on [MaterialUp](https://www.uplabs.com/challenges/the-materialup-challenge). Although I didn't win it, I did learn a lot."
-  },  {
-    "title": "Invisible",
-    "tags": ["photoshop", "invisible", "artwork", "assignment", "design", "competition"],
-    "type": "illustration",
-    "date": {
-      "start": "2017-01-07",
-      "end": "2017-01-23"
-    },
-    "media": null,
-    "description": "I had to make an illustration with the theme invisible. My image is a man with an invisible forehead. The idea is that you can see into his mind. I tried several images in his head, including gears, space and nature. I liked the literal interpretation of the brain at molecular level best."
-  },  {
-    "title": "Photography lesson",
-    "tags": ["photos", "camera", "assignment", "stucture", "nature", "abstract", "pictures"],
-    "type": "collection",
-    "date": {
-      "start": "2017-04-05",
-      "end": "2017-04-19"
-    },
-    "media": ["Plants", "River", "Tree stump", "Roof", "Bridge"],
-    "description": "I had a lesson in photography.\n\n\n I learned about things like exposure and perspective. We took pictures from different angles of patterns and nature."
+    "description": "This was my concept for a boarding screen for Android. It was my first project with a clear deadline and one where I used HTML for a design instead of an image.\n\n\nIt was part of a design challenge on [MaterialUp](https://www.uplabs.com/challenges/the-materialup-challenge)."
   },  {
     "title": "T-Shirt",
     "tags": ["photo", "shirt", "Bo Burnham", "Deep", "comedian", "design", "black", "white"],
@@ -89,16 +69,6 @@
     "media": "/",
     "description": "This portfolio you're viewing is a project too. I made this as my final project for the school year using _PHP_. This was my first project where I documented everything and planned ahead.\n\n\n I later converted it to _Node.js_ myself when moving from _Github Pages_ to the webhost _Heroku_."
   },  {
-    "title": "Vacation photos",
-    "tags": ["photos", "phone", "structure", "nature", "vacation", "pictures"],
-    "type": "collection",
-    "date": {
-      "start": "2016-07-30",
-      "end": "2017-05-20"
-    },
-    "media": ["Plant arch", "Forest path", "Sunset", "Forest"],
-    "description": "I like taking pictures of nature when on vacation. These are my favorites at this time."
-  },  {
     "title": "Vita Simulare",
     "tags": ["OOP", "canvas", "Javascript", "bacteria", "biology", "Paper.js", "Coffeescript", "jQuery", "simulation"],
     "type": "website",
@@ -107,16 +77,16 @@
       "end": "2018-01-17"
     },
     "media": "/webpages/simulare/",
-    "description": ""
+    "description": "My biggest project yet. I wanted to create life-like bacteria that evolved before your eyes./n/n/nI was inspired to do this project by [Nature of Code](http://natureofcode.com/book/), Daniel Shiffman."
   },  {
     "title": "Faunadex",
-    "tags": ["image recognition", "webapp", "Android", "jQuery", "Javascript"],
+    "tags": ["image recognition", "webapp", "Android", "jQuery", "Javascript", "PWA"],
     "type": "website",
     "date": {
       "start": "2017-09-25",
       "end": "2018-01-12"
     },
     "media": "/webpages/faunadex/",
-    "description": ""
+    "description": "I always wanted to have a Pokédex for animals. I finally created it using _[Clarifai](https://www.clarifai.com/)_. It only works on the newest version of Chrome on Android as far As I know."
   }
 ]}

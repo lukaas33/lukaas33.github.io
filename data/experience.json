@@ -1,77 +1,35 @@
 {"content": [{
-    "title": "Elementary school",
-    "place": "Wentelwiek",
-    "type": "school",
-    "date": {
-      "start": "2003-09-05",
-      "end": "2011-07-30"
-    },
-    "description": "I learned basic things like reading and writing here.",
-    "data": [{
-        "type": "link",
-        "value": "http://www.dewentelwiek.nl/"
-      }
-    ]
-  },  {
-    "title": "VMBO",
-    "place": "Plein College Nuenen",
-    "type": "school",
-    "date": {
-      "start": "2011-08-19",
-      "end": "2012-07-29"
-    },
-    "description": "I went here because I was really too young for high school. I messed up the final test at elementary school.\n\n\n I didn't really like it here and after a year I went to another school.",
-    "data": [{
-        "type": "link",
-        "value": "http://www.pleincollegenuenen.nl/"
-      }
-    ]
-  },  {
-    "title": "HSGE",
-    "place": "Pleinschool Helder",
-    "type": "school",
-    "date": {
-      "start": "2012-08-18",
-      "end": "2016-07-23"
-    },
-    "description": "I went to this school because it offered extra help with learning.",
-    "data": [{
-        "type": "link",
-        "value": "http://pcsintjoris.mwp.nl/pleinschoolhelder/home/tabid/217/default.aspx"
-      }
-    ]
-  },  {
-    "title": "Filling stocks",
-    "place": "Albert Heijn",
+    "title": "Example 1",
+    "place": "Place",
     "type": "job",
     "date": {
-      "start": "2015-12-30",
-      "end": "2016-08-30"
+      "start": "2010-01-01",
+      "end": "2017-01-01"
     },
-    "description": "I worked here for some time when I had spare time and wanted some money. I quit when it got busier for me.",
+    "description": "None",
     "data": [{
         "type": "link",
-        "value": "https://www.ah.nl/winkel/1380"
+        "value": "https://www.example.com"
       },  {
         "type": "number",
-        "value": "+31 040 2840999"
+        "value": "+00 000 000000"
       }
     ]
   },  {
-    "title": "HSGE / Grammar school",
-    "place": "Lorentz Casimir Lyceum",
+    "title": "Example 2",
+    "place": "Place",
     "type": "school",
     "date": {
-      "start": "2016-09-04",
+      "start": "2015-01-01",
       "end": null
     },
-    "description": "When looking for different schools this one made a good expression on me.\n\n\n Here I found out that I liked programming. I decided to go to a higher level of education when at this school.",
+    "description": "None",
     "data": [{
         "type": "link",
-        "value": "http://www.lcl.nl/"
+        "value": "https://www.example.com"
       },  {
         "type": "number",
-        "value": "+31 040 2909420"
+        "value": "+00 000 000000"
       }
     ]
   }

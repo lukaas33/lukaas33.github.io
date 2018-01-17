@@ -64,7 +64,7 @@
         z-index: 30; // Above main
 
         &:hover {
-          @include shadow(14, 28)
+          @include shadow(14, 28);
           z-index: 40; // Above the others
         }
 
@@ -84,7 +84,7 @@
           width: 100%; // Of container
 
           &:hover {
-            background-color: rgba(0, 0, 0, .15); // Darker shade to show text
+            background-color: rgba(0, 0, 0, .35); // Darker shade to show text
 
             .tags {
               opacity: 1;

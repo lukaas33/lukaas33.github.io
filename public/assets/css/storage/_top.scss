@@ -5,7 +5,7 @@ nav {
 
   @extend %flex;
   @include color(grey, 'background-color', 50);
-  @include shadow(2, 10)
+  @include shadow(2, 10);
 
   @include media(phone-only) {
     height: ($height + 4vh);
@@ -149,6 +149,10 @@ nav {
           width: 100%;
 
           .material-icons {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+
             @include media(phone-only) {
               font-size: 3vh;
               margin-top: 1vh;

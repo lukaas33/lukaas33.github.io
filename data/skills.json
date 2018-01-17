@@ -1,183 +1,29 @@
 {"content": [{
-    "title": "English",
-    "description": "I learned a lot of English from the internet. I always liked the idea of an universal language and it is the closest we have.\n\n\nMost of my grammar I learned from school and most of my vocabulary comes from books and TV-programs.",
+    "title": "Example",
+    "description": "None",
     "skills": [{
-        "name": "Vocabulary",
-        "percentage": 70
-      },  {
-        "name": "Grammar",
-        "percentage": 55
-      },  {
-        "name": "Speaking",
+        "name": "Sub 1",
         "percentage": 50
-      }
-    ]
-  },  {
-    "title": "Dutch",
-    "description": "My native language. I have been speaking it since I was around two.",
-    "skills": [{
-        "name": "Vocabulary",
-        "percentage": 80
-      },  {
-        "name": "Grammar",
-        "percentage": 65
-      },  {
-        "name": "Writing",
-        "percentage": 60
-      }
-    ]
-  },  {
-    "title": "Project management",
-    "description": "I learned how to handle projects by handling projects. The first big project I worked on was this resume and I made a lot of mistakes. But I have improved with every project.\n\n\nI learned good practices at school, like documenting what you want to make.",
-    "skills": [{
-        "name": "Git",
+      }, {
+        "name": "Sub 2",
+        "percentage": 10
+      }, {
+        "name": "Sub 3",
         "percentage": 75
-      },  {
-        "name": "Documentation",
-        "percentage": 65
-      },  {
-        "name": "Planning",
-        "percentage": 45
       }
     ]
   },  {
-    "title": "Front-end web",
-    "description": "It started for me with the design of websites. I know a lot of people hate this side of web development, but I like working out my ideas.\n\n\nThrough design I discovered the programming which I like even more. Making an idea work in real life is really fun for me.",
+    "title": "Example 2",
+    "description": "None",
     "skills": [{
-        "name": "Javascript",
-        "percentage": 65
-      },  {
-        "name": "CSS",
-        "percentage": 85
-      },  {
-        "name": "HTML",
-        "percentage": 70
-      }
-    ]
-  },  {
-    "title": "Back-end web",
-    "description": "I'm quite new at back-end programming. I first used _PHP_ to setup dynamic content for this website. Later, when choosing a webhost, I decided to rebuild the dynamic content system with Node. While doing this I did a lot of other programming to get everything working properly.",
-    "skills": [{
-        "name": "Node.js",
-        "percentage": 25
-      },  {
-        "name": "PHP",
-        "percentage": 15
-      },  {
-        "name": "Ajax",
-        "percentage": 40
-      }
-    ]
-  },  {
-    "title": "Databases",
-    "description": "I first used a database for this project. When working with _Node_ I decided to use _MongoDB_, as it works easier with _Javascript_.\nIn school I learned all about _SQL_ and some database normalization.\n\n\nWhat I want to do next is data analysing.",
-    "skills": [{
-        "name": "MongoDB",
-        "percentage": 40
-      },  {
-        "name": "SQL",
-        "percentage": 65
-      },  {
-        "name": "Normalization",
-        "percentage": 15
-      }
-    ]
-  },  {
-    "title": "Design",
-    "description": "As a kid I was more into creative things. The problem was that I couldn't really paint, or draw. I later picked up a hobby of making illustrations in _Paint.net_, which I posted to [Google+](https://plus.google.com/+LucasvanOsenbruggen).\n\n\nWhen I found _Adobe Illustrator_ I liked it more because of the exact placements and preserving of resolution. I ended up with some stuff I still actually like.\n\n\nI abandoned the hobby when I started with the design of websites. The interactiveness with which I could create was more interesting to me.",
-    "skills": [{
-        "name": "Illustrator",
-        "percentage": 45
-      },  {
-        "name": "Photoshop",
-        "percentage": 20
-      },  {
-        "name": "Material Design",
-        "percentage": 65
-      }
-    ]
-  },  {
-    "title": "Programming",
-    "description": "I started programming in websites with _Javascript_. When I had learned that, it was easier to learn other languages. A lot of practices are shared between languages. I later spent some time learning _Python_. Although I didn't really have a purpose for it, I learned a lot about programming in general (for example 1.1 + 2.2 != 3.3).\n\n\nI also took a [typing course](https://www.typing.com/student/verify#45709563-59376030) online for more efficiency.",
-    "skills": [{
-        "name": "Syntax rules",
+        "name": "Sub 1",
+        "percentage": 90
+      }, {
+        "name": "Sub 2",
         "percentage": 50
-      },  {
-        "name": "Practices",
-        "percentage": 35
-      },  {
-        "name": "Typing",
-        "percentage": 70
-      }
-    ]
-  },  {
-    "title": "Computer science",
-    "description": "This field appeals to me mostly because of the science part.\nI'm not sure this is what I want to study but I am interested in it.",
-    "skills": [{
-        "name": "Algorithms",
-        "percentage": 35
       }, {
-        "name": "Artificial Intelligence",
-        "percentage": 5
-      }, {
-        "name": "Computer architecture",
-        "percentage": 15
-      }
-    ]
-  }, {
-    "title": "Biology",
-    "description": "I have always been interested in life. Biology is a field with a lot of interesting parts.\n\n\nI might want to study biology later.",
-    "skills": [{
-        "name": "Genetics",
-        "percentage": 40
-      }, {
-        "name": "Anatomy",
-        "percentage": 25
-      }, {
-        "name": "Ecology",
-        "percentage": 30
-      }
-    ]
-  }, {
-    "title": "Math",
-    "description": "For some reason I always found math more easy than for example history. There is only one answer. It is easier to learn than other subjects because you can practice more.",
-    "skills": [{
-        "name": "Algebra",
-        "percentage": 55
-      }, {
-        "name": "Statistics",
-        "percentage": 20
-      }, {
-        "name": "Geometry",
-        "percentage": 40
-      }
-    ]
-  }, {
-    "title": "Chemistry",
-    "description": "",
-    "skills": [{
-        "name": "Genetics",
-        "percentage": 25
-      }, {
-        "name": "Anatomy",
-        "percentage": 40
-      }, {
-        "name": "Ecology",
-        "percentage": 30
-      }
-    ]
-  }, {
-    "title": "Physics",
-    "description": "",
-    "skills": [{
-        "name": "Genetics",
-        "percentage": 25
-      }, {
-        "name": "Anatomy",
-        "percentage": 40
-      }, {
-        "name": "Ecology",
-        "percentage": 30
+        "name": "Sub 3",
+        "percentage": 75
       }
     ]
   }
