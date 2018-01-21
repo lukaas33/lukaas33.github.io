@@ -62,8 +62,8 @@
 			<!-- Loops through all extra data -->
 			<% for (let data of info.data) { %>
 				<% if (data.type === 'link') { %>
-					<a rel="noopener" target="_blank" href="<%= data.value %>">Website</a>
-
+					<!-- <a rel="noopener" target="_blank" href="<%= data.value %>">Website</a> -->
+					<%- markdown(data.value) %>
 				<% } else if (data.type === 'number') { %>
 					<p class="number"><%= data.value %></p>
 				<% } %>
