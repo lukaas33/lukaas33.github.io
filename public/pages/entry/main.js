@@ -8,7 +8,7 @@ const doc = {
 }
 
 // const base = 'http://localhost:5000'
-const base = window.location.host
+const base = 'https://' + window.location.host
 var target = null
 var working = [] // Tracks files begin read async
 
