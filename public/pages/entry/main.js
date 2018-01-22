@@ -26,7 +26,7 @@ const getData = function (from, object = {}, callback = () => {}) {
           if (value === '') {
             value = null
           }
-          if (item.type === 'file') {
+          if (item.type === 'file' && item.files.length > 0) {
             let i = working.length // Store location in array
             console.log('Loading', i, item.files)
             working[i] = true
@@ -75,14 +75,16 @@ const getData = function (from, object = {}, callback = () => {}) {
 
   var end = function () {
     if (working.every((bool) => {return !bool})) { // All are done
-      clearInterval(wait)
-      callback(object)
+      setTimeout(() => {
+        clearInterval(wait)
+        callback(object)
+      }, 1000)
     }
   }
 
   var wait = setInterval(() => {
     end()
-  }, 200)
+  }, 100)
 }
 
 const accept = function (data) {
