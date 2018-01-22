@@ -67,7 +67,7 @@
       "end": "2017-06-23"
     },
     "media": "/",
-    "description": "This portfolio you're viewing is a project too. I made this as my final project for the school year using _PHP_. This was my first project where I documented everything and planned ahead.\n\n\n I later converted it to _Node.js_ myself when moving from _Github Pages_ to the webhost _Heroku_."
+    "description": "This portfolio you're viewing is a project too. I made this as my final project for the school year using _PHP_. This was my first project where I documented everything and planned ahead.\n\n\n I later converted it to _Node.js_ myself when moving from _Github Pages_ to the webhost _Heroku_.\n\n\nI am still working on it and adding more features./nThe page for entering data can be found [here](/pages/entry). _You need the password for the data to be accepted._"
   },  {
     "title": "Vita Simulare",
     "tags": ["OOP", "canvas", "Javascript", "bacteria", "biology", "Paper.js", "Coffeescript", "jQuery", "simulation"],

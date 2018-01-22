@@ -54,6 +54,10 @@ const getData = function (from, object = {}, callback = () => {}) {
                 reader.readAsDataURL(file) // Convert file to binary data
               })(file, item)
             }
+          } else if (item.type === 'date') {
+            object[item.getAttribute('name')] = new Date(value)
+          } else if (item.type === 'number') {
+            object[item.getAttribute('name')] = Number(value)
           } else {
             object[item.getAttribute('name')] = value
           }
@@ -219,7 +223,7 @@ doc.skills.addEventListener('submit', (event) => {
             let propPart = prop.split('-')
             if (propPart[0] === 'percentage') {
               if (propPart[1] === at) {
-                data.percentage = Number(send[prop])
+                data.percentage = send[prop]
                 delete send[prop] // Delete old holder
               }
             }
