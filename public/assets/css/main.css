@@ -523,8 +523,6 @@ main {
     main .part#about .card .text .tagline {
       color: #616161 ;
       font-size: 1.2rem; }
-    main .part#about .card .text::selection del {
-      text-decoration-color: #fff !important; }
   main #experience .card .text .head {
     cursor: pointer; }
     main #experience .card .text .head .tag {

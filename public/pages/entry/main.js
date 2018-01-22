@@ -34,15 +34,14 @@ const getData = function (from, object = {}, callback = () => {}) {
             value = []
             let loaded = 0
             for (let file of item.files) { // Can be multiple
-              (function (file, item) { // Closure for own scope
-                reader = new FileReader()
+              (function() {
+                let reader = new FileReader()
                 reader.onload = () => { // Working
-                  console.log(reader)
                   if (reader.error === null) { // No error
                     value.push(reader.result)
                     loaded += 1
                     if (loaded === item.files.length) { // All loaded
-                      console.log('Loaded', i, item.files)
+                      console.log('Loaded', i, item.files, reader)
                       object[item.getAttribute('name')] = value
                       working[i] = false
                     } else {
@@ -76,8 +75,8 @@ const getData = function (from, object = {}, callback = () => {}) {
 
   var end = function () {
     if (working.every((bool) => {return !bool})) { // All are done
+      clearInterval(wait)
       setTimeout(() => {
-        clearInterval(wait)
         callback(object)
       }, 1000)
     }

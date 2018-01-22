@@ -441,7 +441,7 @@ text.addEventListener('submit', function (event) {
       }
     })
   } else {
-
+    console.log(values)
   }
 })
 
