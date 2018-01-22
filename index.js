@@ -64,7 +64,7 @@ const send = function (request, response) {
   form.parse(request, function (error, fields, files) {
     if (error) {
       response.end('error') // Info for client
-      console.log('# Form parse')
+      console.log('orm parse')
       throw error
     }
 
@@ -79,7 +79,7 @@ const send = function (request, response) {
     mailgun.messages().send(mailOptions, function (error, body) {
       if (error) {
         response.end('error') // Info for client
-        console.log('# Email send')
+        console.log('Email send')
         throw error
       }
       console.log('Email was sent')
@@ -92,11 +92,9 @@ data.set = function (entering, complete = () => {}) {
   const open = function (name, callback = () => {}) {
     filesystem.readFile(name, 'utf8', function (error, data) { // Open the files and store the content
       if (error) {
-        console.log('# File reading')
+        console.log('File reading')
         throw error
       }
-      // TODO Enter more data
-      // TODO Make a way to enter data online
 
       var json = JSON.parse(data, function (key, value) { // Text to json
         if ((key === 'start' || key === 'end') && value !== null) {
@@ -115,7 +113,7 @@ data.set = function (entering, complete = () => {}) {
     var current = data.database.collection(collection)
     current.updateOne(query, {$set: document}, {upsert: true}, function (error, result) {
       if (error) {
-        console.log('# Database entry')
+        console.log('Database entry')
         throw error
       }
 
@@ -134,7 +132,9 @@ data.set = function (entering, complete = () => {}) {
       })
     }
   } else { // Will enter new data
-
+    upsert(entering.data, entering.target, () => {
+      complete() // Success
+    })
   }
 }
 
@@ -150,7 +150,7 @@ data.get = function (collections, callback = () => {}) {
     let current = data.database.collection(file)
     current.find().sort(options[file]).toArray((error, results) => {
       if (error) {
-        console.log('# Getting data')
+        console.log('Getting data')
         throw error
       }
 
@@ -188,7 +188,7 @@ app.get('/projects/:title', function (request, response) { // The title can be d
       }
     }
     if (!exists) {
-      response.status(404).send('The project does not exist') // The project doesn't exist
+      response.status(404).end('The project does not exist') // The project doesn't exist
     }
   })
 })
@@ -199,15 +199,20 @@ app.post('/send', function (request, response) { // Post request at send
   send(request, response) // Email sender
 })
 
-app.post('/enter', function (request, response) {
-  console.log('Post request for data entry')
-  data.set(request, (succes) => {
-    if (succes) {
-      response.end('error') // Info for clientside
-    } else {
-      response.end() // No errors
+app.post('/enter', function(request, response) {
+  // Authenticate
+  if (request.body.user === process.env.ADMIN_NAME && request.body.pass === process.env.ADMIN_PASS) {
+    console.log('Enter:', request.body.data)
+    try { // Detect errors
+      data.set({target: request.body.target, data: request.body.data}, () => {
+        response.end('Data entered') // Everything worked
+      })
+    } catch (error) {
+      response.end(error)
     }
-  })
+  } else {
+    response.end('Invalid login')
+  }
 })
 
 app.listen(app.get('port'), () => console.log(`Node app is running at ${app.get('port')}`))
@@ -215,7 +220,7 @@ app.listen(app.get('port'), () => console.log(`Node app is running at ${app.get(
 // Actions
 mongoClient.connect(process.env.MONGODB_URI, function (error, database) { // Connects to database using env info
   if (error) {
-    console.log('# Database connect')
+    console.log('Database connect')
     throw error
   }
   data.database = database.db(process.env.DB_NAME)

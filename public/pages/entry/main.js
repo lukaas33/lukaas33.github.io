@@ -1,3 +1,4 @@
+// << Variables >>
 const doc = {
   project: document.querySelector('#projects'),
   experience: document.querySelector('#experience'),
@@ -6,6 +7,11 @@ const doc = {
   media: document.querySelectorAll('input[name=media]')
 }
 
+// const base = 'http://localhost:5000'
+const base = 'https://lucas-resume.herokuapp.com'
+var target = null
+
+// << Functions >>
 const getData = function (from, object) {
   for (let item of from.children) { // Direct children
     switch (item.tagName.toLowerCase()) { // Html tag
@@ -34,6 +40,37 @@ const getData = function (from, object) {
   return object
 }
 
+const accept = function (data) {
+  if (confirm('Send:\n' + JSON.stringify(data).replace(',', '\n'))) {
+    sendData(data)
+  }
+}
+
+const sendData = function (data) {
+  var http = new XMLHttpRequest()
+  http.onreadystatechange = function () {
+    if (this.readyState === 4 && this.status === 200) {
+      alert(this.responseText)
+    }
+  }
+  // Send to the server
+  http.open('POST', `${base}/enter`, true)
+  http.setRequestHeader('Content-Type', 'application/json') // Server will expect format
+  var request = {
+    user: user,
+    pass: pass,
+    data: data,
+    target: target
+  }
+  http.send(JSON.stringify(request))
+}
+
+// << Actions >>
+// Auth
+const user = prompt('Username', '').toLowerCase()
+const pass = prompt('Password', '')
+
+// << Events >>
 doc.type.addEventListener('change', () => {
   for (let input of doc.media) {
     input.disabled = true // Default
@@ -66,7 +103,8 @@ doc.project.addEventListener('submit', (event) => {
   for (let i in send.tags) {
     send.tags[i] = send.tags[i].trim() // Whitespace removal
   }
-  console.log(send)
+  target = 'projects'
+  accept(send)
 })
 
 doc.experience.addEventListener('submit', (event) => {
@@ -110,7 +148,9 @@ doc.experience.addEventListener('submit', (event) => {
       delete send[prop] // Delete old holder
     }
   }
-  console.log(send)
+
+  target = 'experience'
+  accept(send)
 })
 
 doc.skills.addEventListener('submit', (event) => {
@@ -145,5 +185,7 @@ doc.skills.addEventListener('submit', (event) => {
       delete send[prop] // Delete old holder
     }
   }
-  console.log(send)
+
+  target = 'skills'
+  accept(send)
 })
