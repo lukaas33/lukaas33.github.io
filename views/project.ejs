@@ -4,6 +4,7 @@
     if (date === null) {
       return 'now'
     } else {
+      date = new  Date(date)
       if (form === 'full') {
         var year = String(date.getFullYear())
         var month = String(date.getMonth() + 1)

@@ -48,7 +48,7 @@ app.set('port', process.env.PORT || 5000) // Chooses a port
 
 app.use(compression({ threshold: 0 })) // Compression for static files
 app.use(minify()) // Minifies code
-app.use(bodyParser.json()) // Enable json parsing
+app.use(bodyParser.json({limit: '50mb'})) // Enable json parsing
 app.use(bodyParser.urlencoded({extended: true}))
 
 app.use(express.static(`${__dirname}/public`, { maxage: '7d' })) // Serve static files
@@ -64,7 +64,6 @@ const send = function (request, response) {
   form.parse(request, function (error, fields, files) {
     if (error) {
       response.end('error') // Info for client
-      console.log('orm parse')
       throw error
     }
 
@@ -79,7 +78,6 @@ const send = function (request, response) {
     mailgun.messages().send(mailOptions, function (error, body) {
       if (error) {
         response.end('error') // Info for client
-        console.log('Email send')
         throw error
       }
       console.log('Email was sent')
@@ -92,7 +90,6 @@ data.set = function (entering, complete = () => {}) {
   const open = function (name, callback = () => {}) {
     filesystem.readFile(name, 'utf8', function (error, data) { // Open the files and store the content
       if (error) {
-        console.log('File reading')
         throw error
       }
 
@@ -113,7 +110,6 @@ data.set = function (entering, complete = () => {}) {
     var current = data.database.collection(collection)
     current.updateOne(query, {$set: document}, {upsert: true}, function (error, result) {
       if (error) {
-        console.log('Database entry')
         throw error
       }
 
@@ -150,7 +146,6 @@ data.get = function (collections, callback = () => {}) {
     let current = data.database.collection(file)
     current.find().sort(options[file]).toArray((error, results) => {
       if (error) {
-        console.log('Getting data')
         throw error
       }
 
@@ -179,7 +174,7 @@ app.get('/projects/:title', function (request, response) { // The title can be d
     for (let project of variables[needed]) { // Existing projects
       // Standard webname convert
       let webtitle = project.title.toLowerCase()
-      webtitle = webtitle.replace(/ /g, '-') // Whitespace will be replaced like in the url
+      webtitle = webtitle.replace(/ /g, '-') // Whitespace will be replaced in the url
       // Check name
       if (webtitle === request.params.title) {
         exists = true // Project exists
@@ -202,13 +197,41 @@ app.post('/send', function (request, response) { // Post request at send
 app.post('/enter', function(request, response) {
   // Authenticate
   if (request.body.user === process.env.ADMIN_NAME && request.body.pass === process.env.ADMIN_PASS) {
-    console.log('Enter:', request.body.data)
     try { // Detect errors
-      data.set({target: request.body.target, data: request.body.data}, () => {
-        response.end('Data entered') // Everything worked
+      // Standard webname convert
+      let webtitle = request.body.data.title.toLowerCase()
+      webtitle = webtitle.replace(/ /g, '-') // Whitespace will be replaced in the url
+
+      // Save images
+      let toLoad = 2
+      let load = function () {
+        toLoad -= 1
+        if (toLoad === 0) {
+          console.log('Enter:', request.body.data)
+
+          data.set({target: request.body.target, data: request.body.data}, () => {
+            response.end('Data entered') // Everything worked
+          })
+        }
+      }
+
+      filesystem.writeFile(`${__dirname}/public/assets/images/project/banners/${webtitle}.jpg`, request.body.data.cover[0].split(',')[1], 'base64', (error) => {
+        if (error) {
+          throw error
+        }
+        delete request.body.data.cover
+        load()
+      })
+      filesystem.writeFile(`${__dirname}/public/assets/images/project/thumbnails/${webtitle}.jpg`, request.body.data.thumbnail[0].split(',')[1], 'base64', (error) => {
+        if (error) {
+          throw error
+        }
+        delete request.body.data.thumbnail
+        load()
       })
     } catch (error) {
-      response.end(error)
+      console.error(error)
+      response.end(String(error))
     }
   } else {
     response.end('Invalid login')
@@ -220,7 +243,6 @@ app.listen(app.get('port'), () => console.log(`Node app is running at ${app.get(
 // Actions
 mongoClient.connect(process.env.MONGODB_URI, function (error, database) { // Connects to database using env info
   if (error) {
-    console.log('Database connect')
     throw error
   }
   data.database = database.db(process.env.DB_NAME)
