@@ -11,7 +11,8 @@ const doc = {
 const base = 'https://' + window.location.host
 var target = null
 var working = [] // Tracks files begin read async
-
+// TODO add collection upload
+// TODO add image crop
 // << Functions >>
 const getData = function (from, object = {}, callback = () => {}) {
   for (let item of from.children) { // Direct children
