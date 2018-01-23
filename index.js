@@ -10,6 +10,7 @@ const minify = require('express-minify')
 const marked = require('marked')
 // const subdomain = require('express-subdomain')
 const wildcard = require('wildcard-subdomains')
+const path = require('path')
 
 const data = require('./modules/data')
 const mail = require('./modules/mail')
@@ -103,20 +104,24 @@ app.get('/projects/:title', function (request, response) { // The title can be d
 })
 
 app.get('/webpages/:name', function (request, response) { // Subdomain name.example.com, handles if folder doesn't exist
-  switch (request.params.name) {
-    case 'webpages':
-    case 'web': // TODO only show webpages
-    case 'portfolio':
-    case 'projects': // TODO different oucome
-      response.redirect(301, process.env.DOMAIN + '/#portfolio')
-      break
-    case 'mail': // TODO different outcome
-    case 'contact':
-      response.redirect(301, process.env.DOMAIN + '/#contact')
-      break
-    default:
-      response.status(404).end(`Webpage ${request.params.name} does not exist.`)
-  }
+  path.exists(__dirname + request.path, function(exists) {
+    if (!exists) { // Not available
+      switch (request.params.name) {
+        case 'webpages':
+        case 'web': // TODO only show webpages
+        case 'portfolio':
+        case 'projects': // TODO different oucome
+          response.redirect(301, process.env.DOMAIN + '/#portfolio')
+          break
+        case 'mail': // TODO different outcome
+        case 'contact':
+          response.redirect(301, process.env.DOMAIN + '/#contact')
+          break
+        default:
+          response.status(404).end(`Webpage ${request.params.name} does not exist.`)
+      }
+    }
+  })
 })
 
 app.post('/send', function (request, response) { // Post request at send
