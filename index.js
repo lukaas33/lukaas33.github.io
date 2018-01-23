@@ -1,22 +1,24 @@
 'use strict'
 
+// << Variables >>
 // Require
 const express = require('express')
 // const helmet = require('helmet')
-const filesystem = require('fs')
 const bodyParser = require('body-parser')
-const formidable = require('formidable')
 const compression = require('compression')
 const minify = require('express-minify')
 const marked = require('marked')
+// const subdomain = require('express-subdomain')
+const wildcard = require('wildcard-subdomains')
 
-var mongoClient = require('mongodb')
-var mailgun = require('mailgun-js')
+const data = require('./modules/data')
+const mail = require('./modules/mail')
+const enter = require('./modules/enter')
+
 const app = express()
-const data = {files: ['experience', 'projects', 'skills']}
 
-mongoClient = mongoClient.MongoClient
-mailgun = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: process.env.DOMAIN}) // Gets mailgun data from env
+
+// << Setup >>
 var renderer = new marked.Renderer()
 renderer.link = (href, title, text) => {
   // Adds target to external links, from https://github.com/chjj/marked/pull/451
@@ -29,7 +31,6 @@ renderer.link = (href, title, text) => {
 }
 marked.setOptions({renderer: renderer})
 
-// Setup
 app.set('port', process.env.PORT || 5000) // Chooses a port
 
 // app.use(helmet())
@@ -48,119 +49,23 @@ app.set('port', process.env.PORT || 5000) // Chooses a port
 
 app.use(compression({ threshold: 0 })) // Compression for static files
 app.use(minify()) // Minifies code
-app.use(bodyParser.json({limit: '50mb'})) // Enable json parsing
+app.use(bodyParser.json({limit: '50mb'})) // Enable json parsing of requests
 app.use(bodyParser.urlencoded({extended: true}))
 
+app.use(wildcard({ // Webpages get their own domain
+  namespace: 'webpages',
+  whitelist: ['www']
+}))
+
 app.use(express.static(`${__dirname}/public`, { maxage: '7d' })) // Serve static files
-app.engine('html', require('ejs').renderFile) // No idea but it breaks without this line
+
+app.engine('html', require('ejs').renderFile) // No idea what it does but everything breaks without this line
 app.set('views', `${__dirname}/views`)
 app.set('view engine', 'ejs') // Use ejs for templating
 
-// Functions
-const send = function (request, response) {
-  // Handles email form
-  const form = new formidable.IncomingForm() // Object for handeling forms
 
-  form.parse(request, function (error, fields, files) {
-    if (error) {
-      response.end('error') // Info for client
-      throw error
-    }
-
-    var mailOptions = {
-      from: `'${fields.name}' <${fields.email}>`,
-      to: `'Personal' <${process.env.EMAIL_CONTACT}>`,
-      subject: '[SITE MESSAGE]',
-      text: fields.message,
-      html: fields.message
-    }
-
-    mailgun.messages().send(mailOptions, function (error, body) {
-      if (error) {
-        response.end('error') // Info for client
-        throw error
-      }
-      console.log('Email was sent')
-      response.end() // No errors occured
-    })
-  })
-}
-
-data.set = function (entering, complete = () => {}) {
-  const open = function (name, callback = () => {}) {
-    filesystem.readFile(name, 'utf8', function (error, data) { // Open the files and store the content
-      if (error) {
-        throw error
-      }
-
-      var json = JSON.parse(data, function (key, value) { // Text to json
-        if ((key === 'start' || key === 'end') && value !== null) {
-          return new Date(value) // Date strings will be converted to dates
-        } else {
-          return value // Normal values
-        }
-      })
-
-      callback(json.content) // Run function with object
-    })
-  }
-
-  const upsert = function (document, collection, callback = () => {}) {
-    var query = {title: document.title} // Title is unique
-    var current = data.database.collection(collection)
-    current.updateOne(query, {$set: document}, {upsert: true}, function (error, result) {
-      if (error) {
-        throw error
-      }
-
-      callback()
-    })
-  }
-
-  if (typeof entering === 'undefined') { // Will check with the local data
-    for (let file of data.files) {  // Loops through the files
-      open(`data/${file}.json`, (objects) => { // Opens the file
-        for (let object of objects) { // Loops through the objects
-          upsert(object, file, () => {
-            complete()
-          }) // Empty callback
-        }
-      })
-    }
-  } else { // Will enter new data
-    upsert(entering.data, entering.target, () => {
-      complete() // Success
-    })
-  }
-}
-
-data.get = function (collections, callback = () => {}) {
-  var result = {} // Will be filled
-  for (let file of collections) { // Loop through collections needed
-    let options = { // Sort options for each file
-      'experience': {'date.start': 1, 'title': 1},
-      'projects': {'date.end': -1, 'title': 1},
-      'skills': {'title': 1}
-    }
-
-    let current = data.database.collection(file)
-    current.find().sort(options[file]).toArray((error, results) => {
-      if (error) {
-        throw error
-      }
-
-      result[file] = results
-      result[file]['sort'] = options[file]
-
-      if (Object.keys(result).length === collections.length) { // Data from all files is got
-        callback(result)
-      }
-    })
-  }
-}
-
-// Routes
-app.get('/', function (request, response) {
+// << Routes >>
+app.get('/', function (request, response) { // Home
   data.get(data.files, (variables) => {
     response.render('index', {data: variables, markdown: marked})
   })
@@ -183,69 +88,25 @@ app.get('/projects/:title', function (request, response) { // The title can be d
       }
     }
     if (!exists) {
-      response.status(404).end('The project does not exist') // The project doesn't exist
+      response.status(404).end(request.params.title, 'Does not exist, yet...') // The project doesn't exist
     }
   })
 })
 
-// Events
+app.get('/webpages/:name', function (request, response) { // Subdomain name.example.com
+  response.status(404).end(request.params.name, 'Does not exist, yet...')
+})
+
 app.post('/send', function (request, response) { // Post request at send
-  console.log('Post request from client at /send')
-  send(request, response) // Email sender
+  console.log('Email is being sent')
+  // Send email
+  mail.sendForm(request, response) // Email sender
 })
 
 app.post('/enter', function(request, response) {
-  // Authenticate
-  if (request.body.user === process.env.ADMIN_NAME && request.body.pass === process.env.ADMIN_PASS) {
-    try { // Detect errors
-      // Standard webname convert
-      let webtitle = request.body.data.title.toLowerCase()
-      webtitle = webtitle.replace(/ /g, '-') // Whitespace will be replaced in the url
-
-      // Save images
-      let toLoad = 2
-      let load = function () {
-        toLoad -= 1
-        if (toLoad === 0) {
-          console.log('Enter:', request.body.data)
-
-          data.set({target: request.body.target, data: request.body.data}, () => {
-            response.end('Data entered') // Everything worked
-          })
-        }
-      }
-
-      filesystem.writeFile(`${__dirname}/public/assets/images/project/banners/${webtitle}.jpg`, request.body.data.cover[0].split(',')[1], 'base64', (error) => {
-        if (error) {
-          throw error
-        }
-        delete request.body.data.cover
-        load()
-      })
-      filesystem.writeFile(`${__dirname}/public/assets/images/project/thumbnails/${webtitle}.jpg`, request.body.data.thumbnail[0].split(',')[1], 'base64', (error) => {
-        if (error) {
-          throw error
-        }
-        delete request.body.data.thumbnail
-        load()
-      })
-    } catch (error) {
-      console.error(error)
-      response.end(String(error))
-    }
-  } else {
-    response.end('Invalid login')
-  }
+  console.log('Data entry portfolio')
+  // Authenticate and enter
+  enter.entry(request, response)
 })
 
 app.listen(app.get('port'), () => console.log(`Node app is running at ${app.get('port')}`))
-
-// Actions
-mongoClient.connect(process.env.MONGODB_URI, function (error, database) { // Connects to database using env info
-  if (error) {
-    throw error
-  }
-  data.database = database.db(process.env.DB_NAME)
-  data.set() // Database sync without entering new data
-  console.log('Database connection established')
-})

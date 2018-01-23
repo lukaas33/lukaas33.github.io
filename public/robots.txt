@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /pages
+Disallow: /assets
+Allow: /assets/images/project
+Allow: /assets/images/other

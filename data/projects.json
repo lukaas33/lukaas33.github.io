@@ -6,7 +6,7 @@
       "start": "2017-03-20",
       "end": "2017-04-24"
     },
-    "media": "/webpages/solaris/",
+    "media": "https://www.lukaas33.com//webpages/solaris/",
     "description": "This is a project I have been wanting to do for a while. I made an [illustration](https://plus.google.com/+LucasvanOsenbruggen/posts/DVXyfR85kPQ) of the solar system some time before and wanted to make something more interactive."
   },  {
     "title": "Profile picture",
@@ -26,7 +26,7 @@
       "start": "2017-03-01",
       "end": "2017-03-07"
     },
-    "media": "/webpages/picturer/",
+    "media": "https://www.lukaas33.com//webpages/picturer/",
     "description": "I wanted to learn to work with canvas and thought it would be fun to make a profile picture creator. The idea came from my [collection](https://plus.google.com/collection/8jO2fB)."
   },  {
     "title": "Presentation genes",
@@ -46,7 +46,7 @@
       "start": "2017-02-13",
       "end": "2017-02-26"
     },
-    "media": "/webpages/boarding/",
+    "media": "https://www.lukaas33.com//webpages/boarding/",
     "description": "This was my concept for a boarding screen for Android. It was my first project with a clear deadline and one where I used HTML for a design instead of an image.\n\n\nIt was part of a design challenge on [MaterialUp](https://www.uplabs.com/challenges/the-materialup-challenge)."
   },  {
     "title": "T-Shirt",
@@ -66,7 +66,7 @@
       "start": "2017-05-15",
       "end": "2017-06-23"
     },
-    "media": "/",
+    "media": "https://www.lukaas33.com/",
     "description": "This portfolio you're viewing is a project too. I made this as my final project for the school year using _PHP_. This was my first project where I documented everything and planned ahead.\n\n\n I later converted it to _Node.js_ myself when moving from _Github Pages_ to the webhost _Heroku_.\n\n\nI am still working on it and adding more features./nThe page for entering data can be found [here](/pages/entry). _You need the password for the data to be accepted._"
   },  {
     "title": "Vita Simulare",
@@ -76,7 +76,7 @@
       "start": "2017-02-13",
       "end": "2018-01-17"
     },
-    "media": "/webpages/simulare/",
+    "media": "https://www.lukaas33.com//webpages/simulare/",
     "description": "My biggest project yet. I wanted to create life-like bacteria that evolved before your eyes./n/n/nI was inspired to do this project by [Nature of Code](http://natureofcode.com/book/), Daniel Shiffman."
   },  {
     "title": "Faunadex",
@@ -86,7 +86,7 @@
       "start": "2017-09-25",
       "end": "2018-01-12"
     },
-    "media": "/webpages/faunadex/",
+    "media": "https://www.lukaas33.com//webpages/faunadex/",
     "description": "I always wanted to have a Pokédex for animals. I finally created it using _[Clarifai](https://www.clarifai.com/)_. It only works on the newest version of Chrome on Android as far As I know."
   }
 ]}
