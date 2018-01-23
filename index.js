@@ -62,12 +62,12 @@ app.all(/.*/, function (request, response, next) { // Top layer redirect
   }
 })
 
-app.use(express.static(`${__dirname}/public`, {maxage: '7d'})) // Serve static files
-
 app.use(wildcard({ // Webpages get their own domain
   namespace: 'webpages',
   whitelist: ['www']
 }))
+
+app.use(express.static(`${__dirname}/public`, {maxage: '7d'})) // Serve static files
 
 app.engine('html', require('ejs').renderFile) // No idea what it does but everything breaks without this line
 app.set('views', `${__dirname}/views`)
@@ -104,25 +104,20 @@ app.get('/projects/:title', function (request, response) { // The title can be d
 })
 
 app.get('/webpages/:name', function (request, response) { // Subdomain name.example.com, handles if folder doesn't exist
-   path(request.path + 'index.html', (error, exists) => {
-     console.log(request.path + 'index.html')
-     if (!exists) {
-       switch (request.params.name) {
-         case 'webpages':
-         case 'web': // TODO only show webpages
-         case 'portfolio':
-         case 'projects': // TODO different oucome
-         response.redirect(301, process.env.DOMAIN + '/#portfolio')
-         break
-         case 'mail': // TODO different outcome
-         case 'contact':
-         response.redirect(301, process.env.DOMAIN + '/#contact')
-         break
-         default:
-         response.status(404).end(`Webpage ${request.params.name} does not exist.`)
-       }
-     }
-  })
+ switch (request.params.name) {
+   case 'webpages':
+   case 'web': // TODO only show webpages
+   case 'portfolio':
+   case 'projects': // TODO different oucome
+   response.redirect(301, process.env.DOMAIN + '/#portfolio')
+   break
+   case 'mail': // TODO different outcome
+   case 'contact':
+   response.redirect(301, process.env.DOMAIN + '/#contact')
+   break
+   default:
+   response.status(404).end(`Webpage ${request.params.name} does not exist.`)
+ }
 })
 
 app.post('/send', function (request, response) { // Post request at send
