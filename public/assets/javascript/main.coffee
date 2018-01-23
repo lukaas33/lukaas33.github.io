@@ -62,6 +62,11 @@ setMap = (change) ->
   else
     if change then setOn(global.timing / 2) else setOff(0)
 
+setPos = ->
+  at = window.location.href.split('#')
+  if at.length != 1
+    scrollToLoc($('#' + at[1]))
+
 disable = ->
   # No double clicking
   $(@).prop("disabled", true)
@@ -87,7 +92,7 @@ switchPage = (change) ->
     global.cookie("page", newPage) # Update
     setPages global.timing / 2
 
-highLight = -> # TODO fix ripple delay
+highLight = -> # TODO fix ripple delay and origin
   # Highlights items in the menu bar
   $li = $("nav ul li")
   $li.removeClass "focus" # Removes the focus each time
@@ -167,10 +172,15 @@ $ ->
   ### Actions ###
   console.log "# DOM value setup loading..."
   # Sets information in the DOM
+  $("html").scrollTop(0)
   setMap(false)
   setForm()
   setPages(0)
   $("body").show() # Shows page
+  setTimeout( ->
+    setPos()
+  , global.timing * 2) # Animation css done
+
 
   console.log "# DOM events loading..."
   # Prevents the flashing on of the about link on load
@@ -201,7 +211,6 @@ $ ->
 
   $("nav ul").find('a').click (event) ->
     # Go to section
-    event.preventDefault() # Default behaviour disabled
     href = $(@).attr "href"
     scrollToLoc($(href)) # Scroll to element with id
 
@@ -224,6 +233,7 @@ $ ->
 
   $("#portfolio").find(".sort a").click (event) ->
     event.preventDefault() # Default behaviour disabled
+
     # Sort options
     options = [
       {Newest: {"date.end": -1}},

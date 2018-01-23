@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var disable, highLight, scrollToLoc, sendMail, setForm, setMap, setPages, switchPage, toggle;
+  var disable, highLight, scrollToLoc, sendMail, setForm, setMap, setPages, setPos, switchPage, toggle;
 
   setForm = function() {
     var $form;
@@ -84,6 +84,14 @@
       } else {
         return setOff(0);
       }
+    }
+  };
+
+  setPos = function() {
+    var at;
+    at = window.location.href.split('#');
+    if (at.length !== 1) {
+      return scrollToLoc($('#' + at[1]));
     }
   };
 
@@ -202,10 +210,14 @@
 
     /* Actions */
     console.log("# DOM value setup loading...");
+    $("html").scrollTop(0);
     setMap(false);
     setForm();
     setPages(0);
     $("body").show();
+    setTimeout(function() {
+      return setPos();
+    }, global.timing * 2);
     console.log("# DOM events loading...");
     setTimeout(function() {
       highLight();
@@ -233,7 +245,6 @@
     });
     $("nav ul").find('a').click(function(event) {
       var href;
-      event.preventDefault();
       href = $(this).attr("href");
       return scrollToLoc($(href));
     });
