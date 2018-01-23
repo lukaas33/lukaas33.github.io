@@ -16,10 +16,10 @@
   "theme_color": "#d32f2f",
   "background_color": "#d32f2f",
   "display": "standalone",
-  "start_url": "/webpages/faunadex/",
+  "start_url": "/",
   "serviceworker": {
     "src": "serviceworker.js",
-    "scope": "/webpages/faunadex/",
+    "scope": "/",
     "use_cache": true
   }
 }
