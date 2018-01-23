@@ -61,12 +61,12 @@ app.all(/.*/, function (request, response, next) { // Top layer redirect
   }
 })
 
+app.use(express.static(`${__dirname}/public`, {maxage: '7d'})) // Serve static files
+
 app.use(wildcard({ // Webpages get their own domain
-  namespace: 'sub',
+  namespace: 'webpages',
   whitelist: ['www']
 }))
-
-app.use(express.static(`${__dirname}/public`, {maxage: '7d'})) // Serve static files
 
 app.engine('html', require('ejs').renderFile) // No idea what it does but everything breaks without this line
 app.set('views', `${__dirname}/views`)
@@ -102,7 +102,7 @@ app.get('/projects/:title', function (request, response) { // The title can be d
   })
 })
 
-app.get('/sub/:name', function (request, response) { // Subdomain name.example.com, handles if folder doesn't exist
+app.get('/webpages/:name', function (request, response) { // Subdomain name.example.com, handles if folder doesn't exist
   switch (request.params.name) {
     case 'webpages':
     case 'web': // TODO only show webpages
