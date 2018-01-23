@@ -81,6 +81,10 @@ app.get('/', function (request, response) { // Home
   })
 })
 
+app.get('/projects', function (request, response) { // Base folder
+  response.redirect(302, process.env.DOMAIN + '/#portfolio')
+})
+
 app.get('/projects/:title', function (request, response) { // The title can be different
   var needed = 'projects'
   data.get([needed], (variables) => {
@@ -103,18 +107,22 @@ app.get('/projects/:title', function (request, response) { // The title can be d
   })
 })
 
+app.get('/webpages', function (request, response) { // Base folder
+  response.redirect(302, process.env.DOMAIN + '/#portfolio') // TODO only show webpages
+})
+
 app.get('/webpages/:name', function (request, response) { // Subdomain name.example.com, handles if folder doesn't exist
  switch (request.params.name) {
    case 'webpages':
    case 'web': // TODO only show webpages
    case 'portfolio':
    case 'projects': // TODO different oucome
-   response.redirect(301, process.env.DOMAIN + '/#portfolio')
-   break
+     response.redirect(301, process.env.DOMAIN + '/#portfolio')
+     break
    case 'mail': // TODO different outcome
    case 'contact':
-   response.redirect(301, process.env.DOMAIN + '/#contact')
-   break
+     response.redirect(301, process.env.DOMAIN + '/#contact')
+     break
    default:
    response.status(404).end(`Webpage ${request.params.name} does not exist.`)
  }
