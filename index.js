@@ -102,7 +102,8 @@ app.get('/projects/:title', function (request, response) { // The title can be d
       }
     }
     if (!exists) {
-      response.status(404).end(`Project ${request.params.title} does not exist.`) // The project doesn't exist
+      // The project doesn't exist
+      response.status(404).render('error', {error: {status: 404, message: "This project doesn't exist"}})
     }
   })
 })
@@ -124,8 +125,9 @@ app.get('/webpages/:name', function (request, response) { // Subdomain name.exam
      response.redirect(301, process.env.DOMAIN + '/#contact')
      break
    default:
-   response.status(404).end(`Webpage ${request.params.name} does not exist.`)
- }
+    // No response or redirect
+    response.status(404).render('error', {error: {status: 404, message: "This page doesn't exist"}})
+  }
 })
 
 app.post('/send', function (request, response) { // Post request at send
@@ -139,5 +141,6 @@ app.post('/enter', function(request, response) {
   // Authenticate and enter
   enter.entry(request, response)
 })
+
 
 app.listen(app.get('port'), () => console.log(`Node app is running at ${app.get('port')}`))
