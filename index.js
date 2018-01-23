@@ -57,7 +57,7 @@ app.all(/.*/, function (request, response, next) { // Top layer redirect
   if (host.indexOf('lucas-resume.herokuapp.com') === -1) { // redirect away from
     next() // No problem
   } else {
-    res.redirect(301, process.env.DOMAIN + request.path)
+    response.redirect(301, process.env.DOMAIN + request.path)
   }
 })
 
@@ -108,11 +108,11 @@ app.get('/sub/:name', function (request, response) { // Subdomain name.example.c
     case 'web': // TODO only show webpages
     case 'portfolio':
     case 'projects': // TODO different oucome
-      response.redirect(301, '/#portfolio')
+      response.redirect(301, process.env.DOMAIN + '/#portfolio')
       break
     case 'mail': // TODO different outcome
     case 'contact':
-      response.redirect(301, '/#contact')
+      response.redirect(301, process.env.DOMAIN + '/#contact')
       break
     default:
       response.status(404).end(`Webpage ${request.params.name} does not exist.`)
