@@ -47,17 +47,26 @@ app.set('port', process.env.PORT || 5000) // Chooses a port
 //   }
 // }))
 
-app.use(compression({ threshold: 0 })) // Compression for static files
+app.use(compression({threshold: 0})) // Compression for static files
 app.use(minify()) // Minifies code
 app.use(bodyParser.json({limit: '50mb'})) // Enable json parsing of requests
 app.use(bodyParser.urlencoded({extended: true}))
 
+app.all(/.*/, function (request, response, next) { // Top layer redirect
+  const host = request.get('host')
+  if (host.indexOf('lucas-resume.herokuapp.com') === -1) { // redirect away from
+    next() // No problem
+  } else {
+    res.redirect(301, process.env.DOMAIN + request.path)
+  }
+})
+
 app.use(wildcard({ // Webpages get their own domain
-  namespace: 'webpages',
+  namespace: 'sub',
   whitelist: ['www']
 }))
 
-app.use(express.static(`${__dirname}/public`, { maxage: '7d' })) // Serve static files
+app.use(express.static(`${__dirname}/public`, {maxage: '7d'})) // Serve static files
 
 app.engine('html', require('ejs').renderFile) // No idea what it does but everything breaks without this line
 app.set('views', `${__dirname}/views`)
@@ -88,13 +97,26 @@ app.get('/projects/:title', function (request, response) { // The title can be d
       }
     }
     if (!exists) {
-      response.status(404).end(request.params.title, 'Does not exist, yet...') // The project doesn't exist
+      response.status(404).end(`Project ${request.params.title} does not exist.`) // The project doesn't exist
     }
   })
 })
 
-app.get('/webpages/:name', function (request, response) { // Subdomain name.example.com
-  response.status(404).end(request.params.name, 'Does not exist, yet...')
+app.get('/sub/:name', function (request, response) { // Subdomain name.example.com, handles if folder doesn't exist
+  switch (request.params.name) {
+    case 'webpages':
+    case 'web': // TODO only show webpages
+    case 'portfolio':
+    case 'projects': // TODO different oucome
+      response.redirect(301, '/#portfolio')
+      break
+    case 'mail': // TODO different outcome
+    case 'contact':
+      response.redirect(301, '/#contact')
+      break
+    default:
+      response.status(404).end(`Webpage ${request.params.name} does not exist.`)
+  }
 })
 
 app.post('/send', function (request, response) { // Post request at send
