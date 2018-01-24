@@ -3,7 +3,7 @@
 // << Variables >>
 // Require
 const express = require('express')
-// const helmet = require('helmet')
+const helmet = require('helmet')
 const bodyParser = require('body-parser')
 const compression = require('compression')
 const minify = require('express-minify')
@@ -34,7 +34,7 @@ marked.setOptions({renderer: renderer})
 
 app.set('port', process.env.PORT || 5000) // Chooses a port
 
-// app.use(helmet())
+app.use(helmet())
 // app.use(helmet.contentSecurityPolicy({ // Allowed sources
 //   directives: {
 //     // Setup for http headers
