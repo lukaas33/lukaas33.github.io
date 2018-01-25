@@ -12,6 +12,7 @@ Descriptions of projects are stored in the data-folder and can be viewed at the 
 I currently only make websites for learning or for fun.
 All my code is open source, so if I ever make something nice everyone can use it.
 
+In my other [repository](https://github.com/lukaas33/general-server) I only do server-side programming. With this one the server-side is only for the portfolio project.
 
 ---
 
@@ -26,13 +27,13 @@ All my code is open source, so if I ever make something nice everyone can use it
 
 -   [Resume](https://www.lukaas33.com)
 
-    This repository is a prject itself.
+    This repository is a project itself.
 
--   [Simulare](https://www.lukaas33.com/webpages/simulare)
+-   [Simulare](https://simulare.lukaas33.com)
 
     A simulation of bacteria.
 
--   [Faunadex](https://www.lukaas33.com/webpages/faunadex)
+-   [Faunadex](https://faunadex.lukaas33.com)
 
     Scan an animal to get information about it.
 
@@ -45,9 +46,23 @@ All my code is open source, so if I ever make something nice everyone can use it
     My version of the classic game.
 
 
-#### Things to do / learn
+### To do
 
--   Information theory
+-   Finish project pages
+-   Make a robot with Arduino
+-   Standard stylesheet for re-use in future projects
+-   Tensorflow chatbot
+-   ~~Pokédex for animals~~
+-   ~~Simulation of bacteria~~
+-   ~~Chat app~~ _(Mostly done)_
+-   ~~Solar system model~~ _(May want to make an improved version)_
+
+
+#### Things to learn
+
+-   3d graphics
+-   Cryptography
+-   Information theory _(Don't really know what it means...)_
 -   Algorithms
 -   C / C++
     -   Arduino programming
@@ -60,7 +75,7 @@ All my code is open source, so if I ever make something nice everyone can use it
 -   Regex
 -   Latex
 -   ~~Markdown~~ _(Duh)_
--   ~~Python~~ _(Haven't found a purpose for it)_
+-   ~~Python~~ _(My favorite language)_
 -   ~~PHP~~ _(Not interested anymore)_
 -   ~~SQL~~
 -   ~~Git~~ _(A little)_
