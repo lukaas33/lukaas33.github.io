@@ -11,7 +11,8 @@ const sendForm = function (request, response) {
 
   form.parse(request, function (error, fields, files) {
     if (error) {
-      response.end('error') // Info for client
+      response.status(500).send('error') // Info for client
+      response.end()
       throw error
     }
 
@@ -25,11 +26,13 @@ const sendForm = function (request, response) {
 
     mailgun.messages().send(mailOptions, function (error, body) {
       if (error) {
-        response.end('error') // Info for client
+        response.status(500).send('error') // Info for client
+        response.end()
         throw error
       }
       console.log('Email was sent')
-      response.end() // No errors occured
+      response.status(201).send() // No errors occured
+      response.end()
     })
   })
 }
