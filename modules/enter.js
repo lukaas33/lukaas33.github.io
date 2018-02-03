@@ -19,7 +19,6 @@ const entry = function (request, response) {
 
           data.set({target: request.body.target, data: request.body.data}, () => {
             response.status(201).send('Data entered') // Everything worked
-            response.end()
           })
         }
       }
@@ -42,11 +41,9 @@ const entry = function (request, response) {
     } catch (error) {
       console.error(error)
       response.status(500).send(String(error))
-      response.end()
     }
   } else {
     response.status(401).send('Invalid login')
-    response.end()
   }
 }
 

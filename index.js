@@ -18,11 +18,11 @@ const app = express()
 
 
 // << Setup >>
-var renderer = new marked.Renderer()
+let renderer = new marked.Renderer()
 renderer.link = (href, title, text) => {
   // Adds target to external links, from https://github.com/chjj/marked/pull/451
   let external = /^https?:\/\/.+$/.test(href) // Is external
-  var add = external ? 'rel="noopener" target="_blank"' : null
+  let add = external ? 'rel="noopener" target="_blank"' : null
   return `<a ${add} href="${href}">${text}</a>` // Edited url
 }
 marked.setOptions({renderer: renderer})
@@ -54,7 +54,6 @@ app.all(/.*/, function (request, response, next) { // Top layer redirect
     next() // No problem
   } else {
     response.redirect(301, process.env.DOMAIN + request.path)
-    response.end()
   }
 })
 
@@ -74,19 +73,17 @@ app.set('view engine', 'ejs') // Use ejs for templating
 app.get('/', function (request, response) { // Home
   data.get(data.files, (variables) => {
     response.status(200).render('index', {data: variables, markdown: marked})
-    response.end()
   })
 })
 
 app.get('/projects', function (request, response) { // Base folder
   response.redirect(302, process.env.DOMAIN + '/#portfolio')
-  response.end()
 })
 
 app.get('/projects/:title', function (request, response) { // The title can be different
-  var needed = 'projects'
+  let needed = 'projects'
   data.get([needed], (variables) => {
-    var exists = false
+    let exists = false
 
     for (let project of variables[needed]) { // Existing projects
       // Standard webname convert
@@ -96,14 +93,12 @@ app.get('/projects/:title', function (request, response) { // The title can be d
       if (webtitle === request.params.title) {
         exists = true // Project exists
         response.status(200).render('project', {data: project, markdown: marked})
-        response.end()
         break // Ends loop
       }
     }
     if (!exists) {
       // The project doesn't exist
       response.status(404).render('error', {error: {status: 404, message: "This project doesn't exist"}})
-      response.end()
     }
   })
 })
@@ -119,17 +114,14 @@ app.get('/webpages/:name', function (request, response) { // Subdomain name.exam
    case 'portfolio':
    case 'projects': // TODO different oucome
      response.redirect(301, process.env.DOMAIN + '/#portfolio')
-     response.end()
      break
    case 'mail': // TODO different outcome
    case 'contact':
      response.redirect(301, process.env.DOMAIN + '/#contact')
-     response.end()
      break
    default:
     // No response or redirect
     response.status(404).render('error', {error: {status: 404, message: "This page doesn't exist"}})
-    response.end()
   }
 })
 
