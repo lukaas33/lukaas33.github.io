@@ -3,12 +3,12 @@ const filesystem = require('fs')
 var mongoClient = require('mongodb')
 mongoClient = mongoClient.MongoClient
 const files = ['experience', 'projects', 'skills']
-var database = null
+let database = null
 
 
 // << Functions >>
 const get = function (collections, callback = () => {}) {
-  var result = {} // Will be filled
+  let result = {} // Will be filled
   for (let file of collections) { // Loop through collections needed
     let options = { // Sort options for each file
       'experience': {'date.start': 1, 'title': 1},
@@ -39,7 +39,7 @@ const set = function (entering, complete = () => {}) {
         throw error
       }
 
-      var json = JSON.parse(data, function (key, value) { // Text to json
+      let json = JSON.parse(data, function (key, value) { // Text to json
         if ((key === 'start' || key === 'end') && value !== null) {
           return new Date(value) // Date strings will be converted to dates
         } else {
@@ -52,8 +52,8 @@ const set = function (entering, complete = () => {}) {
   }
 
   const upsert = function (document, collection, callback = () => {}) {
-    var query = {title: document.title} // Title is unique
-    var current = database.collection(collection)
+    let query = {title: document.title} // Title is unique
+    let current = database.collection(collection)
     current.updateOne(query, {$set: document}, {upsert: true}, function (error, result) {
       if (error) {
         throw error
