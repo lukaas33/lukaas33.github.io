@@ -3,7 +3,7 @@ const filesystem = require('fs')
 
 
 // << Functions >>
-const entry = function (request, response, next) {
+const entry = function (request, response) {
   if (request.body.user === process.env.ADMIN_NAME && request.body.pass === process.env.ADMIN_PASS) {
     try { // Detect errors
       // Standard webname convert
@@ -24,7 +24,7 @@ const entry = function (request, response, next) {
         }
       }
 
-      let folder = `${__dirname}/public/assets/images/project`
+      var folder = `${__dirname}/public/assets/images/project`
       filesystem.writeFile(`${folder}/banners/${webtitle}.jpg`, request.body.data.cover[0].split(',')[1], 'base64', (error) => {
         if (error) {
           throw error
@@ -41,14 +41,12 @@ const entry = function (request, response, next) {
       })
     } catch (error) {
       console.error(error)
-      const err = new Error("Couldn't create image")
-      err.status(400)
-      next(err)
+      response.status(500).send(String(error))
+      response.end()
     }
   } else {
-    const err = new Error('Invalid login')
-    err.status(401)
-    next(err)
+    response.status(401).send('Invalid login')
+    response.end()
   }
 }
 

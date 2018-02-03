@@ -18,11 +18,11 @@ const app = express()
 
 
 // << Setup >>
-const renderer = new marked.Renderer()
+var renderer = new marked.Renderer()
 renderer.link = (href, title, text) => {
   // Adds target to external links, from https://github.com/chjj/marked/pull/451
   let external = /^https?:\/\/.+$/.test(href) // Is external
-  let add = external ? 'rel="noopener" target="_blank"' : null
+  var add = external ? 'rel="noopener" target="_blank"' : null
   return `<a ${add} href="${href}">${text}</a>` // Edited url
 }
 marked.setOptions({renderer: renderer})
@@ -54,6 +54,7 @@ app.all(/.*/, function (request, response, next) { // Top layer redirect
     next() // No problem
   } else {
     response.redirect(301, process.env.DOMAIN + request.path)
+    response.end()
   }
 })
 
@@ -70,20 +71,22 @@ app.set('view engine', 'ejs') // Use ejs for templating
 
 
 // << Routes >>
-app.get('/', function (request, response, next) { // Home
+app.get('/', function (request, response) { // Home
   data.get(data.files, (variables) => {
     response.status(200).render('index', {data: variables, markdown: marked})
+    response.end()
   })
 })
 
-app.get('/projects', function (request, response, next) { // Base folder
+app.get('/projects', function (request, response) { // Base folder
   response.redirect(302, process.env.DOMAIN + '/#portfolio')
+  response.end()
 })
 
-app.get('/projects/:title', function (request, response, next) { // The title can be different
-  let needed = 'projects'
+app.get('/projects/:title', function (request, response) { // The title can be different
+  var needed = 'projects'
   data.get([needed], (variables) => {
-    let exists = false
+    var exists = false
 
     for (let project of variables[needed]) { // Existing projects
       // Standard webname convert
@@ -93,58 +96,54 @@ app.get('/projects/:title', function (request, response, next) { // The title ca
       if (webtitle === request.params.title) {
         exists = true // Project exists
         response.status(200).render('project', {data: project, markdown: marked})
+        response.end()
         break // Ends loop
       }
     }
     if (!exists) {
       // The project doesn't exist
-      const error = new Error("This project doesn't exist")
-      error.status(404)
-      next(error)
+      response.status(404).render('error', {error: {status: 404, message: "This project doesn't exist"}})
+      response.end()
     }
   })
 })
 
-app.get('/webpages', function (request, response, next) { // Base folder
+app.get('/webpages', function (request, response) { // Base folder
   response.redirect(302, process.env.DOMAIN + '/#portfolio') // TODO only show webpages
 })
 
-app.get('/webpages/:name', function (request, response, next) { // Subdomain name.example.com, handles if folder doesn't exist
+app.get('/webpages/:name', function (request, response) { // Subdomain name.example.com, handles if folder doesn't exist
  switch (request.params.name) {
    case 'webpages':
    case 'web': // TODO only show webpages
    case 'portfolio':
    case 'projects': // TODO different oucome
      response.redirect(301, process.env.DOMAIN + '/#portfolio')
+     response.end()
      break
    case 'mail': // TODO different outcome
    case 'contact':
      response.redirect(301, process.env.DOMAIN + '/#contact')
+     response.end()
      break
    default:
     // No response or redirect
-    const error = new Error("This page doesn't exist")
-    error.status(404)
-    next(error)
+    response.status(404).render('error', {error: {status: 404, message: "This page doesn't exist"}})
+    response.end()
   }
 })
 
-app.post('/send', mail.sendForm)
-
-app.post('/enter', enter.entry)
-
-// Error handle
-app.use((error, request, response) => {
-  if (!error.status) {
-    error.status = 500
-  }
-  console.error(error)
-  if (error.status === 404) {
-    response.status(error.status).render('error', {error: error})
-  } else {
-    response.send(error)
-  }
-  response.end()
+app.post('/send', function (request, response) { // Post request at send
+  console.log('Email is being sent')
+  // Send email
+  mail.sendForm(request, response) // Email sender
 })
+
+app.post('/enter', function(request, response) {
+  console.log('Data entry portfolio')
+  // Authenticate and enter
+  enter.entry(request, response)
+})
+
 
 app.listen(app.get('port'), () => console.log(`Node app is running at ${app.get('port')}`))
