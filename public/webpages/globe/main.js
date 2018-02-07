@@ -1,20 +1,10 @@
-// Mostly copied and edited
-  // - https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/
+// Using the three.js library
+  // Mostly used the code in the docs
+  // https://threejs.org/docs/
 
-'use strict'
-// >> variables
-const canvas = document.getElementById('canvas')
-const context = canvas.getContext("webgl")
+const scene = new THREE.Scene()
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 
-// >> Functions
-const draw = {}
-
-draw.background = function () {
-  context.clearColor(0.0, 0.0, 0.0, 0.75);
-  context.clear(context.COLOR_BUFFER_BIT);
-}
-
-// >> Events
-window.onload = function () {
-  draw.background()
-}
+const renderer = new THREE.WebGLRenderer()
+renderer.setSize( window.innerWidth, window.innerHeight )
+document.body.appendChild(renderer.domElement)
