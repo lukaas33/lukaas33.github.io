@@ -1,4 +1,6 @@
 (function () { // Closed scope
+'use strict'
+
 // >> Variables
 const doc = {
   body: document.body,
@@ -7,9 +9,7 @@ const doc = {
   canvas: document.getElementById('canvas')
 }
 
-const local = {
-  started: false
-}
+const local = {}
 
 
 
@@ -22,13 +22,15 @@ const update = function () {
   global.start = local.center
   doc.canvas.width = local.width
   doc.canvas.height = local.height
+
+  drawField()
 }
 
 const drawField = function () {
-  console.log(local)
-  const clearZone = new Shape.Circle(local.center, local.height / 10)
-  clearZone.strokeWidth = 6
-  clearZone.strokeColor = '#9e9e9e'
+  const background = new Path.Rectangle([0, 0], [local.width, local.height])
+  background.fillColor = '#eeeeee'
+
+  const clearZone = new Shape.Circle(local.center, global.vars.step * 10)
   clearZone.fillColor = '#ffffff'
 }
 
@@ -37,13 +39,14 @@ const getLocation = function (callback) {
   doc.popup.style.display = 'block'
 
   doc.canvas.addEventListener('click', (event) => {  // The location to go to
-    if (!local.started) {
+    if (!global.vars.started) {
       const click = new Point(event.pageX, event.pageY)
       console.log(click)
 
-      if (global.funct.distance([click, local.center]) > local.height / 10) { // Outside circle
+      if (global.funct.distance([click, local.center]) > global.vars.step * 10) { // Outside circle
         doc.popup.style.display = 'none'
-        const marker = new Shape.Circle(click, local.height / 50)
+        global.target = click // Store
+        const marker = new Shape.Circle(click, global.vars.step * 2)
         marker.fillColor = '#bdbdbd'
 
         console.log('User picked location')
@@ -65,8 +68,9 @@ update()
 drawField()
 
 getLocation(() => {
-  local.started = true // Start evolving
+  global.vars.started = true // Start evolving
   doc.status.style.display = 'block'
+  global.loop() // Start algorithm
 })
 
 
@@ -76,22 +80,23 @@ window.addEventListener('resize', (event) => {
   update()
 })
 
-view.onframe = (event) => {
-  if (local.started) {
-    if (global.population.length > 0) { // There is a population
-      for (let instance of global.population) {
-        instance.move() // Let all walkers move
+view.onFrame = (event) => {
+  if (global.vars.started && global.vars.work) {
+    for (let walker of global.vars.population) {
+      if (walker.started) {
+        walker.move()
       }
     }
+    global.vars.at += 1 * global.vars.timeFactor
   }
 }
 
 setInterval(() => { // Update values
-  if (local.started) {
+  if (global.vars.started) {
     // Update values in statusbar
     doc.status.textContent = `
     Generation: ${global.vars.generation}
-    At step: ${global.vars.at}
+    At step: ${Math.ceil(global.vars.at / 30)}
     `
   }
 }, 500)
