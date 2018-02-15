@@ -2,12 +2,16 @@
 'use strict'
 
 // >> Variables
+const populationSize = 10
+const steps = 1500
+const timeFactor = 1
+const parentAmount = 2
+
 const step = 10
-const timeFactor = 3
-const steps = 100
-const populationSize = 2
+const maxIterations = 3
+
 const population = []
-let generation = 1
+let generation = 0
 let at = 0 // Step of walker
 
 
@@ -38,15 +42,6 @@ global.vars = {
 
 
 // >> Functions
-const normalize = function (fitnessArray) {
-  const total = fitnessArray.reduce((a, b) => a + b, 0)
-
-  for (let i = 0; i < fitnessArray.length; i++) {
-    fitnessArray[i] /= total
-  }
-  return fitnessArray
-}
-
 const distance = function (points) {
   const dx = (points[0].x - points[1].x) ** 2
   const dy = (points[0].y - points[1].y) ** 2
@@ -59,7 +54,16 @@ const chooseParents = function (num, pool) {
   const result = []
 
   while (result.length < num) {
-    let rand = Math.
+    let rand = Math.random()
+    let cumulative = 0 // Use cumulative value
+
+    for (let walker of pool) {
+       cumulative += walker.fitness
+       if (rand < cumulative) { // Choice based on probabilit, 0.4 better than 0.1
+         result.push(walker)
+         break
+       }
+    }
   }
 }
 
@@ -71,8 +75,8 @@ global.funct = {distance: distance}
 // >> Classes
 class DNA {
   // Create instance
-  constructor (inherited = null) {
-    if (inherited === null) { // First generation
+  constructor (inherited = []) {
+    if (inherited.length === 0) { // First generation
       const options = [].concat.apply(...DNA.nucleotides) // Flatten
       const code = []
 
@@ -82,6 +86,27 @@ class DNA {
       }
 
       this.code = code // property of instance
+    } else { // Combination
+      const code = []
+
+      const length = Math.floor(steps / inherited.length) // Length of dna
+      const extra = steps % length
+      let at = 0
+
+      for (let dna of inherited) {
+        let codeLength = length
+        if (at + length + extra === steps) { // Final part
+          codeLength += extra // If length = 33 and steps = 100, this one will be 34
+        }
+
+        let part = code.slice(at, codeLength)
+        for (let nuc of part) {
+          code.push(nuc)
+        }
+        at += codeLength
+      }
+
+      this.code = code
     }
   }
 
@@ -107,13 +132,15 @@ class Walker {
   constructor (start = [0, 0], parents = null) {
     this.location = new Point(start)
     this.started = false
+    this.distance = null
+    this.fitness = null
 
     if (parents === null) { // Random
       this.dna = new DNA()
-    } else { // Combination
+    } else { // Combine dna
       const dna = []
       for (let parent of parents) {
-        dna.push(parent.dna.code) // Store parent dna
+        dna.push(parent.dna.code) // Store only parent dna
       }
       this.dna = new DNA(dna)
     }
@@ -126,7 +153,7 @@ class Walker {
 
   // >> Methods
   move () {
-    let every = 30 // Every 30 frames, changed to be sped up or slowed down
+    let every = 30 // Every 30 frames
     let i = this.loc / every
 
     if (Number.isInteger(i)) { // The valid indices
@@ -155,18 +182,29 @@ class Walker {
   display () {
     this.body = new Shape.Circle(this.location, step)
     this.body.fillColor = '#e0e0e0'
+    global.layer.addChildren(this.body)
   }
 
   calcFitness () {
-    this.fitness = this.distance ** -1 // High for low distances
+    let fitness = this.distance ** -1 // High for low distances
+    fitness = fitness ** 100 // Increase influence
+    this.fitness = fitness
     return this.fitness
+  }
+
+  normalizeFitness (total) {
+    this.fitness = this.fitness / total
   }
 
   checkEnd () {
     this.distance = distance([this.location, global.target])
-    if (this.distance < step * 2) { // Inside target
-        at = steps * 30 // Let the check end all movement
+    if (this.distance < step) { // Inside target
+        global.vars.work = false // Stop movement
     }
+  }
+
+  end () {
+    this.body.remove() // From field
   }
 }
 
@@ -174,7 +212,7 @@ class Walker {
 
 // >> Execution
 global.loop = function () { // Will be executed once per frame
-  if (population.length === 0) {
+  if (population.length === 0) { // No population
     // initialise population
     while (population.length < populationSize) {
       population.push(new Walker(global.start))
@@ -186,20 +224,48 @@ global.loop = function () { // Will be executed once per frame
     walker.display()
     walker.started = true // Will start moving
   }
-  global.vars.work = true // Stop
+  global.vars.work = true
+
 
   let check = setInterval(() => {
     if (at >= steps * 30) {
+      generation += 1
+
       global.vars.work = false // Stop movement
-      clearInterval(check)
+      clearInterval(check) // No double checking on recursion
 
       let fitnesses = []
       for (let walker of population) {
         fitnesses.push(walker.calcFitness()) // Add to the list
       }
+      let total = fitnesses.reduce((a, b) => a + b)
+      let max = Math.max(...fitnesses)
 
-      fitnesses = normalize(fitnesses) // normalize values
-      console.log(fitnesses)
+      for (let walker of population) {
+        if (walker.fitness === max) {
+          console.log('Best', walker.distance, walker.dna)
+        }
+        walker.normalizeFitness(total) // Normalize values
+      }
+
+      console.log(generation, population)
+
+      let newPopulation = []
+      while (newPopulation.length < populationSize) {
+        let parents = chooseParents(parentAmount, population)
+        newPopulation.push(new Walker(global.start, parents))
+      }
+
+      for (let i = 0; i < population.length; i++) {
+        population[i].end() // Remove
+        population[i] = newPopulation[i] // Replace
+      }
+
+      if (generation < maxIterations) {
+        console.log('New iteration')
+        at = 0
+        global.loop() // New iteration
+      }
     }
   }, 5)
 }

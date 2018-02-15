@@ -22,8 +22,6 @@ const update = function () {
   global.start = local.center
   doc.canvas.width = local.width
   doc.canvas.height = local.height
-
-  drawField()
 }
 
 const drawField = function () {
@@ -32,6 +30,9 @@ const drawField = function () {
 
   const clearZone = new Shape.Circle(local.center, global.vars.step * 10)
   clearZone.fillColor = '#ffffff'
+
+  local.background = new Layer([background, clearZone])
+  local.background.activate()
 }
 
 const getLocation = function (callback) {
@@ -67,6 +68,9 @@ update()
 
 drawField()
 
+global.layer = new Layer()
+global.layer.activate()
+
 getLocation(() => {
   global.vars.started = true // Start evolving
   doc.status.style.display = 'block'
@@ -99,7 +103,7 @@ setInterval(() => { // Update values
     At step: ${Math.ceil(global.vars.at / 30)}
     `
   }
-}, 500)
+}, 250)
 
 
 doc.body.style.opacity = 1 // Display screen
