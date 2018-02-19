@@ -2,13 +2,12 @@
 'use strict'
 
 // >> Variables
-const populationSize = 10
-const steps = 1500
-const timeFactor = 1
-const parentAmount = 2
+const populationSize = 100
+const steps = 100 // Steps before end
+const parentAmount = 2 // How many parents make one child
 
-const step = 10
-const maxIterations = 3
+const step = 10 // Pixels per step
+const maxIterations = Infinity
 
 const population = []
 let generation = 0
@@ -32,11 +31,9 @@ global.vars = {
   get step () {
     return step
   },
-  get timeFactor () {
-    return timeFactor
-  },
   started: false,
-  work: false
+  work: false,
+  timeFactor: 1 // Speed higher or lower
 }
 
 
@@ -153,11 +150,8 @@ class Walker {
 
   // >> Methods
   move () {
-    let every = 30 // Every 30 frames
-    let i = this.loc / every
-
-    if (Number.isInteger(i)) { // The valid indices
-      let use = this.dna.code[i] // Use the position
+    if (Number.isInteger(this.loc)) { // The valid indices
+      let use = this.dna.code[this.loc] // Use the position
 
       switch (use) {
         case 'A':
@@ -174,9 +168,11 @@ class Walker {
         break
       }
     }
+  }
 
-    this.checkEnd()
-    this.body.position = this.location
+  update () {
+      this.checkEnd()
+      this.body.position = this.location
   }
 
   display () {
@@ -225,11 +221,11 @@ global.loop = function () { // Will be executed once per frame
     walker.started = true // Will start moving
   }
   global.vars.work = true
+  generation += 1
 
 
   let check = setInterval(() => {
-    if (at >= steps * 30) {
-      generation += 1
+    if (at >= steps) {
 
       global.vars.work = false // Stop movement
       clearInterval(check) // No double checking on recursion

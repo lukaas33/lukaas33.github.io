@@ -9,7 +9,9 @@ const doc = {
   canvas: document.getElementById('canvas')
 }
 
-const local = {}
+const local = {
+    time: 0
+}
 
 
 
@@ -88,22 +90,35 @@ view.onFrame = (event) => {
   if (global.vars.started && global.vars.work) {
     for (let walker of global.vars.population) {
       if (walker.started) {
-        walker.move()
+        walker.update() // Update with location
       }
     }
-    global.vars.at += 1 * global.vars.timeFactor
   }
 }
 
-setInterval(() => { // Update values
-  if (global.vars.started) {
-    // Update values in statusbar
-    doc.status.textContent = `
-    Generation: ${global.vars.generation}
-    At step: ${Math.ceil(global.vars.at / 30)}
-    `
-  }
-}, 250)
+setInterval(() => {
+    if (global.vars.started && global.vars.work) {
+        // Change location
+        if (local.time >= 10 * global.vars.timeFactor) { // New step
+            global.vars.at = 1 + global.vars.at
+            local.time = 0 // Restart
+
+            for (let walker of global.vars.population) {
+              if (walker.started) {
+                walker.move() // Update with location
+              }
+            }
+
+            // Update values in statusbar
+            doc.status.textContent = `
+            Generation: ${global.vars.generation}
+            At step: ${Math.ceil(global.vars.at / 30)}
+            `
+        }
+
+        local.time += 5 // ms
+    }
+}, 5)
 
 
 doc.body.style.opacity = 1 // Display screen
