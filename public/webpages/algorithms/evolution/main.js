@@ -22,6 +22,7 @@ const update = function () {
   local.center = new Point(local.width / 2, local.height / 2)
 
   global.start = local.center
+  global.space = new Path.Rectangle([0, 0], [local.width, local.height])
   doc.canvas.width = local.width
   doc.canvas.height = local.height
 }

@@ -2,16 +2,18 @@
 'use strict'
 
 // >> Variables
-const populationSize = 500
-const steps = 20 // Steps before end
-const parentAmount = 2 // How many parents make one child
+const populationSize = 250
+const steps = 125 // Steps before end
+const parentAmount = 5 // How many parents make one child
 
-const step = 45 // Pixels per step
-const maxIterations = Infinity
+const step = 10 // Pixels per step
+const maxIterations = 1000
 
-const population = []
+let population = []
 let generation = 0
 let at = 0 // Step of walker
+
+const ids = [] // Track all
 
 
 // Export references to variables
@@ -35,7 +37,6 @@ global.vars = {
   work: false,
   timeFactor: 10 // Speed higher or lower
 }
-
 
 
 // >> Functions
@@ -62,6 +63,18 @@ const chooseParents = function (num, pool) {
        }
     }
   }
+
+  return result
+}
+
+const genId = function (len = 16) {
+  while (true) {
+    let id = Math.floor(Math.random() * (10 ** len))
+    if (!ids.includes(id)) { // Is unique
+      ids.push(id)
+      return id
+    }
+  }
 }
 
 // Export once
@@ -74,33 +87,54 @@ class DNA {
   // Create instance
   constructor (inherited = []) {
     if (inherited.length === 0) { // First generation
-      const options = [].concat.apply(...DNA.nucleotides) // Flatten
       const code = []
 
       while (code.length < DNA.maxLength) {
-        let i = Math.floor(Math.random() * options.length)
-        code.push(options[i])
+        code.push(DNA.random)
       }
 
       this.code = code // property of instance
-    } else { // Combination
+    } else { // Recombination
       const code = []
 
-      const length = Math.floor(steps / inherited.length) // Length of dna
-      const extra = steps % length
-      let at = 0
+      if (true) { // Use system 1
+        while (code.length < DNA.maxLength) {
+          let chance = Math.random()
 
-      for (let dna of inherited) {
-        let codeLength = length
-        if (at + length + extra === steps) { // Final part
-          codeLength += extra // If length = 33 and steps = 100, this one will be 34
+          if (chance < DNA.mutationRate) { // Mutation of this position
+            code.push(DNA.random)
+          } else {
+            let parent = Math.floor(Math.random() * 2)
+            code.push(inherited[parent][code.length]) // inherited this position
+          }
         }
+      } else { // Use system 2
+        const length = Math.floor(DNA.maxLength / inherited.length) // DNA part length
+        const parts = Math.floor(DNA.maxLength / length)
 
-        let part = code.slice(at, codeLength)
-        for (let nuc of part) {
-          code.push(nuc)
+        let at = 0
+        let i = 0
+        for (let parent of inherited) {
+          let part
+          if (at == parts - 1) { // Last
+            part = parent.slice(i, parent.length)
+          } else {
+            part = parent.slice(i, i + length)
+          }
+
+          for (let nuc of part) {
+            let chance = Math.random()
+
+            if (chance < DNA.mutationRate) { // Mutation of this position
+              code.push(DNA.random)
+            } else {
+              code.push(nuc)
+            }
+          }
+
+          at += 1
+          i = at * length
         }
-        at += codeLength
       }
 
       this.code = code
@@ -110,6 +144,12 @@ class DNA {
   // >> Properties
   static get nucleotides () {
     return [['A', 'T'], ['C', 'G']]
+  }
+
+  static get random () {
+    const options = [].concat.apply(...DNA.nucleotides) // Flatten
+    const nuc = options[Math.floor(Math.random() * options.length)]
+    return nuc
   }
 
   static get maxLength () {
@@ -131,6 +171,8 @@ class Walker {
     this.started = false
     this.distance = null
     this.fitness = null
+
+    this.id = genId()
 
     if (parents === null) { // Random
       this.dna = new DNA()
@@ -183,7 +225,7 @@ class Walker {
 
   calcFitness () {
     let fitness = this.distance ** -1 // High for low distances
-    fitness *= 10 // Increase influence
+    fitness **= 4 // Increase influence of distance
     this.fitness = fitness
     return this.fitness
   }
@@ -196,6 +238,19 @@ class Walker {
     this.distance = distance([this.location, global.target])
     if (this.distance < 30) { // Inside target
         global.vars.work = false // Stop movement
+    }
+  }
+
+  checkEdge () {
+    if (global.space.contains(this.body.bounds)) {
+
+    } else {
+      for (let index in population) {
+        if (population[index].id === this.id) {
+          this.end()
+          population.splice(index, 1) // Don't track
+        }
+      }
     }
   }
 
@@ -239,26 +294,27 @@ global.loop = function () { // Will be executed once per frame
 
       for (let walker of population) {
         if (walker.fitness === max) {
-          console.log('Best', walker.distance, walker.dna)
+          console.log(walker)
         }
         walker.normalizeFitness(total) // Normalize values
       }
 
-      console.log(generation, population)
+      console.log(generation)
+      console.log(population)
 
       let newPopulation = []
       while (newPopulation.length < populationSize) {
         let parents = chooseParents(parentAmount, population)
-        newPopulation.push(new Walker(global.start, parents))
+        let child = new Walker(global.start, parents)
+        newPopulation.push(child)
       }
 
-      for (let i = 0; i < population.length; i++) {
-        population[i].end() // Remove
-        population[i] = newPopulation[i] // Replace
+      for (let walker of population) {
+        walker.end()
       }
+      population = newPopulation
 
       if (generation < maxIterations) {
-        console.log('New iteration')
         at = 0
         global.loop() // New iteration
       }
