@@ -30,7 +30,7 @@ const drawField = function () {
   const background = new Path.Rectangle([0, 0], [local.width, local.height])
   background.fillColor = '#eeeeee'
 
-  const clearZone = new Shape.Circle(local.center, global.vars.step * 10)
+  const clearZone = new Shape.Circle(local.center, 100)
   clearZone.fillColor = '#ffffff'
 
   local.background = new Layer([background, clearZone])
@@ -43,13 +43,16 @@ const getLocation = function (callback) {
 
   doc.canvas.addEventListener('click', (event) => {  // The location to go to
     if (!global.vars.started) {
-      const click = new Point(event.pageX, event.pageY)
+      let click = new Point(event.pageX, event.pageY)
       console.log(click)
 
-      if (global.funct.distance([click, local.center]) > global.vars.step * 10) { // Outside circle
+      click.x -= click.x % 30 // Align to grid
+      click.y -= click.y % 30 // Align to grid
+
+      if (global.funct.distance([click, local.center]) > 100) { // Outside circle
         doc.popup.style.display = 'none'
         global.target = click // Store
-        const marker = new Shape.Circle(click, global.vars.step * 2)
+        const marker = new Shape.Circle(click, 30)
         marker.fillColor = '#bdbdbd'
 
         console.log('User picked location')
@@ -99,7 +102,7 @@ view.onFrame = (event) => {
 setInterval(() => {
     if (global.vars.started && global.vars.work) {
         // Change location
-        if (local.time >= 10 * global.vars.timeFactor) { // New step
+        if (local.time >= 10 * (global.vars.timeFactor ** -1)) { // New step
             global.vars.at = 1 + global.vars.at
             local.time = 0 // Restart
 
@@ -112,7 +115,7 @@ setInterval(() => {
             // Update values in statusbar
             doc.status.textContent = `
             Generation: ${global.vars.generation}
-            At step: ${Math.ceil(global.vars.at / 30)}
+            At step: ${Math.ceil(global.vars.at)}
             `
         }
 

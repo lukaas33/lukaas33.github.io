@@ -2,11 +2,11 @@
 'use strict'
 
 // >> Variables
-const populationSize = 100
-const steps = 100 // Steps before end
+const populationSize = 500
+const steps = 20 // Steps before end
 const parentAmount = 2 // How many parents make one child
 
-const step = 10 // Pixels per step
+const step = 45 // Pixels per step
 const maxIterations = Infinity
 
 const population = []
@@ -33,7 +33,7 @@ global.vars = {
   },
   started: false,
   work: false,
-  timeFactor: 1 // Speed higher or lower
+  timeFactor: 10 // Speed higher or lower
 }
 
 
@@ -176,14 +176,14 @@ class Walker {
   }
 
   display () {
-    this.body = new Shape.Circle(this.location, step)
+    this.body = new Shape.Circle(this.location, 10)
     this.body.fillColor = '#e0e0e0'
     global.layer.addChildren(this.body)
   }
 
   calcFitness () {
     let fitness = this.distance ** -1 // High for low distances
-    fitness = fitness ** 100 // Increase influence
+    fitness *= 10 // Increase influence
     this.fitness = fitness
     return this.fitness
   }
@@ -194,7 +194,7 @@ class Walker {
 
   checkEnd () {
     this.distance = distance([this.location, global.target])
-    if (this.distance < step) { // Inside target
+    if (this.distance < 30) { // Inside target
         global.vars.work = false // Stop movement
     }
   }
