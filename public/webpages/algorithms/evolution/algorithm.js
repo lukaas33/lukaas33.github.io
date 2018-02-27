@@ -3,11 +3,11 @@
 
 // >> Variables
 const populationSize = 250
-const steps = 125 // Steps before end
+const steps = 150 // Steps before end
 const parentAmount = 5 // How many parents make one child
 
 const step = 10 // Pixels per step
-const maxIterations = 1000
+const maxIterations = Infinity
 
 let population = []
 let generation = 0
@@ -35,7 +35,7 @@ global.vars = {
   },
   started: false,
   work: false,
-  timeFactor: 10 // Speed higher or lower
+  timeFactor: 25 // Speed higher or lower
 }
 
 
@@ -157,7 +157,7 @@ class DNA {
   }
 
   static get mutationRate () {
-    return 0.05
+    return 0.015
   }
 
   // >> Methods
@@ -171,6 +171,7 @@ class Walker {
     this.started = false
     this.distance = null
     this.fitness = null
+    this.speed = null
 
     this.id = genId()
 
@@ -219,15 +220,33 @@ class Walker {
 
   display () {
     this.body = new Shape.Circle(this.location, 10)
-    this.body.fillColor = '#e0e0e0'
+    let colors = [0, 0, 0, 0] // Based on DNA
+    const options = [].concat.apply(...DNA.nucleotides) // Flatten
+    for (let nuc of this.dna.code) {
+      for (let index in options) {
+        if (options[index] === nuc) { // Found one
+          colors[index] += 1
+        }
+      }
+    }
+
+    for (let index in colors) {
+      colors[index] = colors[index] / DNA.maxLength // Normalize
+    }
+    console.log(colors)
+
+    this.body.fillColor = new Color(...colors)
     global.layer.addChildren(this.body)
   }
 
   calcFitness () {
     let fitness = this.distance ** -1 // High for low distances
-    fitness **= 4 // Increase influence of distance
+    if (this.speed !== null) {
+      fitness += (this.speed * 5) ** -1 // High for low amount of steps
+    }
+
     this.fitness = fitness
-    return this.fitness
+    return fitness
   }
 
   normalizeFitness (total) {
@@ -237,18 +256,20 @@ class Walker {
   checkEnd () {
     this.distance = distance([this.location, global.target])
     if (this.distance < 30) { // Inside target
-        global.vars.work = false // Stop movement
+      this.started = false
+      this.speed = this.loc // Total steps
+      // global.vars.work = false // Stop all movement
     }
   }
 
   checkEdge () {
-    if (global.space.contains(this.body.bounds)) {
+    if (global.space.contains(this.body.bounds)) { // In page
 
     } else {
       for (let index in population) {
-        if (population[index].id === this.id) {
-          this.end()
+        if (population[index].id === this.id) { // Find
           population.splice(index, 1) // Don't track
+          this.end()
         }
       }
     }
