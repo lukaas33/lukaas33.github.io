@@ -48,6 +48,14 @@
   font-weight: normal;
   text-align: center; }
 
+.card {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2);
+  background-color: #FAFAFA;
+  animation: slideUp 400ms ease-in-out;
+  transition: 400ms ease-in-out; }
+  .card:hover {
+    box-shadow: 0px 14px 28px rgba(0, 0, 0, 0.1), 0px 10px 19px rgba(0, 0, 0, 0.2); }
+
 #menu header button {
   cursor: pointer; }
   #menu header button:disabled {
@@ -184,3 +192,7 @@ hr {
       text-transform: uppercase;
       color: #fff;
       font-weight: normal; }
+
+.card {
+  margin: 2.5vw;
+  padding: 0.5rem; }

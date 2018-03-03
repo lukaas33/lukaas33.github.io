@@ -6,3 +6,9 @@
 @import "partials/menu";
 
 // TODO style pages
+
+.card {
+  @extend %card;
+  margin: $margin-standard / 2; // Space
+  padding: $padding-standard
+}
