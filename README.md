@@ -13,8 +13,8 @@ I currently only make websites for learning or for fun.
 All my code is open source, so if I ever make something nice everyone can use it.
 
 In my other [repository](https://github.com/lukaas33/general-server) I only do server-side programming. With this one the server-side is only for the portfolio project.
+--------------------------------------------------------------------------------
 
----
 
 #### Links
 
