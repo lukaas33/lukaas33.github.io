@@ -33,6 +33,7 @@
 %>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <!-- Site data -->
   <meta charset="UTF-8">
@@ -49,164 +50,174 @@
   <meta property="profile:username" content="Lukaas33">
   <!-- Applies to multiple pages -->
   <%- include('partials/appdata') %>
-  <!-- Verify ownership -->
-  <meta name="google-site-verification" content="uBKBwodm244IRdbB2qDBus4wgTX706KrGGqC-SdZPFA"/>
-  <!-- Css -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
-  <link href="assets/css/main.css" media="screen" rel="stylesheet">
-  <link href="assets/css/print.css" media="print" rel="stylesheet">
-  <style> body {display: none;} /* Will be show when javascript completes actions */ </style>
-  <noscript><style> body {display: block;} /* Javascript not available */ </style></noscript>
-  <!-- Javascript -->
-  <script async src="assets/javascript/scripts.js"></script>
-  <script>
-    var data = <%- JSON.stringify(data) %> // Bug fixing
-    console.log(data)
-  </script>
+    <!-- Verify ownership -->
+    <meta name="google-site-verification" content="uBKBwodm244IRdbB2qDBus4wgTX706KrGGqC-SdZPFA" />
+    <!-- Css -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+    <link href="assets/css/main.css" media="screen" rel="stylesheet">
+    <link href="assets/css/print.css" media="print" rel="stylesheet">
+    <style>
+      body {
+        display: none;
+      }
+
+      /* Will be show when javascript completes actions */
+    </style>
+    <noscript><style> body {display: block;} /* Javascript not available */ </style></noscript>
+    <!-- Javascript -->
+    <script async src="assets/javascript/scripts.js"></script>
+    <script>
+      var data = <%- JSON.stringify(data) %> // Bug fixing
+      console.log(data)
+    </script>
 </head>
+
 <body onload="console.log('// DOM completely loaded')">
   <!-- Navbar -->
   <%- include('partials/top') %>
-  <!-- Content -->
-  <main>
-  <!-- TODO load parts of the page when needed -->
-    <section class="part" id="about">
-      <div class="content">
-        <div class="card">
-          <div class="container">
-            <picture>
-              <!-- Generated different size images with http://www.responsivebreakpoints.com/ -->
-              <img sizes="(max-width: 1400px) 100vw, 1400px" srcset="assets/images/other/photo-me_190.jpg 190w, assets/images/other/photo-me_514.jpg 514w, assets/images/other/photo-me_729.jpg 729w, assets/images/other/photo-me_900.jpg 900w, assets/images/other/photo-me_1053.jpg 1053w, assets/images/other/photo-me_1193.jpg 1193w, assets/images/other/photo-me_1320.jpg 1320w, assets/images/other/photo-me_1400.jpg 1400w" src="assets/images/other/photo-me_1400.jpg" alt="A picture of me, Lucas van Osenbruggen">
-            </picture>
-          </div>
-          <div class="text">
-            <h1>Lucas van Osenbruggen</h1>
-            <p class="tagline">Not a fan of taglines</p>
-            <hr>
-            <p>
-              Hello world. My name is Lucas van Osenbruggen.<br>
-              I'm <span class="since" date="2000-08-22"><%= sinceDate('2000-08-22T22:22+01:00') %></span> old and live in the Netherlands. I play baseball as a sport and am a non-professional programmer.<br>
-              <br>
-              This portfolio you're looking at right now was build from scratch by me. I used <em>jQuery</em> and <em>Material Design</em> tools.
-              You can see how <del>smoothly and without mistakes</del> it all went at <a rel="noopener" target="_blank" href="https://github.com/lukaas33/lukaas33.github.io">my repo</a>.
-              It's responsive (A little at least) and printer-friendly.<br>
-              I started working on it <span class="since" date="2017-05-15"><%= sinceDate('2017-05-15T15:00+01:00') %></span> ago.
-              You can find more details about this resume in the portfolio section below.<br>
-              You can contact me via the contact section.<br>
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="part" id="experience">
-      <!-- TODO Add a way for the user to see this card can be clicked-->
-      <h2 class="title">Experience</h2>
-      <div class="content">
-        <!-- Loop creates multiple cards -->
-        <% for (let entry of data.experience) { %>
-          <%- include('partials/cards/experience', {info: entry, sinceDate: sinceDate, markdown: markdown}) %>
-        <% } %>
-      </div>
-    </section>
-
-    <section class="part" id="skills">
-      <!-- TODO Add a way for the user to see this card can be clicked -->
-      <h2 class="title">Skills</h2>
-      <div class="content">
-        <% for (let entry of data.skills) { %>
-          <%- include('partials/cards/skills', {info: entry, markdown: markdown}) %>
-        <% } %>
-      </div>
-    </section>
-
-    <section class="part" id="portfolio">
-      <h2 class="title">Portfolio</h2>
-      <br>
-      <!-- TODO Add search here -->
-      <div class="sort">
-        <!-- TODO implement sort here -->
-        <div tooltip class="sort">
-          <a rel="tag" href="#">
-            <i class="material-icons md-dark">sort</i>
-            <span>Newest</span>
-            <div class="tooltip">Sort by Oldest</div>
-          </a>
-        </div>
-      </div>
-      <div class="content">
-        <!-- Loops over number of pages needed -->
-        <!-- Includes the number of the current page and the info needed for the page -->
-        <% var pageNum = Math.ceil(data.projects.length / 9) %>
-        <% for (let i = 1; i < pageNum + 1; i++) { %>
-          <%- include('partials/page', {info: data.projects.slice((i - 1) * 9, i * 9), current: i}) %>
-        <% } %>
-      </div>
-      <div class="select">
-        <button ripple class="backward">
-          <i class="material-icons md-dark">arrow_left</i>
-        </button>
-        <p>Page <span></span></p>
-        <button ripple class="forward">
-          <i class="material-icons md-dark">arrow_right</i>
-        </button>
-      </div>
-    </section>
-
-    <section class="part" id="contact">
-      <h2 class="title">Contact</h2>
-      <div class="content">
-        <div class="card">
-          <div class="container">
-            <div class="map">
-              <!-- From Google Maps by clicking on embed-->
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d159148.20387619114!2d5.311427964912663!3d51.44547418604335!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c6d91b5579c39f%3A0xf39ad2648164b998!2sEindhoven!5e0!3m2!1sen!2snl!4v1516218238524" frameborder="0" style="border:0" sandbox="allow-scripts" allowfullscreen></iframe>
+    <!-- Content -->
+    <main>
+      <!-- TODO load parts of the page when needed -->
+      <section class="part" id="about">
+        <div class="content">
+          <div class="card">
+            <div class="container">
+              <picture>
+                <!-- Generated different size images with http://www.responsivebreakpoints.com/ -->
+                <img sizes="(max-width: 1400px) 100vw, 1400px" srcset="assets/images/other/photo-me_190.jpg 190w, assets/images/other/photo-me_514.jpg 514w, assets/images/other/photo-me_729.jpg 729w, assets/images/other/photo-me_900.jpg 900w, assets/images/other/photo-me_1053.jpg 1053w, assets/images/other/photo-me_1193.jpg 1193w, assets/images/other/photo-me_1320.jpg 1320w, assets/images/other/photo-me_1400.jpg 1400w"
+                  src="assets/images/other/photo-me_1400.jpg" alt="A picture of me, Lucas van Osenbruggen">
+              </picture>
             </div>
             <div class="text">
-              <ul>
-                <li>
-                  <div class="box">
-                    <div class="icon"><i class="material-icons md-light md-inactive">phone</i></div>
-                    <div><p>+00 00 000000</p></div>
-                  </div>
-                </li>
-                <li>
-                  <div class="box">
-                    <div class="icon"><i class="material-icons md-light md-inactive">email</i></div>
-                    <div><p>contact@lukaas33.com</p></div>
-                  </div>
-                </li>
-                <li>
-                  <div class="box">
-                    <div class="icon"><i class="material-icons md-light md-inactive">map</i></div>
-                    <div><p>Eindhoven</p></div>
-                  </div>
-                </li>
-              </ul>
+              <h1>Lucas van Osenbruggen</h1>
+              <p class="tagline">Not a fan of taglines</p>
+              <hr>
+              <p>
+                Hello world. My name is Lucas van Osenbruggen.<br> I'm <span class="since" date="2000-08-22"><%= sinceDate('2000-08-22T22:22+01:00') %></span> old and live in the Netherlands. I play baseball as a sport and am a non-professional programmer.<br>
+                <br> This portfolio you're looking at right now was build from scratch by me. I used <em>jQuery</em> and <em>Material Design</em> tools. You can see how <del>smoothly and without mistakes</del> it all went at <a rel="noopener" target="_blank"
+                  href="https://github.com/lukaas33/lukaas33.github.io">my repo</a>. It's responsive (A little at least) and printer-friendly.<br> I started working on it <span class="since" date="2017-05-15"><%= sinceDate('2017-05-15T15:00+01:00') %></span>                  ago. You can find more details about this resume in the portfolio section below.<br> You can contact me via the contact section.<br>
+              </p>
             </div>
           </div>
-          <button ripple class="show"><p></p></button>
         </div>
-        <div class="card">
-          <div class="text">
-            <form>
-              <fieldset>
-                <input type="text" name="name" maxlength="25" aria-label="Name" placeholder="Name"/>
-                <input type="text" name="email" maxlength="35" aria-label="Email" placeholder="Email"/>
-                <textarea type="text" name="message" maxlength="1000" placeholder="Message" aria-label="Message"></textarea>
-              </fieldset>
-              <div class="end">
-                <button ripple>
-                  <input type="submit" aria-label="Send" value="Send message">
-                </button>
-                <p class="error"><noscript>Turn on Javascript to send messages</noscript></p>
-              </div>
-            </form>
+      </section>
+
+      <section class="part" id="experience">
+        <!-- TODO Add a way for the user to see this card can be clicked-->
+        <h2 class="title">Experience</h2>
+        <div class="content">
+          <!-- Loop creates multiple cards -->
+          <% for (let entry of data.experience) { %>
+            <%- include('partials/cards/experience', {info: entry, sinceDate: sinceDate, markdown: markdown}) %>
+              <% } %>
+        </div>
+      </section>
+
+      <section class="part" id="skills">
+        <!-- TODO Add a way for the user to see this card can be clicked -->
+        <h2 class="title">Skills</h2>
+        <div class="content">
+          <% for (let entry of data.skills) { %>
+            <%- include('partials/cards/skills', {info: entry, markdown: markdown}) %>
+              <% } %>
+        </div>
+      </section>
+
+      <section class="part" id="portfolio">
+        <h2 class="title">Portfolio</h2>
+        <br>
+        <!-- TODO Add search here -->
+        <div class="sort">
+          <!-- TODO implement sort here -->
+          <div tooltip class="sort">
+            <a rel="tag" href="#">
+          <i class="material-icons md-dark">sort</i>
+          <span>Newest</span>
+          <div class="tooltip">Sort by Oldest</div>
+        </a>
           </div>
         </div>
-      </div>
-    </section>
-  </main>
+        <div class="content">
+          <!-- Loops over number of pages needed -->
+          <!-- Includes the number of the current page and the info needed for the page -->
+          <% var pageNum = Math.ceil(data.projects.length / 9) %>
+            <% for (let i = 1; i < pageNum + 1; i++) { %>
+              <%- include('partials/page', {info: data.projects.slice((i - 1) * 9, i * 9), current: i}) %>
+                <% } %>
+        </div>
+        <div class="select">
+          <button ripple class="backward">
+        <i class="material-icons md-dark">arrow_left</i>
+      </button>
+          <p>Page <span></span></p>
+          <button ripple class="forward">
+        <i class="material-icons md-dark">arrow_right</i>
+      </button>
+        </div>
+      </section>
+
+      <section class="part" id="contact">
+        <h2 class="title">Contact</h2>
+        <div class="content">
+          <div class="card">
+            <div class="container">
+              <div class="map">
+                <!-- From Google Maps by clicking on embed-->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d159148.20387619114!2d5.311427964912663!3d51.44547418604335!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c6d91b5579c39f%3A0xf39ad2648164b998!2sEindhoven!5e0!3m2!1sen!2snl!4v1516218238524"
+                  frameborder="0" style="border:0" sandbox="allow-scripts" allowfullscreen></iframe>
+              </div>
+              <div class="text">
+                <ul>
+                  <li>
+                    <div class="box">
+                      <div class="icon"><i class="material-icons md-light md-inactive">phone</i></div>
+                      <div>
+                        <p>+00 00 000000</p>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="box">
+                      <div class="icon"><i class="material-icons md-light md-inactive">email</i></div>
+                      <div>
+                        <p>contact@lukaas33.com</p>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="box">
+                      <div class="icon"><i class="material-icons md-light md-inactive">map</i></div>
+                      <div>
+                        <p>Eindhoven</p>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <button ripple class="show"><p></p></button>
+          </div>
+          <div class="card">
+            <div class="text">
+              <form>
+                <fieldset>
+                  <input type="text" name="name" maxlength="25" aria-label="Name" placeholder="Name" />
+                  <input type="text" name="email" maxlength="35" aria-label="Email" placeholder="Email" />
+                  <textarea type="text" name="message" maxlength="1000" placeholder="Message" aria-label="Message"></textarea>
+                </fieldset>
+                <div class="end">
+                  <button ripple>
+                <input type="submit" aria-label="Send" value="Send message">
+              </button>
+                  <p class="error"><noscript>Turn on Javascript to send messages</noscript></p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
 </body>
+
 </html>
