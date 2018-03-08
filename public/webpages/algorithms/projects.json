@@ -1,28 +1,32 @@
 {
-    "*": [
+  "*": [
+  {
+    "title": "Evolutionaire cirkels",
+    "text": ".md",
+    "exe": ".js",
+    "iframe": true,
+    "lang": "ne"
+  }, {
+    "name": "Olympiade",
+    "group": [
     {
-        "title": "Evolutionary",
-        "description": ".md",
-        "lang": ".js",
-        "canvas": true
+      "title": "Blokken",
+      "text": ".pdf",
+      "exe": ".py",
+      "iframe": false,
+      "lang": "ne"
     }, {
-        "name": "Olympiade",
-        "group": [
-        {
-            "title": "Blokken",
-            "description": ".pdf",
-            "lang": ".py",
-            "canvas": false
-        }, {
-            "title": "Centroide",
-            "description": ".pdf",
-            "lang": ".py",
-            "canvas": false
-        }, {
-            "title": "Weg",
-            "description": ".pdf",
-            "lang": ".py",
-            "canvas": false
-        }]
+      "title": "Centroide",
+      "text": ".pdf",
+      "exe": ".py",
+      "iframe": false,
+      "lang": "ne"
+    }, {
+      "title": "Weg",
+      "text": ".pdf",
+      "exe": ".py",
+      "iframe": false,
+      "lang": "ne"
     }]
+  }]
 }
