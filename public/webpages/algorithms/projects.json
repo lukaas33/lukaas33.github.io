@@ -1,0 +1,28 @@
+{
+    "*": [
+    {
+        "title": "Evolutionary",
+        "description": ".md",
+        "lang": ".js",
+        "canvas": true
+    }, {
+        "name": "Olympiade",
+        "group": [
+        {
+            "title": "Blokken",
+            "description": ".pdf",
+            "lang": ".py",
+            "canvas": false
+        }, {
+            "title": "Centroide",
+            "description": ".pdf",
+            "lang": ".py",
+            "canvas": false
+        }, {
+            "title": "Weg",
+            "description": ".pdf",
+            "lang": ".py",
+            "canvas": false
+        }]
+    }]
+}
