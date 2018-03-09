@@ -12,7 +12,7 @@ const getData = function (path, callback) {
 
   xmlhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-        callback(this.responseText)
+        callback(this.responseText) // File content as text
     }
   }
 
@@ -21,14 +21,67 @@ const getData = function (path, callback) {
 }
 
 const webName = function (title) {
-  title = title.toLowerCase().replace(/ /g, '-')
-  title = encodeURIComponent(title) // Remove special symbols
+  // https://stackoverflow.com/questions/11652681/replacing-umlauts-in-js
+  title = title.toLowerCase()
+  title = title.replace(/ï/g, 'i')
+  title = title.replace(/ä/g, 'ae')
+  title = title.replace(/ö/g, 'oe')
+  title = title.replace(/ü/g, 'ue')
+  title = title.replace(/ß/g, 'ss')
+  title = title.replace(/ /g, '-')
+  title = title.replace(/\./g, '')
+  title = title.replace(/,/g, '')
+  title = title.replace(/\(/g, '')
+  title = title.replace(/\)/g, '')
   return title
 }
 
 // > Change doc
 const loadProject = function (details) {
-  console.log(details, "loading")
+  let path = []
+
+  if (details.iframe) { // Add an iframe
+    path[0] = `${webName(details.title)}/main.${details.exe}`
+    path[1] = `${webName(details.title)}/text.${details.text}`
+  } else {
+    path[0] = `${webName(details.title)}.${details.exe}`
+    path[1] = `${webName(details.title)}.${details.text}`
+  }
+  console.log(path)
+
+  getData(path[0], (data) => {
+    const dom = document.getElementById(webName(details.title))
+    const container = document.createElement('pre')
+    const code = document.createElement('code')
+    code.textContent = data
+    code.classList.add(details.exe)
+    hljs.highlightBlock(code) // Add syntax highlighting
+
+    container.appendChild(code)
+    dom.appendChild(container)
+
+    if (details.text == 'pdf') {
+      const embed = document.createElement('embed')
+      embed.type = 'application/pdf'
+      embed.src = path[1]
+      dom.appendChild(embed)
+    } else {
+      getData(path[1], (data) => {
+        const dom = document.getElementById(webName(details.title))
+        const descr = document.createElement('div')
+
+        if (details.text === 'txt') {
+          descr.textContent = data
+          dom.appendChild(descr)
+        } else if (details.text === 'html') {
+          descr.innerHTML = data
+          dom.appendChild(descr)
+        } else if (details.text === 'md') {
+
+        }
+      })
+    }
+  })
 }
 
 const addToMenu = function (names) {
@@ -40,6 +93,7 @@ const addToMenu = function (names) {
       link.href = '#' + webName(name)
       link.textContent = name
       list.appendChild(link)
+
       doc.menu.appendChild(list) // Add to dom
     } else { // Array
       let sub = document.createElement('ol')
@@ -49,6 +103,7 @@ const addToMenu = function (names) {
         link.href = '#' + webName(name)
         link.textContent = name
         list.appendChild(link)
+
         sub.appendChild(list) // Add to dom
       }
       doc.menu.appendChild(sub)

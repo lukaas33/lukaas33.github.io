@@ -1,9 +1,9 @@
 {
   "*": [
   {
-    "title": "Evolutionaire cirkels",
-    "text": ".md",
-    "exe": ".js",
+    "title": "Evolutie van cirkels",
+    "text": "md",
+    "exe": "js",
     "iframe": true,
     "lang": "ne"
   }, {
@@ -11,20 +11,20 @@
     "group": [
     {
       "title": "Blokken",
-      "text": ".pdf",
-      "exe": ".py",
+      "text": "pdf",
+      "exe": "py",
       "iframe": false,
       "lang": "ne"
     }, {
-      "title": "Centroide",
-      "text": ".pdf",
-      "exe": ".py",
+      "title": "Centroïde",
+      "text": "pdf",
+      "exe": "py",
       "iframe": false,
       "lang": "ne"
     }, {
-      "title": "Weg",
-      "text": ".pdf",
-      "exe": ".py",
+      "title": "Rondweg",
+      "text": "pdf",
+      "exe": "py",
       "iframe": false,
       "lang": "ne"
     }]
