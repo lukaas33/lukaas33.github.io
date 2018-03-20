@@ -1,9 +1,14 @@
 // >> Variables
 const doc = {
+  body: document.getElementsByTagName("body")[0],
   menu: document.getElementById("menu"),
   main: document.getElementById("main")
 }
 
+const converter = new showdown.Converter({
+  simplifiedAutoLink: true,
+  excludeTrailingPunctuationFromURLs: true,
+})
 
 // >> functions
 // > Pure
@@ -41,30 +46,34 @@ const loadProject = function (details) {
   let path = []
 
   if (details.iframe) { // Add an iframe
-    path[0] = `${webName(details.title)}/main.${details.exe}`
-    path[1] = `${webName(details.title)}/text.${details.text}`
+    path[0] = `data/${webName(details.title)}/main.${details.exe}`
+    path[1] = `data/${webName(details.title)}/text.${details.text}`
+    path[2] = `data/${webName(details.title)}/index.html`
   } else {
-    path[0] = `${webName(details.title)}.${details.exe}`
-    path[1] = `${webName(details.title)}.${details.text}`
+    path[0] = `data/${webName(details.title)}.${details.exe}`
+    path[1] = `data/${webName(details.title)}.${details.text}`
   }
   console.log(path)
 
   getData(path[0], (data) => {
     const dom = document.getElementById(webName(details.title))
+    const box = document.createElement('div')
     const container = document.createElement('pre')
     const code = document.createElement('code')
+
     code.textContent = data
     code.classList.add(details.exe)
     hljs.highlightBlock(code) // Add syntax highlighting
 
     container.appendChild(code)
-    dom.appendChild(container)
+    box.appendChild(container)
 
     if (details.text == 'pdf') {
       const embed = document.createElement('embed')
       embed.type = 'application/pdf'
       embed.src = path[1]
-      dom.appendChild(embed)
+      box.appendChild(embed)
+      dom.appendChild(box)
     } else {
       getData(path[1], (data) => {
         const dom = document.getElementById(webName(details.title))
@@ -72,15 +81,26 @@ const loadProject = function (details) {
 
         if (details.text === 'txt') {
           descr.textContent = data
-          dom.appendChild(descr)
         } else if (details.text === 'html') {
           descr.innerHTML = data
-          dom.appendChild(descr)
         } else if (details.text === 'md') {
+        	const html = converter.makeHtml(data)
+          descr.innerHTML = html
+        }
 
+        box.appendChild(descr)
+        dom.appendChild(box)
+
+        if (path[2]) {
+          const iframe = document.createElement('iframe')
+          iframe.src = path[2]
+          dom.appendChild(document.createElement('br'))
+          dom.appendChild(iframe)
+          iframe.height = Math.floor((iframe.offsetWidth / 16) * 9) // 16:9
         }
       })
     }
+
   })
 }
 

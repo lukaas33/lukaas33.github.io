@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: 'Roboto Mono', monospace;
+  margin: 0;
+  padding: 0;
+  padding: 1rem;
+  background-color: #eeeeee;
+  color: #212121;
+}
+
+a {
+  text-decoration: none;
+}
+a:focus,
+a:hover {
+  text-decoration: underline;
+}
+
+header {
+  height: 5rem;
+  display: flex;
+  align-items: center
+}
+header img {
+  height: 100%;
+  margin-right: 1rem;
+}
+header div {
+
+}
+header h1 {
+  margin: 0;
+}
+header p {
+  margin: 0;
+}
+
+nav,
+header {
+  padding: 0.5rem;
+  background-color: #e0e0e0;
+}
+nav {
+
+}
+nav a {
+  color: #212121;
+}
+
+@media only screen and (min-width: 1250px) {
+  section div {
+    flex-direction: row;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+  }
+}
+@media only screen and (max-width: 1250px) {
+  section div {
+    flex-direction: column;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+  }
+}
+
+section {
+
+}
+section h2::before,
+div h2::before {
+  content: '# '
+}
+section h3::before {
+  content: '## '
+}
+section div div { /* Text */
+  min-width: 20vw;
+  display: block; /* Prevent flex */
+  padding: 0.5rem;
+  background-color: #fff;
+}
+section div div a {
+  color: #4caf50;
+}
+
+section div embed,
+section div pre,
+section div div {
+  min-height: calc(29.7cm + 1.5cm); /* Room for toolbar */
+  overflow-y: scroll
+}
+
+section pre {
+  flex-grow: 2;
+  margin: 0;
+}
+section embed,
+section div div {
+  min-width: 21cm;
+}
+section iframe {
+  width: 100%;
+  overflow: hidden;
+  border: 0.5rem solid #bdbdbd;
+}
