@@ -26,7 +26,7 @@ const generateQuery = function (query) {
 
 const editCookie = function (name, value = null) {
   const cookies = document.cookie.split(';')
-  let cookie = null
+  let cookie = []
   for (let ckie of cookies) { // Search
     ckie = ckie.split('=')
     if (ckie[0] === name) { // Found
@@ -40,13 +40,13 @@ const editCookie = function (name, value = null) {
   }
 
   if (value === null) { // None given
-    if (cookie === null) { // None found
+    if (cookie.length === 0) { // None found
       return undefined // End empty return
     } else { // Found
       return cookie
     }
   } else {
-    if (cookie === null) { // New
+    if (cookie.length === 0) { // New
       document.cookie = `${name}=${value}; path=/;`
       console.log('Assign', value)
     } else { // Add to old

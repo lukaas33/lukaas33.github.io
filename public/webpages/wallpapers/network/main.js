@@ -8,7 +8,7 @@ paper.install(window)
 // > Variables
 const dots = {
   props: {
-    dark: {color: '#3949ab', scale: 3},
+    dark: {color: '#3949ab', scale: 4},
     light: {color: '#5c6bc0', scale: 1.5},
     main: {color: '#ffffff', scale: 1},
   },
@@ -19,7 +19,7 @@ const dots = {
   }
 }
 const local = {
-  num: Math.ceil(view.viewSize.width / 25 / 3), // Based on screen size
+  num: Math.ceil(view.viewSize.width / 20), // Based on screen size
   size: view.viewSize,
   timeFactor: 1,
   pressing: null,
@@ -35,13 +35,13 @@ class Dot {
     return {low: 20, top: 55}
   }
   static get stroke () { // Size range
-    return {low: 2, top: 6}
+    return {low: 2, top: 8}
   }
   static get speed () { // Speed in pixel per frame
-    return {low: 5, top: 40}
+    return {low: 5, top: 25}
   }
   static get dist () { // Max connection distance
-    return 200
+    return 250
   }
 
   constructor (loc, dir, group) { // initialise
@@ -155,7 +155,7 @@ draw.layer.activate()
 // Add the dots
 for (let group in dots.group) {
   dots.props[group].layer = new Layer()
-  while (dots.group[group].length < local.num) {
+  while (dots.group[group].length < (local.num / (dots.props[group].scale * 2))) {
     const loc = new Point({
       x: Math.floor(Math.random() * view.viewSize.width),
       y: Math.floor(Math.random() * view.viewSize.height)
