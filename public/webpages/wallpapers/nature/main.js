@@ -4,12 +4,15 @@ const source = document.getElementById('source')
 
 const next = document.getElementById('next')
 
+const queries = ['jungle', 'earthview', 'space', 'earth', 'nature', 'animals', 'landscape']
+
 
 // >> Functions
 // Get a new image
 const getImage = function () {
-  const url = generateQuery('jungle')
-  editCookie('images', url)
+  const index = Math.floor(Math.random() * queries.length)
+  const url = generateQuery(queries[index])
+  // editCookie('images', url)
   ajax(url)
 }
 
@@ -90,9 +93,9 @@ const display = function (data) {
 
 // >> Events
 window.onload = function () {
-  if (editCookie('images') === undefined) {
-    editCookie('images', []) // initial
-  }
+  // if (editCookie('images') === undefined) {
+  //   editCookie('images', []) // initial
+  // }
   getImage()
 }
 
