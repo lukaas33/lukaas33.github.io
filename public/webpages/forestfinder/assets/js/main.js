@@ -11,13 +11,44 @@ if ('serviceWorker' in navigator) { // If support
   'use strict'
 
 // >> Functions
+// Returns distance and the direction
+const directions = function (position, target) {
+  const rad = (deg) => deg * Math.PI / 180
+
+  // https://www.movable-type.co.uk/scripts/latlong.html
+  const lat1 = rad(position.latitude)
+  const lat2 = rad(target.latitude)
+  const dlat = rad(target.latitude - position.latitude)
+  const dlon = rad(target.longitude - position.longitude)
+
+  const ha =  (Math.sin(dlat / 2) ** 2) + (Math.cos(lat1) * Math.cos(lat2)) * (Math.sin(dlon / 2) ** 2)
+  const c = 2 * Math.atan2(Math.sqrt(ha), Math.sqrt(1 - ha))
+  const dist = c * constants.radius // Distance between points
+
+  // https://stackoverflow.com/questions/3809179/angle-between-2-gps-coordinates
+  const dy = target.latitude - position.latitude
+  const dx = Math.cos(rad(position.latitude)) * (target.longitude - position.longitude)
+  const angle = Math.atan2(dy, dx) // Angle between user and target
+  const heading = angle - position.heading // Return relative to the heading direction
+
+  return {
+    distance: dist,
+    heading: heading
+  }
+}
+
+// Gets the user location
 const getLocation = function (callback, err = () => {}) {
   const success = function (pos) { // Successfull get
     console.log(pos)
-    if (pos.accuracy < 40) { // In meters
-      callback(pos)
+    if (pos.coord.heading) { // Need compass info
+      if (pos.coords.accuracy < 25) { // In meters
+        callback(pos)
+      }
+    } else {
+      err() // Let caller know there is a problem
     }
-   }
+  }
 
    const fail = function (error) { // Error in getting
      console.error(error)
@@ -47,22 +78,17 @@ const getLocation = function (callback, err = () => {}) {
   })
 }
 
-const getTarget = function () {
-  return location("51.466831, 5.559329")
-}
-
-const location = function (string, acc) {
-  const parts = string.split(',')
+// Gets the target location
+const getTarget = function () { // TODO get this from a database
 
   const coord = {
-    latitude: parseFloat(parts[0]),
-    longitude: parseFloat(parts[1]),
-    accuracy: acc // In meters
+    latitude: 51.465891,
+    longitude: 5.558564,
+    accuracy: 5 // In meters
   }
 
   return coord
 }
-
 
 
 // >> Classes
@@ -78,12 +104,22 @@ const global = {
   track: null
 }
 
+const constants = {
+  radius: 6.371e6 // Of Earth
+}
+
 // >> Run
 // Check available
 if ("geolocation" in navigator) {
   doc.status.innerText = "Getting location"
+  // First get the target
+  const target = getTarget()
+  // Start getting the location
   getLocation((pos) => {
     doc.status.innerText = JSON.stringify(pos.coords)
+    console.log(JSON.stringify(directions(pos.coords, target)))
+  }, () => {
+    doc.status.innerText = "Something went wrong."
   })
 } else {
   doc.status.innerText = "Location data not available on this device."
