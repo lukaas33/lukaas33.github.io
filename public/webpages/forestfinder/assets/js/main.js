@@ -30,10 +30,9 @@ const directions = function (position, target) {
   const dx = Math.cos(rad(position.latitude)) * (target.longitude - position.longitude)
   const targetAngle = Math.atan2(dy, dx) // Angle between user and target
 
+  let heading = null
   if (position.heading) { // Not null
-    const heading = targetAngle - position.heading // Return relative to the heading direction
-  } else {
-    const heading = null
+    heading = targetAngle - rad(position.heading) // Return relative to the heading direction
   }
 
   return {
@@ -97,15 +96,14 @@ const getTarget = function () { // TODO get this from a database
 // >> Variables
 const doc = {
   status: document.getElementById('status'),
-  data: document.getElementById('data')
+  data: document.getElementById('data'),
+  distance: document.getElementById('distance'),
+  dir: document.getElementById('dir'),
+  compass: document.getElementById('compass')
 }
 
 const global = {
   track: null,
-  loc: {
-    now: null,
-    last: null
-  }
 }
 
 const constants = {
@@ -120,11 +118,15 @@ if ("geolocation" in navigator) {
   const target = getTarget()
   // Start getting the location
   getLocation((pos) => {
-    global.loc.last = global.loc.now
-    global.loc.now = pos.coords
+    doc.status.innerText = "" // Empty
 
-    doc.status.innerText = JSON.stringify(pos.coords)
-    console.log(JSON.stringify(directions(pos.coords, target)))
+    const dir = directions(pos.coords, target)
+    doc.distance.innerText = dir.distance + ' meter'
+
+    if (dir.heading) {
+      doc.dir.setAttribute('transform', `rotate(${dir.heading * 180 / Math.PI} ${doc.compass.cx.baseVal.value} ${doc.compass.cy.baseVal.value})`)
+    }
+
   }, () => {
     doc.status.innerText = "Something went wrong."
   })
