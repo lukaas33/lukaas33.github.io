@@ -28,8 +28,13 @@ const directions = function (position, target) {
   // https://stackoverflow.com/questions/3809179/angle-between-2-gps-coordinates
   const dy = target.latitude - position.latitude
   const dx = Math.cos(rad(position.latitude)) * (target.longitude - position.longitude)
-  const angle = Math.atan2(dy, dx) // Angle between user and target
-  const heading = angle - position.heading // Return relative to the heading direction
+  const targetAngle = Math.atan2(dy, dx) // Angle between user and target
+
+  if (position.heading) { // Not null
+    const heading = targetAngle - position.heading // Return relative to the heading direction
+  } else {
+    const heading = null
+  }
 
   return {
     distance: dist,
@@ -38,15 +43,11 @@ const directions = function (position, target) {
 }
 
 // Gets the user location
-const getLocation = function (callback, err = () => {}) {
+const getLocation = function (callback, err = () => { }) {
   const success = function (pos) { // Successfull get
     console.log(pos)
-    if (pos.coord.heading) { // Need compass info
-      if (pos.coords.accuracy < 25) { // In meters
-        callback(pos)
-      }
-    } else {
-      err() // Let caller know there is a problem
+    if (pos.coords.accuracy < 20) { // In meters
+      callback(pos)
     }
   }
 
@@ -80,7 +81,6 @@ const getLocation = function (callback, err = () => {}) {
 
 // Gets the target location
 const getTarget = function () { // TODO get this from a database
-
   const coord = {
     latitude: 51.465891,
     longitude: 5.558564,
@@ -101,7 +101,11 @@ const doc = {
 }
 
 const global = {
-  track: null
+  track: null,
+  loc: {
+    now: null,
+    last: null
+  }
 }
 
 const constants = {
@@ -116,6 +120,9 @@ if ("geolocation" in navigator) {
   const target = getTarget()
   // Start getting the location
   getLocation((pos) => {
+    global.loc.last = global.loc.now
+    global.loc.now = pos.coords
+
     doc.status.innerText = JSON.stringify(pos.coords)
     console.log(JSON.stringify(directions(pos.coords, target)))
   }, () => {
