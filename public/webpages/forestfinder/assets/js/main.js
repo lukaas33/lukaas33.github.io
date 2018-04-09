@@ -78,15 +78,42 @@ const getLocation = function (callback, err = () => { }) {
   })
 }
 
-// Gets the target location
-const getTarget = function () { // TODO get this from a database
-  const coord = {
-    latitude: 51.465891,
-    longitude: 5.558564,
-    accuracy: 5 // In meters
-  }
+// Gets the target location from a 'database'
+const getTarget = function (callback) {
+  if (false) { // Exists in storage
 
-  return coord
+  } else { // Need to get
+    const xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function () {
+      if (this.readyState === 4 && this.status === 200) {
+        console.log(this.responseText)
+
+        const lines = this.responseText.split('\n')
+        const names = lines[0].split(',')
+
+        for (let i = 1; i < lines.length; i++) {
+          let line = lines[i].split(',')
+          let object = {}
+          for (let j in line) {
+            let val = line[j]
+            // Convert to numbers if possible
+            if (!isNaN(parseFloat(val))) {
+              val = parseFloat(val)
+            }
+
+            object[names[j]] = val
+          }
+
+          global.data.push(object)
+        }
+
+        console.log(global.data)
+        callback()
+      }
+    }
+    xhttp.open("GET", constants.database, true)
+    xhttp.send()
+  }
 }
 
 
@@ -104,10 +131,13 @@ const doc = {
 
 const global = {
   track: null,
+  data: [],
+  at: null
 }
 
 const constants = {
-  radius: 6.371e6 // Of Earth
+  radius: 6.371e6, // Of Earth
+  database: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv"
 }
 
 // >> Run
@@ -115,20 +145,21 @@ const constants = {
 if ("geolocation" in navigator) {
   doc.status.innerText = "Getting location"
   // First get the target
-  const target = getTarget()
-  // Start getting the location
-  getLocation((pos) => {
-    doc.status.innerText = "" // Empty
+  getTarget(() => {
+    // Start getting the location
+    getLocation((pos) => {
+      doc.status.innerText = "" // Empty
 
-    const dir = directions(pos.coords, target)
-    doc.distance.innerText = dir.distance + ' meter'
+      const dir = directions(pos.coords, global.data[global.at])
+      doc.distance.innerText = dir.distance + ' meter'
 
-    if (dir.heading) {
-      doc.dir.setAttribute('transform', `rotate(${dir.heading * 180 / Math.PI} ${doc.compass.cx.baseVal.value} ${doc.compass.cy.baseVal.value})`)
-    }
+      if (dir.heading) {
+        doc.dir.setAttribute('transform', `rotate(${dir.heading * 180 / Math.PI} ${doc.compass.cx.baseVal.value} ${doc.compass.cy.baseVal.value})`)
+      }
 
-  }, () => {
-    doc.status.innerText = "Something went wrong."
+    }, () => {
+      doc.status.innerText = "Something went wrong."
+    })
   })
 } else {
   doc.status.innerText = "Location data not available on this device."
