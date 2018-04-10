@@ -7,6 +7,13 @@ if ('serviceWorker' in navigator) { // If support
   })
 }
 
+// TODO add data entry option
+// TODO store tree data for limited time
+// TODO generate sequence of trees to be unique per user
+// TODO continue with new one after first one is found
+// TODO make sure all exceptions are handled
+// TODO add fallbacks for other devices and browsers
+
 (function () {
   'use strict'
 
@@ -30,14 +37,9 @@ const directions = function (position, target) {
   const dx = Math.cos(rad(position.latitude)) * (target.longitude - position.longitude)
   const targetAngle = Math.atan2(dy, dx) // Angle between user and target
 
-  let heading = null
-  if (position.heading) { // Not null
-    heading = targetAngle - rad(position.heading) // Return relative to the heading direction
-  }
-
   return {
     distance: dist,
-    heading: heading
+    angle: targetAngle
   }
 }
 
@@ -74,7 +76,7 @@ const getLocation = function (callback, err = () => { }) {
   global.track = navigator.geolocation.watchPosition (success, fail, { // Options
     enableHighAccuracy: true,
     maximumAge: 5 * 60 * 1000,
-    timeout: 1 * 60 * 1000
+    timeout:  15 * 1000
   })
 }
 
@@ -132,7 +134,8 @@ const doc = {
 const global = {
   track: null,
   data: [],
-  at: null
+  at: null,
+  dir: null
 }
 
 const constants = {
@@ -144,19 +147,17 @@ const constants = {
 // Check available
 if ("geolocation" in navigator) {
   doc.status.innerText = "Getting location"
-  // First get the target
+  // First get the target location from online
   getTarget(() => {
     // Start getting the location
     getLocation((pos) => {
       doc.status.innerText = "" // Empty
 
-      const dir = directions(pos.coords, global.data[global.at])
-      doc.distance.innerText = dir.distance + ' meter'
+      // Get the current distance and direction
+      global.dir = directions(pos.coords, global.data[global.at])
 
-      if (dir.heading) {
-        doc.dir.setAttribute('transform', `rotate(${dir.heading * 180 / Math.PI} ${doc.compass.cx.baseVal.value} ${doc.compass.cy.baseVal.value})`)
-      }
-
+      // Display distance
+      doc.distance.innerText = global.dir.distance + ' meter'
     }, () => {
       doc.status.innerText = "Something went wrong."
     })
@@ -164,6 +165,19 @@ if ("geolocation" in navigator) {
 } else {
   doc.status.innerText = "Location data not available on this device."
 }
+
+// >> Events
+// Get the direction of the device
+window.addEventListener("devicemotion", (event) => {
+  // Use angle between points to calculate relative distance
+  if (global.dir) {
+    const moveAngle = Math.atan2(event.acceleration.y, event.acceleration.x)
+    const angle = (moveAngle - global.dir.angle) * 180 / Math.PI // The target is north on the compass
+
+    // Display angle to go to
+    doc.dir.setAttribute('transform', `rotate(${angle} ${doc.compass.cx.baseVal.value} ${doc.compass.cy.baseVal.value})`)
+  }
+})
 
 
 }.call(this))
