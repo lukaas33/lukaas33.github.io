@@ -1,0 +1,32 @@
+* {
+  margin: 0;
+  padding: 0; }
+
+body,
+:root {
+  width: 100%;
+  height: 100%; }
+
+main {
+  width: 100%;
+  height: 100%; }
+
+#status {
+  line-height: 5vmin;
+  font-size: 4vmin;
+  padding: 0.5vmin;
+  text-align: center; }
+
+#data {
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+  #data svg {
+    width: 85vmin;
+    height: 85vmin;
+    margin: 2.5vmin; }
+    #data svg #compass {
+      fill: grey; }
+    #data svg #dir {
+      stroke: red;
+      stroke-width: 2; }

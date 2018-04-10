@@ -134,7 +134,7 @@ const doc = {
 const global = {
   track: null,
   data: [],
-  at: null,
+  at: 0,
   dir: null
 }
 
