@@ -84,7 +84,7 @@ const getLocation = function (callback, err = () => { }) {
 const getTarget = function (callback) {
   if (false) { // Exists in storage
 
-  } else { // Need to get
+  } else { // Need to get online
     const xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
       if (this.readyState === 4 && this.status === 200) {
@@ -118,6 +118,43 @@ const getTarget = function (callback) {
   }
 }
 
+// Run every time location is updated
+const loop = function (pos) {
+  // Get the current distance and direction
+  const target = global.data[global.at]
+  global.dir = directions(pos.coords, target)
+
+  // Display distance
+  doc.status.innerText = Math.ceil(global.dir.distance) + ' meter'
+
+  // Check if target is reached
+  let biggest = Math.max(pos.coords.accuracy, target.accuracy)
+  if (target.accuracy === biggest) { // Target circle bigger
+    if (global.dir.distance < target.accuracy - pos.coords.accuracy) { // User circle inside target circle
+      newTarget()
+    }
+  } else { //
+    if (global.dir.distance < pos.coords.accuracy - target.accuracy) { // Target circle inside user circle
+      newTarget()
+    }
+  }
+
+}
+
+// Choose a new target from the list
+const newTarget = function () {
+  alert("Target is reached.")
+  result.push({
+    time: new Date()
+  })
+  if (global.result.length === global.data.length) { // End
+    alert("Found all targets.")
+  } else {
+    global.at += 1
+    global.at %= global.data.length
+  }
+}
+
 
 // >> Classes
 
@@ -126,7 +163,6 @@ const getTarget = function (callback) {
 const doc = {
   status: document.getElementById('status'),
   data: document.getElementById('data'),
-  distance: document.getElementById('distance'),
   dir: document.getElementById('dir'),
   compass: document.getElementById('compass')
 }
@@ -135,7 +171,8 @@ const global = {
   track: null,
   data: [],
   at: 0,
-  dir: null
+  dir: null,
+  result: []
 }
 
 const constants = {
@@ -149,16 +186,8 @@ if ("geolocation" in navigator) {
   doc.status.innerText = "Getting location"
   // First get the target location from online
   getTarget(() => {
-    // Start getting the location
-    getLocation((pos) => {
-      doc.status.innerText = "" // Empty
-
-      // Get the current distance and direction
-      global.dir = directions(pos.coords, global.data[global.at])
-
-      // Display distance
-      doc.distance.innerText = global.dir.distance + ' meter'
-    }, () => {
+    // Start getting the location, will repeat itself
+    getLocation(loop, () => {
       doc.status.innerText = "Something went wrong."
     })
   })
@@ -170,8 +199,8 @@ if ("geolocation" in navigator) {
 // Get the direction of the device
 window.addEventListener("devicemotion", (event) => {
   console.log("Motion:", event)
-  // Use angle between points to calculate relative distance
   if (global.dir) {
+    // Use angle between points to calculate relative distance
     const moveAngle = Math.atan2(event.acceleration.y, event.acceleration.x)
     const angle = (moveAngle - global.dir.angle) * 180 / Math.PI // The target is north on the compass
 
