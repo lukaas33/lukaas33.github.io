@@ -11,7 +11,8 @@ main {
   width: 100%;
   height: 100%; }
 
-#status {
+#status,
+#distance {
   line-height: 5vmin;
   font-size: 4vmin;
   padding: 0.5vmin;
@@ -29,4 +30,5 @@ main {
       fill: grey; }
     #data svg #dir {
       stroke: red;
-      stroke-width: 2; }
+      stroke-width: 2;
+      transform-origin: 50% 50%; }

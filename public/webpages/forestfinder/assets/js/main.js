@@ -46,7 +46,7 @@ const directions = function (position, target) {
 // Gets the user location
 const getLocation = function (callback, err = () => { }) {
   const success = function (pos) { // Successfull get
-    console.log(pos)
+    console.log("Position:", pos)
     if (pos.coords.accuracy < 20) { // In meters
       callback(pos)
     }
@@ -88,7 +88,7 @@ const getTarget = function (callback) {
     const xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
       if (this.readyState === 4 && this.status === 200) {
-        console.log(this.responseText)
+        console.log("Text:", this.responseText)
 
         const lines = this.responseText.split('\n')
         const names = lines[0].split(',')
@@ -109,7 +109,7 @@ const getTarget = function (callback) {
           global.data.push(object)
         }
 
-        console.log(global.data)
+        console.log("Parsed:", global.data)
         callback()
       }
     }
@@ -169,13 +169,16 @@ if ("geolocation" in navigator) {
 // >> Events
 // Get the direction of the device
 window.addEventListener("devicemotion", (event) => {
+  console.log("Motion:", event)
   // Use angle between points to calculate relative distance
   if (global.dir) {
     const moveAngle = Math.atan2(event.acceleration.y, event.acceleration.x)
     const angle = (moveAngle - global.dir.angle) * 180 / Math.PI // The target is north on the compass
 
+    console.log("Angle:", angle)
+
     // Display angle to go to
-    doc.dir.setAttribute('transform', `rotate(${angle} ${doc.compass.cx.baseVal.value} ${doc.compass.cy.baseVal.value})`)
+    doc.dir.setAttribute('transform', `rotate(${angle}deg)`)
   }
 })
 
