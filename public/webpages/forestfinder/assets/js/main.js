@@ -10,9 +10,12 @@ if ('serviceWorker' in navigator) { // If support
 // TODO add data entry option
 // TODO store tree data for limited time
 // TODO generate sequence of trees to be unique per user
-// TODO continue with new one after first one is found
 // TODO make sure all exceptions are handled
 // TODO add fallbacks for other devices and browsers
+// TODO design
+// TODO dutch language support
+
+// TODO continue with new one after first one is found
 
 (function () {
   'use strict'
@@ -80,41 +83,70 @@ const getLocation = function (callback, err = () => { }) {
   })
 }
 
-// Gets the target location from a 'database'
+const storage = function () {
+
+}
+
+// Gets the target locations
 const getTarget = function (callback) {
-  if (false) { // Exists in storage
+  const getData = function (callback) {
+    if (navigator.onLine) {
+      const xhttp = new XMLHttpRequest()
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+          console.log("Text:", this.responseText)
 
-  } else { // Need to get online
-    const xhttp = new XMLHttpRequest()
-    xhttp.onreadystatechange = function () {
-      if (this.readyState === 4 && this.status === 200) {
-        console.log("Text:", this.responseText)
+          const lines = this.responseText.split('\n')
+          const names = lines[0].split(',')
 
-        const lines = this.responseText.split('\n')
-        const names = lines[0].split(',')
+          for (let i = 1; i < lines.length; i++) {
+            let line = lines[i].split(',')
+            let object = {}
+            for (let j in line) {
+              let val = line[j]
+              // Convert to numbers if possible
+              if (!isNaN(parseFloat(val))) {
+                val = parseFloat(val)
+              }
 
-        for (let i = 1; i < lines.length; i++) {
-          let line = lines[i].split(',')
-          let object = {}
-          for (let j in line) {
-            let val = line[j]
-            // Convert to numbers if possible
-            if (!isNaN(parseFloat(val))) {
-              val = parseFloat(val)
+              object[names[j]] = val
             }
 
-            object[names[j]] = val
+            global.data.push(object)
           }
 
-          global.data.push(object)
+          console.log("Parsed:", global.data)
+          callback()
         }
-
-        console.log("Parsed:", global.data)
-        callback()
       }
+      xhttp.open("GET", constants.database, true)
+      xhttp.send()
+    } else {
+      alert("Could not get data online.")
     }
-    xhttp.open("GET", constants.database, true)
-    xhttp.send()
+  }
+
+
+  if (false) { // Exists in storage
+    if (false) { // Data needs to be renewed
+      getData((data) => {
+        // TODO Store data
+
+        // Return
+        callback(data)
+      })
+    } else {
+      // TODO Return from storage
+
+    }
+
+  } else { // Need to get data online
+    getData((data) => {
+      // TODO Store data
+
+      // Return
+      callback(data)
+    })
   }
 }
 
@@ -144,7 +176,7 @@ const loop = function (pos) {
 // Choose a new target from the list
 const newTarget = function () {
   alert("Target is reached.")
-  result.push({
+  global.result.push({
     time: new Date()
   })
   if (global.result.length === global.data.length) { // End
@@ -191,25 +223,23 @@ if ("geolocation" in navigator) {
       doc.status.innerText = "Something went wrong."
     })
   })
+
+  // >> Events
+  // Get the direction of the device
+  window.addEventListener("devicemotion", (event) => {
+    console.log("Motion:", event)
+    if (global.dir) {
+      // Use angle between points to calculate relative distance
+      const moveAngle = Math.atan2(event.acceleration.y, event.acceleration.x)
+      const angle = (moveAngle - global.dir.angle) * 180 / Math.PI // The target is north on the compass
+
+      console.log("Angle:", Math.floor(angle))
+
+      // Display angle to go to
+      doc.dir.style.transform = `rotate(${Math.floor(angle)}deg)`
+    }
+  })
 } else {
   doc.status.innerText = "Location data not available on this device."
 }
-
-// >> Events
-// Get the direction of the device
-window.addEventListener("devicemotion", (event) => {
-  console.log("Motion:", event)
-  if (global.dir) {
-    // Use angle between points to calculate relative distance
-    const moveAngle = Math.atan2(event.acceleration.y, event.acceleration.x)
-    const angle = (moveAngle - global.dir.angle) * 180 / Math.PI // The target is north on the compass
-
-    console.log("Angle:", angle)
-
-    // Display angle to go to
-    doc.dir.setAttribute('transform', `rotate(${angle}deg)`)
-  }
-})
-
-
 }.call(this))
