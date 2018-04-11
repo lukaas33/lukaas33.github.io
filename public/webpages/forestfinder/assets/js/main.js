@@ -1,3 +1,12 @@
+// Global scope
+const global = {
+  track: null,
+  data: [],
+  at: 0,
+  dir: null,
+  result: []
+}
+
 // Serviceworker register
 if ('serviceWorker' in navigator) { // If support
   navigator.serviceWorker.register('serviceworker.js', {scope: './'}).then(function (registration) {
@@ -21,13 +30,18 @@ if ('serviceWorker' in navigator) { // If support
   'use strict'
 
 // >> Functions
-// Returns distance and the direction
-const directions = function (position, target) {
-  const rad = (deg) => deg * Math.PI / 180
+// General
+const rad = (deg) => deg * Math.PI / 180
+const deg = (rad) => rad * 180 / Math.PI
 
-  // https://www.movable-type.co.uk/scripts/latlong.html
+// Returns distance and the direction
+// https://www.movable-type.co.uk/scripts/latlong.html
+const directions = function (position, target) {
   const lat1 = rad(position.latitude)
   const lat2 = rad(target.latitude)
+  const lon1 = rad(position.longitude)
+  const lon2 = rad(target.longitude)
+
   const dlat = rad(target.latitude - position.latitude)
   const dlon = rad(target.longitude - position.longitude)
 
@@ -35,20 +49,19 @@ const directions = function (position, target) {
   const c = 2 * Math.atan2(Math.sqrt(ha), Math.sqrt(1 - ha))
   const dist = c * constants.radius // Distance between points
 
-  // https://stackoverflow.com/questions/3809179/angle-between-2-gps-coordinates
-  const dy = target.latitude - position.latitude
-  const dx = Math.cos(rad(position.latitude)) * (target.longitude - position.longitude)
-  let targetAngle = Math.atan2(dy, dx) // Angle between user and target
-  targetAngle = (targetAngle + 1.5 * Math.PI) % (2 * Math.PI) // 0 is north
+  const y = Math.sin(lon2- lon1) * Math.cos(lat2)
+  const x = (Math.cos(lat1) * Math.sin(lat2)) - (Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1))
+  const bearing = Math.atan2(y, x) // Angle between user and target
+  const angle = deg(bearing)
 
   return {
     distance: dist,
-    angle: targetAngle
+    angle: angle
   }
 }
 
 // Gets the user location
-const getLocation = function (callback, err = () => { }) {
+const getLocation = function (callback, err) {
   const success = function (pos) { // Successfull get
     console.log("Position:", pos)
     if (pos.coords.accuracy < 20) { // In meters
@@ -200,14 +213,6 @@ const doc = {
   compass: document.getElementById('compass')
 }
 
-const global = {
-  track: null,
-  data: [],
-  at: 0,
-  dir: null,
-  result: []
-}
-
 const constants = {
   radius: 6.371e6, // Of Earth
   database: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv"
@@ -223,35 +228,27 @@ if ("geolocation" in navigator) {
     getLocation(loop, () => {
       doc.status.innerText = "Something went wrong."
     })
-  })
 
-  // >> Events
-  // Get the direction of the device
-  console.log()
-  window.addEventListener("deviceorientation", (event) => {
-    console.log("Orientation:", event)
-    if (global.dir) {
-      let orientation = null
-      if (Math.abs(event.beta) < 30) { // Device is held flat
-        orientation = event.alpha
-      } else { // Device is held straight
-        orientation = event.gamma
+    // >> Events
+    // Get the direction of the device
+    console.log()
+    window.addEventListener("deviceorientation", (event) => {
+      console.log("Orientation:", event)
+      if (global.dir) {
+        let orientation = event.alpha
+
+        // Use angle between points to calculate relative distance
+        const angle = (orientation - global.dir.angle) - 90 // The target is north on the compass
+
+        console.log("Angle between points:", global.dir.angle)
+        console.log("Orientation angle:", orientation)
+        console.log("Angle to go to:", angle)
+
+        // Display angle to go to
+        doc.dir.style.transform = `rotate(${Math.floor(angle)}deg)`
       }
-
-
-      // Use angle between points to calculate relative distance
-      const deg = (rad) => rad * 180 / Math.PI
-
-      const angle = orientation - deg(global.dir.angle) // The target is north on the compass
-
-      console.log("Angle between points:", deg(global.dir.angle))
-      // console.log("Orientation angle:", orientation)
-      // console.log("Angle to go to:", angle)
-
-      // Display angle to go to
-      doc.dir.style.transform = `rotate(${Math.floor(angle)}deg)`
-    }
-  }, false)
+    }, false)
+  })
 } else {
   doc.status.innerText = "Location data not available on this device."
 }
