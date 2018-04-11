@@ -38,7 +38,8 @@ const directions = function (position, target) {
   // https://stackoverflow.com/questions/3809179/angle-between-2-gps-coordinates
   const dy = target.latitude - position.latitude
   const dx = Math.cos(rad(position.latitude)) * (target.longitude - position.longitude)
-  const targetAngle = Math.atan2(dy, dx) // Angle between user and target
+  let targetAngle = Math.atan2(dy, dx) // Angle between user and target
+  targetAngle = (targetAngle + 1.5 * Math.PI) % (2 * Math.PI) // 0 is north
 
   return {
     distance: dist,
@@ -226,19 +227,31 @@ if ("geolocation" in navigator) {
 
   // >> Events
   // Get the direction of the device
-  window.addEventListener("devicemotion", (event) => {
-    console.log("Motion:", event)
+  console.log()
+  window.addEventListener("deviceorientation", (event) => {
+    console.log("Orientation:", event)
     if (global.dir) {
-      // Use angle between points to calculate relative distance
-      const moveAngle = Math.atan2(event.acceleration.y, event.acceleration.x)
-      const angle = (moveAngle - global.dir.angle) * 180 / Math.PI // The target is north on the compass
+      let orientation = null
+      if (Math.abs(event.beta) < 30) { // Device is held flat
+        orientation = event.alpha
+      } else { // Device is held straight
+        orientation = event.gamma
+      }
 
-      console.log("Angle:", Math.floor(angle))
+
+      // Use angle between points to calculate relative distance
+      const deg = (rad) => rad * 180 / Math.PI
+
+      const angle = orientation - deg(global.dir.angle) // The target is north on the compass
+
+      console.log("Angle between points:", deg(global.dir.angle))
+      // console.log("Orientation angle:", orientation)
+      // console.log("Angle to go to:", angle)
 
       // Display angle to go to
       doc.dir.style.transform = `rotate(${Math.floor(angle)}deg)`
     }
-  })
+  }, false)
 } else {
   doc.status.innerText = "Location data not available on this device."
 }

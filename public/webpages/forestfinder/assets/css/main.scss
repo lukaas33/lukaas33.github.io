@@ -12,6 +12,11 @@ body,
 main {
   width: 100%;
   height: 100%;
+  // Center all
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #status {
@@ -44,6 +49,7 @@ main {
       stroke: rgb(255,0,0);
       stroke-width: 2;
       transform-origin: 50% 50%; // Rotate around this point
+      transition: 400ms;
     }
   }
 }
