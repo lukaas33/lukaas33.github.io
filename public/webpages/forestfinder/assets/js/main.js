@@ -1,10 +1,8 @@
 // Global scope
 const global = {
   track: null,
-  data: [],
-  at: 0,
   dir: null,
-  result: []
+  fallback: {} // If no cookies
 }
 
 // Serviceworker register
@@ -33,6 +31,72 @@ if ('serviceWorker' in navigator) { // If support
 // General
 const rad = (deg) => deg * Math.PI / 180
 const deg = (rad) => rad * 180 / Math.PI
+
+
+const store = function (name, value = null, expire = 8) {
+  let time = new Date()
+  time.setTime(time.getTime() + (expire * 60 * 60 * 1000)) // Time until expired
+
+  if (navigator.cookieEnabled && window.location.protocol === 'https:') { // Cookies can be used safely
+  // if (true) {
+
+    if (value === null) { // Need to get
+      const cookies = document.cookie.split(';')
+      for (let value of cookies) {
+        let current = value.split('=') // Name and value pair
+        if (current[0].trim() === name) { // Found
+
+          let result = current[1].trim()
+          try {
+            result = JSON.parse(result) // Will parse strings to numbers, booleans, etc.
+            return result
+          } catch (error) {
+            if (error.name === 'SyntaxError') { // Tried to parse a string value
+              return result // Just return the string
+            }
+          }
+        }
+      }
+      return undefined
+    } else { // Need to set
+      value = JSON.stringify(value)
+      document.cookie = `${name}=${value}; expires=${time.toUTCString()}; secure;` // Set value
+      console.log(`set cookie ${name} to ${value}`)
+    }
+
+  } else if (window.localStorage) { // Use session storage
+
+    if (value === null) {
+      let result = localStorage.getItem(name)
+      if (result) {
+        result = JSON.parse(result) // Will parse strings to numbers, booleans, etc.
+        if ((new Date()).getTime() > result.expire) { // Expired
+          return undefined
+        } else {
+          return result.data
+        }
+      } else {
+        return undefined
+      }
+    } else {
+      value = {expire: time.getTime(), data: value} // Add time to be deleted
+      value = JSON.stringify(value)
+      localStorage.setItem(name, value)
+      console.log(`set local storage ${name} to ${value}`)
+    }
+
+  } else { // Use variables
+
+    if (value === null) {
+      return global.fallback[name] // Get value
+    } else {
+      global.fallback[name] = value // Set value
+      console.log(`set fallback variable ${name} to ${value}`)
+    }
+
+  }
+}
+
 
 // Returns distance and the direction
 // https://www.movable-type.co.uk/scripts/latlong.html
@@ -97,21 +161,18 @@ const getLocation = function (callback, err) {
   })
 }
 
-const storage = function () {
-
-}
-
 // Gets the target locations
 const getTarget = function (callback) {
   const getData = function (callback) {
-    if (navigator.onLine) {
+    if (navigator.onLine) { // Internet connection
       const xhttp = new XMLHttpRequest()
       xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
           console.log("Text:", this.responseText)
 
-          const lines = this.responseText.split('\n')
+          const lines = this.responseText.split('\r')
           const names = lines[0].split(',')
+          const data = []
 
           for (let i = 1; i < lines.length; i++) {
             let line = lines[i].split(',')
@@ -126,11 +187,10 @@ const getTarget = function (callback) {
               object[names[j]] = val
             }
 
-            global.data.push(object)
+            data.push(object)
           }
 
-          console.log("Parsed:", global.data)
-          callback()
+          callback(data)
         }
       }
       xhttp.open("GET", constants.database, true)
@@ -140,24 +200,16 @@ const getTarget = function (callback) {
     }
   }
 
+  if (!store('at')) { // Doesn't exist yet
+    store('at', 0)
+  }
 
-  if (false) { // Exists in storage
-    if (false) { // Data needs to be renewed
-      getData((data) => {
-        // TODO Store data
-
-        // Return
-        callback(data)
-      })
-    } else {
-      // TODO Return from storage
-
-    }
-
+  const data = store('data')
+  if (data) { // Exists in storage
+     callback(data)
   } else { // Need to get data online
     getData((data) => {
-      // TODO Store data
-
+      store('data', data)
       // Return
       callback(data)
     })
@@ -167,37 +219,47 @@ const getTarget = function (callback) {
 // Run every time location is updated
 const loop = function (pos) {
   // Get the current distance and direction
-  const target = global.data[global.at]
+  const data = store('data')
+  const target = data[store('at')]
   global.dir = directions(pos.coords, target)
 
   // Display distance
   doc.status.innerText = Math.ceil(global.dir.distance) + ' meter'
 
   // Check if target is reached
-  let biggest = Math.max(pos.coords.accuracy, target.accuracy)
-  if (target.accuracy === biggest) { // Target circle bigger
-    if (global.dir.distance < target.accuracy - pos.coords.accuracy) { // User circle inside target circle
-      newTarget()
-    }
-  } else { //
-    if (global.dir.distance < pos.coords.accuracy - target.accuracy) { // Target circle inside user circle
-      newTarget()
-    }
+  if (global.dir.distance < target.accuracy + pos.coords.accuracy) { // User circle inside target circle
+    newTarget()
   }
+
 
 }
 
 // Choose a new target from the list
 const newTarget = function () {
   alert("Target is reached.")
-  global.result.push({
-    time: new Date()
-  })
-  if (global.result.length === global.data.length) { // End
-    alert("Found all targets.")
+
+  // Save progress
+  let result = store('results')
+  if (result) {
+    result.push({
+      time: new Date()
+    })
+    store('results', result) // Update
   } else {
-    global.at += 1
-    global.at %= global.data.length
+    result = []
+    store('results', result)
+  }
+
+
+  const data = store('data')
+  if (result.length === data.length) { // End
+    alert("Found all targets.")
+    sendData()
+  } else {
+    let at = store('at')
+    at += 1
+    at %= data.length
+    store('at', at)
   }
 }
 
@@ -223,7 +285,8 @@ const constants = {
 if ("geolocation" in navigator) {
   doc.status.innerText = "Getting location"
   // First get the target location from online
-  getTarget(() => {
+  getTarget((data) => {
+    console.log('got:', data)
     // Start getting the location, will repeat itself
     getLocation(loop, () => {
       doc.status.innerText = "Something went wrong."
