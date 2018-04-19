@@ -209,7 +209,7 @@ const getTarget = function (callback) {
      callback(data)
   } else { // Need to get data online
     getData((data) => {
-      store('data', data)
+      store('data', data, 24 * 3)
       // Return
       callback(data)
     })
@@ -218,48 +218,87 @@ const getTarget = function (callback) {
 
 // Run every time location is updated
 const loop = function (pos) {
-  // Get the current distance and direction
-  const data = store('data')
-  const target = data[store('at')]
-  global.dir = directions(pos.coords, target)
+  if (store('working')) {
+    // Get the current distance and direction
+    const data = store('data')
+    const target = data[store('at')]
+    global.dir = directions(pos.coords, target)
 
-  // Display distance
-  doc.status.innerText = Math.ceil(global.dir.distance) + ' meter'
+    // Display distance
+    doc.status.innerText = Math.ceil(global.dir.distance) + ' meter'
 
-  // Check if target is reached
-  if (global.dir.distance < target.accuracy + pos.coords.accuracy) { // User circle inside target circle
-    newTarget()
+    // Check if target is reached
+    if (global.dir.distance < target.accuracy + pos.coords.accuracy) { // User circle inside target circle
+      newTarget(target)
+    }
+  } else { // Done
+    sendData()
   }
-
-
 }
 
 // Choose a new target from the list
-const newTarget = function () {
+const newTarget = function (current) {
   alert("Target is reached.")
 
   // Save progress
   let result = store('results')
-  if (result) {
+  if (result) { // Already exists
     result.push({
+      point: current,
       time: new Date()
     })
-    store('results', result) // Update
+    store('results', result, 8) // Update
   } else {
     result = []
-    store('results', result)
+    store('results', result, 8)
   }
 
 
   const data = store('data')
   if (result.length === data.length) { // End
     alert("Found all targets.")
+    store('working', false, 4)
     sendData()
   } else {
     let at = store('at')
     at += 1
     at %= data.length
-    store('at', at)
+    store('at', at, 8)
+  }
+}
+
+// Sends the data gathered
+const sendData = function () {
+  const post = function (data, callback) {
+    const xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function () {
+      if (this.readyState === 4 && this.status === 200) {
+        	callback()
+      }
+    }
+    xhttp.open("POST", constants.mail, true)
+    xhttp.setRequestHeader('Content-Type', 'application/json') // Server will expect format
+    data = {
+      text: JSON.stringify(data),
+      to: 'lukaas9000@gmail.com',
+      subject: 'ForestFinder'
+    }
+    xhttp.send(JSON.stringify(data))
+  }
+
+  const result = store('results')
+  if (result) {
+    if (navigator.onLine) { // Internet connection
+      post(result, () => {
+        alert("Data was sent")
+      })
+    } else {
+      window.setInterval(() => { // Wait
+        post(result, () => {
+          alert("Data was sent")
+        })
+      }, 2500)
+    }
   }
 }
 
@@ -277,7 +316,9 @@ const doc = {
 
 const constants = {
   radius: 6.371e6, // Of Earth
-  database: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv"
+  database: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv",
+  // mail: "https://general-server.herokuapp.com/mail"
+  mail: "http://localhost:5000/mail"
 }
 
 // >> Run
@@ -287,6 +328,9 @@ if ("geolocation" in navigator) {
   // First get the target location from online
   getTarget((data) => {
     console.log('got:', data)
+    if (store('working')) {
+      store('working', true, 4)
+    }
     // Start getting the location, will repeat itself
     getLocation(loop, () => {
       doc.status.innerText = "Something went wrong."
