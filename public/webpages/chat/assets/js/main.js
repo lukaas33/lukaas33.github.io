@@ -2,8 +2,8 @@
 'use strict'
 
 // << Variables >>
-const target = 'https://general-server.herokuapp.com/chat' // Server route
-// const target = 'http://localhost:5000/chat'
+// const target = 'https://general-server.herokuapp.com/chat' // Server route
+const target = 'http://localhost:5000/chat'
 
 const register = document.getElementById('register')
 const chat = document.getElementById('chat')
@@ -18,13 +18,15 @@ var local = {
   user: null,
   data: {
     users: null,
-    messages: null
+    messages: null,
+    self: []
   },
   read: [],
   scroll: true,
   setup: false,
   hover: null,
-  time: 400
+  time: 400,
+  privkey: null
 }
 
 // << Return functions >>
@@ -52,6 +54,77 @@ const id = function (len) {
   }
 
   return result.join('') // Add together
+}
+
+// RSA encryption
+// https://en.wikipedia.org/wiki/RSA_(cryptosystem)#Code
+// https://stackoverflow.com/questions/14346829/is-there-a-way-to-convert-a-string-to-a-base-10-number-for-encryption
+const rsa = {
+  // String to hex
+  encode: function (string) {
+    let number = "0x"
+    for (let i = 0; i < string.length; i++) {
+        number += string.charCodeAt(i).toString(16)
+    }
+    number = parseInt(number, 16)
+    return number
+  },
+  decode: function (number) {
+      number = number.toString(16)
+      let string = ""
+      for (let i = 0; i < number.length;) {
+          let code = number.slice(i, i += 2);
+          string += String.fromCharCode(parseInt(code, 16));
+      }
+      return string;
+  },
+  // Generates key pair
+  keys: function (keysize) {
+    const random_prime = function (bits) {
+      const min = bigInt(6074001000).shiftLeft(bits - 33) // min ≈ √2 × 2^(bits - 1)
+      const max = bigInt.one.shiftLeft(bits).minus(1)   // max = 2^(bits) - 1
+
+      while (true) {
+        let p = bigInt.randBetween(min, max)
+        if (p.isProbablePrime(256)) {
+          return p
+        }
+      }
+    }
+
+    // Init
+    let e = bigInt(65537) // use fixed public exponent
+    let p = null
+    let q = null
+    let lambda = null
+
+    // generate p and q such that λ(n) = lcm(p − 1, q − 1) is coprime with e and |p-q| >= 2^(keysize/2 - 100)
+    do {
+      p = random_prime(keysize / 2)
+      q = random_prime(keysize / 2)
+      lambda = bigInt.lcm(p.minus(1), q.minus(1))
+    } while (bigInt.gcd(e, lambda).notEquals(1) || p.minus(q).abs().shiftRight(keysize / 2 - 100).isZero())
+
+    return {
+      pubkey: {
+        n: p.multiply(q),   // public key (part I)
+        e: e,               // public key (part II)
+      },
+      privkey: {
+        d: e.modInv(lambda) // private key d = e^(-1) mod λ(n)
+      }
+    }
+  },
+  // Encrypts
+  encrypt: function (text = '', pubkey) {
+    text = rsa.encode(text)
+    return bigInt(text).modPow(pubkey.e, pubkey.n);
+  },
+  // Decrypts
+  decrypt: function (text = '', privkey, pubkey) {
+    const val =  bigInt(text).modPow(privkey.d, pubkey.n)
+    return rsa.decode(val)
+  },
 }
 
 // Check values
@@ -167,7 +240,13 @@ const displayChats = function () {
 
         let databaseText = mess.message
         databaseText = databaseText.replace(/''/g, `'`).replace(/""/g, `"`)
-        text.textContent = databaseText
+
+        if (mess.sender !== 'chatbot' && mess.sender !== local.user.ID) {
+          text.textContent = rsa.decrypt(databaseText, local.privkey, JSON.parse(local.user.pubkey))
+        } else {
+          text.textContent = databaseText
+        }
+
         date.textContent = `${mess.time.getHours()}:${
           prefix(mess.time.getMinutes())
         }  ${
@@ -209,15 +288,17 @@ const unreadChats = function (user) {
 // Displays the users
 const displayUser = function (user, item) {
   for (let prop in user) {
-    let value = user[prop]
-    if (value !== null && value !== 'null') { // Valid value
-      let elem = document.createElement('span')
-      elem.className = prop
-      elem.textContent = value
-      if (prop === 'name') {
-        item.insertAdjacentElement('afterbegin', elem)
-      } else {
-        item.appendChild(elem)
+    if (['ID', 'name', 'country', 'age'].indexOf(prop) !== -1) {
+      let value = user[prop]
+      if (value !== null && value !== 'null') { // Valid value
+        let elem = document.createElement('span')
+        elem.className = prop
+        elem.textContent = value
+        if (prop === 'name') {
+          item.insertAdjacentElement('afterbegin', elem)
+        } else {
+          item.appendChild(elem)
+        }
       }
     }
   }
@@ -344,7 +425,17 @@ const initialiseApp = function () {
     getData((data) => {
       if (data !== null) {
         local.data.users = data.users // Store
-        local.data.messages = data.messages
+        local.data.messages = data.messages // Messages received
+        for (let message of local.data.self) { // Messages sent
+          for (let user of local.data.users) {
+            if (user.ID === message.receiver) { // User exists
+              local.data.messages.push(message)
+            }
+          }
+        }
+        local.data.messages = local.data.messages.sort(function(a, b) {
+          return (a.time.getTime() - b.time.getTime())
+        })
         displayData()
         displayChats()
         let load = doc('#text .loader')
@@ -368,7 +459,8 @@ input.addEventListener('submit', function (event) {
     ID: id(8),
     name: fields[0].value,
     country: fields[1].options[fields[1].selectedIndex].value,
-    age: Number(fields[2].value)
+    age: Number(fields[2].value),
+    pubkey: null
   }
   submit.disabled = true // No resubmit
 
@@ -397,10 +489,15 @@ input.addEventListener('submit', function (event) {
   if (valid) { // Send info
     let load = doc('#input .loader')
     load.style.display = 'inline-block'
+
+    const keys = rsa.keys(512)
+    local.privkey = keys.privkey
+    values.pubkey = JSON.stringify(keys.pubkey)
+    local.user = values
+
     sendData('user', values, (success) => {
       if (success) {
         register.style.display = 'none'
-        local.user = values
         initialiseApp() // Start the app
       } else {
         alert('Server error')
@@ -426,6 +523,16 @@ text.addEventListener('submit', function (event) {
     message: escape(field.value),
     time: new Date()
   }
+
+  // Encrypts with receiver pubkey if exists
+  let original = null
+  for (let user of local.data.users) {
+    if (user.ID === local.selected && user.pubkey) {
+      original = values.message
+      values.message = rsa.encrypt(values.message, JSON.parse(user.pubkey))
+    }
+  }
+
   submit.disabled = true
 
   if (values.message !== null) {
@@ -433,6 +540,10 @@ text.addEventListener('submit', function (event) {
     let load = doc('#text .loader')
     load.style.display = 'inline-block'
     sendData('message', values, (success) => {
+      if (original) {
+        values.message = original
+      }
+      local.data.self.push(values)
       submit.disabled = false
       if (success) {
         text.reset() // The form
