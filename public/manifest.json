@@ -4,7 +4,9 @@
   "theme_color": "#eeeeee",
   "background_color": "#eeeeee",
   "display": "standalone",
-  "start_url": "/",
+  "start_url": ".",
+  "orientation": "portrait",
+  "lang": "en-US",
   "icons": [
     {
       "src": "assets/images/favicon/android-chrome-192x192.png",

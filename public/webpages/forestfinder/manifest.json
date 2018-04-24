@@ -4,10 +4,12 @@
   "theme_color": "#4caf50",
   "background_color": "#4caf50",
   "display": "standalone",
-  "start_url": "/",
+  "orientation": "portrait",
+  "lang": "en-US",
+  "start_url": ".",
   "serviceworker": {
     "src": "serviceworker.js",
-    "scope": "/",
+    "scope": ".",
     "use_cache": true
   }
 }
