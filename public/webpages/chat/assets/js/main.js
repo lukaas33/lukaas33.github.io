@@ -1,9 +1,18 @@
+// Serviceworker register
+if ('serviceWorker' in navigator) { // If support
+  navigator.serviceWorker.register('serviceworker.js', {scope: '.'}).then(function (registration) {
+    console.log('Service Worker Registered at:', registration.scope)
+  }, function (error) {
+    console.log('Registration failed', error)
+  })
+}
+
 (function() { // Global vars are local to this file
 'use strict'
 
 // << Variables >>
-// const target = 'https://general-server.herokuapp.com/chat' // Server route
-const target = 'http://localhost:5000/chat'
+const target = 'https://general-server.herokuapp.com/chat' // Server route
+// const target = 'http://localhost:5000/chat'
 
 const register = document.getElementById('register')
 const chat = document.getElementById('chat')
