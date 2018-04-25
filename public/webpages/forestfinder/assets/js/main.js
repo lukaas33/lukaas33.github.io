@@ -127,7 +127,7 @@ const directions = function (position, target) {
 // Gets the user location
 const getLocation = function (callback, err) {
   const success = function (pos) { // Successfull get
-    console.log("Position:", pos)
+    // console.log("Position:", pos)
     if (pos.coords.accuracy < 20) { // In meters
       callback(pos)
     }
@@ -200,12 +200,12 @@ const getTarget = function (callback) {
     }
   }
 
-  if (!store('at')) { // Doesn't exist yet
+  if (store('at') === null) { // Doesn't exist yet
     store('at', 0)
   }
 
   const data = store('data')
-  if (data) { // Exists in storage
+  if (data !== null) { // Exists in storage
      callback(data)
   } else { // Need to get data online
     getData((data) => {
@@ -218,14 +218,15 @@ const getTarget = function (callback) {
 
 // Run every time location is updated
 const loop = function (pos) {
-  if (store('working')) {
+  if (store('working') === true) { // Explicit
     // Get the current distance and direction
     const data = store('data')
     const target = data[store('at')]
     global.dir = directions(pos.coords, target)
 
+    doc.target.textContent = target.name
     // Display distance
-    doc.status.innerText = Math.ceil(global.dir.distance) + ' meter'
+    doc.status.textContent = `${Math.ceil(global.dir.distance)} meter`
 
     // Check if target is reached
     if (global.dir.distance < target.accuracy + pos.coords.accuracy) { // User circle inside target circle
@@ -242,22 +243,21 @@ const newTarget = function (current) {
 
   // Save progress
   let result = store('results')
-  if (result) { // Already exists
-    result.push({
-      point: current,
-      time: new Date()
-    })
-    store('results', result, 8) // Update
-  } else {
+  if (result === null) {
     result = []
-    store('results', result, 8)
   }
+
+  result.push({
+    point: current,
+    time: new Date()
+  })
+  store('results', result, 8)
 
 
   const data = store('data')
   if (result.length === data.length) { // End
     alert("Found all targets.")
-    store('working', false, 4)
+    store('working', false, 4) // Stop all
     sendData()
   } else {
     let at = store('at')
@@ -287,7 +287,7 @@ const sendData = function () {
   }
 
   const result = store('results')
-  if (result) {
+  if (result !== null) {
     if (navigator.onLine) { // Internet connection
       post(result, () => {
         alert("Data was sent")
@@ -309,6 +309,7 @@ const sendData = function () {
 // >> Variables
 const doc = {
   status: document.getElementById('status'),
+  target: document.getElementById('target'),
   data: document.getElementById('data'),
   dir: document.getElementById('dir'),
   compass: document.getElementById('compass')
@@ -317,8 +318,8 @@ const doc = {
 const constants = {
   radius: 6.371e6, // Of Earth
   database: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv",
-  // mail: "https://general-server.herokuapp.com/mail"
-  mail: "http://localhost:5000/mail"
+  mail: "https://general-server.herokuapp.com/mail"
+  // mail: "http://localhost:5000/mail"
 }
 
 // >> Run
@@ -328,9 +329,11 @@ if ("geolocation" in navigator) {
   // First get the target location from online
   getTarget((data) => {
     console.log('got:', data)
-    if (store('working')) {
+
+    if (store('working') === null) {
       store('working', true, 4)
     }
+
     // Start getting the location, will repeat itself
     getLocation(loop, () => {
       doc.status.innerText = "Something went wrong."
@@ -338,18 +341,13 @@ if ("geolocation" in navigator) {
 
     // >> Events
     // Get the direction of the device
-    console.log()
     window.addEventListener("deviceorientation", (event) => {
-      console.log("Orientation:", event)
+      // console.log("Orientation:", event)
       if (global.dir) {
         let orientation = event.alpha
 
         // Use angle between points to calculate relative distance
         const angle = (orientation - global.dir.angle) - 90 // The target is north on the compass
-
-        console.log("Angle between points:", global.dir.angle)
-        console.log("Orientation angle:", orientation)
-        console.log("Angle to go to:", angle)
 
         // Display angle to go to
         doc.dir.style.transform = `rotate(${Math.floor(angle)}deg)`

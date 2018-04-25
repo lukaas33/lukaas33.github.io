@@ -24,7 +24,7 @@ const urlsToCache = [
   "assets/icons/favicon/mstile-310x310.png",
   "assets/icons/favicon/mstile-70x70.png",
   "assets/icons/favicon/safari-pinned-tab.svg",
-  "https://peterolson.github.com/BigInteger.js/BigInteger.js"
+  "https://cdnjs.cloudflare.com/ajax/libs/big-integer/1.6.28/BigInteger.min.js"
 ]
 
 

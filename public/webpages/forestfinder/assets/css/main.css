@@ -15,7 +15,8 @@ main {
   justify-content: center;
   align-items: center; }
 
-#status {
+#status,
+#target {
   line-height: 5vmin;
   font-size: 4vmin;
   padding: 0.5vmin;
@@ -26,8 +27,8 @@ main {
   justify-content: center;
   align-items: center; }
   #data svg {
-    width: 85vmin;
-    height: 85vmin;
+    width: 80vmin;
+    height: 80vmin;
     margin: 2.5vmin; }
     #data svg #compass {
       fill: grey; }

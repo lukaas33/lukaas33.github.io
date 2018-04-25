@@ -19,7 +19,8 @@ main {
   align-items: center;
 }
 
-#status {
+#status,
+#target {
   line-height: 5vmin;
   font-size: 4vmin;
   padding: 0.5vmin;
@@ -37,8 +38,8 @@ main {
   }
 
   svg {
-    width: 85vmin;
-    height: 85vmin;
+    width: 80vmin;
+    height: 80vmin;
     margin: 2.5vmin;
 
     #compass {
