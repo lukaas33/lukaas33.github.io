@@ -34,8 +34,8 @@
     "wildcard-subdomains": "^1.1.0"
   },
   "engines": {
-    "node": "6.10.3",
-    "npm": "3.10.10"
+    "node": "8.11.1",
+    "npm": "6.0.0"
   },
   "bugs": {
     "url": "https://github.com/lukaas33/lukaas33.github.io/issues"
