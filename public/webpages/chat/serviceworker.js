@@ -27,8 +27,19 @@ const urlsToCache = [
   "https://cdnjs.cloudflare.com/ajax/libs/big-integer/1.6.28/BigInteger.min.js"
 ]
 
+// Notification
+self.addEventListener('push', function(event) {
+  console.log(`Push had this data: "${event.data.text()}"`)
 
-// TODO notifications and defered actions
+  const title = 'Chat';
+  const options = {
+    body: 'Yay it works.',
+    icon: 'assets/icons/favicon/favicon-16x16.png',
+    badge: 'assets/icons/favicon/android-chrom-192x192.png'
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options))
+})
 
 // Perform install steps
 self.addEventListener('install', function (event) {

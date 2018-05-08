@@ -1,16 +1,8 @@
-// Serviceworker register
-if ('serviceWorker' in navigator) { // If support
-  navigator.serviceWorker.register('serviceworker.js', {scope: '.'}).then(function (registration) {
-    console.log('Service Worker Registered at:', registration.scope)
-  }, function (error) {
-    console.log('Registration failed', error)
-  })
-}
-
 (function() { // Global vars are local to this file
 'use strict'
 
 // << Variables >>
+const pubkey = 'BLHJskP_I5dSgo2D7njK1WzzSQh3Xyatpd-fwDYOWA9eHm4OF0JX_LlRG5kQ6VO1ZG8wJyrGyAkYvrYPSOvS_ho' // App
 const target = 'https://general-server.herokuapp.com/chat' // Server route
 // const target = 'http://localhost:5000/chat'
 
@@ -21,7 +13,7 @@ const message = document.getElementById('message')
 const messages = document.getElementById('messages')
 const text = document.getElementById('text')
 
-var local = {
+const local = {
   selected: null,
   load: null,
   user: null,
@@ -37,6 +29,7 @@ var local = {
   time: 400,
   privkey: null
 }
+
 
 // << Return functions >>
 // Generates ids
@@ -63,6 +56,19 @@ const id = function (len) {
   }
 
   return result.join('') // Add together
+}
+
+const urlB64ToUint8Array = function (base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4)
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
+
+  const rawData = window.atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i)
+  }
+  return outputArray
 }
 
 // RSA encryption
@@ -456,6 +462,33 @@ const initialiseApp = function () {
     return refresh // The function executes once before being loaded with the setInterval
   }(), 2500)
 }
+
+
+// << Run >>
+// Serviceworker register
+if ('serviceWorker' in navigator) { // If support
+  navigator.serviceWorker.register('serviceworker.js', {scope: '.'}).then(function (registration) {
+    console.log('Service Worker Registered at:', registration.scope)
+
+    if ('PushManager' in window) {
+      const key = urlB64ToUint8Array(pubkey)
+      registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: key
+      }).then(function (subscription) {
+        if (Notification.permission === 'denied') {
+        } else {
+          console.log('User is subscribed.')
+        }
+      }).catch(function (error) {
+        console.log('Failed to subscribe the user: ', error)
+      })
+    }
+  }, function (error) {
+    console.log('Registration failed', error)
+  })
+}
+
 
 // << Events >>
 // Input submit
