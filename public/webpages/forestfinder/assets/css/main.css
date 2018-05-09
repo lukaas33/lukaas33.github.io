@@ -7,29 +7,34 @@ body,
   width: 100%;
   height: 100%; }
 
+:root {
+  --padding: 2.5vmin; }
+
 main {
-  width: 100%;
-  height: 100%;
-  flex-direction: column;
-  display: flex;
-  justify-content: center;
-  align-items: center; }
+  width: calc(100% - (var(--padding) * 3 * 2));
+  margin: 0 calc(var(--padding) * 3);
+  height: 95%;
+  display: grid;
+  grid-gap: var(--padding);
+  grid-template-rows: 1fr 6fr;
+  grid-template-columns: 1fr; }
+
+nav {
+  height: 5%;
+  width: 100%; }
 
 #status,
 #target {
-  line-height: 5vmin;
-  font-size: 4vmin;
-  padding: 0.5vmin;
   text-align: center; }
 
 #data {
   display: flex;
   justify-content: center;
-  align-items: center; }
+  align-items: center;
+  padding: var(--padding); }
   #data svg {
-    width: 80vmin;
-    height: 80vmin;
-    margin: 2.5vmin; }
+    height: 100%;
+    width: 100%; }
     #data svg #compass {
       fill: grey; }
     #data svg #dir {

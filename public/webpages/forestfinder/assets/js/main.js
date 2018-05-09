@@ -237,6 +237,20 @@ const loop = function (pos) {
   }
 }
 
+// Update compass
+const compass = function (data) {
+  // console.log("Orientation:", event)
+  if (global.dir) {
+    let orientation = data.alpha
+
+    // Use angle between points to calculate relative distance
+    const angle = (orientation - global.dir.angle) - 90 // The target is north on the compass
+
+    // Display angle to go to
+    doc.dir.style.transform = `rotate(${Math.floor(angle)}deg)`
+  }
+}
+
 // Choose a new target from the list
 const newTarget = function (current) {
   alert("Target is reached.")
@@ -312,7 +326,7 @@ const doc = {
   target: document.getElementById('target'),
   data: document.getElementById('data'),
   dir: document.getElementById('dir'),
-  compass: document.getElementById('compass')
+  compass: document.getElementById('compass'),
 }
 
 const constants = {
@@ -342,16 +356,7 @@ if ("geolocation" in navigator) {
     // >> Events
     // Get the direction of the device
     window.addEventListener("deviceorientation", (event) => {
-      // console.log("Orientation:", event)
-      if (global.dir) {
-        let orientation = event.alpha
-
-        // Use angle between points to calculate relative distance
-        const angle = (orientation - global.dir.angle) - 90 // The target is north on the compass
-
-        // Display angle to go to
-        doc.dir.style.transform = `rotate(${Math.floor(angle)}deg)`
-      }
+      compass(event)
     }, false)
   })
 } else {
