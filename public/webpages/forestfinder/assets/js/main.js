@@ -2,7 +2,11 @@
 const global = {
   track: null,
   dir: null,
-  fallback: {} // If no cookies
+  fallback: {}, // If no cookies
+  contact: 'lukaas9000@gmail.com',
+  timer: {
+    connect: null
+  }
 }
 
 // Serviceworker register
@@ -294,7 +298,7 @@ const sendData = function () {
     xhttp.setRequestHeader('Content-Type', 'application/json') // Server will expect format
     data = {
       text: JSON.stringify(data),
-      to: 'lukaas9000@gmail.com',
+      to: global.contact,
       subject: 'ForestFinder'
     }
     xhttp.send(JSON.stringify(data))
@@ -303,13 +307,19 @@ const sendData = function () {
   const result = store('results')
   if (result !== null) {
     if (navigator.onLine) { // Internet connection
-      post(result, () => {
-        alert("Data was sent")
-      })
-    } else {
-      window.setInterval(() => { // Wait
+      if (store('sent')) {
         post(result, () => {
           alert("Data was sent")
+        })
+      }
+    } else {
+      global.connect = window.setInterval(() => { // Wait
+        post(result, () => {
+          if (store('sent')) {
+            alert("Data was sent")
+            window.clearInterval(global.connect) // End
+
+          }
         })
       }, 2500)
     }
@@ -346,6 +356,9 @@ if ("geolocation" in navigator) {
 
     if (store('working') === null) {
       store('working', true, 4)
+    }
+    if (store('sent') === null) {
+      store('sent', false)
     }
 
     // Start getting the location, will repeat itself
