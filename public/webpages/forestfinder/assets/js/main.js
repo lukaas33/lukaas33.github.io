@@ -3,7 +3,6 @@ const global = {
   track: null,
   dir: null,
   fallback: {}, // If no cookies
-  contact: 'lukaas9000@gmail.com',
   timer: {
     connect: null
   }
@@ -41,8 +40,8 @@ const store = function (name, value = null, expire = 8) {
   let time = new Date()
   time.setTime(time.getTime() + (expire * 60 * 60 * 1000)) // Time until expired
 
-  if (navigator.cookieEnabled && window.location.protocol === 'https:') { // Cookies can be used safely
-  // if (true) {
+  // if (navigator.cookieEnabled && window.location.protocol === 'https:') { // Cookies can be used safely
+  if (false) { // Don't use cookies
 
     if (value === null) { // Need to get
       const cookies = document.cookie.split(';')
@@ -68,7 +67,7 @@ const store = function (name, value = null, expire = 8) {
       console.log(`set cookie ${name} to ${value}`)
     }
 
-  } else if (window.localStorage) { // Use session storage
+  } else if (window.localStorage) { // Use local storage
 
     if (value === null) {
       let result = localStorage.getItem(name)
@@ -167,7 +166,7 @@ const getLocation = function (callback, err) {
 
 // Gets the target locations
 const getTarget = function (callback) {
-  const getData = function (callback) {
+  const getData = function (cb) {
     if (navigator.onLine) { // Internet connection
       const xhttp = new XMLHttpRequest()
       xhttp.onreadystatechange = function () {
@@ -194,7 +193,7 @@ const getTarget = function (callback) {
             data.push(object)
           }
 
-          callback(data)
+          cb(data)
         }
       }
       xhttp.open("GET", constants.database, true)
@@ -204,12 +203,10 @@ const getTarget = function (callback) {
     }
   }
 
-  if (store('at') === null) { // Doesn't exist yet
-    store('at', 0)
-  }
 
-  const data = store('data')
-  if (data !== null) { // Exists in storage
+
+  let data = store('data')
+  if (data) { // Exists in storage
      callback(data)
   } else { // Need to get data online
     getData((data) => {
@@ -298,7 +295,7 @@ const sendData = function () {
     xhttp.setRequestHeader('Content-Type', 'application/json') // Server will expect format
     data = {
       text: JSON.stringify(data),
-      to: global.contact,
+      to: constants.contact,
       subject: 'ForestFinder'
     }
     xhttp.send(JSON.stringify(data))
@@ -341,6 +338,7 @@ const doc = {
 
 const constants = {
   radius: 6.371e6, // Of Earth
+  contact: 'lukaas9000@gmail.com',
   database: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv",
   mail: "https://general-server.herokuapp.com/mail"
   // mail: "http://localhost:5000/mail"
@@ -359,6 +357,9 @@ if ("geolocation" in navigator) {
     }
     if (store('sent') === null) {
       store('sent', false)
+    }
+    if (store('at') === null) { // Doesn't exist yet
+      store('at', 0, 8)
     }
 
     // Start getting the location, will repeat itself
