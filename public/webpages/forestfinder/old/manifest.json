@@ -1,0 +1,15 @@
+{
+  "name": "Forest Finder",
+  "short_name": "Forestfinder",
+  "theme_color": "#4caf50",
+  "background_color": "#4caf50",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "en-US",
+  "start_url": ".",
+  "serviceworker": {
+    "src": "serviceworker.js",
+    "scope": ".",
+    "use_cache": true
+  }
+}
