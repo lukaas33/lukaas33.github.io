@@ -2,13 +2,57 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Info -->
     <meta charset="utf-8">
     <title>Navigatie</title>
-    <script type="text/javascript" src="assets/js/navigation.js"></script>
-    <script type="text/javascript" src="assets/js/database.js"></script>
-    <script type="text/javascript" src="assets/js/quiz.js"></script>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=0">
+    <link rel="manifest" href="manifest.json">
+    <!-- Code -->
+    <script defer type="text/javascript" src="assets/js/navigation.js"></script>
+    <script defer type="text/javascript" src="assets/js/database.js"></script>
+    <script defer type="text/javascript" src="assets/js/quiz.js"></script>
+    <!-- Styling -->
+    <link href="assets/style/nav.css" media="screen" rel="stylesheet"/>
   </head>
   <body>
+    <!-- Menu -->
+    <nav>
+      <li></li>
+      <li></li>
+      <li></li>
+    </nav>
+    <!-- Page content -->
+    <main>
+      <!-- Top bar -->
+      <header>
+        <button type="button" name="menu">
+          <img src="" alt="Menu button">
+        </button>
+        <!-- Tree name -->
+        <h2></h2>
+        <!-- Distance to point -->
+        <div class="tag">
+          <span class="distance"></span>
+          <span>m</span>
+        </div>
+      </header>
+      <section id="image">
+        <!-- Image of the tree -->
+        <img src="" alt="">
+      </section>
+      <section id="navigator">
+        <svg>
+          <circle id="compass" cx="50%" cy="50%" r="50%"/>
+          <line id="arrow" x1="50%" y1="50%" x2="50%" y="100%"/>
+        </svg>
+      </section>
+      <section id="history">
+        <div class="cards">
 
+        </div>
+        <button type="button" name="more"></button>
+      </section>
+    </main>
   </body>
 </html>
