@@ -12,7 +12,16 @@ const database = {
   get data () { // Accessed via database.data
     if (window.localStorage) {
       const stringData = localStorage.getItem(this.name)
-      const data = JSON.parse(stringData)
+      const data = JSON.parse(stringData, (key, value) => {
+        // Extra conversion table
+        if (key === "required" || key === "double") {
+          if (value === "TRUE") {
+            return true
+          } else if (value === "FALSE" || value === "") {
+            return false
+          }
+        }
+      })
       return data
     } else {
 
