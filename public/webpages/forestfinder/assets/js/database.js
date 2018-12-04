@@ -12,16 +12,7 @@ const database = {
   get data () { // Accessed via database.data
     if (window.localStorage) {
       const stringData = localStorage.getItem(this.name)
-      const data = JSON.parse(stringData, (key, value) => {
-        // Extra conversion table
-        if (key === "required" || key === "double") {
-          if (value === "TRUE") {
-            return true
-          } else if (value === "FALSE" || value === "") {
-            return false
-          }
-        }
-      })
+      const data = JSON.parse(stringData)
       return data
     } else {
 
@@ -58,6 +49,15 @@ const getCsv = function (link, callback) {
             // Convert to numbers if possible
             if (!isNaN(parseFloat(val))) {
               val = parseFloat(val)
+            }
+            // Convert sheets format of TRUE and False
+            if (val === "TRUE") {
+              val = true
+            } else if (val === "FALSE") {
+              val = false
+            }
+            if (val === "") {
+              val = null
             }
             object[names[j]] = val
           }
