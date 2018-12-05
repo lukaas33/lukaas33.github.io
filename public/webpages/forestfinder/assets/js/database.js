@@ -1,15 +1,17 @@
 // Functionality for retrieving data from the online database
 // Functions for local storage
+
+// === Vars ===
 const database = {
   link: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv",
   name: "treeLocationData",
-  getOnline: function (callback) {
+  getOnline (callback) {
     getCsv(this.link, (data) => { // Get via xhttp
-      this.data = data // Store data
+      this.locations = data // Store data
       callback(data) // Return the data
     })
   },
-  get data () { // Accessed via database.data
+  get locations () { // Accessed via database.locations
     if (window.localStorage) {
       const stringData = localStorage.getItem(this.name)
       const data = JSON.parse(stringData)
@@ -18,7 +20,7 @@ const database = {
 
     }
   },
-  set data (jsonData) {
+  set locations (jsonData) {
     const stringData = JSON.stringify(jsonData)
     if (window.localStorage) {
       localStorage.setItem(this.name, stringData)
@@ -28,13 +30,13 @@ const database = {
   }
 }
 
-// Gets the target locations
+// === Functions ===
+// Gets the target location from the spreadsheet
 const getCsv = function (link, callback) {
   if (navigator.onLine) { // Internet connection
     const xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () { // When data returns
       if (this.readyState === 4 && this.status === 200) {
-        console.log("Text:", this.responseText)
 
         // Convert csv to js object
         const lines = this.responseText.split('\r')
