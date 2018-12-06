@@ -13,7 +13,7 @@ const game = {
       id = Math.ceil(Math.random() * options.length) // Random id, every entry has an id of 1 to n
     }
 
-    id = 1 // Testing
+    id = 1 // TEST
     for (let option of options) {
       if (option.location_id === id) { // Found it
         navigation.destination = new Coord(option) // Store only the coordinate
@@ -37,26 +37,30 @@ const game = {
         delete this.destinationInfo.location_id
       }
     }
+  },
+  refresh () { // The screen refresh
+    navigation.loc = new Coord({latitude: 51.448009, longitude: 5.508001, acuraccy: 1}) // TEST
+    const directions = navigation.directions()
+    console.log(directions)
+    doc.distance.innerHTML = directions.distance
+    doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
   }
 }
 
 const doc = {
-  distance: document.querySelector(".tag .distance")
+  distance: document.querySelector(".tag .distance"),
+  arrow: document.querySelector("#arrow")
 }
 
 // === Functions ===
-const displayData = function (directions) {
-  doc.distance.innerHTML = directions.distance
-}
 
 
 // === Execute ===
 // Async loading functions
 // Start tracking
 navigation.track((loc) => { // When location is retrieved the screen will update
-  if (navigation.loc !== null && navigation.destination !== null) {
-    const directions = navigation.directions()
-    displayData(directions)
+  if (navigation.loc !== null && navigation.destination !== null) { // Two points available
+    game.refresh() // Run the sceen refresh
   }
 })
 // Get the data
@@ -68,4 +72,4 @@ database.getOnline((data) => {
 // Loop function for game
 const wait = window.setInterval(() => {
 
-}, 1000) // Refresh time
+}, 500) // Refresh time

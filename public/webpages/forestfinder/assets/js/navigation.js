@@ -20,7 +20,7 @@ class Coord {
 
 // === Variables ===
 const navigation = {
-  loc: new Coord({latitude: 51.448009, longitude: 5.508001, acuraccy: 1}), // Current user location
+  loc: null, // Current user location
   destination: null, // Stores destination coordinate
   options: {
     enableHighAccuracy: true,
@@ -34,8 +34,10 @@ const navigation = {
   },
   directions () {
     const dist = geolib.getDistance(this.loc, this.destination)
+    const bearing = geolib.getBearing(this.loc, this.destination) // N,E,S,W 0,90,180,270 direction
+    // const angle = (bearing / 180) * Math.PI // In Radians
 
-    const direction = {distance: dist}
+    const direction = {distance: dist, angle: bearing}
     return direction
   }
 }
