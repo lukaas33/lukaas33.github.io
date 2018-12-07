@@ -6,17 +6,18 @@ const game = {
   visited: [], // IDs of visited location
   destination: null,
   destinationInfo: null, // Stores info about the destination
-  chooseDestination () {
+  chooseDestination (choice) { // Selects next destination
     const options = database.locations
-    let id = null
-    while (id in this.visited) {
-      id = Math.ceil(Math.random() * options.length) // Random id, every entry has an id of 1 to n
+
+    // Random approach
+    let id = choice // if no argument it will use an algoritm to choose
+    while (id in this.visited || id === undefined) {
+      id = Math.ceil(Math.random() * options.length) // Every entry has an id of 1 to n
     }
 
-    id = 1 // TEST
     for (let option of options) {
       if (option.location_id === id) { // Found it
-        navigation.destination = new Coord(option) // Store only the coordinate
+        navigation.destination = new Coord(option) // Store only the coordinate here
         game.destination = option.location_id // Store the unique Id
 
         // Look for the data if this tree is not unique
@@ -44,12 +45,22 @@ const game = {
     console.log(directions)
     doc.distance.innerHTML = directions.distance
     doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
+  },
+  display () { // Displays info of the tree to visit
+    doc.image.src = this.destinationInfo.image
+    doc.name.textContent = this.destinationInfo.name
+  },
+  start () { // Starts the game
+    this.chooseDestination() // Choose the destination TEST with 1
+    this.display()
   }
 }
 
 const doc = {
   distance: document.querySelector(".tag .distance"),
-  arrow: document.querySelector("#arrow")
+  arrow: document.querySelector("#arrow"),
+  image: document.querySelector("#image img"),
+  name: document.querySelector("header h2")
 }
 
 // === Functions ===
@@ -58,7 +69,7 @@ const doc = {
 // === Execute ===
 // Async loading functions
 // Start tracking
-navigation.track((loc) => { // When location is retrieved the screen will update
+navigation.track(() => { // When location is retrieved the screen will update
   if (navigation.loc !== null && navigation.destination !== null) { // Two points available
     game.refresh() // Run the sceen refresh
   }
@@ -66,7 +77,7 @@ navigation.track((loc) => { // When location is retrieved the screen will update
 // Get the data
 database.getOnline((data) => {
   console.log(data)
-  game.chooseDestination()
+  game.start() // Start the game
 })
 
 // Loop function for game

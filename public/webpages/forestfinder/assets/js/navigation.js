@@ -29,7 +29,7 @@ const navigation = {
   track (callback) {
     trackLocation(this.options, (loc) => {
       this.loc = loc
-      callback(loc)
+      callback()
     })
   },
   directions () {
