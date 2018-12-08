@@ -53,9 +53,10 @@ const trackLocation = function (options, callback) {
       callback(loc) // Return value somewhere else and continue
     }, () => {
       // Error
-      console.error("Get location error")
+      alert("Location error")
     }, options)
   } else {
     // geolocation IS NOT available
+    alert("No GPS available")
   }
 }

@@ -75,10 +75,24 @@ navigation.track(() => { // When location is retrieved the screen will update
   }
 })
 // Get the data
-database.getOnline((data) => {
-  console.log(data)
-  game.start() // Start the game
-})
+// if (database.locations === null) { // Available offline
+if (true) {
+  database.getOnline((data) => { // Get the data online
+    console.log(data)
+    game.start()
+  })
+} else {
+  game.start()
+}
+
+// Serviceworker register
+if ('serviceWorker' in window.navigator) { // If support
+  window.navigator.serviceWorker.register('serviceworker.js', {scope: './'}).then((registration) => {
+    console.log('Service Worker Registered at:', registration.scope)
+  }, (error) => {
+    alert('Registration failed', error)
+  })
+}
 
 // Loop function for game
 const wait = window.setInterval(() => {

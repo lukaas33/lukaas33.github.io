@@ -7,6 +7,20 @@ const database = {
   name: "treeLocationData",
   getOnline (callback) {
     getCsv(this.link, (data) => { // Get via xhttp
+      // Cache images for offline use
+      for (let loc of data) {
+        if (loc.image) { // Exists
+          // this.cacheImage(loc.image)
+          caches.open('cached-images').then((cache) => {
+            // Caches image after getting from url
+            let request = new Request(loc.image, {mode: 'no-cors'}) // opague resonse will be stored
+            fetch(request).then((response) => {
+              return cache.put(request, response)
+            })
+          })
+        }
+      }
+
       this.locations = data // Store data
       callback(data) // Return the data
     })
@@ -14,14 +28,18 @@ const database = {
   get locations () { // Accessed via database.locations
     if (window.localStorage) {
       const stringData = localStorage.getItem(this.name)
-      const data = JSON.parse(stringData)
-      return data
+      if (stringData === null) {
+        return null
+      } else {
+        const data = JSON.parse(stringData) // decode
+        return data
+      }
     } else {
 
     }
   },
   set locations (jsonData) {
-    const stringData = JSON.stringify(jsonData)
+    const stringData = JSON.stringify(jsonData) // encode
     if (window.localStorage) {
       localStorage.setItem(this.name, stringData)
     } else {
