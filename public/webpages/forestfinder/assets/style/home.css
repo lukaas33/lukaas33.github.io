@@ -1,0 +1,8 @@
+svg #compass {
+  fill: grey; }
+
+svg #arrow {
+  stroke: red;
+  stroke-width: 2;
+  transform-origin: 50% 50%;
+  transition: 500ms; }
