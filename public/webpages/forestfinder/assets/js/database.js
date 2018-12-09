@@ -8,18 +8,7 @@ const database = {
   getOnline (callback) {
     getCsv(this.link, (data) => { // Get via xhttp
       // Cache images for offline use
-      for (let loc of data) {
-        if (loc.image) { // Exists
-          // this.cacheImage(loc.image)
-          caches.open('cached-images').then((cache) => {
-            // Caches image after getting from url
-            let request = new Request(loc.image, {mode: 'no-cors'}) // opague resonse will be stored
-            fetch(request).then((response) => {
-              return cache.put(request, response)
-            })
-          })
-        }
-      }
+      this.checkCachedImages(data)
 
       this.locations = data // Store data
       callback(data) // Return the data
@@ -45,55 +34,64 @@ const database = {
     } else {
 
     }
+  },
+  checkCachedImages (data) {
+    for (let loc of data) {
+      if (loc.image) { // Exists
+        this.cacheImage(loc.image)
+      }
+    }
+  },
+  cacheImage (url) {
+    caches.open('cached-images').then((cache) => {
+      // Caches image after getting from url
+      let request = new Request(url, {mode: 'no-cors'}) // opague resonse will be stored
+      fetch(request).then((response) => {
+        return cache.put(request, response)
+      })
+    })
   }
 }
 
 // === Functions ===
 // Gets the target location from the spreadsheet
 const getCsv = function (link, callback) {
-  if (navigator.onLine) { // Internet connection
-    const xhttp = new XMLHttpRequest()
-    xhttp.onreadystatechange = function () { // When data returns
-      if (this.readyState === 4 && this.status === 200) {
+  const xhttp = new XMLHttpRequest()
+  xhttp.onreadystatechange = function () { // When data returns
+    if (this.readyState === 4 && this.status === 200) {
 
-        // Convert csv to js object
-        const lines = this.responseText.split('\r')
-        const names = lines[0].split(',')
-        const data = []
+      // Convert csv to js object
+      const lines = this.responseText.split('\r')
+      const names = lines[0].split(',')
+      const data = []
 
-        for (let i = 1; i < lines.length; i++) {
-          let line = lines[i].split(',')
-          let object = {}
-          for (let j in line) {
-            let val = line[j]
-            // Convert to numbers if possible
-            if (!isNaN(parseFloat(val))) {
-              val = parseFloat(val)
-            }
-            // Convert sheets format of TRUE and False
-            if (val === "TRUE") {
-              val = true
-            } else if (val === "FALSE") {
-              val = false
-            }
-            if (val === "") {
-              val = null
-            }
-            object[names[j]] = val
+      for (let i = 1; i < lines.length; i++) {
+        let line = lines[i].split(',')
+        let object = {}
+        for (let j in line) {
+          let val = line[j]
+          // Convert to numbers if possible
+          if (!isNaN(parseFloat(val))) {
+            val = parseFloat(val)
           }
-
-          data.push(object)
+          // Convert sheets format of TRUE and False
+          if (val === "TRUE") {
+            val = true
+          } else if (val === "FALSE") {
+            val = false
+          }
+          if (val === "") {
+            val = null
+          }
+          object[names[j]] = val
         }
 
-        callback(data) // Async return
+        data.push(object)
       }
+
+      callback(data) // Async return
     }
-    xhttp.open("GET", link, true) // Async get request
-    xhttp.send()
-  } else {
-    alert(`
-      Can't connect to the database.
-      Please connect to the internet and try again.
-    `)
   }
+  xhttp.open("GET", link, true) // Async get request
+  xhttp.send()
 }

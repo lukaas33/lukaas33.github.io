@@ -1,4 +1,5 @@
 // Files to store
+const cacheName = 'cached-files'
 const urlsToCache = [
   // ".", // Self
   // "manifest.json",
@@ -22,7 +23,7 @@ const urlsToCache = [
 // Perform install steps
 self.addEventListener('install', function (event) {
   event.waitUntil(
-    caches.open('cached-files').then((cache) => {
+    caches.open(cacheName).then((cache) => {
       console.log('Opened cache')
       return cache.addAll(urlsToCache)
     })

@@ -40,9 +40,8 @@ const game = {
     }
   },
   refresh () { // The screen refresh
-    navigation.loc = new Coord({latitude: 51.448009, longitude: 5.508001, acuraccy: 1}) // TEST
+    // navigation.loc = new Coord({latitude: 51.448009, longitude: 5.508001, acuraccy: 1}) // TEST
     const directions = navigation.directions()
-    console.log(directions)
     doc.distance.innerHTML = directions.distance
     doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
   },
@@ -75,13 +74,14 @@ navigation.track(() => { // When location is retrieved the screen will update
   }
 })
 // Get the data
-// if (database.locations === null) { // Available offline
-if (true) {
+if (database.locations === null) { // Available offline
+// if (true) { // Always refresh for testing
   database.getOnline((data) => { // Get the data online
     console.log(data)
     game.start()
   })
 } else {
+  // database.checkCachedImages(database.locations) // Cached data can be easily overwritten
   game.start()
 }
 
