@@ -22,6 +22,7 @@ class Coord {
 const navigation = {
   loc: null, // Current user location
   destination: null, // Stores destination coordinate
+  orientation: null,
   options: {
     enableHighAccuracy: true,
     maximumAge: 5 * 1000 // Minimum location refresh time
@@ -35,9 +36,11 @@ const navigation = {
   directions () {
     const dist = geolib.getDistance(this.loc, this.destination)
     const bearing = geolib.getBearing(this.loc, this.destination) // N,E,S,W 0,90,180,270 direction
-    // const angle = (bearing / 180) * Math.PI // In Radians
+    // Make direction to go relative to user orientation instead of relative to north
+    let angle = bearing - this.orientation
+    angle = (360 + angle) % 360 // Remove < 0 or > 360
 
-    const direction = {distance: dist, angle: bearing}
+    const direction = {distance: dist, angle: angle}
     return direction
   }
 }
@@ -59,4 +62,10 @@ const trackLocation = function (options, callback) {
     // geolocation IS NOT available
     alert("No GPS available")
   }
+}
+
+const trackOrientation = function (callback) {
+  window.addEventListener("deviceorientation", (event) => {
+    navigation.orientation = event.alpha
+  }, true)
 }

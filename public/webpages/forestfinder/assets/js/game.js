@@ -69,7 +69,7 @@ const doc = {
 // Async loading functions
 // Start tracking
 navigation.track(() => { // When location is retrieved the screen will update
-  if (navigation.loc !== null && navigation.destination !== null) { // Two points available
+  if (navigation.loc !== null && navigation.destination !== null && navigation.orientation) { // Two points available
     game.refresh() // Run the sceen refresh
   }
 })
