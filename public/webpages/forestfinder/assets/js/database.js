@@ -4,7 +4,6 @@
 // === Vars ===
 const database = {
   link: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv",
-  name: "treeLocationData",
   getOnline (callback) {
     getCsv(this.link, (data) => { // Get via xhttp
       // Cache images for offline use
@@ -16,7 +15,7 @@ const database = {
   },
   get locations () { // Accessed via database.locations
     if (window.localStorage) {
-      const stringData = localStorage.getItem(this.name)
+      const stringData = localStorage.getItem("treeLocationData")
       if (stringData === null) {
         return null
       } else {
@@ -30,14 +29,20 @@ const database = {
   set locations (jsonData) {
     const stringData = JSON.stringify(jsonData) // encode
     if (window.localStorage) {
-      localStorage.setItem(this.name, stringData)
+      localStorage.setItem("treeLocationData", stringData)
     } else {
 
     }
   },
+  set progess (data) { // Add datapoint
+    
+  },
+  get progess () {
+
+  },
   checkCachedImages (data) {
     for (let loc of data) {
-      if (loc.image) { // Exists
+      if (loc.image) { // Exists in data
         this.cacheImage(loc.image)
       }
     }

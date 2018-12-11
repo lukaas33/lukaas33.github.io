@@ -18,35 +18,40 @@ const game = {
     for (let option of options) {
       if (option.location_id === id) { // Found it
         navigation.destination = new Coord(option) // Store only the coordinate here
-        game.destination = option.location_id // Store the unique Id
-
-        // Look for the data if this tree is not unique
-        if (!option.double) { // Not a double entry
-          this.destinationInfo = option
-        } else { // Tree is a duplicate
-          for (let other of options) {
-            if (option.location_id !== other.location_id) { // Not itself
-              if (option.tree_id === other.tree_id && !other.double) { // Found the original
-                this.destinationInfo = other
-              }
-            }
-          }
-        }
-        // Delete irrelevant values here
-        delete this.destinationInfo.latitude
-        delete this.destinationInfo.longitude
-        delete this.destinationInfo.location_id
+        this.destination = option.location_id // Store the unique Id
       }
     }
   },
-  refresh () { // The screen refresh
-    // navigation.loc = new Coord({latitude: 51.448009, longitude: 5.508001, acuraccy: 1}) // TEST
-    const directions = navigation.directions()
+  getInfo (options) { // TODO
+    // Look for the data if this tree is not unique
+    if (!option.double) { // Not a double entry
+      this.destinationInfo = option
+    } else { // Tree is a duplicate
+      for (let other of options) {
+        if (option.location_id !== other.location_id) { // Not itself
+          if (option.tree_id === other.tree_id && !other.double) { // Found the original
+            this.destinationInfo = other
+          }
+        }
+      }
+    }
+    // Delete irrelevant values here
+    delete this.destinationInfo.latitude
+    delete this.destinationInfo.longitude
+    delete this.destinationInfo.location_id
+  },
+  refresh (directions) { // The screen refresh
     doc.distance.innerHTML = directions.distance
     if (directions.angle !== null) { // Relative to orientation
       doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
     } else { // Relative to north
       doc.arrow.style.transform = `rotate(${Math.floor(directions.bearing)}deg)`
+    }
+  },
+  check (directions) {
+    if (directions.distance < 10) {
+      // TODO start a quiz
+      database.progess = game.destination()
     }
   },
   display () { // Displays info of the tree to visit
@@ -74,7 +79,10 @@ const doc = {
 // Start tracking
 navigation.track(() => { // When location is retrieved the screen will update
   if (navigation.loc !== null && navigation.destination !== null) { // Two points available
-    game.refresh() // Run the sceen refresh
+    // navigation.loc = new Coord({latitude: 51.448009, longitude: 5.508001, acuraccy: 1}) // TEST
+    const directions = navigation.directions()
+    game.refresh(directions) // Run the sceen refresh
+    game.check(directions) // Check if arrived
   }
 })
 
