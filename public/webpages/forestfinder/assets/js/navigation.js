@@ -28,19 +28,23 @@ const navigation = {
     maximumAge: 5 * 1000 // Minimum location refresh time
   },
   track (callback) {
-    trackLocation(this.options, (loc) => {
+    trackOrientation()
+    trackLocation(this.options, (loc) => { // Execute when called
       this.loc = loc
       callback()
     })
   },
   directions () {
     const dist = geolib.getDistance(this.loc, this.destination)
-    const bearing = geolib.getBearing(this.loc, this.destination) // N,E,S,W 0,90,180,270 direction
-    // Make direction to go relative to user orientation instead of relative to north
-    let angle = bearing - this.orientation
-    angle = (360 + angle) % 360 // Remove < 0 or > 360
+    const bearing = geolib.getBearing(this.loc, this.destination) // N,E,S,W 0,90,180,270 direction, relative to north
+    let angle = null
+    if (navigation.orientation) {
+      // Make direction to go relative to user orientation instead of relative to north
+      angle = bearing - this.orientation
+      angle = (360 + angle) % 360 // Remove < 0 or > 360
+    }
 
-    const direction = {distance: dist, angle: angle}
+    const direction = {distance: dist, angle: angle, bearing: bearing}
     return direction
   }
 }
@@ -64,8 +68,10 @@ const trackLocation = function (options, callback) {
   }
 }
 
-const trackOrientation = function (callback) {
-  window.addEventListener("deviceorientation", (event) => {
-    navigation.orientation = event.alpha
-  }, true)
+const trackOrientation = function () {
+  if(window.DeviceOrientationEvent) {
+    window.addEventListener("deviceorientation", (event) => {
+      navigation.orientation = event.alpha
+    }, true)
+  }
 }

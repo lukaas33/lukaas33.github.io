@@ -43,7 +43,11 @@ const game = {
     // navigation.loc = new Coord({latitude: 51.448009, longitude: 5.508001, acuraccy: 1}) // TEST
     const directions = navigation.directions()
     doc.distance.innerHTML = directions.distance
-    doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
+    if (directions.angle !== null) { // Relative to orientation
+      doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
+    } else { // Relative to north
+      doc.arrow.style.transform = `rotate(${Math.floor(directions.bearing)}deg)`
+    }
   },
   display () { // Displays info of the tree to visit
     doc.image.src = this.destinationInfo.image
@@ -69,10 +73,11 @@ const doc = {
 // Async loading functions
 // Start tracking
 navigation.track(() => { // When location is retrieved the screen will update
-  if (navigation.loc !== null && navigation.destination !== null && navigation.orientation) { // Two points available
+  if (navigation.loc !== null && navigation.destination !== null) { // Two points available
     game.refresh() // Run the sceen refresh
   }
 })
+
 // Get the data
 if (database.locations === null) { // Available offline
 // if (true) { // Always refresh for testing
@@ -87,7 +92,7 @@ if (database.locations === null) { // Available offline
 
 // Serviceworker register
 if ('serviceWorker' in window.navigator) { // If support
-  window.navigator.serviceWorker.register('serviceworker.js', {scope: './'}).then((registration) => {
+  window.navigator.serviceWorker.register('serviceworker.js', {scope: '.'}).then((registration) => {
     console.log('Service Worker Registered at:', registration.scope)
   }, (error) => {
     alert('Registration failed', error)
@@ -97,4 +102,4 @@ if ('serviceWorker' in window.navigator) { // If support
 // Loop function for game
 const wait = window.setInterval(() => {
 
-}, 500) // Refresh time
+}, 1000) // Refresh time
