@@ -21,16 +21,21 @@ const game = {
         this.destination = option.location_id // Store the unique Id
       }
     }
+    this.getInfo(options)
   },
-  getInfo (options) { // TODO
+  getInfo (options) {
     // Look for the data if this tree is not unique
-    if (!option.double) { // Not a double entry
-      this.destinationInfo = option
-    } else { // Tree is a duplicate
-      for (let other of options) {
-        if (option.location_id !== other.location_id) { // Not itself
-          if (option.tree_id === other.tree_id && !other.double) { // Found the original
-            this.destinationInfo = other
+    for (let option of options) {
+      if (option.location_id === this.destination) { // Found it
+        if (!option.double) { // Not a double entry
+          this.destinationInfo = option
+        } else { // Tree is a duplicate
+          for (let other of options) {
+            if (option.location_id !== other.location_id) { // Not itself
+              if (option.tree_id === other.tree_id && !other.double) { // Found the original
+                this.destinationInfo = other
+              }
+            }
           }
         }
       }

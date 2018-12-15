@@ -16,6 +16,8 @@ const urlsToCache = [
   // "assets/style/home.css",
   // "assets/style/opties.css",
   // "assets/style/herbarium.css",
+  // "assets/images/logo.svg",
+  // "assets/images/menu.svg",
   "https://cdn.jsdelivr.net/npm/geolib@2.0.24/dist/geolib.min.js"
 ]
 

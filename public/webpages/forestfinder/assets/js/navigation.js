@@ -38,9 +38,9 @@ const navigation = {
     const dist = geolib.getDistance(this.loc, this.destination)
     const bearing = geolib.getBearing(this.loc, this.destination) // N,E,S,W 0,90,180,270 direction, relative to north
     let angle = null
-    if (navigation.orientation) {
+    if (navigation.orientation) { // Value available
       // Make direction to go relative to user orientation instead of relative to north
-      angle = bearing - this.orientation
+      angle = this.orientation - bearing
       angle = (360 + angle) % 360 // Remove < 0 or > 360
     }
 
@@ -69,9 +69,11 @@ const trackLocation = function (options, callback) {
 }
 
 const trackOrientation = function () {
-  if(window.DeviceOrientationEvent) {
-    window.addEventListener("deviceorientation", (event) => {
+  if(window.DeviceOrientationEvent) { // Available
+    window.addEventListener("deviceorientationabsolute", (event) => {
       navigation.orientation = event.alpha
     }, true)
+  } else {
+
   }
 }

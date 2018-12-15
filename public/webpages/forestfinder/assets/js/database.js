@@ -34,13 +34,13 @@ const database = {
 
     }
   },
-  set progess (data) { // Add datapoint
-    
-  },
-  get progess () {
+  set progess (data) { // Add datapoint, will add (not overwrite) via database.prograss = {}
 
   },
-  checkCachedImages (data) {
+  get progess () { // Get all datapoints
+
+  },
+  checkCachedImages (data) { // TODO check if cached before caching
     for (let loc of data) {
       if (loc.image) { // Exists in data
         this.cacheImage(loc.image)
