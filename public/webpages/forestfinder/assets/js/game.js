@@ -2,10 +2,11 @@
 // Uses the functions in the other scripts
 
 // === Variables ===
-const game = {
+const game = { // TODO store some values in cookies
   visited: [], // IDs of visited location
-  destination: null,
+  destination: null, // ID of the destination
   destinationInfo: null, // Stores info about the destination
+  
   chooseDestination (choice) { // Selects next destination
     const options = database.locations
 
@@ -21,19 +22,23 @@ const game = {
         this.destination = option.location_id // Store the unique Id
       }
     }
-    this.getInfo(options)
+    this.destinationInfo = this.getInfo(option.location_id, options)
+    // Display
+    this.display()
   },
-  getInfo (options) {
+  getInfo (id, options) {
     // Look for the data if this tree is not unique
+    let destinationInfo = null
+
     for (let option of options) {
-      if (option.location_id === this.destination) { // Found it
+      if (option.location_id === id) { // Found it
         if (!option.double) { // Not a double entry
-          this.destinationInfo = option
+          destinationInfo = option
         } else { // Tree is a duplicate
           for (let other of options) {
             if (option.location_id !== other.location_id) { // Not itself
               if (option.tree_id === other.tree_id && !other.double) { // Found the original
-                this.destinationInfo = other
+                destinationInfo = other
               }
             }
           }
@@ -41,9 +46,11 @@ const game = {
       }
     }
     // Delete irrelevant values here
-    delete this.destinationInfo.latitude
-    delete this.destinationInfo.longitude
-    delete this.destinationInfo.location_id
+    delete destinationInfo.latitude
+    delete destinationInfo.longitude
+    delete destinationInfo.location_id
+    // Return elsewhere
+    return destinationInfo
   },
   refresh (directions) { // The screen refresh
     doc.distance.innerHTML = directions.distance
@@ -54,18 +61,23 @@ const game = {
     }
   },
   check (directions) {
-    if (directions.distance < 10) {
+    if (directions.distance < navigation.accuracy) {
       // TODO start a quiz
-      database.progess = game.destination()
+      database.progess = { // Add data
+        time: (new Date()).getTime(), // Datetime as milliseconds since epoch
+        loc: navigation.destination,
+        data: this.destinationInfo
+      }
+      game.arrived()
     }
+  },
+  arrived () {
+    this.visited.push(this.destination)
+    this.chooseDestination() // Choose the destination TEST with 1
   },
   display () { // Displays info of the tree to visit
     doc.image.src = this.destinationInfo.image
     doc.name.textContent = this.destinationInfo.name
-  },
-  start () { // Starts the game
-    this.chooseDestination() // Choose the destination TEST with 1
-    this.display()
   }
 }
 
@@ -82,7 +94,7 @@ const doc = {
 // === Execute ===
 // Async loading functions
 // Start tracking
-navigation.track(() => { // When location is retrieved the screen will update
+navigation.track(() => { // When location is retrieved, main loop runs
   if (navigation.loc !== null && navigation.destination !== null) { // Two points available
     // navigation.loc = new Coord({latitude: 51.448009, longitude: 5.508001, acuraccy: 1}) // TEST
     const directions = navigation.directions()
@@ -96,10 +108,10 @@ if (database.locations === null) { // Available offline
 // if (true) { // Always refresh for testing
   database.getOnline((data) => { // Get the data online
     console.log(data)
-    game.start()
+    game.chooseDestination() // Choose the destination TEST with 1
   })
 } else {
-  // database.checkCachedImages(database.locations) // Cached data can be easily overwritten
+  // database.checkCachedImages(database.locations) // Cached data may be overwritten
   game.start()
 }
 
@@ -112,7 +124,7 @@ if ('serviceWorker' in window.navigator) { // If support
   })
 }
 
-// Loop function for game
-const wait = window.setInterval(() => {
-
-}, 1000) // Refresh time
+// // Time loop function for game
+// const wait = window.setInterval(() => {
+//
+// }, 1000) // Refresh time

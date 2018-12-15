@@ -20,6 +20,7 @@ class Coord {
 
 // === Variables ===
 const navigation = {
+  accuracy: 10, // Within x meters of an object will be considered the same location
   loc: null, // Current user location
   destination: null, // Stores destination coordinate
   orientation: null,
@@ -27,6 +28,7 @@ const navigation = {
     enableHighAccuracy: true,
     maximumAge: 5 * 1000 // Minimum location refresh time
   },
+  
   track (callback) {
     trackOrientation()
     trackLocation(this.options, (loc) => { // Execute when called

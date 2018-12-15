@@ -4,6 +4,24 @@
 // === Vars ===
 const database = {
   link: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv",
+  get locations () { // Accessed via database.locations
+    return this.getStorage("treeLocationData")
+  },
+  set locations (data) {
+    this.setStorage("treeLocationData", data)
+  },
+  get progess () { // Get all datapoints
+    return this.getStorage("gameProgress")
+  },
+  set progess (data) { // Add datapoint, will add (not overwrite) via database.prograss = {}
+    let progess = this.getStorage("gameProgress")
+    if (progess === null) {
+      progress = [] // Init as array
+    }
+    progress.push(data) // Add to the array
+    this.setStorage('gameProgress', progress)
+  },
+  
   getOnline (callback) {
     getCsv(this.link, (data) => { // Get via xhttp
       // Cache images for offline use
@@ -13,9 +31,9 @@ const database = {
       callback(data) // Return the data
     })
   },
-  get locations () { // Accessed via database.locations
+  getStorage (name) {
     if (window.localStorage) {
-      const stringData = localStorage.getItem("treeLocationData")
+      const stringData = localStorage.getItem(name)
       if (stringData === null) {
         return null
       } else {
@@ -26,19 +44,13 @@ const database = {
 
     }
   },
-  set locations (jsonData) {
+  setStorage (name, jsonData) {
     const stringData = JSON.stringify(jsonData) // encode
     if (window.localStorage) {
-      localStorage.setItem("treeLocationData", stringData)
+      localStorage.setItem(name, stringData)
     } else {
 
     }
-  },
-  set progess (data) { // Add datapoint, will add (not overwrite) via database.prograss = {}
-
-  },
-  get progess () { // Get all datapoints
-
   },
   checkCachedImages (data) { // TODO check if cached before caching
     for (let loc of data) {
