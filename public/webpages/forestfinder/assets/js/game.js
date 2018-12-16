@@ -6,7 +6,7 @@ const game = { // TODO store some values in cookies
   visited: [], // IDs of visited location
   destination: null, // ID of the destination
   destinationInfo: null, // Stores info about the destination
-  
+
   chooseDestination (choice) { // Selects next destination
     const options = database.locations
 
@@ -22,8 +22,12 @@ const game = { // TODO store some values in cookies
         this.destination = option.location_id // Store the unique Id
       }
     }
-    this.destinationInfo = this.getInfo(option.location_id, options)
+    this.destinationInfo = this.getInfo(this.destination, options)
     // Display
+    if (navigation.loc !== null) {
+      const directions = navigation.directions()
+      game.refresh(directions) // Run the sceen refresh
+    }
     this.display()
   },
   getInfo (id, options) {
@@ -112,7 +116,7 @@ if (database.locations === null) { // Available offline
   })
 } else {
   // database.checkCachedImages(database.locations) // Cached data may be overwritten
-  game.start()
+  game.chooseDestination()
 }
 
 // Serviceworker register
