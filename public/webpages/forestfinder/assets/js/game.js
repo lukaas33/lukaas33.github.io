@@ -6,6 +6,8 @@ const game = { // TODO store some values in cookies
   visited: [], // IDs of visited location
   destination: null, // ID of the destination
   destinationInfo: null, // Stores info about the destination
+  startTime: null,
+  duration: 40 * 60,
 
   chooseDestination (choice) { // Selects next destination
     const options = database.locations
@@ -26,9 +28,9 @@ const game = { // TODO store some values in cookies
     // Display
     if (navigation.loc !== null) {
       const directions = navigation.directions()
-      game.refresh(directions) // Run the sceen refresh
+      refresh(directions) // Run the sceen refresh
     }
-    this.display()
+    display()
   },
   getInfo (id, options) {
     // Look for the data if this tree is not unique
@@ -56,14 +58,6 @@ const game = { // TODO store some values in cookies
     // Return elsewhere
     return destinationInfo
   },
-  refresh (directions) { // The screen refresh
-    doc.distance.innerHTML = directions.distance
-    if (directions.angle !== null) { // Relative to orientation
-      doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
-    } else { // Relative to north
-      doc.arrow.style.transform = `rotate(${Math.floor(directions.bearing)}deg)`
-    }
-  },
   check (directions) {
     if (directions.distance < navigation.accuracy) {
       // TODO start a quiz
@@ -79,9 +73,12 @@ const game = { // TODO store some values in cookies
     this.visited.push(this.destination)
     this.chooseDestination() // Choose the destination TEST with 1
   },
-  display () { // Displays info of the tree to visit
-    doc.image.src = this.destinationInfo.image
-    doc.name.textContent = this.destinationInfo.name
+  start () {
+    this.chooseDestination() // Choose the destination TEST with 1
+    this.startTime = (new Date()).getTime()
+  },
+  end() {
+
   }
 }
 
@@ -89,11 +86,44 @@ const doc = {
   distance: document.querySelector(".tag .distance"),
   arrow: document.querySelector("#arrow"),
   image: document.querySelector("#image img"),
-  name: document.querySelector("header h2")
+  name: document.querySelector("header h2"),
+  clock: document.querySelector(".clock")
 }
 
 // === Functions ===
+const clock = function() {
+  // Display clock
+  const elapsed = Math.floor(((new Date()).getTime() - game.startTime) / 1000) // Time elapsed since start
+  const timeLeft = game.duration - elapsed
+  let min = Math.floor(timeLeft / 60)
+  let sec = min != 0 ? timeLeft % (min * 60) : elapsed // If min == 0 the mod operator will return NaN
 
+  if (min <= 0) { // End of game
+    game.end()
+  }
+
+  if (min < 10) {
+    min = '0' + min // 08, 09, 10, 11
+  }
+  if (sec < 10) {
+    sec = '0' + sec // This is allowed in js
+  }
+  doc.clock.innerHTML = `${min}:${sec}`
+}
+
+const display = function () { // Displays info of the tree to visit
+  doc.image.src = game.destinationInfo.image
+  doc.name.textContent = game.destinationInfo.name
+}
+
+const refresh = function (directions) { // The screen refresh
+  doc.distance.innerHTML = directions.distance
+  if (directions.angle !== null) { // Relative to orientation
+    doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
+  } else { // Relative to north
+    doc.arrow.style.transform = `rotate(${Math.floor(directions.bearing)}deg)`
+  }
+}
 
 // === Execute ===
 // Async loading functions
@@ -102,7 +132,7 @@ navigation.track(() => { // When location is retrieved, main loop runs
   if (navigation.loc !== null && navigation.destination !== null) { // Two points available
     // navigation.loc = new Coord({latitude: 51.448009, longitude: 5.508001, acuraccy: 1}) // TEST
     const directions = navigation.directions()
-    game.refresh(directions) // Run the sceen refresh
+    refresh(directions) // Run the sceen refresh
     game.check(directions) // Check if arrived
   }
 })
@@ -112,11 +142,15 @@ if (database.locations === null) { // Available offline
 // if (true) { // Always refresh for testing
   database.getOnline((data) => { // Get the data online
     console.log(data)
-    game.chooseDestination() // Choose the destination TEST with 1
+    if (game.destination === null) { // Not already in progress
+      game.start()
+    }
   })
 } else {
-  // database.checkCachedImages(database.locations) // Cached data may be overwritten
-  game.chooseDestination()
+  // database.checkCachedImages(database.locations) // Cached images may have been overwritten
+  if (game.destination === null) { // Not already in progress
+    game.start()
+  }
 }
 
 // Serviceworker register
@@ -128,7 +162,7 @@ if ('serviceWorker' in window.navigator) { // If support
   })
 }
 
-// // Time loop function for game
-// const wait = window.setInterval(() => {
-//
-// }, 1000) // Refresh time
+// Time loop function for game
+const wait = window.setInterval(() => {
+  clock()
+}, 750) // Refresh time less than 1 sec for smooth display
