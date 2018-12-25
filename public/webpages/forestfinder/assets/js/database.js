@@ -4,24 +4,27 @@
 // === Vars ===
 const database = {
   link: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv",
+  // Locations in the local database
   get locations () { // Accessed via database.locations
     return this.getStorage("treeLocationData")
   },
   set locations (data) {
     this.setStorage("treeLocationData", data)
   },
-  get progess () { // Get all datapoints
-    return this.getStorage("gameProgress")
-  },
-  set progess (data) { // Add datapoint, will add (not overwrite) via database.prograss = {}
+  // The route progress
+  get progress () { // Get all datapoints
     let progess = this.getStorage("gameProgress")
     if (progess === null) {
       progress = [] // Init as array
     }
+    return progress
+  },
+  set progress (data) { // Add datapoint, will add (not overwrite) via database.prograss = {}
+    let progress = this.progress
     progress.push(data) // Add to the array
     this.setStorage('gameProgress', progress)
   },
-  
+  // Get the data online and save it
   getOnline (callback) {
     getCsv(this.link, (data) => { // Get via xhttp
       // Cache images for offline use
@@ -51,6 +54,23 @@ const database = {
     } else {
 
     }
+  },
+  getCookie (name) {
+    const cookies = document.cookie.split(';') // Split all cookies
+    for (let cookie of cookies) {
+      let keyVal = cookie.trim().split('=') // Seperate key from value
+      if (name === keyVal[0]) {
+        let value = JSON.parse(keyVal[1]) // String to js datatypes
+        return value
+      }
+    }
+
+  },
+  setCookie (name, value) {
+    // TODO secure option + possible expiration
+    const stringValue = JSON.stringify(value) // Convert to string
+    const expire = new Date((new Date()).getTime() + (1 * 24 * 60 * 60 * 1000)) // Won't expire when browser window closes
+    document.cookie = `${name}=${stringValue}; path=/webpages/forestfinder; expires=${expire.toUTCString()}` // Add to cookies
   },
   checkCachedImages (data) { // TODO check if cached before caching
     for (let loc of data) {

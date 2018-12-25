@@ -2,19 +2,53 @@
 // Uses the functions in the other scripts
 
 // === Variables ===
-const game = { // TODO store some values in cookies
-  visited: [], // IDs of visited location
-  destination: null, // ID of the destination
+const game = {
+  // IDs of visited location
+  get visited () {
+    let visited = database.getCookie("visited")
+    if (visited === undefined) { // Need to init
+      visited = []
+    }
+    return visited
+  },
+  set visited (value) {
+    let visited = this.visited
+    visited.push(value) // Add instead of overwrite
+    database.setCookie("visited", visited)
+  },
+  // ID of the destination
+  get destination () {
+    let res = database.getCookie("destination")
+    if (res === undefined) {
+      res = null
+    }
+    return res
+  },
+  set destination (id) {
+    database.setCookie("destination", id)
+  },
+
+  get startTime () {
+    let res = database.getCookie("startTime")
+    if (res === undefined) {
+      res = null
+    }
+    return res
+  },
+  set startTime (time) {
+    database.setCookie("startTime", time)
+  },
+
   destinationInfo: null, // Stores info about the destination
-  startTime: null,
   duration: 40 * 60,
 
-  chooseDestination (choice) { // Selects next destination
+  // Selects destination and gets the info
+  chooseDestination (choice) {
     const options = database.locations
 
-    // Random approach
     let id = choice // if no argument it will use an algoritm to choose
     while (id in this.visited || id === undefined) {
+      // Random approach
       id = Math.ceil(Math.random() * options.length) // Every entry has an id of 1 to n
     }
 
@@ -32,8 +66,8 @@ const game = { // TODO store some values in cookies
     }
     display()
   },
+  // Look for the data if this tree is not unique
   getInfo (id, options) {
-    // Look for the data if this tree is not unique
     let destinationInfo = null
 
     for (let option of options) {
@@ -58,10 +92,11 @@ const game = { // TODO store some values in cookies
     // Return elsewhere
     return destinationInfo
   },
+  // Check if arrived
   check (directions) {
     if (directions.distance < navigation.accuracy) {
       // TODO start a quiz
-      database.progess = { // Add data
+      database.progress = { // Add data
         time: (new Date()).getTime(), // Datetime as milliseconds since epoch
         loc: navigation.destination,
         data: this.destinationInfo
@@ -70,12 +105,16 @@ const game = { // TODO store some values in cookies
     }
   },
   arrived () {
-    this.visited.push(this.destination)
-    this.chooseDestination() // Choose the destination TEST with 1
+    this.visited = this.destination // Add
+    this.chooseDestination() // Choose the destination
   },
   start () {
-    this.chooseDestination() // Choose the destination TEST with 1
-    this.startTime = (new Date()).getTime()
+    if (this.destination === null) { // First time 
+      this.chooseDestination() // Choose the destination
+      this.startTime = (new Date()).getTime()
+    } else { // Continue
+      this.chooseDestination(this.destination) // Call with chosen destination
+    }
   },
   end() {
 
@@ -126,8 +165,8 @@ const refresh = function (directions) { // The screen refresh
 }
 
 // === Execute ===
-// Async loading functions
-// Start tracking
+// Async loading of different information
+// Start tracking location
 navigation.track(() => { // When location is retrieved, main loop runs
   if (navigation.loc !== null && navigation.destination !== null) { // Two points available
     // navigation.loc = new Coord({latitude: 51.448009, longitude: 5.508001, acuraccy: 1}) // TEST
@@ -137,20 +176,17 @@ navigation.track(() => { // When location is retrieved, main loop runs
   }
 })
 
-// Get the data
+// Get the data, online if needed
 if (database.locations === null) { // Available offline
 // if (true) { // Always refresh for testing
   database.getOnline((data) => { // Get the data online
     console.log(data)
-    if (game.destination === null) { // Not already in progress
-      game.start()
-    }
+    game.start()
   })
 } else {
   // database.checkCachedImages(database.locations) // Cached images may have been overwritten
-  if (game.destination === null) { // Not already in progress
-    game.start()
-  }
+  game.start()
+
 }
 
 // Serviceworker register
