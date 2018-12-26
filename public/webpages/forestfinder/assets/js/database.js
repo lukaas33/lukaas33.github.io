@@ -24,6 +24,14 @@ const database = {
     progress.push(data) // Add to the array
     this.setStorage('gameProgress', progress)
   },
+  getUserData (callback) {
+    let data = this.getStorage("userData")
+    if (data === null) {
+      promptUserData(callback)
+    } else {
+      callback(data)
+    }
+  },
   // Get the data online and save it
   getOnline (callback) {
     getCsv(this.link, (data) => { // Get via xhttp
@@ -34,10 +42,11 @@ const database = {
       callback(data) // Return the data
     })
   },
+  // Local storage functions
   getStorage (name) {
     if (window.localStorage) {
       const stringData = localStorage.getItem(name)
-      if (stringData === null) {
+      if (stringData === null) { // Avoid trying to parse null
         return null
       } else {
         const data = JSON.parse(stringData) // decode
@@ -55,6 +64,7 @@ const database = {
 
     }
   },
+  // Cookie functions
   getCookie (name) {
     const cookies = document.cookie.split(';') // Split all cookies
     for (let cookie of cookies) {
@@ -72,6 +82,7 @@ const database = {
     const expire = new Date((new Date()).getTime() + (1 * 24 * 60 * 60 * 1000)) // Won't expire when browser window closes
     document.cookie = `${name}=${stringValue}; path=/webpages/forestfinder; expires=${expire.toUTCString()}` // Add to cookies
   },
+  // Cache functions
   checkCachedImages (data) { // TODO check if cached before caching
     for (let loc of data) {
       if (loc.image) { // Exists in data
@@ -91,6 +102,33 @@ const database = {
 }
 
 // === Functions ===
+// Asks the user for data
+const promptUserData = function (callback) {
+  const ask = function (question) {
+    let answer = prompt(question)
+    while (!answer) { // Empty answers ('', null, 0) not valid, repeat until valid
+       answer = prompt(question)
+    }
+    return answer
+  }
+
+  // Sequence of unskippable questions
+  let group = ask("Wie zitten er allemaal in je groepje?\nVul alle namen gescheiden door komma's in.")
+  let names = group.split(',')
+  names = names.map(x => trim(x)) // Remove whitespace
+  let grade = ask("In welke klas zit je?")
+  let teacher = ask("Welke docent heb je?")
+
+  database.setStorage("userData", {
+    names: names,
+    "class": grade,
+    teacher: teacher
+  })
+
+  while (!confirm("Klik op 'ok' als je klaar bent om te beginnen.")) {} // Display until true
+  callback() // Continue executing code
+}
+
 // Gets the target location from the spreadsheet
 const getCsv = function (link, callback) {
   const xhttp = new XMLHttpRequest()

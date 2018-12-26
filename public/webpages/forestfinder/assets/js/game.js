@@ -109,9 +109,11 @@ const game = {
     this.chooseDestination() // Choose the destination
   },
   start () {
-    if (this.destination === null) { // First time 
-      this.chooseDestination() // Choose the destination
-      this.startTime = (new Date()).getTime()
+    if (this.startTime === null) { // First time
+      database.getUserData(() => {
+        this.chooseDestination() // Choose the destination
+        this.startTime = (new Date()).getTime()
+      })
     } else { // Continue
       this.chooseDestination(this.destination) // Call with chosen destination
     }
