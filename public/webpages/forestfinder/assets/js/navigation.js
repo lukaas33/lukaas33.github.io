@@ -8,7 +8,7 @@ class Coord {
     this.latitude = loc.latitude
     this.longitude = loc.longitude
     // Get other data if available
-    for (let name of ["altitude", "heading", "speed", "acuraccy"]) {
+    for (let name of ["altitude", "heading", "speed", "accuracy"]) {
       if (name in loc) { // Property is in object
         this[name] = loc[name]
       } else {
@@ -20,7 +20,6 @@ class Coord {
 
 // === Variables ===
 const navigation = {
-  accuracy: 10, // Within x meters of an object will be considered the same location
   loc: null, // Current user location
   destination: null, // Stores destination coordinate
   orientation: null,
@@ -28,7 +27,7 @@ const navigation = {
     enableHighAccuracy: true,
     maximumAge: 5 * 1000 // Minimum location refresh time
   },
-  
+
   track (callback) {
     trackOrientation()
     trackLocation(this.options, (loc) => { // Execute when called

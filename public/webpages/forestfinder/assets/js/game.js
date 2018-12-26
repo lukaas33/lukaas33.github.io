@@ -94,14 +94,19 @@ const game = {
   },
   // Check if arrived
   check (directions) {
-    if (directions.distance < navigation.accuracy) {
-      // TODO start a quiz
-      database.progress = { // Add data
-        time: (new Date()).getTime(), // Datetime as milliseconds since epoch
-        loc: navigation.destination,
-        data: this.destinationInfo
-      }
-      game.arrived()
+    // Within x meters of an object will be considered the same location
+    if (directions.distance < navigation.loc.accuracy) { // Uses GPS accuracy
+      game.waiting = window.setTimeout(() => { // Must be 2.5 seconds in the area
+        // TODO start a quiz
+        database.progress = { // Add data
+          time: (new Date()).getTime(), // Datetime as milliseconds since epoch
+          loc: navigation.destination,
+          data: this.destinationInfo
+        }
+        game.arrived()
+      }, 5000)
+    } else {
+      clearTimeout(game.waiting) // Cancel game.arrived
     }
   },
   arrived () {
