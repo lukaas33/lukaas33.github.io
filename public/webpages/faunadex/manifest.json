@@ -23,5 +23,10 @@
     "src": "serviceworker.js",
     "scope": ".",
     "use_cache": true
+  },
+  "permissions": {
+    "video-capture": {
+      "description": "Required to capture video using getUserMedia()"
+    }
   }
 }

@@ -58,27 +58,20 @@ const binarySearch = function (value) {
 }
 
 // Sets the media constraints
-const setConstraints = function () {
-  // Video input constraints TODO tweak values
-  var constraints = {
-    audio: false,
-    video: {
-      // width: {
-      //   ideal: local.view.width
-      // },
-      // height: {
-      //   ideal: local.view.height
-      // },
-      // aspectRatio: local.view.ratio,
-      facingMode: "environment",
-      frameRate: {
-        ideal: 20
-      }
-    }
+const constraints = {
+  audio: false,
+  video: {
+  //   width: {
+  //     ideal: local.view.width
+  //   },
+  //   height: {
+  //     ideal: local.view.height
+  //   },
+  //   aspectRatio: local.view.ratio,
+    facingMode: {exact: "environment"},
+    deviceId: null,
+    // frameRate: 20
   }
-
-  // TODO change based on device
-  return constraints
 }
 
 // TODO Tests input
@@ -120,7 +113,7 @@ const getLocation = function (coordinates) { // TODO ask for permission and get 
   if (coordinates) {
     return {long: 51.523782, lat: -0.158480}
   } else {
-    return "221B Baker Street, London, United Kingdom"
+    return "Location undefined"
   }
 }
 
@@ -371,31 +364,41 @@ $(window).on('load', () => {
 
   var toLoad = 2
   // Show camera feed in page
-    // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-    // https://developers.google.com/web/updates/2015/10/media-devices
-  navigator.mediaDevices.getUserMedia(setConstraints()).then((stream) => {
-    // Add feed to video
-    var video = doc.feed[0]
-    video.srcObject = stream // Add media stream to video element
 
-    video.onloadedmetadata = (event) => {
-      var ratio = video.videoHeight / video.videoWidth
-      video.height = local.view.height
-      video.width = local.view.height / ratio
-      doc.feed[0].play() // Play feed
+  navigator.mediaDevices.enumerateDevices().then((devices) => {
+    devices.forEach((device) => {
+      if (device.label.indexOf('back' !== -1)) {
+        constraints.deviceId = device.deviceId
+      }
+    })
+    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+      // Add feed to video
+      var video = document.querySelector('video')
+      video.srcObject = stream // Add media stream to video element
+
+
+
+      video.onloadedmetadata = (event) => {
+        var ratio = video.videoHeight / video.videoWidth
+        video.height = local.view.height
+        video.width = local.view.height / ratio
+        video.play() // Play feed
+        toLoad -= 1
+        if (toLoad === 0) {
+          loaded() // Everthing done
+        }
+      }
+    }).catch((error) => {
+      // TODO handle error
+      console.log(error)
       toLoad -= 1
       if (toLoad === 0) {
         loaded() // Everthing done
       }
-    }
-  }).catch((error) => {
-    // TODO handle error
-    console.log(error)
-    toLoad -= 1
-    if (toLoad === 0) {
-      loaded() // Everthing done
-    }
+    })
   })
+
+
 
   // Get the aniaml names
   $.getJSON('assets/storage/animal-names.json', function (data) {
