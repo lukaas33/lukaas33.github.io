@@ -111,7 +111,7 @@ const getDate = function () { // TODO UTC and stuff
 // Returns the location
 const getLocation = function (coordinates) { // TODO ask for permission and get location
   if (coordinates) {
-    return {long: 51.523782, lat: -0.158480}
+    return {long: null, lat: null}
   } else {
     return "Location undefined"
   }
@@ -152,9 +152,14 @@ const filterText = function () {
     // Source https://stackoverflow.com/questions/4292468/javascript-regex-remove-text-between-parentheses
     text = text.replace(/ *\([^)]*\) */, ' ') // remove in the main text
 
-    sciName = sciName.split(',')[0] // If like: (homo sapiens, ssp. homo sapiens sapiens)
+    if (sciName.indexOf(',') !== -1) {
+      sciName = sciName.split(',')[1] // If like: (homo sapiens, ssp. homo sapiens sapiens)
+    }  else if (sciName.indexOf('or') !== -1) {
+      let sciName = sciName.split('or')[1] // If like: (or Selachii)
+    }  else if (sciName.indexOf(':') !== -1) {
+      let sciName = sciName.split(':')[1] // If like: (taxnomically: Felis catus)
+    }
 
-    let name = sciName.split('or')[1] // If like: (Felis silvestris catus or Felis catus) / (or Selachii)
     if (typeof(name) === 'string') {
       sciName = name.trim()
     }
@@ -173,7 +178,7 @@ const filterText = function () {
     name: name,
     img: image, // Compressed base64
     scientific: sciName,
-    text: $(text)[0], // Dom object
+    text: text,
     links: links,
     confidence: `${Math.floor(local.result.returned.value * 100)}%`,
     date: local.metadata.date,

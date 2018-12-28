@@ -24,7 +24,8 @@ shared.sort = function (property) {
 // Convertion options
 shared.json = {
   stringify: (key, value) => {
-    if (key === 'text') { // Html object
+    // if (key === 'text') { // Html object
+    if (false) {
       return value.outerHTML
     } else {
       return value
@@ -33,8 +34,8 @@ shared.json = {
   parse: (key, value) => {
     if (key === 'date') { // Datestring
       return new Date(value)
-    } else if (key === 'text') { // Html as string
-      return $.parseHTML(value)[0]
+    // } else if (key === 'text') { // Html as string
+      // return $.parseHTML(value)[0]
     } else {
       return value
     }
