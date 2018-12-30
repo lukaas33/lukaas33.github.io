@@ -25,7 +25,9 @@
         <img src="assets/images/icons/location.svg"/>
         <%
           var loc = data.location.coordinates
-          var link = `https://www.google.com/maps/?q=${loc.long},${loc.lat}`
+          if (loc) {
+            var link = `https://www.google.com/maps/?q=${loc.latitude},${loc.longitude}`
+          }
         %>
         <span><a target="_blank" href="<%= link %>"><%= data.location.representation %></a></span>
       </div>

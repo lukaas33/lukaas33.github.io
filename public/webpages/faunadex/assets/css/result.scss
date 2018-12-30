@@ -27,6 +27,14 @@
     overflow-y: scroll;
     padding: $padding-standard;
 
+    a {
+      color: $secondary-A400;
+
+      &:visited {
+        color: $secondary-A700;
+      }
+    }
+
     .head {
       @extend %center-flex;
       justify-content: space-between; // Different than extended class
@@ -77,27 +85,12 @@
           margin-right: 0.75rem;
           display: inline-block;
         }
-
-        span {
-          a {
-            color: inherit;
-          }
-        }
       }
     }
 
     .links {
       padding-bottom:  0.5rem;
 
-      ul {
-        a {
-          color: $secondary-A400;
-
-          &:visited {
-            color: $secondary-A700;
-          }
-        }
-      }
     }
   }
 }

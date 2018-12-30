@@ -41,6 +41,7 @@
     display: flex; // All cards visible
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: center;
 
     .thumbnail {
       margin: $margin-standard / 2; // Space

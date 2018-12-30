@@ -109,12 +109,17 @@ const getDate = function () { // TODO UTC and stuff
 
 
 // Returns the location
-const getLocation = function (coordinates) { // TODO ask for permission and get location
-  if (coordinates) {
-    return {long: null, lat: null}
-  } else {
-    return "Location undefined"
+const getLocation = function (callback) {
+  try {
+    navigator.geolocation.getCurrentPosition((coord) => {
+      let loc = coord.coords
+      // TODO get human readable representation
+      callback({representation: `${loc.latitude}, ${loc.longitude}`, coordinates: loc})
+    })
+  } catch {
+    callback({representation: "Location not known", coordinates: null})
   }
+
 }
 
 // Convert image
@@ -155,14 +160,12 @@ const filterText = function () {
     if (sciName.indexOf(',') !== -1) {
       sciName = sciName.split(',')[1] // If like: (homo sapiens, ssp. homo sapiens sapiens)
     }  else if (sciName.indexOf('or') !== -1) {
-      let sciName = sciName.split('or')[1] // If like: (or Selachii)
+      sciName = sciName.split('or')[1] // If like: (or Selachii)
     }  else if (sciName.indexOf(':') !== -1) {
-      let sciName = sciName.split(':')[1] // If like: (taxnomically: Felis catus)
+      sciName = sciName.split(':')[1] // If like: (taxnomically: Felis catus)
     }
 
-    if (typeof(name) === 'string') {
-      sciName = name.trim()
-    }
+    sciName = sciName.trim()
   } catch (error) {
     // No () in this article
   }
@@ -267,10 +270,12 @@ const displayResult = function () {
   doc.back.parents('.top').show()
   doc.save.show()
   local.state = 'result' // Change behaviour of back
+  doc.loader.hide()
 }
 
 // Image is selected by user TODO add loaders
 const imageSent = function () {
+  doc.loader.show()
   doc.accept.hide()
   doc.back.parents('.top').hide() // Until loaded
   imageGetResult()
@@ -278,17 +283,17 @@ const imageSent = function () {
 }
 
 const imageSelected = function () {
-  local.metadata = { // Store the image data
-    date: getDate(),
-    location: {
-      coordinates: getLocation(true), // Get as coordinate
-      representation: getLocation(false)
+  getLocation((res) => {
+    local.metadata = { // Store the image data
+      date: getDate(),
+      location: res
     }
-  }
-  doc.take.hide()
-  doc.accept.show()
-  doc.gallery.parents('.top').hide()
-  local.state = 'selected' // Change behaviour of back
+    doc.take.hide()
+    doc.accept.show()
+    doc.gallery.parents('.top').hide()
+    local.state = 'selected' // Change behaviour of back
+  })
+
 }
 
 const beginState = () => {

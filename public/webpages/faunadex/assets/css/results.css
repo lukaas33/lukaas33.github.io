@@ -64,9 +64,9 @@
 
 #menu header button, #result button[name=back] {
   cursor: pointer; }
-  #menu header button:disabled, #result button[name=back]:disabled {
+  #menu header button:disabled, #result button:disabled[name=back] {
     cursor: default; }
-  #menu header button:focus, #result button[name=back]:focus, #menu header button:active, #result button[name=back]:active {
+  #menu header button:focus, #result button:focus[name=back], #menu header button:active, #result button:active[name=back] {
     outline: none; }
 
 #menu header button, #result button[name=back] {
@@ -76,7 +76,7 @@
 
 #menu header button, #result button[name=back] {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 0px 2px 3px rgba(0, 0, 0, 0.2); }
-  #menu header button:hover, #result button[name=back]:hover, #menu header button:focus, #result button[name=back]:focus {
+  #menu header button:hover, #result button:hover[name=back], #menu header button:focus, #result button:focus[name=back] {
     box-shadow: 0px 8px 22px rgba(0, 0, 0, 0.1), 0px 6px 15px rgba(0, 0, 0, 0.2); }
 
 #menu header button, #result button[name=back] {
@@ -227,7 +227,8 @@ hr {
 #overview .box {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap; }
+  flex-wrap: wrap;
+  justify-content: center; }
   #overview .box .thumbnail {
     margin: 2.5vw;
     width: 42.5vw; }

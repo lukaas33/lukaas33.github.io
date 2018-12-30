@@ -35,10 +35,16 @@ $(window).on('load', () => {
     doc.result.show()
   } else {
     if (typeof(local.results) !== 'undefined') { // Exist
-      for (let result of local.results) {
-        let thumbnail = new EJS({url: 'views/partials/thumbnail.ejs'}).render({data: result})
-        doc.overview.find('.box').append(thumbnail) // Add html to doc
+      if (local.results.length > 0) {
+        for (let result of local.results) {
+          let thumbnail = new EJS({url: 'views/partials/thumbnail.ejs'}).render({data: result})
+          doc.overview.find('.box').append(thumbnail) // Add html to doc
+        }
+      } else {
+        doc.overview.find('.box').text("No results yet")
       }
+    } else {
+      doc.overview.find('.box').text("No results yet")
     }
     doc.loader.hide()
     doc.overview.css({display: 'block'}) // Can't use show() for some reason

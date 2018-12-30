@@ -14,7 +14,7 @@
   width: $size;
   height: $size;
   $margin: ($margin-standard * 2) - ($size / 2);
-  margin: $margin; // Corner of card
+  margin: ($margin * 2) ($margin); // Corner of card
 
   button,
   .styling {
@@ -26,6 +26,12 @@
 
   &:nth-child(1) {
     left: 0;
+
+    button[name=back] {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
   &:nth-child(2) {
     right: 0;
@@ -41,6 +47,9 @@
   }
 }
 
+.page #loader {
+  z-index: 100;
+}
 
 #self {
   display: none; // Start state
