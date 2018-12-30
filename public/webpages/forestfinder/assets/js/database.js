@@ -115,7 +115,7 @@ const promptUserData = function (callback) {
   // Sequence of unskippable questions
   let group = ask("Wie zitten er allemaal in je groepje?\nVul alle namen gescheiden door komma's in.")
   let names = group.split(',')
-  names = names.map(x => trim(x)) // Remove whitespace
+  names = names.map(x => x.trim()) // Remove whitespace
   let grade = ask("In welke klas zit je?")
   let teacher = ask("Welke docent heb je?")
 

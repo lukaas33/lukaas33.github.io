@@ -1,12 +1,76 @@
-svg {
-  #compass {
-    fill: grey;
+// imports
+@import "variables";
+@import "shared";
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1rem;
+  background-color: $grey-100;
+  @include shadow(10, 8);
+  z-index: 100;
+  position: relative; // Apply z-index
+
+  button[name="menu"] {
+    @extend %form;
+    width: 10%;
+
+    img {
+      height: 100%;
+      width: 100%;
+    }
   }
 
-  #arrow {
-    stroke: rgb(255,0,0);
-    stroke-width: 2;
-    transform-origin: 50% 50%;
-    // transition: 500ms;
+  h2 {
+    margin-left:  2rem;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    font-weight: normal;
+  }
+
+  .tag {
+    background-color: $secondary-A700;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    margin-left: auto;
+    font-weight: bold;
+  }
+}
+
+#image {
+  z-index: 90;
+  position: relative; // Apply z-index
+  @include shadow(4, 8);
+  height: 35vh; // x% of screen height
+
+
+  img {
+    object-fit: cover; // Will keep aspect ratio
+    height: 100%;
+    width: 100%;
+  }
+}
+
+#navigator {
+  z-index: 80;
+  position: relative; // Apply z-index
+  height: 35vh; // x% of screen height
+
+  svg {
+
+    #compass {
+      fill: $primary-600;
+      stroke: $primary-800;
+      stroke-width: 10%;
+    }
+
+    #arrow {
+      stroke: $grey-800;
+      stroke-width: 2;
+      transform-origin: 50% 50%;
+      // transition: 500ms;
+    }
   }
 }

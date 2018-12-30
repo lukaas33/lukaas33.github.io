@@ -1,7 +1,82 @@
-svg #compass {
-  fill: grey; }
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+header button[name="menu"] {
+  cursor: pointer; }
+  header button:disabled[name="menu"] {
+    cursor: default; }
+  header button:focus[name="menu"], header button:active[name="menu"] {
+    outline: none; }
 
-svg #arrow {
-  stroke: red;
-  stroke-width: 2;
-  transform-origin: 50% 50%; }
+header button[name="menu"] {
+  background-color: transparent;
+  border: 0 solid transparent;
+  transition: 400ms ease-in-out; }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0); }
+
+:root {
+  font-size: 18px;
+  height: 100%;
+  width: 100%; }
+
+body {
+  width: 100%;
+  height: 100%;
+  font-size: 1rem;
+  font-family: 'roboto', sans-serif;
+  background-color: #EEEEEE;
+  color: #616161;
+  position: relative; }
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1rem;
+  background-color: #F5F5F5;
+  box-shadow: 0px 10px 8px rgba(0, 0, 0, 0.1), 0px 7px 6px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  position: relative; }
+  header button[name="menu"] {
+    width: 10%; }
+    header button[name="menu"] img {
+      height: 100%;
+      width: 100%; }
+  header h2 {
+    margin-left: 2rem;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    font-weight: normal; }
+  header .tag {
+    background-color: #00b8d4;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    margin-left: auto;
+    font-weight: bold; }
+
+#image {
+  z-index: 90;
+  position: relative;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
+  height: 35vh; }
+  #image img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%; }
+
+#navigator {
+  z-index: 80;
+  position: relative;
+  height: 35vh; }
+  #navigator svg #compass {
+    fill: #43a047;
+    stroke: #2e7d32;
+    stroke-width: 10%; }
+  #navigator svg #arrow {
+    stroke: #424242;
+    stroke-width: 2;
+    transform-origin: 50% 50%; }
