@@ -22,3 +22,12 @@ body {
   color: $grey-700;
   position: relative; // Main level for absolute to be positioned against
 }
+
+br {
+  line-height: 1rem;
+}
+
+hr {
+  border-top: 1px solid $grey-400;
+  margin: 1rem 5%; // Two lines heigh, x% of screen wide
+}

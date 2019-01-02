@@ -4,7 +4,7 @@
   <head>
     <!-- Info -->
     <meta charset="utf-8">
-    <title>Navigatie</title>
+    <title>Navigatie Forestfinder</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=0">
     <link rel="manifest" href="manifest.json">
@@ -21,6 +21,11 @@
   <body>
     <!-- Menu -->
     <nav>
+      <li><a href="navigatie"><img src="" alt="">Navigatie</a></li>
+      <li><a href="opties"></a></li>
+      <li><a href="herbarium"></a></li>
+      <br>
+      <div class="clock"></div>
     </nav>
     <!-- Page content -->
     <main>
@@ -41,16 +46,27 @@
         <!-- Image of the tree -->
         <img src="" alt="">
       </section>
+      <br>
       <section id="navigator">
         <svg>
-          <circle id="compass" cx="50%" cy="50%" r="50%"/>
-          <line id="arrow" x1="50%" y1="50%" x2="50%" y="100%"/>
+          <!-- Need this definition to make an arrowhead, from https://www.w3.org/TR/svg-markers/ -->
+          <defs>
+            <marker id="arrowhead" viewBox="0 0 10 10" refX="7" refY="5" markerUnits="strokeWidth" markerWidth="4" markerHeight="3" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" stroke="none">
+            </marker>
+          </defs>
+
+          <circle id="compass" cx="50%" cy="50%" r="0"/>
+          <line class="marking" x1="50%" y1="25%" x2="50%" y2="75%"/>
+          <line class="marking" x1="25%" y1="50%" x2="75%" y2="50%"/>
+          <line class="marking" x1="25%" y1="75%" x2="75%" y2="25%"/>
+          <line class="marking" x1="75%" y1="75%" x2="25%" y2="25%"/>
+
+          <line id="arrow" x1="50%" y1="50%" x2="50%" y2="85%" marker-end="url(#arrowhead)"/>
         </svg>
       </section>
+      <hr>
       <section id="history">
-        <div class="clock">
-
-        </div>
         <div class="cards">
 
         </div>
