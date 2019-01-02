@@ -1,4 +1,8 @@
 nav {
   display: none; // Start state
   position: absolute;
+  background-color: $grey-100;
+  padding: 1rem;
+  z-index: 110; // Over everything
+  @include shadow(0, 8, 6);
 }

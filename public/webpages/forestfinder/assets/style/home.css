@@ -40,7 +40,11 @@ hr {
 
 nav {
   display: none;
-  position: absolute; }
+  position: absolute;
+  background-color: #F5F5F5;
+  padding: 1rem;
+  z-index: 110;
+  box-shadow: 4px 0px 8px rgba(0, 0, 0, 0.1), 2.66667px 0px 6px rgba(0, 0, 0, 0.2); }
 
 header {
   display: flex;
