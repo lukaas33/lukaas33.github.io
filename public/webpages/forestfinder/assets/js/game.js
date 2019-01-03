@@ -133,7 +133,6 @@ const doc = {
   arrow: document.querySelector("#arrow"),
   image: document.querySelector("#image img"),
   name: document.querySelector("header h2"),
-  clock: document.querySelector(".clock")
 }
 
 // === Functions ===
@@ -154,7 +153,7 @@ const clock = function() {
   if (sec < 10) {
     sec = '0' + sec // This is allowed in js
   }
-  doc.clock.innerHTML = `${min}:${sec}`
+  document.querySelector('.clock').innerHTML = `${min}:${sec}`
 }
 
 const display = function () { // Displays info of the tree to visit
