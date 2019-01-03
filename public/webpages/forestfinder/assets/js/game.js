@@ -17,15 +17,15 @@ const game = {
     database.setCookie("visited", visited)
   },
   // ID of the destination
-  get destination () {
-    let res = database.getCookie("destination")
+  get route () {
+    let res = database.getCookie("route")
     if (res === undefined) {
-      res = null
+      res = []
     }
     return res
   },
-  set destination (id) {
-    database.setCookie("destination", id)
+  set route (id) {
+    database.setCookie("route", id)
   },
 
   get startTime () {
@@ -39,26 +39,42 @@ const game = {
     database.setCookie("startTime", time)
   },
 
+  waiting: null,
   destinationInfo: null, // Stores info about the destination
   duration: 40 * 60,
 
-  // Selects destination and gets the info
-  chooseDestination (choice) {
+  // Generates complete route
+  generateRoute() {
     const options = database.locations
+    const points = []
+    const trees = []
+    const doubles = []
 
-    let id = choice // if no argument it will use an algoritm to choose
-    while (id in this.visited || id === undefined) {
-      // Random approach
-      id = Math.ceil(Math.random() * options.length) // Every entry has an id of 1 to n
+    for (let i = 0; i < options.length; i++) {
+      // Random id
+      let id = Math.ceil(Math.random() * options.length) // Every entry has an id of 1 to n-1
+      let tree_id = options[id].tree_id
+
+      if (trees.indexOf(tree_id) === -1) { // Not already one of these trees in the route
+        trees.push(tree_id) // Future checking
+        points.push(id) // Add to the route
+      } else {
+        doubles.push(id) // Add to the end
+      }
     }
+
+    this.route = points.concat(doubles) // All points in the route
+  },
+  // Selects destination and gets the info
+  chooseDestination (id) {
+    const options = database.locations
 
     for (let option of options) {
       if (option.location_id === id) { // Found it
         navigation.destination = new Coord(option) // Store only the coordinate here
-        this.destination = option.location_id // Store the unique Id
       }
     }
-    this.destinationInfo = this.getInfo(this.destination, options)
+    this.destinationInfo = this.getInfo(id, options)
     // Display
     if (navigation.loc !== null) {
       const directions = navigation.directions()
@@ -96,31 +112,40 @@ const game = {
   check (directions) {
     // Within x meters of an object will be considered the same location
     if (directions.distance < navigation.loc.accuracy) { // Uses GPS accuracy
-      game.waiting = window.setTimeout(() => { // Must be 2.5 seconds in the area
-        // TODO start a quiz
-        database.progress = { // Add data
-          time: (new Date()).getTime(), // Datetime as milliseconds since epoch
-          loc: navigation.destination,
-          data: this.destinationInfo
-        }
-        game.arrived()
-      }, 5000)
+      if (!game.waiting) {
+        game.waiting = window.setTimeout(() => { // Must be 2.5 seconds in the area
+          // TODO start a quiz
+          database.progress = { // Add data
+            time: (new Date()).getTime(), // Datetime as milliseconds since epoch
+            loc: navigation.destination,
+            data: this.destinationInfo
+          }
+          game.arrived()
+        }, 5000)
+      }
     } else {
       clearTimeout(game.waiting) // Cancel game.arrived
+      game.waiting = false
     }
   },
   arrived () {
-    this.visited = this.destination // Add
-    this.chooseDestination() // Choose the destination
+    this.visited = this.route[0] // Add
+    this.route = this.route.slice(1) // Remove first from route
+    if (this.route.length > 0) {
+      this.chooseDestination(this.route[0]) // Choose the destination
+    } else {
+      this.end() // Game is done
+    }
   },
   start () {
     if (this.startTime === null) { // First time
-      database.getUserData(() => {
-        this.chooseDestination() // Choose the destination
-        this.startTime = (new Date()).getTime()
+      database.getUserData(() => { // Get data then execute other code
+        this.generateRoute()
+        this.chooseDestination(this.route[0]) // Choose the destination
+        this.startTime = (new Date()).getTime() // Game starts
       })
     } else { // Continue
-      this.chooseDestination(this.destination) // Call with chosen destination
+      this.chooseDestination(this.route[0]) // Call with chosen destination
     }
   },
   end() {
