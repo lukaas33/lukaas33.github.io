@@ -52,7 +52,7 @@ const game = {
 
     for (let i = 0; i < options.length; i++) {
       // Random id
-      let id = Math.ceil(Math.random() * options.length) // Every entry has an id of 1 to n-1
+      let id = Math.floor(Math.random() * options.length) // Every entry has an id of 1 to n-1
       let tree_id = options[id].tree_id
 
       if (trees.indexOf(tree_id) === -1) { // Not already one of these trees in the route
@@ -112,7 +112,7 @@ const game = {
   check (directions) {
     // Within x meters of an object will be considered the same location
     if (directions.distance < navigation.loc.accuracy) { // Uses GPS accuracy
-      if (!game.waiting) {
+      if (game.waiting !== null) {
         game.waiting = window.setTimeout(() => { // Must be 2.5 seconds in the area
           // TODO start a quiz
           database.progress = { // Add data
@@ -125,7 +125,7 @@ const game = {
       }
     } else {
       clearTimeout(game.waiting) // Cancel game.arrived
-      game.waiting = false
+      game.waiting = null
     }
   },
   arrived () {
