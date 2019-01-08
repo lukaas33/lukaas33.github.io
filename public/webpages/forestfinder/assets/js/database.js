@@ -24,6 +24,17 @@ const database = {
     progress.push(data) // Add to the array
     this.setStorage('gameProgress', progress)
   },
+  get startTime () {
+    let res = this.getCookie("startTime")
+    if (res === undefined) {
+      res = null
+    }
+    return res
+  },
+  set startTime (time) {
+    this.setCookie("startTime", time)
+  },
+  duration: 40 * 60,
   getUserData (callback) {
     let data = this.getStorage("userData")
     if (data === null) {

@@ -28,20 +28,8 @@ const game = {
     database.setCookie("route", id)
   },
 
-  get startTime () {
-    let res = database.getCookie("startTime")
-    if (res === undefined) {
-      res = null
-    }
-    return res
-  },
-  set startTime (time) {
-    database.setCookie("startTime", time)
-  },
-
   waiting: null,
   destinationInfo: null, // Stores info about the destination
-  duration: 40 * 60,
 
   // Generates complete route
   generateRoute() {
@@ -52,8 +40,8 @@ const game = {
 
     for (let i = 0; i < options.length; i++) {
       // Random id
-      let id = Math.floor(Math.random() * options.length) // Every entry has an id of 1 to n-1
-      let tree_id = options[id].tree_id
+      let id = Math.ceil(Math.random() * options.length) // Every entry has an id of 1 to n-1
+      let tree_id = options[id - 1].tree_id
 
       if (trees.indexOf(tree_id) === -1) { // Not already one of these trees in the route
         trees.push(tree_id) // Future checking
@@ -138,11 +126,11 @@ const game = {
     }
   },
   start () {
-    if (this.startTime === null) { // First time
+    if (database.startTime === null) { // First time
       database.getUserData(() => { // Get data then execute other code
         this.generateRoute()
         this.chooseDestination(this.route[0]) // Choose the destination
-        this.startTime = (new Date()).getTime() // Game starts
+        database.startTime = (new Date()).getTime() // Game starts
       })
     } else { // Continue
       this.chooseDestination(this.route[0]) // Call with chosen destination
@@ -161,26 +149,6 @@ const doc = {
 }
 
 // === Functions ===
-const clock = function() {
-  // Display clock
-  const elapsed = Math.floor(((new Date()).getTime() - game.startTime) / 1000) // Time elapsed since start
-  const timeLeft = game.duration - elapsed
-  let min = Math.floor(timeLeft / 60)
-  let sec = min != 0 ? timeLeft % (min * 60) : elapsed // If min == 0 the mod operator will return NaN
-
-  if (min <= 0) { // End of game
-    game.end()
-  }
-
-  if (min < 10) {
-    min = '0' + min // 08, 09, 10, 11
-  }
-  if (sec < 10) {
-    sec = '0' + sec // This is allowed in js
-  }
-  document.querySelector('.clock').innerHTML = `${min}:${sec}`
-}
-
 const display = function () { // Displays info of the tree to visit
   doc.image.src = game.destinationInfo.image
   doc.name.textContent = game.destinationInfo.name
@@ -228,8 +196,3 @@ if ('serviceWorker' in window.navigator) { // If support
     alert('Registration failed', error)
   })
 }
-
-// Time loop function for game
-const wait = window.setInterval(() => {
-  clock()
-}, 750) // Refresh time less than 1 sec for smooth display
