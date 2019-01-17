@@ -3,19 +3,23 @@
 
 // Functions
 const diplayCard = function (data) {
-  const page = document.querySelector('main')
   const card = document.createElement('div')
   card.className += 'card'
 
+  const link = document.createElement('a')
+  link.href = `herbarium/?id=${data.location_id}`
+
   const img = document.createElement('img')
   img.src = data.image
-  card.appendChild(img)
+  link.appendChild(img)
 
-  const name = document.createElement('p')
+  const name = document.createElement('h3')
   name.textContent = data.name
-  card.appendChild(name)
+  link.appendChild(name)
 
-  page.appendChild(card)
+  card.appendChild(link)
+
+  document.querySelector('main').appendChild(card)
 }
 
 const plants = function () {
@@ -29,7 +33,26 @@ const plants = function () {
       }
     }
   } else { // Detail page
+    const trees = database.locations
+    let data = null
 
+    for (let tree of trees) {
+      if (tree.location_id == id) {
+        data = tree
+      }
+    }
+
+    const page = document.createElement('div')
+
+    const img = document.createElement('img')
+    img.src = data.image
+    page.appendChild(img)
+
+    const name = document.createElement('h3')
+    name.textContent = data.name
+    page.appendChild(name)
+
+    document.querySelector('main').appendChild(page)
   }
 }
 

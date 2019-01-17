@@ -40,7 +40,9 @@ const menu = {
 menu.insert()
 
 if (database.startTime === null) { // Game not started
-  location.href = '' // Home
+  window.setTimeout(() => {
+    location.href = '' // Home
+  }, 1000)
 }
 
 // Events

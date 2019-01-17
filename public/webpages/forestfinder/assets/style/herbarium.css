@@ -1,0 +1,11 @@
+main .card img {
+  height: 100px;
+}
+
+main {
+  display: flex;
+}
+
+.card {
+  margin: 10px;
+}
