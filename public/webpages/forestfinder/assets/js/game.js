@@ -103,11 +103,6 @@ const game = {
       if (game.waiting !== null) {
         game.waiting = window.setTimeout(() => { // Must be 2.5 seconds in the area
           // TODO start a quiz
-          database.progress = { // Add data
-            time: (new Date()).getTime(), // Datetime as milliseconds since epoch
-            loc: navigation.destination,
-            data: this.destinationInfo
-          }
           game.arrived()
         }, 5000)
       }
@@ -117,6 +112,12 @@ const game = {
     }
   },
   arrived () {
+    database.progress = { // Add data
+      time: (new Date()).getTime(), // Datetime as milliseconds since epoch
+      tree: this.destinationInfo.tree_id,
+      loc: navigation.loc
+    }
+
     this.visited = this.route[0] // Add
     this.route = this.route.slice(1) // Remove first from route
     if (this.route.length > 0) {

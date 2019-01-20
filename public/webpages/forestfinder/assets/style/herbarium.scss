@@ -1,12 +1,24 @@
-main {
+// imports
+@import "variables";
+@import "shared";
+@import "menu";
+
+
+#overview-page {
   display: flex;
 
   .card {
-    margin: 0;
+    margin: 10px; // TEMP
 
     img {
-      height: 0;
+      height: 100px; // TEMP
 
     }
+  }
+}
+
+#detail-page {
+  img {
+    width: 500px; // TEMP
   }
 }

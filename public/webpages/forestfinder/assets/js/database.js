@@ -13,8 +13,8 @@ const database = {
   },
   // The route progress
   get progress () { // Get all datapoints
-    let progess = this.getStorage("gameProgress")
-    if (progess === null) {
+    let progress = this.getStorage("gameProgress")
+    if (progress === null) {
       progress = [] // Init as array
     }
     return progress
