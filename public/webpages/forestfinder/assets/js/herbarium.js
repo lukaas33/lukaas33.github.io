@@ -34,7 +34,7 @@ const displayPage = function (data) {
   elements.title = document.createElement('h3')
   elements.title.textContent = data.name
   elements.sub = document.createElement('h5')
-  elements.sub.textContent = `Boom #${data.location_id}`
+  elements.sub.textContent = `Boom #${data.tree_id}`
 
   elements.br1 = document.createElement('br')
   elements.des = document.createElement('p')

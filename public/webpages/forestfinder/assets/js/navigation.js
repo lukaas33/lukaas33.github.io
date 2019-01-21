@@ -7,6 +7,7 @@ class Coord {
   constructor (loc) { // Initialise
     this.latitude = loc.latitude
     this.longitude = loc.longitude
+    this.time = (new Date())
     // Get other data if available
     for (let name of ["altitude", "heading", "speed", "accuracy"]) {
       if (name in loc) { // Property is in object
@@ -27,6 +28,7 @@ const navigation = {
     enableHighAccuracy: true,
     maximumAge: 5 * 1000 // Minimum location refresh time
   },
+  humanSpeed: 12.5, // Running speed for humans (upper limit)
 
   track (callback) {
     trackOrientation()
@@ -35,8 +37,11 @@ const navigation = {
       callback()
     })
   },
+  dist (loc) {
+    return geolib.getDistance(loc, this.destination)
+  },
   directions () {
-    const dist = geolib.getDistance(this.loc, this.destination)
+    const dist = this.dist(this.loc)
     const bearing = geolib.getBearing(this.loc, this.destination) // N,E,S,W 0,90,180,270 direction, relative to north
     let angle = null
     if (navigation.orientation) { // Value available

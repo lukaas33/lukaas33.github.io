@@ -101,10 +101,12 @@ const game = {
     // Within x meters of an object will be considered the same location
     if (directions.distance < navigation.loc.accuracy) { // Uses GPS accuracy
       if (game.waiting !== null) {
-        game.waiting = window.setTimeout(() => { // Must be 2.5 seconds in the area
+        const x = 5000
+        game.waiting = window.setTimeout(() => { // Must be x seconds in the area
           // TODO start a quiz
+          // TODO make user take photo
           game.arrived()
-        }, 5000)
+        }, x)
       }
     } else {
       clearTimeout(game.waiting) // Cancel game.arrived
@@ -138,7 +140,7 @@ const game = {
     }
   },
   end() {
-
+    clearInterval(wait)
   }
 }
 
@@ -169,7 +171,6 @@ const refresh = function (directions) { // The screen refresh
 // Start tracking location
 navigation.track(() => { // When location is retrieved, main loop runs
   if (navigation.loc !== null && navigation.destination !== null) { // Two points available
-    // navigation.loc = new Coord({latitude: 51.448009, longitude: 5.508001, acuraccy: 1}) // TEST
     const directions = navigation.directions()
     refresh(directions) // Run the sceen refresh
     game.check(directions) // Check if arrived
