@@ -14,9 +14,11 @@
     <script defer type="text/javascript" src="assets/js/database.js"></script>
     <script defer type="text/javascript" src="assets/js/quiz.js"></script>
     <script defer type="text/javascript" src="assets/js/game.js"></script>
+    <script defer type="text/javascript" src="assets/js/herbarium.js"></script>
     <script defer type="text/javascript" src="assets/js/menu.js"></script>
     <!-- Styling -->
     <link href="assets/style/home.css" media="screen" rel="stylesheet"/>
+    <link href="assets/style/herbarium.css" media="screen" rel="stylesheet"/>
   </head>
   <body>
     <!-- Menu -->
@@ -63,10 +65,15 @@
       </section>
       <hr>
       <section id="history">
-        <div class="cards">
+        <h4>Recente resultaten</h4>
+        <div id="overview-page">
 
         </div>
-        <button type="button" name="more"></button>
+        <button type="button" name="more">
+          <a href="herbarium">
+            <img src="assets/images/forward.svg" alt="">
+          </a>
+        </button>
       </section>
     </main>
   </body>

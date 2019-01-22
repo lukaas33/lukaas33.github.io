@@ -22,7 +22,12 @@ const menu = {
     let sec = min != 0 ? timeLeft % (min * 60) : elapsed // If min == 0 the mod operator will return NaN
 
     if (min <= 0) { // End of game
-      game.end()
+      clearInterval(wait)
+      min = 0
+      sec = 0
+      if (typeof(game) !== 'undefined') { // At the home page
+        game.end()
+      }
     }
 
     if (min < 10) {

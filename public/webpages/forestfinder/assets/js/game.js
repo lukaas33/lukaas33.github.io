@@ -120,6 +120,9 @@ const game = {
       loc: navigation.loc
     }
 
+    doc.cards.innerHTML = ''
+    herbarium.recents()
+
     this.visited = this.route[0] // Add
     this.route = this.route.slice(1) // Remove first from route
     if (this.route.length > 0) {
@@ -140,7 +143,7 @@ const game = {
     }
   },
   end() {
-    clearInterval(wait)
+
   }
 }
 
@@ -149,6 +152,7 @@ const doc = {
   arrow: document.querySelector("#arrow"),
   image: document.querySelector("#image img"),
   name: document.querySelector("header h2"),
+  cards: document.querySelector("#overview-page")
 }
 
 // === Functions ===
