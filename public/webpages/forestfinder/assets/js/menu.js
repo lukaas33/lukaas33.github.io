@@ -1,6 +1,6 @@
 const menu = {
   nav: document.querySelector('nav'),
-  open: document.querySelector('button[name=menu]'),
+
   insert () {
     // Insert menu in page
     let xhttp = new XMLHttpRequest()
@@ -46,9 +46,16 @@ if (database.startTime === null) { // Game not started
 }
 
 // Events
-menu.open.addEventListener('click', (event) => {
+document.querySelector('button[name=menu]').addEventListener('click', (event) => {
   menu.nav.style.display = 'inline-block'
+
+  // Set the reverse
+  document.querySelector('button[name=close]').addEventListener('click', (event) => {
+    menu.nav.style.display = 'none'
+  })
 })
+
+
 
 // Time loop function for game
 const wait = window.setInterval(() => {

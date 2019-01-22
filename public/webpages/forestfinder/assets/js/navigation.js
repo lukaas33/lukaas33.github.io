@@ -7,7 +7,7 @@ class Coord {
   constructor (loc) { // Initialise
     this.latitude = loc.latitude
     this.longitude = loc.longitude
-    this.time = (new Date())
+    this.time = (new Date()).getTime()
     // Get other data if available
     for (let name of ["altitude", "heading", "speed", "accuracy"]) {
       if (name in loc) { // Property is in object
@@ -28,12 +28,23 @@ const navigation = {
     enableHighAccuracy: true,
     maximumAge: 5 * 1000 // Minimum location refresh time
   },
-  humanSpeed: 12.5, // Running speed for humans (upper limit)
+  humanSpeed: 1.806, // Walking speed for humans (number found at https://en.wikipedia.org/wiki/Walking)
 
   track (callback) {
     trackOrientation()
     trackLocation(this.options, (loc) => { // Execute when called
-      this.loc = loc
+      if (this.loc !== null) {
+        const elapsed = (loc.time - this.loc.time) / 1000 // Since last measured
+        const maxDistance = (this.humanSpeed * elapsed) // Max distance crossed
+        const diff = geolib.getDistance(loc, this.loc) // Distance between coords
+
+        if (diff <= (maxDistance + this.loc.accuracy)) { // Valid measurement
+          this.loc = loc // Update
+        }
+      } else {
+        this.loc = loc // Init
+      }
+
       callback()
     })
   },
