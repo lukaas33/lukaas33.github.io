@@ -39,6 +39,9 @@ const herbarium = {
         document.querySelector('main').appendChild(page)
 
         const trees = this.filter(database.locations, database.progress)
+
+        document.querySelector('#num').textContent = trees.length
+
         for (let tree of trees) {
           this.diplayCard(tree)
         }

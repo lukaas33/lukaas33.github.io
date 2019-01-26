@@ -55,3 +55,46 @@
     }
   }
 }
+
+#history {
+  h4 {
+    text-align: center;
+  }
+
+  div {
+    display: flex; // Button and cards next eachother
+    justify-content: center;
+    align-content: center;
+
+    #overview-page {
+      display: flex; // Cards next eachother
+      flex-wrap: wrap;
+      width: 75vw;
+      margin: 0 (5vw / 2);
+
+      .card {
+        width: 20vw;
+        height: 20vw; // 1:1
+        margin: (5vw / 2);
+
+
+      }
+    }
+
+    button[name='more'] {
+      @extend %form;
+      width: 10vw;
+      height: 10vw; // 1:1
+      margin: (15vw / 2) (10vw / 2);
+
+      background-color: $secondary-A700;
+      border-radius: 50%;
+      @include shadow(4, 8);
+
+      a {
+        width: 100%;
+        width: 100%;
+      }
+    }
+  }
+}

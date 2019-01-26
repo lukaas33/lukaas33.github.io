@@ -22,6 +22,9 @@ header button[name="menu"] {
   height: 100%;
   width: 100%; }
 
+html {
+  font-size: 100%; }
+
 body {
   width: 100%;
   height: 100%;
@@ -37,6 +40,22 @@ br {
 hr {
   border-top: 1px solid #BDBDBD;
   margin: 1rem 5%; }
+
+.card {
+  background-color: #ffffff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2); }
+  .card a {
+    text-decoration: none; }
+    .card a img {
+      display: block;
+      width: 100%;
+      height: calc(100% - 2rem);
+      object-fit: cover; }
+    .card a h3 {
+      font-size: 1rem;
+      margin: 0.5rem;
+      color: #616161;
+      text-overflow: ellipsis; }
 
 header {
   display: flex;
@@ -75,12 +94,17 @@ nav {
   z-index: 110;
   box-shadow: 6px 0px 8px rgba(0, 0, 0, 0.1), 4px 0px 6px rgba(0, 0, 0, 0.2); }
 
+header .tag {
+  border-radius: 50%; }
+
 #overview-page {
-  display: flex; }
+  display: flex;
+  flex-wrap: wrap;
+  width: 100vw; }
   #overview-page .card {
-    margin: 10px; }
-    #overview-page .card img {
-      height: 100px; }
+    width: 45vw;
+    height: 45vw;
+    margin: 2.5vw; }
 
 #detail-page img {
   width: 500px; }

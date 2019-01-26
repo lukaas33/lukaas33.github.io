@@ -3,17 +3,24 @@
 @import "shared";
 @import "menu";
 
+header {
+  .tag {
+    border-radius: 50%;
+  }
+}
+
 
 #overview-page {
   display: flex;
+  flex-wrap: wrap;
+  width: 100vw;
 
   .card {
-    margin: 10px; // TEMP
+    width: 45vw;
+    height: 45vw; // 1:1
+    margin: (5vw / 2);
 
-    img {
-      height: 100px; // TEMP
 
-    }
   }
 }
 
