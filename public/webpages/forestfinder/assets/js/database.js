@@ -90,11 +90,12 @@ const database = {
   setCookie (name, value) {
     // TODO secure option + possible expiration
     const stringValue = JSON.stringify(value) // Convert to string
-    const expire = new Date((new Date()).getTime() + (1 * 24 * 60 * 60 * 1000)) // Won't expire when browser window closes
+    const time = (1 * 24 * 60 * 60 * 1000) // x days
+    const expire = new Date((new Date()).getTime() + time) // Won't expire when browser window closes
     document.cookie = `${name}=${stringValue}; path=/webpages/forestfinder; expires=${expire.toUTCString()}` // Add to cookies
   },
   // Cache functions
-  checkCachedImages (data) { // TODO check if cached before caching
+  checkCachedImages (data) {
     for (let loc of data) {
       if (loc.image) { // Exists in data
         this.cacheImage(loc.image)
@@ -102,7 +103,11 @@ const database = {
     }
   },
   cacheImage (url) {
-    caches.open('cached-images').then((cache) => {
+    const img = new Image()
+    img.src = url // Preload
+  },
+  cache (url) { // NOT USED, was used for caching images
+    caches.open('cached').then((cache) => {
       // Caches image after getting from url
       let request = new Request(url, {mode: 'no-cors'}) // opague resonse will be stored
       fetch(request).then((response) => {

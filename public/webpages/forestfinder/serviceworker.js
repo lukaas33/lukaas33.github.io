@@ -1,6 +1,6 @@
 // Files to store
 const cacheName = 'cached-files'
-const urlsToCache = [
+const urlsToCache = [ // TODO add all files
   // ".", // Self
   // "manifest.json",
   // "index.html",
@@ -12,12 +12,22 @@ const urlsToCache = [
   // "assets/js/menu.js",
   // "assets/js/navigation.js",
   // "assets/js/quiz.js",
-  // "assets/js/plant.js",
+  // "assets/js/herbarium.js",
   // "assets/style/home.css",
   // "assets/style/opties.css",
   // "assets/style/herbarium.css",
   // "assets/images/logo.svg",
   // "assets/images/menu.svg",
+  // "assets/images/clear.svg",
+  // "assets/images/delete.svg",
+  // "assets/images/download.svg",
+  // "assets/images/flag.svg",
+  // "assets/images/forward.svg",
+  // "assets/images/mail.svg",
+  // "assets/images/nature.svg",
+  // "assets/images/navigation.svg",
+  // "assets/images/refresh.svg",
+  // "assets/images/settings.svg",
   "https://cdn.jsdelivr.net/npm/geolib@2.0.24/dist/geolib.min.js"
 ]
 

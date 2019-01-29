@@ -189,9 +189,8 @@ if (database.locations === null) { // Available offline
     game.start()
   })
 } else {
-  // database.checkCachedImages(database.locations) // Cached images may have been overwritten
+  database.checkCachedImages(database.locations) // Cached images may have been overwritten
   game.start()
-
 }
 
 // Serviceworker register
