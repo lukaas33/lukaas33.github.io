@@ -6,6 +6,9 @@
 header {
   .tag {
     border-radius: 50%;
+    height: 2rem;
+    width: 2rem;
+    opacity: 0; // Will only display on overview page
   }
 }
 
@@ -20,12 +23,38 @@ header {
     height: 45vw; // 1:1
     margin: (5vw / 2);
 
-
+    @include image-card(1rem);
   }
 }
 
 #detail-page {
-  img {
-    width: 500px; // TEMP
+  #img {
+    z-index: 90;
+    position: relative; // Apply z-index
+    @include shadow(4, 8);
+    height: 35vh; // x% of screen height
+
+    img {
+      object-fit: cover; // Will keep aspect ratio
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  h4 {
+    text-align: center;
+  }
+
+  a {
+    text-decoration: none;
+    color: $primary-500;
+  }
+
+  .card {
+    width: 95vw;
+    margin: (5vw / 2);
+    padding: (5vw / 2);
+
+    @extend %card;
   }
 }

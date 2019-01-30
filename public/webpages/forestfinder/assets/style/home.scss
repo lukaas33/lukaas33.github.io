@@ -3,6 +3,13 @@
 @import "shared";
 @import "menu";
 
+header {
+  .tag {
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
 #image {
   z-index: 90;
   position: relative; // Apply z-index
@@ -63,21 +70,21 @@
 
   div {
     display: flex; // Button and cards next eachother
-    justify-content: center;
+    justify-content: left;
     align-content: center;
 
     #overview-page {
       display: flex; // Cards next eachother
       flex-wrap: wrap;
       width: 75vw;
-      margin: 0 (5vw / 2);
+      margin: 0 (5vw) (5vw) (5vw);
 
       .card {
         width: 20vw;
-        height: 20vw; // 1:1
+        height: 25vw;
         margin: (5vw / 2);
 
-
+        @include image-card(0.77rem);
       }
     }
 
@@ -85,7 +92,7 @@
       @extend %form;
       width: 10vw;
       height: 10vw; // 1:1
-      margin: (15vw / 2) (10vw / 2);
+      margin: (10vw) (10vw / 2) (10vw) 0;
 
       background-color: $secondary-A700;
       border-radius: 50%;

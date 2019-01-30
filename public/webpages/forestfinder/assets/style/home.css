@@ -11,6 +11,13 @@ header button[name="menu"], #history div button[name='more'] {
   border: 0 solid transparent;
   transition: 400ms ease-in-out; }
 
+#history div #overview-page .card {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  overflow: hidden; }
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -41,25 +48,6 @@ hr {
   border-top: 1px solid #BDBDBD;
   margin: 1rem 5%; }
 
-.card {
-  background-color: #ffffff;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: ellipsis; }
-  .card a {
-    width: 100%;
-    height: 100%;
-    text-decoration: none; }
-    .card a img {
-      display: block;
-      width: 100%;
-      height: calc(100% - 2rem);
-      object-fit: cover; }
-    .card a h3 {
-      font-size: 1rem;
-      margin: 0.5rem;
-      color: #616161; }
-
 header {
   display: flex;
   align-items: center;
@@ -80,12 +68,12 @@ header {
     font-size: 1.35rem;
     font-weight: normal; }
   header .tag {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #00b8d4;
     color: white;
     font-size: 0.8rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
     margin-left: auto;
     font-weight: bold; }
 
@@ -96,6 +84,10 @@ nav {
   padding: 1rem;
   z-index: 110;
   box-shadow: 6px 0px 8px rgba(0, 0, 0, 0.1), 4px 0px 6px rgba(0, 0, 0, 0.2); }
+
+header .tag {
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem; }
 
 #image {
   z-index: 90;
@@ -138,21 +130,40 @@ nav {
 
 #history div {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-content: center; }
   #history div #overview-page {
     display: flex;
     flex-wrap: wrap;
     width: 75vw;
-    margin: 0 2.5vw; }
+    margin: 0 5vw 5vw 5vw; }
     #history div #overview-page .card {
       width: 20vw;
-      height: 20vw;
+      height: 25vw;
       margin: 2.5vw; }
+      #history div #overview-page .card a {
+        width: 100%;
+        height: 100%;
+        text-decoration: none; }
+        #history div #overview-page .card a img {
+          display: block;
+          width: 100%;
+          height: calc(100% - 2.31rem);
+          object-fit: cover; }
+        #history div #overview-page .card a div {
+          margin: 0.385rem;
+          height: 1.54rem;
+          overflow: hidden;
+          display: flex;
+          align-items: center; }
+          #history div #overview-page .card a div h3 {
+            line-height: 0.77rem;
+            font-size: 0.77rem;
+            color: #616161; }
   #history div button[name='more'] {
     width: 10vw;
     height: 10vw;
-    margin: 7.5vw 5vw;
+    margin: 10vw 5vw 10vw 0;
     background-color: #00b8d4;
     border-radius: 50%;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2); }

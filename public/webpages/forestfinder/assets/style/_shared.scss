@@ -39,34 +39,6 @@ hr {
   margin: 1rem 5%; // Two lines heigh, x% of screen wide
 }
 
-.card {
-  background-color: #ffffff;
-  @include shadow(4, 8);
-  position: relative;
-  overflow: ellipsis;
-
-  a {
-    width: 100%;
-    height: 100%;
-    text-decoration: none;
-    $text-size: 1rem;
-
-    img {
-      display: block;
-      width: 100%;
-      height: calc(100% - #{$text-size * 2}); // Room for name
-      object-fit: cover; // Will keep aspect ratio
-
-    }
-
-    h3 {
-      font-size: $text-size;
-      margin: $text-size / 2;
-      color: $grey-700;
-
-    }
-  }
-}
 
 // Shared elements
 header {
@@ -97,12 +69,12 @@ header {
   }
 
   .tag {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: $secondary-A700;
     color: white;
     font-size: 0.8rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
     margin-left: auto;
     font-weight: bold;
   }

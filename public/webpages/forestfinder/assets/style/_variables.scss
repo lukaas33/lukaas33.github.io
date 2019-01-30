@@ -38,6 +38,39 @@ $grey-900: #212121;
   #{$w / 1.5}px #{ceil($h / 1.5)}px #{ceil($blur / 1.5)}px rgba(0, 0, 0, 0.2);
 }
 
+@mixin image-card($text-size) {
+  @extend %card;
+
+  a {
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+
+    img {
+      display: block;
+      width: 100%;
+      height: calc(100% - #{$text-size * 3}); // Room for name and margins
+      object-fit: cover; // Will keep aspect ratio
+
+    }
+
+    div {
+      margin: $text-size / 2;
+      height: $text-size * 2; // Two lines
+      overflow: hidden; // Won't overflow card
+      display: flex;
+      align-items: center; // Vertical middle
+
+      h3 {
+        line-height: $text-size;
+        font-size: $text-size;
+        color: $grey-700;
+
+      }
+    }
+  }
+}
+
 %click {
   cursor: pointer; // Can be clicked
 
@@ -56,4 +89,12 @@ $grey-900: #212121;
   background-color: transparent; // Hides default background
   border: 0 solid transparent; // Hides border
   transition: $animation;
+}
+
+%card {
+  @include shadow(4, 8);
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  overflow: hidden; // Maintain rounded corners
 }

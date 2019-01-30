@@ -11,6 +11,13 @@ header button[name="menu"] {
   border: 0 solid transparent;
   transition: 400ms ease-in-out; }
 
+#overview-page .card, #detail-page .card {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  overflow: hidden; }
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -41,22 +48,6 @@ hr {
   border-top: 1px solid #BDBDBD;
   margin: 1rem 5%; }
 
-.card {
-  background-color: #ffffff;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2); }
-  .card a {
-    text-decoration: none; }
-    .card a img {
-      display: block;
-      width: 100%;
-      height: calc(100% - 2rem);
-      object-fit: cover; }
-    .card a h3 {
-      font-size: 1rem;
-      margin: 0.5rem;
-      color: #616161;
-      text-overflow: ellipsis; }
-
 header {
   display: flex;
   align-items: center;
@@ -77,12 +68,12 @@ header {
     font-size: 1.35rem;
     font-weight: normal; }
   header .tag {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #00b8d4;
     color: white;
     font-size: 0.8rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
     margin-left: auto;
     font-weight: bold; }
 
@@ -95,7 +86,10 @@ nav {
   box-shadow: 6px 0px 8px rgba(0, 0, 0, 0.1), 4px 0px 6px rgba(0, 0, 0, 0.2); }
 
 header .tag {
-  border-radius: 50%; }
+  border-radius: 50%;
+  height: 2rem;
+  width: 2rem;
+  opacity: 0; }
 
 #overview-page {
   display: flex;
@@ -105,6 +99,44 @@ header .tag {
     width: 45vw;
     height: 45vw;
     margin: 2.5vw; }
+    #overview-page .card a {
+      width: 100%;
+      height: 100%;
+      text-decoration: none; }
+      #overview-page .card a img {
+        display: block;
+        width: 100%;
+        height: calc(100% - 3rem);
+        object-fit: cover; }
+      #overview-page .card a div {
+        margin: 0.5rem;
+        height: 2rem;
+        overflow: hidden;
+        display: flex;
+        align-items: center; }
+        #overview-page .card a div h3 {
+          line-height: 1rem;
+          font-size: 1rem;
+          color: #616161; }
 
-#detail-page img {
-  width: 500px; }
+#detail-page #img {
+  z-index: 90;
+  position: relative;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
+  height: 35vh; }
+  #detail-page #img img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%; }
+
+#detail-page h4 {
+  text-align: center; }
+
+#detail-page a {
+  text-decoration: none;
+  color: #4caf50; }
+
+#detail-page .card {
+  width: 95vw;
+  margin: 2.5vw;
+  padding: 2.5vw; }

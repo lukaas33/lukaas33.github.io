@@ -41,6 +41,7 @@ const herbarium = {
         const trees = this.filter(database.locations, database.progress)
 
         document.querySelector('#num').textContent = trees.length
+        document.querySelector('.tag').style.opacity = 1 // Display
 
         for (let tree of trees) {
           this.diplayCard(tree)
@@ -82,17 +83,27 @@ const herbarium = {
 
     const elements = {}
 
-    elements.img = document.createElement('img')
-    elements.img.src = data.image
+    elements.img = document.createElement('div')
+    elements.img.id = 'img'
+    const img = document.createElement('img')
+    img.src = data.image
+    elements.img.appendChild(img)
 
-    elements.title = document.createElement('h3')
-    elements.title.textContent = data.name
-    elements.sub = document.createElement('h5')
-    elements.sub.textContent = `Boom #${data.tree_id}`
+    elements.description = document.createElement('div')
+    elements.description.classList += "card"
 
-    elements.br1 = document.createElement('br')
-    elements.des = document.createElement('p')
-    elements.des.textContent = data.description
+    const title = document.createElement('h3')
+    title.textContent = data.name
+    elements.description.appendChild(title)
+
+    const sub = document.createElement('h5')
+    sub.textContent = `Boom #${data.tree_id}`
+    elements.description.appendChild(sub)
+
+    elements.description.appendChild(document.createElement('br'))
+    const des = document.createElement('p')
+    des.textContent = data.description
+    elements.description.appendChild(des)
 
     elements.sep1 = document.createElement('hr')
 
@@ -104,10 +115,7 @@ const herbarium = {
         if (point.tree === data.tree_id) {
           i += 1
           const info = document.createElement('div')
-
-          const name = document.createElement('h5')
-          name.textContent = `Ontmoeting ${i}`
-          info.appendChild(name)
+          info.classList += "card"
 
           const date = document.createElement('p')
           date.textContent = (new Date(point.time)).toString()
@@ -121,20 +129,26 @@ const herbarium = {
       elements.sep2 = document.createElement('hr')
     }
 
-    elements.info = document.createElement('h4')
-    elements.info.textContent = "Meer info"
+    elements.header = document.createElement('h4')
+    elements.header.textContent = "Meer info"
 
-    const wiki = document.createElement('a')
-    wiki.href = data.link
-    wiki.textContent = `Wikipedia: ${data.name}`
-    elements.wiki = document.createElement('p')
-    elements.wiki.appendChild(wiki)
+    elements.info = document.createElement('div')
+    elements.info.classList += "card"
 
     const map = document.createElement('a')
     map.href = `https://www.google.com/maps/?q=${data.latitude},${data.longitude}`
-    map.textContent = `Kaart`
-    elements.map = document.createElement('p')
-    elements.map.appendChild(map)
+    map.textContent = `Locatie op de kaart`
+    elements.info.appendChild(map)
+    elements.info.appendChild(document.createElement('br'))
+
+    const urls = data.link.split(',')
+    for (let url of urls) {
+      let link = document.createElement('a')
+      link.href = url
+      link.textContent = url
+      elements.info.appendChild(link)
+      elements.info.appendChild(document.createElement('br'))
+    }
 
     for (let element in elements) { // Add all to page
       page.appendChild(elements[element])
@@ -155,7 +169,9 @@ const herbarium = {
 
     const name = document.createElement('h3')
     name.textContent = data.name
-    link.appendChild(name)
+    const box = document.createElement('div')
+    box.appendChild(name)
+    link.appendChild(box)
 
     card.appendChild(link)
 
