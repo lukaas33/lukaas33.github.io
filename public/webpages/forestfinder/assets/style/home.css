@@ -170,3 +170,25 @@ header .tag {
     #history div button[name='more'] a {
       width: 100%;
       width: 100%; }
+
+#overlay {
+  display: none;
+  background-color: rgba(0, 0, 0, 0.35);
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100vw;
+  padding: 2rem;
+  z-index: 120; }
+  #overlay > div {
+    padding: 2rem;
+    background-color: white;
+    height: 100%;
+    position: relative; }
+    #overlay > div div {
+      background-color: white;
+      position: absolute;
+      top: 2rem;
+      left: 0;
+      padding: 1rem; }
