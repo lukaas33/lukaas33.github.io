@@ -103,8 +103,6 @@ const game = {
       if (game.waiting !== null) {
         const x = 5000
         game.waiting = window.setTimeout(() => { // Must be x seconds in the area
-          // TODO start a quiz
-          // TODO make user take photo
           game.arrived()
         }, x)
       }
@@ -119,6 +117,9 @@ const game = {
       tree: this.destinationInfo.tree_id,
       loc: navigation.loc
     }
+
+    // TODO make user take photo
+    quiz.start(this.destinationInfo)
 
     doc.cards.innerHTML = ''
     herbarium.recents()
