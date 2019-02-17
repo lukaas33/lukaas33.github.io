@@ -1,12 +1,12 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
-header button[name="menu"], #history div button[name='more'] {
+header button[name="menu"], nav button[name="close"], #history div button[name='more'] {
   cursor: pointer; }
-  header button:disabled[name="menu"], #history div button:disabled[name='more'] {
+  header button:disabled[name="menu"], nav button:disabled[name="close"], #history div button:disabled[name='more'] {
     cursor: default; }
-  header button:focus[name="menu"], #history div button:focus[name='more'], header button:active[name="menu"], #history div button:active[name='more'] {
+  header button:focus[name="menu"], nav button:focus[name="close"], #history div button:focus[name='more'], header button:active[name="menu"], nav button:active[name="close"], #history div button:active[name='more'] {
     outline: none; }
 
-header button[name="menu"], #history div button[name='more'] {
+header button[name="menu"], nav button[name="close"], #history div button[name='more'] {
   background-color: transparent;
   border: 0 solid transparent;
   transition: 400ms ease-in-out; }
@@ -81,9 +81,33 @@ nav {
   display: none;
   position: absolute;
   background-color: #F5F5F5;
-  padding: 1rem;
+  height: 100%;
   z-index: 110;
   box-shadow: 6px 0px 8px rgba(0, 0, 0, 0.1), 4px 0px 6px rgba(0, 0, 0, 0.2); }
+  nav button[name="close"] {
+    padding: 1rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: white;
+    background-color: #4caf50;
+    text-transform: uppercase; }
+    nav button[name="close"] img {
+      margin-right: 0.5rem; }
+  nav div {
+    margin: 1rem; }
+    nav div li {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem; }
+      nav div li img {
+        margin-right: 0.5rem; }
+      nav div li a {
+        font-size: 1rem;
+        color: #424242;
+        text-decoration: none; }
 
 header .tag {
   border-radius: 0.5rem;
