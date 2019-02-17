@@ -17,18 +17,41 @@ const quiz = {
     }
   },
 
-  answers: {
-    "form": null,
-    "edge": null,
-    "lines": null
+  get points () {
+    let point = database.getCookie("points")
+    if (point === undefined) { // Need to init
+      point = 0
+    }
+    return point
+  },
+  set points (value) {
+    let point = this.points
+    point += value
+    database.setCookie("points", point)
   },
 
-  start (info) {
-    for (let question of this.question_names) {
-      let answer = info[`quiz_${question}`]
-      this.answers[question] = answer
+  progress: null,
+  points_per_correct: 5,
+  streak_limit: 2,
+  points_for_streak: 5,
+  streak: 0,
+  at: 0,
+
+  start (info, progress) {
+    progress.questions = {}
+    for (let name of this.question_names)  { // Add empty answer objects
+      progress["questions"][name] = {
+        "answer": null,
+        "user": null
+      }
     }
 
+    for (let question of this.question_names) { // Add correct answers
+      let answer = info[`quiz_${question}`]
+      progress.questions[question]["answer"] = answer
+    }
+
+    this.progress = progress
     this.setup(info)
   },
   setup (info) {
@@ -69,12 +92,30 @@ const quiz = {
   check (event) {
     const options = event.srcElement.options
     const value = options[options.selectedIndex].value
-    const question = event.srcElement.name
 
-    if (value === this.answers[question]) {
-      
+    const question = event.srcElement.name
+    quiz.progress.questions[question]["user"] = value
+
+    const answer = quiz.progress.questions[question]["answer"].toLowerCase()
+
+    if (value === answer) {
+      quiz.points = quiz.points_per_correct // Add
+      quiz.streak += 1
+
+      if (quiz.streak > quiz.streak_limit) {
+        quiz.points = (quiz.streak - quiz.streak_limit) * quiz.points_for_streak // Add
+      }
+    } else {
+      quiz.streak = 0
     }
 
-    event.srcElement.style.display = 'none'
+    event.srcElement.parentElement.style.display = 'none'
+    quiz.at += 1
+
+    if (quiz.at === 3) {
+      quiz.at = 0
+      database.progress = quiz.progress // Add to database
+      document.querySelector("#overlay").style.display = 'none'
+    }
   }
 }

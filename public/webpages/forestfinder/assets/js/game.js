@@ -112,14 +112,16 @@ const game = {
     }
   },
   arrived () {
-    database.progress = { // Add data
+    const progress = { // Add data
       time: (new Date()).getTime(), // Datetime as milliseconds since epoch
       tree: this.destinationInfo.tree_id,
       loc: navigation.loc
     }
 
     // TODO make user take photo
-    quiz.start(this.destinationInfo)
+    if (this.destinationInfo.required) { // Has a quiz
+      quiz.start(this.destinationInfo, progress)
+    }
 
     doc.cards.innerHTML = ''
     herbarium.recents()
