@@ -96,9 +96,13 @@ const herbarium = {
     title.textContent = data.name
     elements.description.appendChild(title)
 
-    const sub = document.createElement('h5')
+    const sub = document.createElement('h6')
     sub.textContent = `Boom #${data.tree_id}`
     elements.description.appendChild(sub)
+
+    const sci = document.createElement('h5')
+    sci.textContent = data.sci_name
+    elements.description.appendChild(sci)
 
     elements.description.appendChild(document.createElement('br'))
     const des = document.createElement('p')
@@ -117,11 +121,52 @@ const herbarium = {
           const info = document.createElement('div')
           info.classList += "card"
 
+          const dateBox = document.createElement('div')
+          dateBox.classList += 'date'
+          const dateIcon = document.createElement('img')
+          dateIcon.src = "assets/images/date.svg"
+          dateBox.appendChild(dateIcon)
+
           const date = document.createElement('p')
           date.textContent = (new Date(point.time)).toString()
-          info.appendChild(date)
+          dateBox.appendChild(date)
+          info.appendChild(dateBox)
 
-          // TODO add quiz results
+          const scoreBox = document.createElement('div')
+          scoreBox.classList += 'score'
+          const scoreIcon = document.createElement('img')
+          scoreIcon.src = "assets/images/score.svg"
+          scoreBox.appendChild(scoreIcon)
+
+          const progress = document.createElement('progress')
+          progress.max = quiz.question_names.length
+          progress.value = 0
+
+          // Table uses a lot of nested elements so I am using a different way of html insertion here
+          const table = document.createElement('table')
+          let content = `<tr><th>Vraag</th><th>Antwoord</th><th>Correct</th></tr>` // Header row
+
+          for (let question in point.questions) { // Properties
+            let text = quiz.questions[question]
+            let user = point.questions[question].user
+
+            let answer = point.questions[question].answer
+            let correct = ''
+            if (user.toLowerCase() !== answer.toLowerCase()) { // Wrong
+              correct = answer
+              user = `<s>${user}<s/>` // Strikethrough
+            } else { // Correct
+              progress.value += 1
+            }
+            content += `<tr><td>${text}</td><td>${user}</td><td>${correct}</td></tr>` // Add to string
+          }
+
+          progress.textContent = `${progress.value}/${progress.max}`
+          scoreBox.appendChild(progress)
+          info.appendChild(scoreBox)
+
+          table.innerHTML = content
+          info.appendChild(table)
 
           elements[`res${i}`] = info
         }
@@ -139,7 +184,6 @@ const herbarium = {
     map.href = `https://www.google.com/maps/?q=${data.latitude},${data.longitude}`
     map.textContent = `Locatie op de kaart`
     elements.info.appendChild(map)
-    elements.info.appendChild(document.createElement('br'))
 
     const urls = data.link.split(',')
     for (let url of urls) {
@@ -147,7 +191,6 @@ const herbarium = {
       link.href = url
       link.textContent = url
       elements.info.appendChild(link)
-      elements.info.appendChild(document.createElement('br'))
     }
 
     for (let element in elements) { // Add all to page

@@ -17,11 +17,13 @@ header {
   display: flex;
   flex-wrap: wrap;
   width: 100vw;
+  $space: 5vw;
+  padding: $space 0;
 
   .card {
     width: 45vw;
     height: 45vw; // 1:1
-    margin: (5vw / 2);
+    margin: $space / 2;
 
     @include image-card(1rem);
   }
@@ -32,7 +34,7 @@ header {
     z-index: 90;
     position: relative; // Apply z-index
     @include shadow(4, 8);
-    height: 35vh; // x% of screen height
+    height: 30vh; // x% of screen height
 
     img {
       object-fit: cover; // Will keep aspect ratio
@@ -41,13 +43,64 @@ header {
     }
   }
 
+
   h4 {
     text-align: center;
+    text-transform: uppercase;
   }
 
   a {
     text-decoration: none;
     color: $primary-500;
+
+  }
+
+  .date {
+    margin-bottom: 1rem;
+  }
+
+  .score, .date {
+    display: flex;
+
+    img {
+      min-height: 1.6rem;
+      margin-right: 0.4rem
+    }
+  }
+
+  .score {
+    progress {
+      height: 1.4rem;
+      width: 100%;
+    }
+  }
+
+
+  table {
+    font-size: 0.7rem;
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0.5rem 0;
+
+    tr {
+      th {
+        background-color: $primary-500;
+        color: white;
+      }
+
+      th, td {
+        word-break: break-all;
+        text-align: left;
+        padding: 0.4rem;
+        border: 1px solid $grey-400;
+        width: auto;
+
+        &:first-of-type {
+          width: 50%; // First colomn bigger
+        }
+      }
+    }
   }
 
   .card {
@@ -56,5 +109,30 @@ header {
     padding: (5vw / 2);
 
     @extend %card;
+
+    h3 {
+      font-size: 1.2rem;
+      color: $grey-800;
+    }
+
+    h5, h6 {
+      font-weight: normal;
+      font-size: 0.8rem;
+      color: $grey-700;
+    }
+
+    h5 {
+      font-style: italic;
+    }
+
+    p {
+      font-size: 0.8rem;
+      color: $grey-800;
+    }
+
+    & > a { // Direct child
+      display: block;
+      font-size: 0.8rem;
+    }
   }
 }

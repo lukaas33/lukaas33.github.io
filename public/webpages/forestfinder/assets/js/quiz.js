@@ -73,7 +73,7 @@ const quiz = {
       select.appendChild(document.createElement('option')) // Empty input option
       for (let answer of this.possible_answers[question]) {
         let option = document.createElement('option')
-        option.value = answer.toLowerCase()
+        option.value = answer
         option.textContent = answer
         select.appendChild(option)
       }
@@ -96,9 +96,9 @@ const quiz = {
     const question = event.srcElement.name
     quiz.progress.questions[question]["user"] = value
 
-    const answer = quiz.progress.questions[question]["answer"].toLowerCase()
+    const answer = quiz.progress.questions[question]["answer"]
 
-    if (value === answer) {
+    if (value.toLowerCase() === answer.toLowerCase()) {
       quiz.points = quiz.points_per_correct // Add
       quiz.streak += 1
 

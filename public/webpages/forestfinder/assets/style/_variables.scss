@@ -95,6 +95,6 @@ $grey-900: #212121;
   @include shadow(4, 8);
   position: relative;
   background-color: #ffffff;
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
   overflow: hidden; // Maintain rounded corners
 }

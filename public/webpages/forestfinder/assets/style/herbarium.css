@@ -15,7 +15,7 @@ header button[name="menu"], nav button[name="close"] {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
   position: relative;
   background-color: #ffffff;
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
   overflow: hidden; }
 
 * {
@@ -118,7 +118,8 @@ header .tag {
 #overview-page {
   display: flex;
   flex-wrap: wrap;
-  width: 100vw; }
+  width: 100vw;
+  padding: 5vw 0; }
   #overview-page .card {
     width: 45vw;
     height: 45vw;
@@ -147,20 +148,67 @@ header .tag {
   z-index: 90;
   position: relative;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
-  height: 35vh; }
+  height: 30vh; }
   #detail-page #img img {
     object-fit: cover;
     height: 100%;
     width: 100%; }
 
 #detail-page h4 {
-  text-align: center; }
+  text-align: center;
+  text-transform: uppercase; }
 
 #detail-page a {
   text-decoration: none;
   color: #4caf50; }
 
+#detail-page .date {
+  margin-bottom: 1rem; }
+
+#detail-page .score, #detail-page .date {
+  display: flex; }
+  #detail-page .score img, #detail-page .date img {
+    min-height: 1.6rem;
+    margin-right: 0.4rem; }
+
+#detail-page .score progress {
+  height: 1.4rem;
+  width: 100%; }
+
+#detail-page table {
+  font-size: 0.7rem;
+  table-layout: fixed;
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.5rem 0; }
+  #detail-page table tr th {
+    background-color: #4caf50;
+    color: white; }
+  #detail-page table tr th, #detail-page table tr td {
+    word-break: break-all;
+    text-align: left;
+    padding: 0.4rem;
+    border: 1px solid #BDBDBD;
+    width: auto; }
+    #detail-page table tr th:first-of-type, #detail-page table tr td:first-of-type {
+      width: 50%; }
+
 #detail-page .card {
   width: 95vw;
   margin: 2.5vw;
   padding: 2.5vw; }
+  #detail-page .card h3 {
+    font-size: 1.2rem;
+    color: #424242; }
+  #detail-page .card h5, #detail-page .card h6 {
+    font-weight: normal;
+    font-size: 0.8rem;
+    color: #616161; }
+  #detail-page .card h5 {
+    font-style: italic; }
+  #detail-page .card p {
+    font-size: 0.8rem;
+    color: #424242; }
+  #detail-page .card > a {
+    display: block;
+    font-size: 0.8rem; }
