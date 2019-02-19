@@ -27,6 +27,12 @@ const game = {
   set route (id) {
     database.setCookie("route", id)
   },
+  get ended () {
+    return database.getCookie("ended")
+  },
+  set ended (value) {
+    database.setCookie("ended", value)
+  },
 
   waiting: null,
   destinationInfo: null, // Stores info about the destination
@@ -124,7 +130,6 @@ const game = {
     }
 
     doc.cards.innerHTML = ''
-    herbarium.recents()
 
     this.visited = this.route[0] // Add
     this.route = this.route.slice(1) // Remove first from route
@@ -135,18 +140,27 @@ const game = {
     }
   },
   start () {
-    if (database.startTime === null) { // First time
-      database.getUserData(() => { // Get data then execute other code
-        this.generateRoute()
-        this.chooseDestination(this.route[0]) // Choose the destination
-        database.startTime = (new Date()).getTime() // Game starts
-      })
-    } else { // Continue
-      this.chooseDestination(this.route[0]) // Call with chosen destination
+    if (this.ended === true) { // Game already ended
+      this.end()
+    } else {
+      if (database.startTime === null) { // First time start
+        database.getUserData(() => { // Get data then execute other code
+          this.generateRoute()
+          this.chooseDestination(this.route[0]) // Choose the destination
+          database.startTime = (new Date()).getTime() // Game starts
+        })
+      } else { // Continue
+        this.chooseDestination(this.route[0]) // Call with chosen destination
+      }
     }
   },
   end() {
-
+    navigation.track = () => {} // No actions on new gps data
+    this.ended = true
+    document.querySelector(".tag").style.display = 'none'
+    doc.name.textContent = 'Game over'
+    doc.image.src = "assets/images/placeholder.png"
+    doc.nav.innerHTML = `<h4>Total points</h4><div class="tag">${quiz.points}</div>`
   }
 }
 
@@ -155,7 +169,8 @@ const doc = {
   arrow: document.querySelector("#arrow"),
   image: document.querySelector("#image img"),
   name: document.querySelector("header h2"),
-  cards: document.querySelector("#overview-page")
+  cards: document.querySelector("#overview-page"),
+  nav: document.querySelector("#navigator")
 }
 
 // === Functions ===

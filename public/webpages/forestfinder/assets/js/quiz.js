@@ -18,8 +18,8 @@ const quiz = {
   },
 
   get points () {
-    let point = database.getCookie("points")
-    if (point === undefined) { // Need to init
+    let point = database.getStorage("points")
+    if (point === null) { // Need to init
       point = 0
     }
     return point
@@ -27,7 +27,7 @@ const quiz = {
   set points (value) {
     let point = this.points
     point += value
-    database.setCookie("points", point)
+    database.setStorage("points", point)
   },
 
   progress: null,
@@ -116,6 +116,8 @@ const quiz = {
       quiz.at = 0
       database.progress = quiz.progress // Add to database
       document.querySelector("#overlay").style.display = 'none'
+
+      herbarium.recents() // Display recents
     }
   }
 }

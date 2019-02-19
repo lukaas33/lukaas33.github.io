@@ -6,11 +6,20 @@ const herbarium = {
   filter (trees, visited) { // Filter out some
     const sorted = []
 
-    // Filter the ones reached
-    for (let point of visited) {
+    if (database.getCookie("ended") === true) {
+      // Display all
       for (let tree of trees) {
-        if (!tree.double && tree.tree_id === point.tree) { // Found the correct one
+        if (!tree.double) { // Found the correct one
           sorted.push(tree)
+        }
+      }
+    } else {
+      // Filter the ones reached
+      for (let point of visited) {
+        for (let tree of trees) {
+          if (!tree.double && tree.tree_id === point.tree) { // Found the correct one
+            sorted.push(tree)
+          }
         }
       }
     }

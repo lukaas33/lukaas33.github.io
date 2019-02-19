@@ -44,7 +44,7 @@ const menu = {
 // Run
 menu.insert()
 
-if (database.startTime === null) { // Game not started
+if (database.startTime === null && database.getCookie("ended") !== true) { // Game not started
   window.setTimeout(() => {
     location.href = '' // Home
   }, 1000)
