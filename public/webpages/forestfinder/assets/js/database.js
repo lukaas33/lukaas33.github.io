@@ -90,7 +90,7 @@ const database = {
   setCookie (name, value) {
     // TODO secure option + possible expiration
     const stringValue = JSON.stringify(value) // Convert to string
-    const time = (1 * 24 * 60 * 60 * 1000) // x days
+    const time = (5 * 24 * 60 * 60 * 1000) // x days
     const expire = new Date((new Date()).getTime() + time) // Won't expire when browser window closes
     document.cookie = `${name}=${stringValue}; path=/webpages/forestfinder; expires=${expire.toUTCString()}` // Add to cookies
   },

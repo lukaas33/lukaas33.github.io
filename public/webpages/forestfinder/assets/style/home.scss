@@ -7,6 +7,7 @@ header {
   .tag {
     border-radius: 0.5rem;
     padding: 0.5rem 0.75rem;
+    @extend %tag;
   }
 }
 
@@ -31,6 +32,23 @@ header {
   height: $nav-height;
   display: flex; // Center content
   justify-content: center;
+  flex-wrap: wrap;
+
+  h4 {
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .tag {
+    @extend %tag;
+    background-color: $primary-500;
+    border-radius: 50%;
+    height: 8rem;
+    width: 8rem;
+    font-size: 2.5rem;
+    margin-left: 0;
+  }
 
   svg {
     height: 100%;
@@ -66,6 +84,7 @@ header {
 #history {
   h4 {
     text-align: center;
+    text-transform: uppercase;
   }
 
   div {

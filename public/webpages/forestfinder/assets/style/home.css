@@ -8,8 +8,7 @@ header button[name="menu"], nav button[name="close"], #history div button[name='
 
 header button[name="menu"], nav button[name="close"], #history div button[name='more'] {
   background-color: transparent;
-  border: 0 solid transparent;
-  transition: 400ms ease-in-out; }
+  border: 0 solid transparent; }
 
 #history div #overview-page .card {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
@@ -17,6 +16,16 @@ header button[name="menu"], nav button[name="close"], #history div button[name='
   background-color: #ffffff;
   border-radius: 0.25rem;
   overflow: hidden; }
+
+header .tag, #navigator .tag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #00b8d4;
+  color: white;
+  font-size: 0.8rem;
+  margin-left: auto;
+  font-weight: bold; }
 
 * {
   box-sizing: border-box;
@@ -67,15 +76,6 @@ header {
     text-transform: uppercase;
     font-size: 1.35rem;
     font-weight: normal; }
-  header .tag {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #00b8d4;
-    color: white;
-    font-size: 0.8rem;
-    margin-left: auto;
-    font-weight: bold; }
 
 nav {
   display: none;
@@ -128,7 +128,19 @@ header .tag {
   position: relative;
   height: 35vh;
   display: flex;
-  justify-content: center; }
+  justify-content: center;
+  flex-wrap: wrap; }
+  #navigator h4 {
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase; }
+  #navigator .tag {
+    background-color: #4caf50;
+    border-radius: 50%;
+    height: 8rem;
+    width: 8rem;
+    font-size: 2.5rem;
+    margin-left: 0; }
   #navigator svg {
     height: 100%;
     width: 35vh;
@@ -150,7 +162,8 @@ header .tag {
       stroke: #388e3c; }
 
 #history h4 {
-  text-align: center; }
+  text-align: center;
+  text-transform: uppercase; }
 
 #history div {
   display: flex;

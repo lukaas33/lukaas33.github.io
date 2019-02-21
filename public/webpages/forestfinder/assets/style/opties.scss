@@ -1,0 +1,43 @@
+// imports
+@import "variables";
+@import "shared";
+@import "menu";
+
+
+#cards {
+  $space: 5vw;
+  padding: $space;
+
+  .card {
+    @extend %card;
+    padding: $space / 2;
+
+    h3 {
+      font-size: 1.2rem;
+      color: $grey-800;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+      color: $grey-800;
+    }
+
+    button {
+      @extend %form;
+      background-color: $primary-500;
+      color: white;
+      border-radius: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      text-transform: uppercase;
+      display: inline-flex; // Next to other buttons
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.75rem;
+
+      img {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}

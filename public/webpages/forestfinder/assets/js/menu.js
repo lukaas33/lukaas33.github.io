@@ -25,12 +25,15 @@ const menu = {
       clearInterval(wait)
       min = 0
       sec = 0
-      if (typeof(game) !== 'undefined') { // At the home page
-        game.end()
-      } else {
-        window.setTimeout(() => {
-          location.href = '' // Home
-        }, 1000)
+
+      if (database.getCookie('ended') !== true) {
+        if (typeof(game) !== 'undefined') { // At the home page
+          game.end()
+        } else {
+          window.setTimeout(() => {
+            location.href = '' // Home
+          }, 1000)
+        }
       }
     }
 

@@ -88,7 +88,6 @@ $grey-900: #212121;
   @extend %click;
   background-color: transparent; // Hides default background
   border: 0 solid transparent; // Hides border
-  transition: $animation;
 }
 
 %card {
@@ -97,4 +96,15 @@ $grey-900: #212121;
   background-color: #ffffff;
   border-radius: 0.25rem;
   overflow: hidden; // Maintain rounded corners
+}
+
+%tag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $secondary-A700;
+  color: white;
+  font-size: 0.8rem;
+  margin-left: auto;
+  font-weight: bold;
 }

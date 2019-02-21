@@ -160,12 +160,12 @@ const game = {
   end() {
     this.ended = true
     navigation.track = () => {} // No actions on new gps data
-    database.startTime = (new Date()).getTime() // Clock will be 0
+    database.startTime = (new Date()).getTime() - (database.duration * 1000) // Clock will be 0
     document.querySelector(".tag").style.display = 'none'
     herbarium.recents()
     doc.name.textContent = 'Game over'
     doc.image.src = "assets/images/placeholder.png"
-    doc.nav.innerHTML = `<h4>Total points</h4><div class="tag">${quiz.points}</div>`
+    doc.nav.innerHTML = `<h4>Punten</h4><div class="tag">${quiz.points}</div>`
   }
 }
 
