@@ -72,6 +72,7 @@ const herbarium = {
     }
   },
   recents () {
+    document.querySelector('#overview-page').innerHTML = '' // First reset
     const trees = this.filter(database.locations, database.progress)
     const n = 3
     const recent = trees.slice(0, n) // n most recent
@@ -115,68 +116,54 @@ const herbarium = {
 
     elements.sep1 = document.createElement('hr')
 
+    let reached = false
     if (database.progress) {
       for (let point of database.progress) {
         let i = 0
         if (point.tree === data.tree_id) { // Tree has been reached
+          reached = true
+          i += 1
           elements.res = document.createElement('h4')
           elements.res.textContent = "Jouw resultaten"
 
-          i += 1
-          const info = document.createElement('div')
-          info.classList += "card"
-
-          const dateBox = document.createElement('div')
-          dateBox.classList += 'date'
-          const dateIcon = document.createElement('img')
-          dateIcon.src = "assets/images/date.svg"
-          dateBox.appendChild(dateIcon)
-
-          const date = document.createElement('p')
-          date.textContent = (new Date(point.time)).toString()
-          dateBox.appendChild(date)
-          info.appendChild(dateBox)
-
-          const scoreBox = document.createElement('div')
-          scoreBox.classList += 'score'
-          const scoreIcon = document.createElement('img')
-          scoreIcon.src = "assets/images/score.svg"
-          scoreBox.appendChild(scoreIcon)
-
-          const progress = document.createElement('progress')
-          progress.max = quiz.question_names.length
-          progress.value = 0
-
-          // Table uses a lot of nested elements so I am using a different way of html insertion here
-          const table = document.createElement('table')
-          let content = `<tr><th>Vraag</th><th>Antwoord</th><th>Correct</th></tr>` // Header row
-
-          for (let question in point.questions) { // Properties
-            let text = quiz.questions[question]
-            let user = point.questions[question].user
-
-            let answer = point.questions[question].answer
-            let correct = ''
-            if (user.toLowerCase() !== answer.toLowerCase()) { // Wrong
-              correct = answer
-              user = `<s>${user}<s/>` // Strikethrough
-            } else { // Correct
-              progress.value += 1
-            }
-            content += `<tr><td>${text}</td><td>${user}</td><td>${correct}</td></tr>` // Add to string
-          }
-
-          progress.textContent = `${progress.value}/${progress.max}`
-          scoreBox.appendChild(progress)
-          info.appendChild(scoreBox)
-
-          table.innerHTML = content
-          info.appendChild(table)
+          const info = this.progressCard(point)
 
           elements[`res${i}`] = info
-          
+
           elements.sep2 = document.createElement('hr')
         }
+      }
+    }
+
+    if (!reached) { // Display the answers to the quiz
+      if (database.getCookie('ended') === true && data.required === true) {
+        elements.res = document.createElement('h4')
+        elements.res.textContent = "Anwoorden"
+        const trees = database.locations
+
+        const info = document.createElement('div')
+        info.classList += "card"
+
+        const table = document.createElement('table')
+        let content = `<tr><th>Vraag</th><th>Correct</th></tr>` // Header row
+        for (let question of quiz.question_names) { // Properties
+          let text = quiz.questions[question]
+
+          let answer = null
+          for (let tree of trees) {
+            if (tree.tree_id === data.tree_id && tree.double === false) {
+              console.log(tree)
+              answer = tree[`quiz_${question}`]
+            }
+          }
+          content += `<tr><td>${text}</td><td>${answer}</td></tr>` // Add to string
+        }
+
+        table.innerHTML = content
+        info.appendChild(table)
+        elements['resx'] = info
+
+        elements.sep2 = document.createElement('hr')
       }
     }
 
@@ -225,6 +212,59 @@ const herbarium = {
     card.appendChild(link)
 
     document.querySelector('#overview-page').appendChild(card)
+  },
+  progressCard (point) {
+    const info = document.createElement('div')
+    info.classList += "card"
+
+    const dateBox = document.createElement('div')
+    dateBox.classList += 'date'
+    const dateIcon = document.createElement('img')
+    dateIcon.src = "assets/images/date.svg"
+    dateBox.appendChild(dateIcon)
+
+    const date = document.createElement('p')
+    date.textContent = (new Date(point.time)).toString()
+    dateBox.appendChild(date)
+    info.appendChild(dateBox)
+
+    const scoreBox = document.createElement('div')
+    scoreBox.classList += 'score'
+    const scoreIcon = document.createElement('img')
+    scoreIcon.src = "assets/images/score.svg"
+    scoreBox.appendChild(scoreIcon)
+
+    const progress = document.createElement('progress')
+    progress.max = quiz.question_names.length
+    progress.value = 0
+
+    // Table uses a lot of nested elements so I am using a different way of html insertion here
+    const table = document.createElement('table')
+    let content = `<tr><th>Vraag</th><th>Antwoord</th><th>Correct</th></tr>` // Header row
+
+    for (let question in point.questions) { // Properties
+      let text = quiz.questions[question]
+      let user = point.questions[question].user
+
+      let answer = point.questions[question].answer
+      let correct = ''
+      if (user.toLowerCase() !== answer.toLowerCase()) { // Wrong
+        correct = answer
+        user = `<s>${user}<s/>` // Strikethrough
+      } else { // Correct
+        progress.value += 1
+      }
+      content += `<tr><td>${text}</td><td>${user}</td><td>${correct}</td></tr>` // Add to string
+    }
+
+    progress.textContent = `${progress.value}/${progress.max}`
+    scoreBox.appendChild(progress)
+    info.appendChild(scoreBox)
+
+    table.innerHTML = content
+    info.appendChild(table)
+
+    return info
   }
 }
 
