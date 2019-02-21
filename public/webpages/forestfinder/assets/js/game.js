@@ -28,7 +28,7 @@ const game = {
     database.setCookie("route", id)
   },
   get ended () {
-    return database.getCookie("ended")
+    return database.getCookie("ended") === true // Boolean value
   },
   set ended (value) {
     database.setCookie("ended", value)
@@ -127,6 +127,9 @@ const game = {
     // TODO make user take photo
     if (this.destinationInfo.required) { // Has a quiz
       quiz.start(this.destinationInfo, progress)
+    } else {
+      database.progress = quiz.progress // Add to database
+      herbarium.recents() // Display recents
     }
 
     doc.cards.innerHTML = ''
@@ -156,7 +159,7 @@ const game = {
   },
   end() {
     navigation.track = () => {} // No actions on new gps data
-    this.ended = true
+    database.startTime = (new Date()).getTime() // Clock will be 0
     document.querySelector(".tag").style.display = 'none'
     doc.name.textContent = 'Game over'
     doc.image.src = "assets/images/placeholder.png"

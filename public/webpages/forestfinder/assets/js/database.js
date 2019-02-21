@@ -120,20 +120,12 @@ const database = {
 // === Functions ===
 // Asks the user for data
 const promptUserData = function (callback) {
-  const ask = function (question) {
-    let answer = prompt(question)
-    while (!answer) { // Empty answers ('', null, 0) not valid, repeat until valid
-       answer = prompt(question)
-    }
-    return answer
-  }
-
   // Sequence of unskippable questions
-  let group = ask("Wie zitten er allemaal in je groepje?\nVul alle namen gescheiden door komma's in.")
+  let group = prompt("Wie zitten er allemaal in je groepje?\nVul alle namen gescheiden door komma's in.")
   let names = group.split(',')
   names = names.map(x => x.trim()) // Remove whitespace
-  let grade = ask("In welke klas zit je?")
-  let teacher = ask("Welke docent heb je?")
+  let grade = prompt("In welke klas zit je?")
+  let teacher = prompt("Welke docent heb je?")
 
   database.setStorage("userData", {
     names: names,
