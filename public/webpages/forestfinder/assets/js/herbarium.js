@@ -28,15 +28,14 @@ const herbarium = {
 
     // Sort by increasing age
     sorted.sort((a, b) => {
-      if (a.time > b.time) {
+      if (a.time < b.time) {
         return 1
       }
-      if (a.time < b.time) {
+      if (a.time > b.time) {
         return -1
       }
       return 0
     })
-    sorted.reverse()
 
     return sorted
   },
@@ -67,15 +66,9 @@ const herbarium = {
         }
       }
     } else { // No progress
-      if (id === undefined) { // Home
-        const text = document.createElement('div')
-        text.textContent = "Je hebt nog geen bomen gevonden"
-        document.querySelector('main').appendChild(text)
-      } else { // Detail page
-        const text = document.createElement('div')
-        text.textContent = "Je hebt deze boom nog niet gevonden"
-        document.querySelector('main').appendChild(text)
-      }
+      const text = document.createElement('div')
+      text.textContent = "Nog geen bomen gevonden"
+      document.querySelector('main').appendChild(text)
     }
   },
   recents () {
@@ -123,11 +116,12 @@ const herbarium = {
     elements.sep1 = document.createElement('hr')
 
     if (database.progress) {
-      elements.res = document.createElement('h4')
-      elements.res.textContent = "Jouw resultaten"
       for (let point of database.progress) {
         let i = 0
-        if (point.tree === data.tree_id) {
+        if (point.tree === data.tree_id) { // Tree has been reached
+          elements.res = document.createElement('h4')
+          elements.res.textContent = "Jouw resultaten"
+
           i += 1
           const info = document.createElement('div')
           info.classList += "card"
@@ -180,9 +174,10 @@ const herbarium = {
           info.appendChild(table)
 
           elements[`res${i}`] = info
+          
+          elements.sep2 = document.createElement('hr')
         }
       }
-      elements.sep2 = document.createElement('hr')
     }
 
     elements.header = document.createElement('h4')
