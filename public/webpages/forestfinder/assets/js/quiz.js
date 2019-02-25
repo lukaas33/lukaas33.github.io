@@ -85,6 +85,15 @@ const quiz = {
       box.appendChild(part)
     }
 
+    // User take images
+    const part = document.createElement('div')
+    const image = document.createElement('input')
+    image.type = 'file'
+    image.accept = "image/*;capture=camera"
+    image.id = 'image'
+    part.appendChild(image)
+    box.appendChild(part)
+
     container.appendChild(box)
     container.style.display = 'block'
   },

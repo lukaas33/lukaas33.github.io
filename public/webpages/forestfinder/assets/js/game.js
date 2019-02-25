@@ -124,7 +124,6 @@ const game = {
       loc: navigation.loc
     }
 
-    // TODO make user take photo
     if (this.destinationInfo.required) { // Has a quiz
       quiz.start(this.destinationInfo, progress)
     } else {
