@@ -18,8 +18,10 @@ const herbarium = {
         // Filter the ones reached
         for (let point of visited) {
           for (let tree of trees) {
-            if (!tree.double && tree.tree_id === point.tree) { // Found the correct one
-              sorted.push(tree)
+            if (point) {
+              if (!tree.double && tree.tree_id === point.tree) { // Found the correct one
+                sorted.push(tree)
+              }
             }
           }
         }

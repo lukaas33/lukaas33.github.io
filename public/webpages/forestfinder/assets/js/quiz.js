@@ -62,6 +62,18 @@ const quiz = {
     name.textContent = info.name
     box.appendChild(name)
 
+    // User take images
+    const part = document.createElement('div')
+    const image = document.createElement('input')
+    image.type = 'file'
+    image.accept = "image/*;capture=camera"
+    image.id = 'photo'
+    image.onchange = quiz.getImage
+
+    part.appendChild(image)
+    box.appendChild(part)
+
+    // User answer questions
     for (let question of this.question_names) { // All questions
       const part = document.createElement('div')
       const text = document.createElement('p')
@@ -85,17 +97,19 @@ const quiz = {
       box.appendChild(part)
     }
 
-    // User take images
-    const part = document.createElement('div')
-    const image = document.createElement('input')
-    image.type = 'file'
-    image.accept = "image/*;capture=camera"
-    image.id = 'image'
-    part.appendChild(image)
-    box.appendChild(part)
-
     container.appendChild(box)
     container.style.display = 'block'
+  },
+
+  end () {
+    if (quiz.at === 4) {
+      quiz.at = 0
+      database.progress = quiz.progress // Add to database
+      document.querySelector("#overlay").style.display = 'none'
+      document.querySelector("#overlay").innerHTML = ''
+
+      herbarium.recents() // Display recents
+    }
   },
 
   check (event) {
@@ -120,13 +134,20 @@ const quiz = {
 
     event.srcElement.parentElement.style.display = 'none'
     quiz.at += 1
+    quiz.end()
+  },
 
-    if (quiz.at === 3) {
-      quiz.at = 0
-      database.progress = quiz.progress // Add to database
-      document.querySelector("#overlay").style.display = 'none'
+  getImage (event) {
+    files = event.target.files
+    quiz.progress.photos = []
 
-      herbarium.recents() // Display recents
+    for (let i = 0; i < files.length; i ++) {
+      quiz.progress.photos.push(files[i]) // Save in js file object format
+    }
+
+    if (false) {
+      quiz.at += 1
+      quiz.end()
     }
   }
 }

@@ -137,6 +137,16 @@ const promptUserData = function (callback) {
   callback() // Continue executing code
 }
 
+// Convert the file to DataUrl for displaying
+const fileToDataUrl (file) {
+  file = files[i]
+  let reader = new FileReader()
+  reader.addEventListener("load", function () {
+    return this.result
+  }, false)
+  reader.readAsDataURL(file)
+}
+
 // Gets the target location from the spreadsheet
 const getCsv = function (link, callback) {
   const xhttp = new XMLHttpRequest()
