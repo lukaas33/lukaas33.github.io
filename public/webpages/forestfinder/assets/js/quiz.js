@@ -58,6 +58,10 @@ const quiz = {
     const container = document.querySelector("#overlay")
     const box = document.createElement('div')
 
+    const title = document.createElement('h2')
+    title.textContent = "Quiz"
+    box.appendChild(title)
+
     const name = document.createElement('h3')
     name.textContent = info.name
     box.appendChild(name)
@@ -67,8 +71,9 @@ const quiz = {
     const image = document.createElement('input')
     image.type = 'file'
     image.accept = "image/*;capture=camera"
+    image.multiple = 'multiple'
     image.id = 'photo'
-    image.onchange = quiz.getImage
+    image.addEventListener('change', this.getImage)
 
     part.appendChild(image)
     box.appendChild(part)
@@ -142,12 +147,14 @@ const quiz = {
     quiz.progress.photos = []
 
     for (let i = 0; i < files.length; i ++) {
-      quiz.progress.photos.push(files[i]) // Save in js file object format
-    }
+      fileToDataUrl(files[i], (data) => {
+        quiz.progress.photos.push(data) // Save in dataurlformat
 
-    if (false) {
-      quiz.at += 1
-      quiz.end()
+        if (quiz.progress.photos) { // Not empty
+          quiz.at += 1
+          quiz.end()
+        }
+      })
     }
   }
 }

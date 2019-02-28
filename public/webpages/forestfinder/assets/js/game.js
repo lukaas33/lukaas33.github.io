@@ -124,12 +124,7 @@ const game = {
       loc: navigation.loc
     }
 
-    if (this.destinationInfo.required) { // Has a quiz
-      quiz.start(this.destinationInfo, progress)
-    } else {
-      database.progress = quiz.progress // Add to database
-      herbarium.recents() // Display recents
-    }
+    confirm(`Gefeliciteerd, je hebt de ${this.destinationInfo.name} gevonden!`)
 
     doc.cards.innerHTML = ''
 
@@ -139,6 +134,13 @@ const game = {
       this.chooseDestination(this.route[0]) // Choose the destination
     } else {
       this.end() // Game is done
+    }
+
+    if (this.destinationInfo.required) { // Has a quiz
+      quiz.start(this.destinationInfo, progress)
+    } else {
+      database.progress = progress // Add to database
+      herbarium.recents() // Display recents
     }
   },
   start () {

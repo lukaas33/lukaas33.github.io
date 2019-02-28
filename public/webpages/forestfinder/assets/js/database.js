@@ -138,11 +138,11 @@ const promptUserData = function (callback) {
 }
 
 // Convert the file to DataUrl for displaying
-const fileToDataUrl (file) {
-  file = files[i]
-  let reader = new FileReader()
+const fileToDataUrl = function (file, callback) {
+  const reader = new FileReader()
   reader.addEventListener("load", function () {
-    return this.result
+    console.log(this)
+    callback(this.result)
   }, false)
   reader.readAsDataURL(file)
 }
