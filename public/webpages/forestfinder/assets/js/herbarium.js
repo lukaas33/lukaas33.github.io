@@ -90,6 +90,7 @@ const herbarium = {
 
     const elements = {}
 
+    // Image banner
     elements.img = document.createElement('div')
     elements.img.id = 'img'
     const img = document.createElement('img')
@@ -99,10 +100,12 @@ const herbarium = {
     elements.description = document.createElement('div')
     elements.description.classList += "card"
 
+    // Title
     const title = document.createElement('h3')
     title.textContent = data.name
     elements.description.appendChild(title)
 
+    // General info
     const sub = document.createElement('h6')
     sub.textContent = `Boom #${data.tree_id}`
     elements.description.appendChild(sub)
@@ -118,6 +121,7 @@ const herbarium = {
 
     elements.sep1 = document.createElement('hr')
 
+    // Personal progress
     let reached = false
     if (database.progress) {
       for (let point of database.progress) {
@@ -169,6 +173,7 @@ const herbarium = {
       }
     }
 
+    // Extra info
     elements.header = document.createElement('h4')
     elements.header.textContent = "Meer info"
 
@@ -188,7 +193,7 @@ const herbarium = {
       elements.info.appendChild(link)
     }
 
-    for (let element in elements) { // Add all to page
+    for (let element in elements) { // Add all created elements to page
       page.appendChild(elements[element])
     }
 
@@ -198,6 +203,7 @@ const herbarium = {
     const card = document.createElement('div')
     card.className += 'card'
 
+    // Image
     const link = document.createElement('a')
     link.href = `herbarium/?id=${data.location_id}` // To unique page
 
@@ -205,6 +211,7 @@ const herbarium = {
     img.src = data.image
     link.appendChild(img)
 
+    // Name of tree
     const name = document.createElement('h3')
     name.textContent = data.name
     const box = document.createElement('div')
@@ -219,6 +226,7 @@ const herbarium = {
     const info = document.createElement('div')
     info.classList += "card"
 
+    // Date of discovery
     const dateBox = document.createElement('div')
     dateBox.classList += 'date'
     const dateIcon = document.createElement('img')
@@ -230,12 +238,14 @@ const herbarium = {
     dateBox.appendChild(date)
     info.appendChild(dateBox)
 
+    // Quiz score
     const scoreBox = document.createElement('div')
     scoreBox.classList += 'score'
     const scoreIcon = document.createElement('img')
     scoreIcon.src = "assets/images/score.svg"
     scoreBox.appendChild(scoreIcon)
 
+    // Correct in percentage form
     const progress = document.createElement('progress')
     progress.max = quiz.question_names.length
     progress.value = 0
@@ -265,6 +275,19 @@ const herbarium = {
 
     table.innerHTML = content
     info.appendChild(table)
+
+    // Images taken
+    const imgBox = document.createElement('div')
+    dateBox.classList += 'imgs'
+
+    const container = document.createElement('div')
+    for (let imgSrc of point.photos) {
+      let img = document.createElement('img')
+      img.src = imgSrc
+      container.appendChild(img)
+    }
+    imgBox.appendChild(container)
+    info.appendChild(imgBox)
 
     return info
   }
