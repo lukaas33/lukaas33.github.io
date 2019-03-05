@@ -126,7 +126,13 @@ const game = {
 
     confirm(`Gefeliciteerd, je hebt de ${this.destinationInfo.name} gevonden!`)
 
-    doc.cards.innerHTML = ''
+    if (this.destinationInfo.required) { // Has a quiz
+      quiz.start(this.destinationInfo, progress)
+    } else {
+      database.progress = progress // Add to database
+      doc.cards.innerHTML = ''
+      herbarium.recents() // Display recents
+    }
 
     this.visited = this.route[0] // Add
     this.route = this.route.slice(1) // Remove first from route
@@ -134,13 +140,6 @@ const game = {
       this.chooseDestination(this.route[0]) // Choose the destination
     } else {
       this.end() // Game is done
-    }
-
-    if (this.destinationInfo.required) { // Has a quiz
-      quiz.start(this.destinationInfo, progress)
-    } else {
-      database.progress = progress // Add to database
-      herbarium.recents() // Display recents
     }
   },
   start () {

@@ -1,12 +1,12 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
-header button[name="menu"], nav button[name="close"], #history div button[name='more'] {
+header button[name="menu"], nav button[name="close"], #history div button[name='more'], #overlay > div div select, #overlay > div div input[type=file] {
   cursor: pointer; }
-  header button:disabled[name="menu"], nav button:disabled[name="close"], #history div button:disabled[name='more'] {
+  header button:disabled[name="menu"], nav button:disabled[name="close"], #history div button:disabled[name='more'], #overlay > div div select:disabled, #overlay > div div input:disabled[type=file] {
     cursor: default; }
-  header button:focus[name="menu"], nav button:focus[name="close"], #history div button:focus[name='more'], header button:active[name="menu"], nav button:active[name="close"], #history div button:active[name='more'] {
+  header button:focus[name="menu"], nav button:focus[name="close"], #history div button:focus[name='more'], #overlay > div div select:focus, #overlay > div div input:focus[type=file], header button:active[name="menu"], nav button:active[name="close"], #history div button:active[name='more'], #overlay > div div select:active, #overlay > div div input:active[type=file] {
     outline: none; }
 
-header button[name="menu"], nav button[name="close"], #history div button[name='more'] {
+header button[name="menu"], nav button[name="close"], #history div button[name='more'], #overlay > div div select, #overlay > div div input[type=file] {
   background-color: transparent;
   border: 0 solid transparent; }
 
@@ -39,7 +39,9 @@ header .tag, #navigator .tag {
   width: 100%; }
 
 html {
-  font-size: 100%; }
+  font-size: 100%;
+  width: 100%;
+  height: 100%; }
 
 body {
   width: 100%;
@@ -222,12 +224,18 @@ header .tag {
     background-color: white;
     height: 100%;
     position: relative;
-    padding: 2rem; }
-    #overlay > div h3 {
+    padding: 1.5rem; }
+    #overlay > div h2 {
       font-size: 1.5rem; }
+    #overlay > div h3 {
+      font-size: 1.125rem;
+      font-weight: normal; }
     #overlay > div div {
       background-color: white;
-      height: 100%;
-      position: absolute;
-      top: 4rem;
-      left: 2rem; }
+      left: 1.5rem;
+      margin-top: 0.75rem; }
+      #overlay > div div select, #overlay > div div input[type=file] {
+        background-color: #E0E0E0;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        margin-top: 0.5rem; }

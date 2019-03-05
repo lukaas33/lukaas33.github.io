@@ -238,56 +238,60 @@ const herbarium = {
     dateBox.appendChild(date)
     info.appendChild(dateBox)
 
-    // Quiz score
-    const scoreBox = document.createElement('div')
-    scoreBox.classList += 'score'
-    const scoreIcon = document.createElement('img')
-    scoreIcon.src = "assets/images/score.svg"
-    scoreBox.appendChild(scoreIcon)
+    if (point.questions) {
+      // Quiz score
+      const scoreBox = document.createElement('div')
+      scoreBox.classList += 'score'
+      const scoreIcon = document.createElement('img')
+      scoreIcon.src = "assets/images/score.svg"
+      scoreBox.appendChild(scoreIcon)
 
-    // Correct in percentage form
-    const progress = document.createElement('progress')
-    progress.max = quiz.question_names.length
-    progress.value = 0
+      // Correct in percentage form
+      const progress = document.createElement('progress')
+      progress.max = quiz.question_names.length
+      progress.value = 0
 
-    // Table uses a lot of nested elements so I am using a different way of html insertion here
-    const table = document.createElement('table')
-    let content = `<tr><th>Vraag</th><th>Antwoord</th><th>Correct</th></tr>` // Header row
+      // Table uses a lot of nested elements so I am using a different way of html insertion here
+      const table = document.createElement('table')
+      let content = `<tr><th>Vraag</th><th>Antwoord</th><th>Correct</th></tr>` // Header row
 
-    for (let question in point.questions) { // Properties
-      let text = quiz.questions[question]
-      let user = point.questions[question].user
+      for (let question in point.questions) { // Properties
+        let text = quiz.questions[question]
+        let user = point.questions[question].user
 
-      let answer = point.questions[question].answer
-      let correct = ''
-      if (user.toLowerCase() !== answer.toLowerCase()) { // Wrong
-        correct = answer
-        user = `<s>${user}<s/>` // Strikethrough
-      } else { // Correct
-        progress.value += 1
+        let answer = point.questions[question].answer
+        let correct = ''
+        if (user.toLowerCase() !== answer.toLowerCase()) { // Wrong
+          correct = answer
+          user = `<s>${user}<s/>` // Strikethrough
+        } else { // Correct
+          progress.value += 1
+        }
+        content += `<tr><td>${text}</td><td>${user}</td><td>${correct}</td></tr>` // Add to string
       }
-      content += `<tr><td>${text}</td><td>${user}</td><td>${correct}</td></tr>` // Add to string
+
+      progress.textContent = `${progress.value}/${progress.max}`
+      scoreBox.appendChild(progress)
+      info.appendChild(scoreBox)
+
+      table.innerHTML = content
+      info.appendChild(table)
     }
 
-    progress.textContent = `${progress.value}/${progress.max}`
-    scoreBox.appendChild(progress)
-    info.appendChild(scoreBox)
+    if (point.photos) {
+      // Images taken
+      const imgBox = document.createElement('div')
+      imgBox.classList += 'imgs'
 
-    table.innerHTML = content
-    info.appendChild(table)
-
-    // Images taken
-    const imgBox = document.createElement('div')
-    dateBox.classList += 'imgs'
-
-    const container = document.createElement('div')
-    for (let imgSrc of point.photos) {
-      let img = document.createElement('img')
-      img.src = imgSrc
-      container.appendChild(img)
+      const container = document.createElement('div')
+      for (let imgSrc of point.photos) {
+        let img = document.createElement('img')
+        img.src = imgSrc
+        container.appendChild(img)
+      }
+      imgBox.appendChild(container)
+      info.appendChild(imgBox)
     }
-    imgBox.appendChild(container)
-    info.appendChild(imgBox)
 
     return info
   }

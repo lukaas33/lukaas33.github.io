@@ -71,8 +71,44 @@ header {
 
   .score {
     progress {
-      height: 1.4rem;
+      $height: 1.4rem;
+      height: $height;
       width: 100%;
+      -webkit-appearance: none;
+      appearance: none; // Reset default style
+      border: none;
+
+      &::before {
+        content: attr(value) '/' attr(max);
+        position: absolute;
+        font-size: ($height / 2);
+        margin: ($height / 4);
+        left: 50%;
+      }
+
+      &::-webkit-progress-bar { // The back part of the bar
+        border-radius: 1rem;
+        background-color: $grey-300;
+      }
+
+      &::-webkit-progress-value { // The progress part of the bar
+        border-radius: 1rem;
+        background-color: $primary-500;
+      }
+    }
+  }
+
+  .imgs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-height: 50vh;
+
+    div {
+      flex: 0 0 auto;
+      height: 100%;
+      width: auto;
+      margin-right: 1rem;
     }
   }
 

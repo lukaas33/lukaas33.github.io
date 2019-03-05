@@ -66,18 +66,6 @@ const quiz = {
     name.textContent = info.name
     box.appendChild(name)
 
-    // User take images
-    const part = document.createElement('div')
-    const image = document.createElement('input')
-    image.type = 'file'
-    image.accept = "image/*;capture=camera"
-    image.multiple = 'multiple'
-    image.id = 'photo'
-    image.addEventListener('change', this.getImage)
-
-    part.appendChild(image)
-    box.appendChild(part)
-
     // User answer questions
     for (let question of this.question_names) { // All questions
       const part = document.createElement('div')
@@ -101,6 +89,21 @@ const quiz = {
       part.appendChild(select)
       box.appendChild(part)
     }
+
+    // User take images
+    const part = document.createElement('div')
+    const text = document.createElement('p')
+    text.textContent = "Maak met je telefoon een foto van de boom."
+    const image = document.createElement('input')
+    image.type = 'file'
+    image.accept = "image/*;capture=camera"
+    image.multiple = 'multiple'
+    image.id = 'photo'
+    image.addEventListener('change', this.getImage)
+
+    part.appendChild(text)
+    part.appendChild(image)
+    box.appendChild(part)
 
     container.appendChild(box)
     container.style.display = 'block'

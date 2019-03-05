@@ -136,23 +136,43 @@ header {
   padding: 2rem;
   z-index: 120;
 
+  $font-size: 1.5rem;
+
   & > div { // Direct child
     background-color: white;
     height: 100%;
     position: relative; // Absolute elements relative to this
-    $margin: 2rem;
+    $margin: $font-size;
     padding: $margin;
 
+    h2 {
+      font-size: $font-size;
+    }
+
     h3 {
-      font-size: 1.5rem;
+      font-size: $font-size * 0.75;
+      font-weight: normal;
     }
 
     div {
       background-color: white;
-      height: 100%;
-      position: absolute;
-      top: $margin * 2;
       left: $margin;
+      margin-top: $margin / 2;
+
+      select, input[type=file] {
+        @extend %form;
+        background-color: $grey-300;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      select {
+      }
+
+      input[type=file] {
+
+      }
     }
   }
 }
