@@ -2,7 +2,28 @@
 document.querySelector("button[name=refresh]").addEventListener('click', (event) => {
   database.getOnline((data) => {
     console.log(data)
+    document.querySelector("button[name=refresh]").disabled = true // Can't press twice
   })
+})
+
+document.querySelector("button[name=end]").addEventListener('click', (event) => {
+  database.startTime = (new Date()).getTime() - (database.duration * 1000) // Clock will be 0
+  // Automatic redirect via menu.js
+})
+
+document.querySelector("button[name=reset]").addEventListener('click', (event) => {
+  database.setCookie("ended", false)
+  database.startTime = null
+
+  database.setCookie("visited", [])
+  database.setCookie("route", [])
+
+  database.setStorage("gameProgress", null)
+  database.setStorage("points", 0)
+
+  this.disabled = true // No clicking twice
+
+  location.href = '' // Redirect home
 })
 
 // Run
@@ -17,4 +38,8 @@ if (database.getStorage("userData")) {
   names.textContent = data.names.join(', ')
 
   doc.appendChild(names)
+}
+
+if (database.getCookie("ended") === true) { // Doesn't work if game already ended
+  document.querySelector("button[name=end]").disabled = true
 }

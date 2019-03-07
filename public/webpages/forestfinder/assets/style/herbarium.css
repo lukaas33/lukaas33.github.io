@@ -196,12 +196,14 @@ header .tag {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
-  max-height: 50vh; }
+  max-height: 50vh;
+  width: 100%; }
   #detail-page .imgs div {
     flex: 0 0 auto;
-    height: 100%;
-    width: auto;
+    width: 100%;
     margin-right: 1rem; }
+  #detail-page .imgs img {
+    height: 100%; }
 
 #detail-page table {
   font-size: 0.7rem;

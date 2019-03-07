@@ -162,6 +162,7 @@ const game = {
     navigation.track = () => {} // No actions on new gps data
     database.startTime = (new Date()).getTime() - (database.duration * 1000) // Clock will be 0
     document.querySelector(".tag").style.display = 'none'
+    document.querySelector('#history h4').textContent = "overzicht"
     herbarium.recents()
     doc.name.textContent = 'Game over'
     doc.image.src = "assets/images/placeholder.png"

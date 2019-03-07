@@ -88,6 +88,11 @@ $grey-900: #212121;
   @extend %click;
   background-color: transparent; // Hides default background
   border: 0 solid transparent; // Hides border
+
+  &:disabled {
+    background-color: $grey-400;
+    border-color: $grey-600;
+  }
 }
 
 %card {
