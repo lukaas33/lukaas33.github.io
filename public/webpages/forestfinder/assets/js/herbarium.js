@@ -74,15 +74,17 @@ const herbarium = {
     }
   },
   recents () {
-    document.querySelector('#overview-page').innerHTML = '' // First reset
-    const trees = this.filter(database.locations, database.progress)
-    const n = 3
-    const recent = trees.slice(0, n) // n most recent
+    const overview = document.querySelector('#overview-page')
+    if (overview) {
+      overview.innerHTML = '' // First reset
+      const trees = this.filter(database.locations, database.progress)
+      const n = 3
+      const recent = trees.slice(0, n) // n most recent
 
-    for (let tree of recent) {
-      this.diplayCard(tree)
+      for (let tree of recent) {
+        this.diplayCard(tree)
+      }
     }
-
   },
   displayPage (data) {
     const page = document.createElement('div')
@@ -299,8 +301,8 @@ const herbarium = {
 
 
 // Run
-if (location.href.indexOf('herbarium') === -1) { // At home
+if (location.href.indexOf('herbarium') === -1) {
   herbarium.recents()
-} else {
+} else if (location.href.indexOf('herbarium') !== -1) { // At herbarium page
   herbarium.plants()
 }
