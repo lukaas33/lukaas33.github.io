@@ -3,11 +3,11 @@
 
 // Functions
 const herbarium = {
-  filter (trees, visited) { // Filter out some
+  filter (trees, visited, all) { // Filter out some
     const sorted = []
 
     if (trees) {
-      if (database.getCookie("ended") === true) {
+      if (all) {
         // Display all
         for (let tree of trees) {
           if (!tree.double) { // Found the correct one
@@ -42,7 +42,7 @@ const herbarium = {
     return sorted
   },
   plants () { // Display all plants
-    const id = location.href.split('?id=')[1]
+    const id = parseInt(location.href.split('?id=')[1])
 
     if (database.progress.length > 0) { // Not empty
       if (id === undefined) { // Home
@@ -50,20 +50,24 @@ const herbarium = {
         page.id = "overview-page"
         document.querySelector('main').appendChild(page)
 
-        const trees = this.filter(database.locations, database.progress)
+        const trees = this.filter(database.locations, database.progress, database.getCookie("ended") === true)
 
         document.querySelector('#num').textContent = trees.length
         document.querySelector('.tag').style.opacity = 1 // Display
 
         for (let tree of trees) {
-          this.diplayCard(tree)
+          let card = this.diplayCard(tree)
+          if (card) {
+            document.querySelector('main').appendChild(card)
+          }
         }
       } else { // Detail page
         const trees = database.locations
 
         for (let tree of trees) {
-          if (tree.location_id == id) {
-            this.displayPage(tree)
+          if (tree.location_id === id) {
+            let end = database.getCookie('ended') === true
+            document.querySelector('main').appendChild(this.displayPage(tree, end))
           }
         }
       }
@@ -73,7 +77,7 @@ const herbarium = {
       document.querySelector('main').appendChild(text)
     }
   },
-  recents () {
+  recents () { // Display some plants
     const overview = document.querySelector('#overview-page')
     if (overview) {
       overview.innerHTML = '' // First reset
@@ -86,9 +90,9 @@ const herbarium = {
       }
     }
   },
-  displayPage (data) {
+  displayPage (data, answers) { // Display full details of a plant
     const page = document.createElement('div')
-    page.id = "detail-page"
+    page.classList += "detail-page"
 
     const elements = {}
 
@@ -144,7 +148,7 @@ const herbarium = {
     }
 
     if (!reached) { // Display the answers to the quiz
-      if (database.getCookie('ended') === true && data.required === true) {
+      if (answers && data.required === true) {
         elements.res = document.createElement('h4')
         elements.res.textContent = "Anwoorden"
         const trees = database.locations
@@ -160,7 +164,6 @@ const herbarium = {
           let answer = null
           for (let tree of trees) {
             if (tree.tree_id === data.tree_id && tree.double === false) {
-              console.log(tree)
               answer = tree[`quiz_${question}`]
             }
           }
@@ -199,9 +202,17 @@ const herbarium = {
       page.appendChild(elements[element])
     }
 
-    document.querySelector('main').appendChild(page)
+    return page
   },
-  diplayCard (data) {
+  overview () {
+    const trees = this.filter(database.locations, database.progress, true)
+    console.log(trees)
+    for (let tree of trees) {
+      document.querySelector('main').appendChild(this.displayPage(tree, true))
+      document.querySelector('main').appendChild(document.createElement('hr'))
+    }
+  },
+  diplayCard (data) { // Small card
     const card = document.createElement('div')
     card.className += 'card'
 
@@ -224,7 +235,7 @@ const herbarium = {
 
     document.querySelector('#overview-page').appendChild(card)
   },
-  progressCard (point) {
+  progressCard (point) { // Card on detail page
     const info = document.createElement('div')
     info.classList += "card"
 
@@ -301,8 +312,10 @@ const herbarium = {
 
 
 // Run
-if (location.href.indexOf('herbarium') === -1) {
-  herbarium.recents()
-} else if (location.href.indexOf('herbarium') !== -1) { // At herbarium page
+if (location.href.indexOf('herbarium') !== -1) { // At herbarium page
   herbarium.plants()
+} else if (location.href.indexOf('export') !== -1) { // At export page
+  herbarium.overview()
+} else { // Home for example
+  herbarium.recents()
 }

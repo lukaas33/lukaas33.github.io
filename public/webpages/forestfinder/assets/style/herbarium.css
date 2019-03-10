@@ -9,8 +9,11 @@ header button[name="menu"], nav button[name="close"] {
 header button[name="menu"], nav button[name="close"] {
   background-color: transparent;
   border: 0 solid transparent; }
+  header button:disabled[name="menu"], nav button:disabled[name="close"] {
+    background-color: #BDBDBD;
+    border-color: #757575; }
 
-#overview-page .card, #detail-page .card {
+#overview-page .card, .detail-page .card {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
   position: relative;
   background-color: #ffffff;
@@ -146,99 +149,99 @@ header .tag {
           font-size: 1rem;
           color: #616161; }
 
-#detail-page #img {
+.detail-page #img {
   z-index: 90;
   position: relative;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
   height: 30vh; }
-  #detail-page #img img {
+  .detail-page #img img {
     object-fit: cover;
     height: 100%;
     width: 100%; }
 
-#detail-page h4 {
+.detail-page h4 {
   text-align: center;
   text-transform: uppercase; }
 
-#detail-page a {
+.detail-page a {
   text-decoration: none;
   color: #4caf50; }
 
-#detail-page .date {
+.detail-page .date {
   margin-bottom: 1rem; }
 
-#detail-page .score, #detail-page .date {
+.detail-page .score, .detail-page .date {
   display: flex; }
-  #detail-page .score img, #detail-page .date img {
+  .detail-page .score img, .detail-page .date img {
     min-height: 1.6rem;
     margin-right: 0.4rem; }
 
-#detail-page .score progress {
+.detail-page .score progress {
   height: 1.4rem;
   width: 100%;
   -webkit-appearance: none;
   appearance: none;
   border: none; }
-  #detail-page .score progress::before {
+  .detail-page .score progress::before {
     content: attr(value) "/" attr(max);
     position: absolute;
     font-size: 0.7rem;
     margin: 0.35rem;
     left: 50%; }
-  #detail-page .score progress::-webkit-progress-bar {
+  .detail-page .score progress::-webkit-progress-bar {
     border-radius: 1rem;
     background-color: #E0E0E0; }
-  #detail-page .score progress::-webkit-progress-value {
+  .detail-page .score progress::-webkit-progress-value {
     border-radius: 1rem;
     background-color: #4caf50; }
 
-#detail-page .imgs {
+.detail-page .imgs {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
   max-height: 50vh;
   width: 100%; }
-  #detail-page .imgs div {
+  .detail-page .imgs div {
     flex: 0 0 auto;
     width: 100%;
     margin-right: 1rem; }
-  #detail-page .imgs img {
+  .detail-page .imgs img {
     height: 100%; }
 
-#detail-page table {
+.detail-page table {
   font-size: 0.7rem;
   table-layout: fixed;
   border-collapse: collapse;
   width: 100%;
   margin: 0.5rem 0; }
-  #detail-page table tr th {
+  .detail-page table tr th {
     background-color: #4caf50;
     color: white; }
-  #detail-page table tr th, #detail-page table tr td {
+  .detail-page table tr th, .detail-page table tr td {
     word-break: break-all;
     text-align: left;
     padding: 0.4rem;
     border: 1px solid #BDBDBD;
     width: auto; }
-    #detail-page table tr th:first-of-type, #detail-page table tr td:first-of-type {
+    .detail-page table tr th:first-of-type, .detail-page table tr td:first-of-type {
       width: 50%; }
 
-#detail-page .card {
+.detail-page .card {
   width: 95vw;
   margin: 2.5vw;
   padding: 2.5vw; }
-  #detail-page .card h3 {
+  .detail-page .card h3 {
     font-size: 1.2rem;
     color: #424242; }
-  #detail-page .card h5, #detail-page .card h6 {
+  .detail-page .card h5, .detail-page .card h6 {
     font-weight: normal;
     font-size: 0.8rem;
     color: #616161; }
-  #detail-page .card h5 {
+  .detail-page .card h5 {
     font-style: italic; }
-  #detail-page .card p {
+  .detail-page .card p {
     font-size: 0.8rem;
     color: #424242; }
-  #detail-page .card > a {
+  .detail-page .card > a {
     display: block;
     font-size: 0.8rem; }

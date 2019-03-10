@@ -1,1 +1,49 @@
-@import "herbarium.scss";
+.detail-page {
+  padding: 2rem;
+
+  * {
+    color: black !important;
+  }
+
+  #img {
+    display: none;
+  }
+
+  hr {
+    display: none;
+  }
+
+  h4 {
+    text-align: left;
+  }
+
+  .score {
+    progress {
+      &::before {
+        left: 2rem;
+      }
+    }
+  }
+
+  .card {
+
+    box-shadow: none;
+    background-color: transparent;
+    margin: 1rem 0;
+    padding: 0;
+
+    .imgs{
+      display: block;
+      max-height: none;
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+}
+
+hr {
+  page-break-after: always; // Print page breaks
+
+}
