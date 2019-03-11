@@ -7,14 +7,14 @@ const herbarium = {
     const sorted = []
 
     if (trees) {
-      if (all) {
+      if (all) { // All trees
         // Display all
         for (let tree of trees) {
           if (!tree.double) { // Found the correct one
             sorted.push(tree)
           }
         }
-      } else {
+      } else { // Only in progress
         // Filter the ones reached
         for (let point of visited) {
           for (let tree of trees) {
@@ -42,15 +42,18 @@ const herbarium = {
     return sorted
   },
   plants () { // Display all plants
-    const id = parseInt(location.href.split('?id=')[1])
+    const part = location.href.split('?id=')[1]
+    const id = part ? parseInt(part) : part
+    const ended = database.getCookie("ended") === true
 
-    if (database.progress.length > 0) { // Not empty
+    if (database.progress.length > 0 || ended) { // Not empty
       if (id === undefined) { // Home
         const page = document.createElement('div')
         page.id = "overview-page"
         document.querySelector('main').appendChild(page)
 
-        const trees = this.filter(database.locations, database.progress, database.getCookie("ended") === true)
+        const trees = this.filter(database.locations, database.progress, ended)
+        console.log(trees)
 
         document.querySelector('#num').textContent = trees.length
         document.querySelector('.tag').style.opacity = 1 // Display
@@ -66,8 +69,7 @@ const herbarium = {
 
         for (let tree of trees) {
           if (tree.location_id === id) {
-            let end = database.getCookie('ended') === true
-            document.querySelector('main').appendChild(this.displayPage(tree, end))
+            document.querySelector('main').appendChild(this.displayPage(tree, ended))
           }
         }
       }
@@ -79,9 +81,10 @@ const herbarium = {
   },
   recents () { // Display some plants
     const overview = document.querySelector('#overview-page')
+    const ended = database.getCookie("ended") === true
     if (overview) {
       overview.innerHTML = '' // First reset
-      const trees = this.filter(database.locations, database.progress)
+      const trees = this.filter(database.locations, database.progress, ended)
       const n = 3
       const recent = trees.slice(0, n) // n most recent
 
