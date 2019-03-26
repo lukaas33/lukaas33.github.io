@@ -8,15 +8,44 @@ const saveToHtml = function () {
   document.body.appendChild(link) // Needs to be in the DOM
   link.innerHTML = 'Download'
   link.click() // Start download
+  // history.back() // Back to last page
 }
 
-for (let script of document.getElementsByTagName('script')) {
-  script.parentNode.removeChild(script)
+const removeDep = function (callback) {
+  // Make the site without dependencies
+  const links = document.getElementsByTagName("link")
+  for (let i = 0; i < links.length; i++) {
+    let style = document.createElement("style")
+    style.media = "print,screen"
+    // Get the css code
+    let xml = new XMLHttpRequest()
+    xml.open('GET', links[i].href)
+    xml.onreadystatechange = function () {
+      // Enter inline
+      if (this.readyState === 4) {
+        style.textContent = xml.responseText
+        document.body.appendChild(style)
+
+        if (i === links.length - 1) {
+          callback()
+        }
+      }
+    }
+    xml.send()
+  }
 }
 
-const argument = location.href.split('?action=')[1]
-if (argument === 'save') {
-  saveToHtml()
-} else if (argument === 'mail') {
+// Run
+removeDep(() => {
+  const head = document.querySelector('head')
+  head.innerHTML = `
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=0">`
 
-}
+  const argument = location.href.split('?action=')[1]
+  if (argument === 'save') {
+    saveToHtml()
+  } else if (argument === 'mail') {
+
+  }
+})
