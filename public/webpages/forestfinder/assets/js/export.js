@@ -8,13 +8,22 @@ const saveToHtml = function () {
   document.body.appendChild(link) // Needs to be in the DOM
   link.innerHTML = 'Download'
   link.click() // Start download
-  // history.back() // Back to last page
+}
+
+const mailAsHtml = function () {
+  const content = document.querySelector('html').innerHTML
+  database.getUserData((data) => {
+    subject = `ForestFinder: ${data.class} - ${data.names}`
+    link = `mailto:${data.teacher}@lcl.nl?subject=${subject}&body=${encodeURIComponent(content)}`
+    window.open(link)
+  })
 }
 
 const removeDep = function (callback) {
   // Make the site without dependencies
   const links = document.getElementsByTagName("link")
   for (let i = 0; i < links.length; i++) {
+    console.log(links[i])
     let style = document.createElement("style")
     style.media = "print,screen"
     // Get the css code
@@ -46,6 +55,8 @@ removeDep(() => {
   if (argument === 'save') {
     saveToHtml()
   } else if (argument === 'mail') {
-
+    mailAsHtml()
   }
+
+  history.back() // Back to last page
 })
