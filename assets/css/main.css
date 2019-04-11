@@ -1,0 +1,28 @@
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Rem unitbased on this size */
+  font-size: 18px;
+  height: 100%;
+  width: 100%;
+
+  /* Variables */
+  --grey-200: #eeeeee;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: var(--grey-200);
+  /* Absolute will be positioned reltive to this element */
+  position: relative;
+}
+
+main, #screen, body {
+  width: 100%;
+  height: 100%;
+}
