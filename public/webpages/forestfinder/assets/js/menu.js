@@ -27,6 +27,7 @@ const menu = {
       sec = 0
 
       if (database.getCookie('ended') !== true) {
+        confirm("De speurtocht is afgelopen.")
         if (typeof(game) !== 'undefined') { // At the home page
           game.end()
         } else {
@@ -35,6 +36,8 @@ const menu = {
           }, 1000)
         }
       }
+    } else if (min == 5) {
+      confirm("Pas op. Je hebt nog 5 minuten tot het einde van de speurtocht.")
     }
 
     if (min < 10) {
