@@ -27,6 +27,7 @@ document.querySelector("button[name=reset]").addEventListener('click', (event) =
   location.href = '' // Redirect home
 })
 
+// Not used anymore
 document.querySelector("button[name=mail]").addEventListener('click', (event) => {
   this.disabled = true // No clicking twice
   location.href = 'assets/elements/export.html/?action=mail'

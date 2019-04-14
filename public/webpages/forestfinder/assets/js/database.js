@@ -4,6 +4,8 @@
 // === Vars ===
 const database = {
   link: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv",
+  emailID: "user_rHMf5Sh6f2prnnJNWlcBY",
+  emailTemplate: "template_Vq4u6Xi3",
   // Locations in the local database
   get locations () { // Accessed via database.locations
     return this.getStorage("treeLocationData")
