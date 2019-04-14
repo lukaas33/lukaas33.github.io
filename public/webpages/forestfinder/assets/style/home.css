@@ -1,14 +1,17 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
-header button[name="menu"], nav button[name="close"], #history div button[name='more'], #overlay > div div select, #overlay > div div input[type=file] {
+header button[name="menu"], nav button[name="close"], #history div button[name='more'], #overlay > div div select, #overlay > div div input[type=file], button[name=skip] {
   cursor: pointer; }
-  header button:disabled[name="menu"], nav button:disabled[name="close"], #history div button:disabled[name='more'], #overlay > div div select:disabled, #overlay > div div input:disabled[type=file] {
+  header button:disabled[name="menu"], nav button:disabled[name="close"], #history div button:disabled[name='more'], #overlay > div div select:disabled, #overlay > div div input:disabled[type=file], button:disabled[name=skip] {
     cursor: default; }
-  header button:focus[name="menu"], nav button:focus[name="close"], #history div button:focus[name='more'], #overlay > div div select:focus, #overlay > div div input:focus[type=file], header button:active[name="menu"], nav button:active[name="close"], #history div button:active[name='more'], #overlay > div div select:active, #overlay > div div input:active[type=file] {
+  header button:focus[name="menu"], nav button:focus[name="close"], #history div button:focus[name='more'], #overlay > div div select:focus, #overlay > div div input:focus[type=file], button:focus[name=skip], header button:active[name="menu"], nav button:active[name="close"], #history div button:active[name='more'], #overlay > div div select:active, #overlay > div div input:active[type=file], button:active[name=skip] {
     outline: none; }
 
-header button[name="menu"], nav button[name="close"], #history div button[name='more'], #overlay > div div select, #overlay > div div input[type=file] {
+header button[name="menu"], nav button[name="close"], #history div button[name='more'], #overlay > div div select, #overlay > div div input[type=file], button[name=skip] {
   background-color: transparent;
   border: 0 solid transparent; }
+  header button:disabled[name="menu"], nav button:disabled[name="close"], #history div button:disabled[name='more'], #overlay > div div select:disabled, #overlay > div div input:disabled[type=file], button:disabled[name=skip] {
+    background-color: #BDBDBD;
+    border-color: #757575; }
 
 #history div #overview-page .card {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
@@ -239,3 +242,15 @@ header .tag {
         border-radius: 0.5rem;
         padding: 0.5rem;
         margin-top: 0.5rem; }
+
+button[name=skip] {
+  background-color: #00b8d4;
+  border-radius: 50%;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  width: 15vw;
+  height: 15vw;
+  margin: 7.5vw;
+  left: 0;
+  bottom: 0;
+  display: none; }

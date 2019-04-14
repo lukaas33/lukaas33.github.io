@@ -75,6 +75,9 @@ const game = {
       refresh(directions) // Run the sceen refresh
     }
     display()
+    window.setTimeout(() => {
+      doc.skip.style.display = 'inline-block'
+    }, 5 * 60 * 1000)
   },
   // Look for the data if this tree is not unique
   getInfo (id, options) {
@@ -142,6 +145,15 @@ const game = {
       this.end() // Game is done
     }
   },
+  skip () {
+    this.visited = this.route[0] // Add
+    this.route = this.route.slice(1) // Remove first from route
+    if (this.route.length > 0) {
+      this.chooseDestination(this.route[0]) // Choose the destination
+    } else {
+      this.end() // Game is done
+    }
+  },
   start () {
     if (this.ended === true) { // Game already ended
       this.end()
@@ -176,7 +188,8 @@ const doc = {
   image: document.querySelector("#image img"),
   name: document.querySelector("header h2"),
   cards: document.querySelector("#overview-page"),
-  nav: document.querySelector("#navigator")
+  nav: document.querySelector("#navigator"),
+  skip: document.querySelector("button[name=skip]")
 }
 
 // === Functions ===
@@ -193,6 +206,7 @@ const refresh = function (directions) { // The screen refresh
     doc.arrow.style.transform = `rotate(${Math.floor(directions.bearing)}deg)`
   }
 }
+
 
 // === Execute ===
 // Async loading of different information
@@ -225,3 +239,10 @@ if ('serviceWorker' in window.navigator) { // If support
     alert('Registration failed', error)
   })
 }
+
+
+// === Events ===
+doc.skip.addEventListener('click', (event) => {
+  game.skip()
+  doc.skip.style.display = 'none'
+})

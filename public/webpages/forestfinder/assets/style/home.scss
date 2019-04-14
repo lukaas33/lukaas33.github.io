@@ -176,3 +176,17 @@ header {
     }
   }
 }
+
+button[name=skip] {
+  @extend %form;
+  background-color: $secondary-A700;
+  border-radius: 50%;
+  @include shadow(4, 8);
+  position: fixed;
+  width: 15vw;
+  height: 15vw; // 1:1
+  margin: (15vw / 2);
+  left: 0;
+  bottom: 0;
+  display: none;
+}
