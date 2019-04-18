@@ -1,16 +1,27 @@
 {
   "short_name": "Forest Finder",
   "name": "Forest Finder",
-  "icons": [],
   "start_url": ".",
-  "background_color": "#eeeeee",
+  "theme_color": "#4caf50",
+  "background_color": "#4caf50",
   "display": "standalone",
   "orientation": "portrait",
   "lang": "nl",
-  "theme_color": "#4caf50",
   "serviceworker": {
     "src": "serviceworker.js",
     "scope": ".",
     "use_cache": true
-  }
+  },
+  "icons": [
+    {
+        "src": "assets/images/favicon/android-chrome-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+    },
+    {
+        "src": "assets/images/favicon/android-chrome-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+    }
+  ]
 }
