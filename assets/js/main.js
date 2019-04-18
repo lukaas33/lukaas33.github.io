@@ -1,3 +1,6 @@
+// Made by Lucas --> (L)
+// Made by Anne --> (A)
+
 (function () { // Closure
   'use strict' // Js strict mode
 
@@ -34,7 +37,12 @@ const view = {
 // The entire map
 const map = {
   size: 0,
-  tiles: []
+  get tiles () {
+    store.get("map")
+  },
+  set tiles (value) {
+    store.set("map", value)
+  }
 }
 
 // Store all instances
@@ -48,7 +56,21 @@ const plants = []
  // |  _|| |_| | | | | (__| |_| | (_) | | | \__ \
  // |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-
+ // Functions for storing data in localStorage (L)
+const store = {
+  get: function (name) {
+    const string = localStorage.getItem(name)
+    try { // Won't work if the data is only a string
+      return JSON.parse(string) // Return converted value
+    } catch () {
+      return string
+    }
+  },
+  set: function (name, value) {
+    const string = JSON.stringify(value)
+    localStorage.setItem(name, string)
+  }
+}
 
 //   ____ _
 //  / ___| | __ _ ___ ___  ___  ___
@@ -64,7 +86,7 @@ class Coord {
   }
 }
 
-// Multiple sprites from a name
+// Multiple sprites from a name (L)
 class Sprites {
   dirs = ["up", "right", "down", "left"]
 
@@ -107,11 +129,11 @@ class Sprites {
   // Recursive function for getting multiple images (asynchronous)
   getImages (path, i, sprites, callback) {
     const file = `${path}-${i}.png`
-    this.getImage(file, (res) => {
-      if (res === null) {
+    this.getImage(file, (result) => {
+      if (result === null) {
         callback(sprites) // Return
       } else {
-        sprites.push(res)
+        sprites.push(result)
         this.getImages(path, i+1, sprites, callback) // Next image, recurse
       }
     })
@@ -125,6 +147,7 @@ class Obj {
     this.sprites = sprites
   }
 
+  // Display a sprite on the screen (L)
   display (sprite) {
     let img = new Image()
     img.onload = () => {
@@ -146,8 +169,10 @@ class Animal extends Obj {
 }
 
 class Squirrel extends Animal {
+  name = "Squirrel"
+
   constructor (loc) {
-    super(loc, "Squirrel")
+    super(loc, Squirrel.name)
   }
 }
 
@@ -170,7 +195,7 @@ class Texture extends Obj {
 // |____/ \___|\__|\__,_| .__/
 //                      |_|
 
-// Set the canvas to the screen size, via css gives stretching effect
+// Set the canvas to the screen size, via css gives stretching effect (L)
 doc.canvas.width = window.innerWidth
 doc.canvas.height = window.innerHeight
 view.screen.width = window.innerWidth
