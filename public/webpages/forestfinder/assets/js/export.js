@@ -1,10 +1,11 @@
+// Save the current page as html
 const saveToHtml = function () {
   const content = [document.querySelector('html').innerHTML]
   const file = new Blob(content, {type: "text/html"}) // JS file object
   const link = document.createElement('a')
   database.getUserData((data) => {
     link.href = URL.createObjectURL(file) // Save to Url
-    link.download = `forestfinder-${data.names}.html` // File name
+    link.download = `forestfinder-${data.names}-${data.class}-${data.teacher}.html` // File name
     link.hidden = true // Not visible
     document.body.appendChild(link) // Needs to be in the DOM
     link.innerHTML = 'Download'
@@ -23,28 +24,30 @@ const mailAsHtml = function () {
     window.open(link)
   })}
 
+// Make the file without dependencies
 const removeDep = function (callback) {
-  // Make the file without dependencies
+  // Remove images
   const logos = document.querySelectorAll(".date img, .score img")
   for (let logo of logos) {
     logo.parentNode.removeChild(logo)
   }
 
-  const links = document.getElementsByTagName("link")
-  for (let i = 0; i < links.length; i++) {
-    console.log(links[i])
+  // Move css inline
+  const css = document.getElementsByTagName("link")
+  for (let i = 0; i < css.length; i++) {
+    console.log(css[i])
     let style = document.createElement("style")
     style.media = "print,screen"
     // Get the css code
     let xml = new XMLHttpRequest()
-    xml.open('GET', links[i].href)
+    xml.open('GET', css[i].href)
     xml.onreadystatechange = function () {
       // Enter inline
       if (this.readyState === 4) {
         style.textContent = xml.responseText
         document.body.appendChild(style)
 
-        if (i === links.length - 1) {
+        if (i === css.length - 1) {
           callback()
         }
       }
@@ -52,19 +55,26 @@ const removeDep = function (callback) {
     xml.send()
   }
 
+  // Remove text of links
+  const links = document.getElementsByTagName('a')
+  for (let link of links) {
+      link.textContent = `${link.textContent}: ${link.href}`
+  }
 }
 
 // Run
 removeDep(() => {
   const head = document.querySelector('head')
+  // Remove all javascript and style elements
   head.innerHTML = `
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=0">`
 
-    const argument = location.href.split('?action=')[1]
-    if (argument === 'save') {
-      saveToHtml()
-    } else if (argument === 'mail') {
-      mailAsHtml()
-    }
+  const argument = location.href.split('?action=')[1]
+  if (argument === 'save') {
+    saveToHtml()
+  } else if (argument === 'mail') {
+    // Option disabled
+    mailAsHtml()
+  }
 })

@@ -1,5 +1,6 @@
 const menu = {
   nav: document.querySelector('nav'),
+  timeLeftWarning: false,
 
   insert () {
     // Insert menu in page
@@ -36,8 +37,9 @@ const menu = {
           }, 1000)
         }
       }
-    } else if (min == 5) {
+    } else if (min == 5 && !this.timeLeftWarning) {
       confirm("Pas op. Je hebt nog 5 minuten tot het einde van de speurtocht.")
+      this.timeLeftWarning = true
     }
 
     if (min < 10) {

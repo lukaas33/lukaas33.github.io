@@ -75,7 +75,10 @@ const game = {
       refresh(directions) // Run the sceen refresh
     }
     display()
-    window.setTimeout(() => {
+
+    // Start the timer for a skipping of the current tree
+    window.clearTimeout(this.skipTimer)
+    this.skipTimer = window.setTimeout(() => {
       doc.skip.style.display = 'inline-block'
     }, 5 * 60 * 1000)
   },
@@ -146,7 +149,7 @@ const game = {
     }
   },
   skip () {
-    this.visited = this.route[0] // Add
+    this.visited = this.route[0] // Add current destination
     this.route = this.route.slice(1) // Remove first from route
     if (this.route.length > 0) {
       this.chooseDestination(this.route[0]) // Choose the destination
