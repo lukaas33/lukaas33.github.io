@@ -180,7 +180,7 @@ const game = {
     document.querySelector('#history h4').textContent = "overzicht"
     herbarium.recents()
     doc.name.textContent = 'Game over'
-    doc.image.src = "assets/images/placeholder.png"
+    doc.image.src = "assets/images/game-over.jpg"
     doc.nav.innerHTML = `<h4>Punten</h4><div class="tag">${quiz.points}</div>`
   }
 }
@@ -236,7 +236,7 @@ if (database.locations === null) { // Available offline
 
 // Serviceworker register
 if ('serviceWorker' in window.navigator) { // If support
-  window.navigator.serviceWorker.register('serviceworker.js', {scope: '.'}).then((registration) => {
+  window.navigator.serviceWorker.register('serviceworker.js').then((registration) => {
     console.log('Service Worker Registered at:', registration.scope)
   }, (error) => {
     alert('Registration failed', error)
