@@ -103,7 +103,15 @@ const herbarium = {
     elements.img = document.createElement('div')
     elements.img.id = 'img'
     const img = document.createElement('img')
-    img.src = data.image
+    img.src = "assets/images/placeholder.svg" // Load placeholder first
+    img.setAttribute('data-img', data.image)
+    img.onload = function () {
+      const replace = new Image()
+      replace.onload = () => {
+        this.src = this.getAttribute('data-img') // Load regular image
+      }
+      replace.src = this.getAttribute('data-img')
+    }
     elements.img.appendChild(img)
 
     elements.description = document.createElement('div')
@@ -224,7 +232,16 @@ const herbarium = {
     link.href = `herbarium/?id=${data.location_id}` // To unique page
 
     const img = document.createElement('img')
-    img.src = data.image
+    img.src = "assets/images/placeholder.svg" // Load placeholder first
+    img.setAttribute('data-img', data.image)
+    img.onload = function () {
+      const replace = new Image()
+      replace.onload = () => {
+        this.src = this.getAttribute('data-img') // Load regular image
+      }
+      replace.src = this.getAttribute('data-img')
+    }
+
     link.appendChild(img)
 
     // Name of tree

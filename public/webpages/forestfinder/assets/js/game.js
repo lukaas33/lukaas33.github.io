@@ -197,7 +197,15 @@ const doc = {
 
 // === Functions ===
 const display = function () { // Displays info of the tree to visit
-  doc.image.src = game.destinationInfo.image
+  doc.image.src = "assets/images/placeholder.svg" // Load placeholder first
+  doc.image.setAttribute('data-img', game.destinationInfo.image)
+  doc.image.onload = function () {
+    const replace = new Image()
+    replace.onload = () => {
+      this.src = this.getAttribute('data-img') // Load regular image
+    }
+    replace.src = this.getAttribute('data-img')
+  }
   doc.name.textContent = game.destinationInfo.name
 }
 

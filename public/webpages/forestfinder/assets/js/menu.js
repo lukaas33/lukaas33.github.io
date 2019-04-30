@@ -48,7 +48,10 @@ const menu = {
     if (sec < 10) {
       sec = '0' + sec // This is allowed in js
     }
-    document.querySelector('.clock').innerHTML = `${min}:${sec}`
+    let clock = document.querySelector('.clock')
+    if (clock) {
+      clock.innerHTML = `${min}:${sec}`
+    }
   }
 }
 
