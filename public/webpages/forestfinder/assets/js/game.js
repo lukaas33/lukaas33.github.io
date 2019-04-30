@@ -234,16 +234,6 @@ if (database.locations === null) { // Available offline
   game.start()
 }
 
-// Serviceworker register
-if ('serviceWorker' in window.navigator) { // If support
-  window.navigator.serviceWorker.register('serviceworker.js').then((registration) => {
-    console.log('Service Worker Registered at:', registration.scope)
-  }, (error) => {
-    alert('Registration failed', error)
-  })
-}
-
-
 // === Events ===
 doc.skip.addEventListener('click', (event) => {
   game.skip()
