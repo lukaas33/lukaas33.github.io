@@ -30,13 +30,17 @@ const doc = {
 
 // Related to the view and drawing
 const view = {
+    width: null,
+    height: null,
     screen: doc.canvas.getContext('2d'),
-    fps: 30
+    fps: 15
 }
 
 // The entire map
 const map = {
   size: 0,
+  width: null,
+  height: null,
   get tiles () {
     store.get("map")
   },
@@ -62,7 +66,7 @@ const store = {
     const string = localStorage.getItem(name)
     try { // Won't work if the data is only a string
       return JSON.parse(string) // Return converted value
-    } catch () {
+    } catch (e) {
       return string
     }
   },
@@ -84,6 +88,20 @@ class Coord {
     this.x = x
     this.y = y
   }
+
+  // Several vector math functions (L)
+  add (coord) {
+    this.x += coord.x
+    this.y += coord.y
+  }
+  substract (coord) {
+    this.x -= coord.x
+    this.y -= coord.y
+  }
+
+  get length () {
+    return Math.sqrt(this.x**2 + this.y**2)
+  }
 }
 
 // Multiple sprites from a name (L)
@@ -93,8 +111,10 @@ class Sprites {
   constructor (name, moving, changing) {
     this.moving = moving
     this.changing = changing
+    this.frame = 0 // Track frame displayed
+    this.size = 32 // Default value
 
-    // Get the different sprites
+    // Get the different sprites (L)
     let path = `assets/sprites/${name.toLowerCase()}`
     if (moving) {
       for (let dir of this.dirs) { // All directions of movement
@@ -113,7 +133,7 @@ class Sprites {
     }
   }
 
-  // Preload image and verify it exists (asychronnous)
+  // Preload image and verify it exists (async) (L)
   getImage (path, callback) {
       let image = new Image()
       image.onload = () => {
@@ -126,7 +146,7 @@ class Sprites {
       image.src = path
   }
 
-  // Recursive function for getting multiple images (asynchronous)
+  // Recursive function for getting multiple images (async) (L)
   getImages (path, i, sprites, callback) {
     const file = `${path}-${i}.png`
     this.getImage(file, (result) => {
@@ -151,13 +171,47 @@ class Obj {
   display (sprite) {
     let img = new Image()
     img.onload = () => {
-      view.screen.drawImage(img, this.loc.x, this.loc.y)
+      view.screen.drawImage(img, this.loc.x, this.loc.y, this.sprites.size, this.sprites.size)
     }
     img.src = sprite
   }
 
+  // Update coordinates and sprites (L)
   update () {
+    const sprites = this.sprites[this.direction]
+    const frame = this.sprites.frame
+    if (this.sprites.moving && this.speed.length > 0) { // Moving object
+      this.sprites.frame = (frame + 1) % (sprites.length)
+    }
+    this.display(sprites[frame])
+  }
 
+  // Update position (L)
+  move () {
+    // this.speed.add(this.acceleration)
+    this.loc.add(this.speed)
+    this.direction = "down"
+    this.borders()
+    this.update()
+  }
+
+  // Stops objects from moving past borders (L)
+  borders () {
+    if (this.loc.x >= view.width) { // TODO switch with map values
+      this.loc.x = view.width - this.sprites.size
+      this.speed = new Coord(0, 0)
+    } else if (this.loc.x <= 0) {
+      this.loc.x = 0
+      this.speed = new Coord(0, 0)
+    }
+
+    if (this.loc.y >= view.height) {
+      this.loc.y = view.height - this.sprites.size
+      this.speed = new Coord(0, 0)
+    } else if (this.loc.y <= 0) {
+      this.loc.y = 0
+      this.speed = new Coord(0, 0)
+    }
   }
 }
 
@@ -196,12 +250,11 @@ class Texture extends Obj {
 //                      |_|
 
 // Set the canvas to the screen size, via css gives stretching effect (L)
-doc.canvas.width = window.innerWidth
-doc.canvas.height = window.innerHeight
-view.screen.width = window.innerWidth
-view.screen.height = window.innerHeight
+doc.canvas.width = view.width = view.screen.width = window.innerWidth
+doc.canvas.height = view.height = view.screen.height = window.innerHeight
 
 let squirrel = new Squirrel(new Coord(50, 50)) // TEST
+squirrel.speed = new Coord(0, 5)
 
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
@@ -212,7 +265,14 @@ let squirrel = new Squirrel(new Coord(50, 50)) // TEST
 // Main drawing function
 view.refresh = window.setInterval(() => {
  if (settings.started) {
+   // Draw background
+   view.screen.fillStyle = '#eeeeee'
+   view.screen.fillRect(0, 0, view.screen.width, view.screen.height)
 
+   // Draw plants
+
+   // Draw animals
+   squirrel.move()
  }
 }, Math.round(1000 / view.fps))
 
