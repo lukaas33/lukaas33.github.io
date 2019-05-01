@@ -84,7 +84,7 @@ const store = {
 
 // Coordinates
 class Coord {
-  constructor (x, y) {
+  constructor (x = 0, y = 0) {
     this.x = x
     this.y = y
   }
@@ -98,15 +98,38 @@ class Coord {
     this.x -= coord.x
     this.y -= coord.y
   }
+  divide (value) {
+    this.x /= value
+    this.y /= value
+  }
+  multiply (value) {
+    this.x *= value
+    this.y *= value
+  }
 
-  get length () {
+  get magnitude () { // Calculate the size
     return Math.sqrt(this.x**2 + this.y**2)
+  }
+  set magnitude (value) { // Change the size
+    let vector = this.normalized
+    vector.multiply(value)
+    this.x = vector.x
+    this.y = vector.y
+  }
+  get angle () { // Return the angle in radians
+    return Math.atan2(this.y, this.x)
+  }
+  get normalized () { // Return the unit vector
+    let mag = this.magnitude
+    let norm = new Coord(this.x, this.y)
+    norm.divide(mag)
+    return norm
   }
 }
 
 // Multiple sprites from a name (L)
 class Sprites {
-  dirs = ["up", "right", "down", "left"]
+  dirs = ["right", "down", "left", "up"]
 
   constructor (name, moving, changing) {
     this.moving = moving
@@ -165,12 +188,15 @@ class Obj {
   constructor (loc, sprites) {
     this.loc = loc
     this.sprites = sprites
+    this.speed = new Coord()
+    this.acceleration = new Coord()
+    this.direction = "down" // Starting position first draw
   }
 
   // Display a sprite on the screen (L)
   display (sprite) {
     let img = new Image()
-    img.onload = () => {
+    img.onload = () => { // Draw in canvas
       view.screen.drawImage(img, this.loc.x, this.loc.y, this.sprites.size, this.sprites.size)
     }
     img.src = sprite
@@ -180,37 +206,53 @@ class Obj {
   update () {
     const sprites = this.sprites[this.direction]
     const frame = this.sprites.frame
-    if (this.sprites.moving && this.speed.length > 0) { // Moving object
+    if (this.sprites.moving && this.speed.magnitude > 0) { // Moving object
       this.sprites.frame = (frame + 1) % (sprites.length)
     }
     this.display(sprites[frame])
   }
 
-  // Update position (L)
+  // Change position (L)
   move () {
-    // this.speed.add(this.acceleration)
-    this.loc.add(this.speed)
-    this.direction = "down"
+    if (this.acceleration.magnitude > 0) {
+      if (this.speed.magnitude < this.maxSpeed) { // Accelerating
+        this.speed.add(this.acceleration)
+      } else { // At max speed
+        this.speed.magnitude = this.maxSpeed // Set to max to correct if over
+        this.acceleration = new Coord()
+      }
+    }
+
+    if (this.speed.magnitude > 0) {
+      this.loc.add(this.speed) // Change in location per frame
+
+      // Get direction
+      let index = Math.floor(2 * this.speed.angle / Math.PI) // Angle to values 0, 1, 2, 3
+      this.direction = this.sprites.dirs[index] // Direction in text form
+    }
+
+    // Update on screen
     this.borders()
     this.update()
   }
 
   // Stops objects from moving past borders (L)
+  // TODO switch with map values
   borders () {
-    if (this.loc.x >= view.width) { // TODO switch with map values
+    if (this.loc.x + this.sprites.size >= view.width) { // Right
       this.loc.x = view.width - this.sprites.size
-      this.speed = new Coord(0, 0)
-    } else if (this.loc.x <= 0) {
+      this.speed = new Coord()
+    } else if (this.loc.x <= 0) { // Left
       this.loc.x = 0
-      this.speed = new Coord(0, 0)
+      this.speed = new Coord()
     }
 
-    if (this.loc.y >= view.height) {
+    if (this.loc.y + this.sprites.size >= view.height) { // Bottom
       this.loc.y = view.height - this.sprites.size
-      this.speed = new Coord(0, 0)
-    } else if (this.loc.y <= 0) {
+      this.speed = new Coord()
+    } else if (this.loc.y <= 0) { // Top
       this.loc.y = 0
-      this.speed = new Coord(0, 0)
+      this.speed = new Coord()
     }
   }
 }
@@ -227,6 +269,7 @@ class Squirrel extends Animal {
 
   constructor (loc) {
     super(loc, Squirrel.name)
+    this.maxSpeed = 10
   }
 }
 
@@ -254,7 +297,7 @@ doc.canvas.width = view.width = view.screen.width = window.innerWidth
 doc.canvas.height = view.height = view.screen.height = window.innerHeight
 
 let squirrel = new Squirrel(new Coord(50, 50)) // TEST
-squirrel.speed = new Coord(0, 5)
+squirrel.acceleration = new Coord(0.1, 0)
 
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
@@ -272,9 +315,9 @@ view.refresh = window.setInterval(() => {
    // Draw plants
 
    // Draw animals
-   squirrel.move()
+   squirrel.move() // TEST
  }
-}, Math.round(1000 / view.fps))
+}, Math.ceil(1000 / view.fps)) // Executes a certain amount of times per second
 
 // Everything loaded
 document.onreadystatechange = function () {
