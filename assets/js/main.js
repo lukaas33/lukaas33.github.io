@@ -172,7 +172,7 @@ class Sprites {
   getImage (path, callback) {
       let image = new Image()
       image.onload = () => {
-        callback(path) // Return
+        callback(image) // Return
       }
       image.onerror = () => {
         callback(null) // End
@@ -200,23 +200,9 @@ class Entity {
   constructor (loc, sprites) {
     this.loc = loc
     this.sprites = sprites // Store locations of image
-    this.sprite = null // Store image object
   }
 
   // Display a sprite on the screen (L)
-  display (sprite) {
-    if (this.sprite !== null && this.sprite.src.indexOf(sprite) !== -1) { // Already loaded image and same sprite
-      view.screen.drawImage(this.sprite, this.loc.x, this.loc.y, this.sprites.size, this.sprites.size)
-    } else {
-      this.sprite = new Image()
-      this.sprite.onload = () => {
-        this.display(this.sprite.src) // Display loaded
-      }
-      this.sprite.src = sprite
-    }
-  }
-
-  // Update sprite used (L)
   update () {
     let sprite = null
 
@@ -234,7 +220,7 @@ class Entity {
       sprite = this.sprites.sprite
     }
 
-    this.display(sprite)
+    view.screen.drawImage(sprite, this.loc.x, this.loc.y, this.sprites.size, this.sprites.size)
   }
 }
 
@@ -282,20 +268,23 @@ class Obj extends Entity {
       this.acceleration.magnitude = 0
     }
 
-    if (this.loc.x + this.sprites.size >= view.width) { // Right
-      this.loc.x = view.width - this.sprites.size
-      stop()
-    } else if (this.loc.x < 0) { // Left
-      this.loc.x = 0
-      stop()
+    if (this.direction === 'right' || this.direction === 'left') {
+      if (this.loc.x + this.sprites.size >= view.width) { // Right
+        this.loc.x = view.width - this.sprites.size
+        stop()
+      } else if (this.loc.x < 0) { // Left
+        this.loc.x = 0
+        stop()
+      }
     }
-
-    if (this.loc.y + this.sprites.size >= view.height) { // Bottom
-      this.loc.y = view.height - this.sprites.size
-      stop()
-    } else if (this.loc.y <= 0) { // Top
-      this.loc.y = 0
-      stop()
+    if (this.direction === 'up' || this.direction === 'down') {
+      if (this.loc.y + this.sprites.size >= view.height) { // Bottom
+        this.loc.y = view.height - this.sprites.size
+        stop()
+      } else if (this.loc.y <= 0) { // Top
+        this.loc.y = 0
+        stop()
+      }
     }
   }
 }
@@ -374,8 +363,8 @@ class Player extends Obj {
 //                      |_|
 
 // Set the canvas to the screen size, via css gives stretching effect (L)
-doc.canvas.width = view.width = view.screen.width = window.innerWidth
-doc.canvas.height = view.height = view.screen.height = window.innerHeight
+doc.canvas.width = view.width = view.screen.width = document.body.clientWidth
+doc.canvas.height = view.height = view.screen.height = document.body.clientHeight
 
 let squirrel = new Squirrel(new Coord(50, 50)) // TEST
 const PC = new Player(squirrel)
