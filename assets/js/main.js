@@ -40,7 +40,8 @@ const view = {
     width: null,
     height: null,
     screen: doc.canvas.getContext('2d'),
-    fps: 20
+    fps: 20, // Frames per seconn
+    scale: 32 // pixels in one meter
 }
 
 // The entire map
@@ -147,7 +148,10 @@ class Sprites {
     this.moving = moving // Moves in all directions
     this.changing = changing // Changes over time
     this.frame = 0 // Track frame displayed
-    this.size = 32 // Default value
+    this.size = {
+      width: null,
+      height: null
+    }
 
     // Get the different sprites (L)
     let path = `assets/sprites/${name.toLowerCase()}`
@@ -204,23 +208,26 @@ class Entity {
 
   // Display a sprite on the screen (L)
   update () {
+    let switchRate = 5 // Switch sprite every x frames
     let sprite = null
 
     if (this.sprites.moving) { // Moving object
       sprite = this.sprites[this.direction]
       if (this.speed.magnitude > 0) {
-        this.sprites.frame = (this.sprites.frame + 1) % (sprite.length) // New frame
+        this.sprites.frame += 1 // New frame
       }
-      sprite = sprite[this.sprites.frame]
+      sprite = sprite[Math.floor(this.sprites.frame / switchRate) % (sprite.length)]
     } else if (this.sprites.changing) { // Changing object
       sprite = this.sprites.sprite
-      this.sprites.frame = (this.sprites.frame + 1) % (sprite.length) // New frame
-      sprite = sprites[this.sprites.frame]
+      this.sprites.frame += 1
+      sprite = sprite[Math.floor(this.sprites.frame / switchRate) % (sprite.length)]
     } else { // Static object
       sprite = this.sprites.sprite
     }
 
-    view.screen.drawImage(sprite, this.loc.x, this.loc.y, this.sprites.size, this.sprites.size)
+    this.sprites.size.width = sprite.width
+    this.sprites.size.height = sprite.height
+    view.screen.drawImage(sprite, this.loc.x, this.loc.y)
   }
 }
 
@@ -251,7 +258,7 @@ class Obj extends Entity {
 
       // Get direction
       let angle = (this.speed.angle + 2 * Math.PI) % (2 * Math.PI) // Angle from 0 to 2 * Pi
-      let index = Math.floor(2 * angle / Math.PI) // Angle to values 0, 1, 2, 3
+      let index = Math.round(2 * (angle / Math.PI)) % 4 // Angle to values 0, 1, 2, 3
       this.direction = this.sprites.dirs[index] // Direction in text form
     }
 
@@ -269,8 +276,8 @@ class Obj extends Entity {
     }
 
     if (this.direction === 'right' || this.direction === 'left') {
-      if (this.loc.x + this.sprites.size >= view.width) { // Right
-        this.loc.x = view.width - this.sprites.size
+      if (this.loc.x + this.sprites.size.width >= view.width) { // Right
+        this.loc.x = view.width - this.sprites.size.width
         stop()
       } else if (this.loc.x < 0) { // Left
         this.loc.x = 0
@@ -278,8 +285,8 @@ class Obj extends Entity {
       }
     }
     if (this.direction === 'up' || this.direction === 'down') {
-      if (this.loc.y + this.sprites.size >= view.height) { // Bottom
-        this.loc.y = view.height - this.sprites.size
+      if (this.loc.y + this.sprites.size.height >= view.height) { // Bottom
+        this.loc.y = view.height - this.sprites.size.height
         stop()
       } else if (this.loc.y <= 0) { // Top
         this.loc.y = 0
@@ -301,8 +308,20 @@ class Squirrel extends Animal {
     let name = "Squirrel"
     super(loc, name)
     this.traits = {
-      maxSpeed: 20,
-      acceleration: 0.5, // px/frame TODO make into SI units
+      maxSpeed: 15,
+      acceleration: 0.5, // px/frame - TODO change to SI
+      name: name
+    }
+  }
+}
+
+class Wolf extends Animal {
+  constructor (loc) {
+    let name = "Wolf"
+    super(loc, name)
+    this.traits = {
+      maxSpeed: 10,
+      acceleration: 1,
       name: name
     }
   }
@@ -367,7 +386,8 @@ doc.canvas.width = view.width = view.screen.width = document.body.clientWidth
 doc.canvas.height = view.height = view.screen.height = document.body.clientHeight
 
 let squirrel = new Squirrel(new Coord(50, 50)) // TEST
-const PC = new Player(squirrel)
+let wolf = new Wolf(new Coord(100, 100))
+const PC = new Player(wolf)
 
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
