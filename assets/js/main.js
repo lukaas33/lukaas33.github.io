@@ -27,7 +27,7 @@ const settings = {
 
 // Fhysical constants, not changing
 const constants = {
-
+  scale: 32 // pixels in one meter
 }
 
 // Related to document, for example html elements
@@ -40,8 +40,7 @@ const view = {
     width: null,
     height: null,
     screen: doc.canvas.getContext('2d'),
-    fps: 20, // Frames per seconn
-    scale: 32 // pixels in one meter
+    fps: 20, // Frames per second
 }
 
 // The entire map
@@ -79,7 +78,7 @@ const store = {
     }
   },
   set: function (name, value) {
-    const string = JSON.stringify(value)
+    const string = JSON.stringify(value) // Convert value
     localStorage.setItem(name, string)
   }
 }
@@ -97,7 +96,7 @@ class Coord {
     this.y = y
   }
 
-  // Several vector math functions (L)
+  // Several vector math methods (L)
   add (coord) {
     this.x += coord.x
     this.y += coord.y
@@ -115,10 +114,10 @@ class Coord {
     this.y *= value
   }
 
-  get magnitude () { // Calculate the size
+  get magnitude () { // Calculate the length of the vector
     return Math.sqrt(this.x**2 + this.y**2)
   }
-  set magnitude (value) { // Change the size
+  set magnitude (value) { // Change the length of the vector
     let vector = this.normalized
     vector.multiply(value)
     this.x = vector.x
@@ -128,6 +127,7 @@ class Coord {
   get angle () { // Return the angle in radians
     return Math.atan2(this.y, this.x)
   }
+
   get normalized () { // Return the unit vector
     let mag = this.magnitude
     if (mag > 0) {
@@ -135,7 +135,7 @@ class Coord {
       norm.divide(mag)
       return norm
     } else {
-      return new Coord()
+      return new Coord() // 0-vector
     }
   }
 }
@@ -245,10 +245,11 @@ class Obj extends Entity {
     // Add to speed
     if (this.acceleration.magnitude >= 0) {
       if (this.speed.magnitude < this.traits.maxSpeed) { // Accelerating
+        this.acceleration.divide(view.fps) // From px/frame to px/second
+        this.acceleration.multiply(constants.scale) // From px/seond to m/s
         this.speed.add(this.acceleration)
       } else { // At max speed
         this.speed.magnitude = this.traits.maxSpeed // Set to max to correct if over
-        this.acceleration.magnitude = 0
       }
     }
 
@@ -270,7 +271,7 @@ class Obj extends Entity {
   // Stops objects from moving past borders (L)
   // TODO switch with map values
   borders () {
-    const stop = () => {
+    const stop = () => { // Stop moving
       this.speed.magnitude = 0
       this.acceleration.magnitude = 0
     }
@@ -296,6 +297,7 @@ class Obj extends Entity {
   }
 }
 
+// Parent class for all animals
 class Animal extends Obj {
   constructor (loc, name) {
     super(loc, new Sprites(name, true, false))
@@ -303,13 +305,15 @@ class Animal extends Obj {
   }
 }
 
+// All animal classes
 class Squirrel extends Animal {
   constructor (loc) {
     let name = "Squirrel"
     super(loc, name)
+    // The animal's traits, in SI units
     this.traits = {
       maxSpeed: 15,
-      acceleration: 0.5, // px/frame - TODO change to SI
+      acceleration: 0.1,
       name: name
     }
   }
@@ -319,26 +323,30 @@ class Wolf extends Animal {
   constructor (loc) {
     let name = "Wolf"
     super(loc, name)
+    // The animal's traits, in SI units
     this.traits = {
-      maxSpeed: 10,
-      acceleration: 1,
+      maxSpeed: 25,
+      acceleration: 0.05,
       name: name
     }
   }
 }
 
+// Plant objects, food for the animals
 class Plant {
   constructor () {
 
   }
 }
 
+// Background texture objects
 class Texture {
   constructor () {
 
   }
 }
 
+// Player class, will have one instance
 class Player extends Obj {
   constructor (animal) {
     super(animal.loc, animal.sprites)
@@ -374,6 +382,14 @@ class Player extends Obj {
   }
 }
 
+
+class NPC extends Obj {
+  constructor (animal) {
+    super(animal.loc, animal.sprites)
+    this.traits = animal.traits
+  }
+}
+
 //  ____       _
 // / ___|  ___| |_ _   _ _ __
 // \___ \ / _ \ __| | | | '_ \
@@ -385,8 +401,9 @@ class Player extends Obj {
 doc.canvas.width = view.width = view.screen.width = document.body.clientWidth
 doc.canvas.height = view.height = view.screen.height = document.body.clientHeight
 
+// Create player
 let squirrel = new Squirrel(new Coord(50, 50)) // TEST
-let wolf = new Wolf(new Coord(100, 100))
+let wolf = new Wolf(new Coord(100, 100)) // TEST
 const PC = new Player(wolf)
 
 //  _____                 _
