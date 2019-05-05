@@ -114,6 +114,14 @@ class Coord {
     this.y *= value
   }
 
+  rotate (dir) { // Rotate the vector
+    if (dir === "right") {
+      [this.x, this.y] = [this.y, -this.x]
+    } else if (dir === "left") {
+      [this.x, this.y] = [-this.y, this.x]
+    }
+  }
+
   get magnitude () { // Calculate the length of the vector
     return Math.sqrt(this.x**2 + this.y**2)
   }
@@ -264,36 +272,42 @@ class Obj extends Entity {
     }
 
     // Update on screen
-    this.borders()
+    if (this.borders()) {
+      this.stop()
+    }
     this.update()
+  }
+
+  // Stop moving
+  stop () {
+    this.speed.magnitude = 0
+    this.acceleration.magnitude = 0
   }
 
   // Stops objects from moving past borders (L)
   // TODO switch with map values
   borders () {
-    const stop = () => { // Stop moving
-      this.speed.magnitude = 0
-      this.acceleration.magnitude = 0
-    }
-
+    let colliding = false
     if (this.direction === 'right' || this.direction === 'left') {
       if (this.loc.x + this.sprites.size.width >= view.width) { // Right
         this.loc.x = view.width - this.sprites.size.width
-        stop()
+        colliding = true
       } else if (this.loc.x < 0) { // Left
         this.loc.x = 0
-        stop()
+        colliding = true
       }
     }
     if (this.direction === 'up' || this.direction === 'down') {
       if (this.loc.y + this.sprites.size.height >= view.height) { // Bottom
         this.loc.y = view.height - this.sprites.size.height
-        stop()
+        colliding = true
       } else if (this.loc.y <= 0) { // Top
         this.loc.y = 0
-        stop()
+        colliding = true
       }
     }
+
+    return colliding
   }
 }
 
@@ -313,7 +327,7 @@ class Squirrel extends Animal {
     // The animal's traits, in SI units
     this.traits = {
       maxSpeed: 15,
-      acceleration: 0.1,
+      acceleration: 0.05,
       name: name
     }
   }
@@ -325,8 +339,8 @@ class Wolf extends Animal {
     super(loc, name)
     // The animal's traits, in SI units
     this.traits = {
-      maxSpeed: 25,
-      acceleration: 0.05,
+      maxSpeed: 10,
+      acceleration: 0.01,
       name: name
     }
   }
@@ -351,14 +365,16 @@ class Player extends Obj {
   constructor (animal) {
     super(animal.loc, animal.sprites)
     this.traits = animal.traits
+    this.pressed = false // Key is being pressed
   }
 
   // Control function, called on key press
   control (key) {
     if (key === false) { // Stop moving
-      this.acceleration.magnitude = 0
-      this.speed.magnitude = 0
-    } else { // Start moving
+      this.pressed = false
+      this.stop()
+    } else if (!this.pressed) { // Start moving if not already a key pressed
+      this.pressed = true
       let movement = null
       switch (key) {
         case 37: // Left
@@ -387,6 +403,84 @@ class NPC extends Obj {
   constructor (animal) {
     super(animal.loc, animal.sprites)
     this.traits = animal.traits
+    this.state = "stop" // Start state
+    this.step = 0
+
+    // Movement matrix (L)
+    this.movement = {
+      "continue": { // Moving
+        "continue": 0.7,
+        "stop": 0.05,
+        "left": 0.1,
+        "right": 0.1,
+        "back": 0.05,
+      },
+      "stop": { // Not moving
+        "continue": 0.3,
+        "stop": 0.25,
+        "left": 0.2,
+        "right": 0.2,
+        "back": 0.05,
+      }
+    }
+
+    this.chooseDirection() // Start moving
+  }
+
+  chooseDirection () {
+    let option = null
+    // Choose random with different chances
+    const options = this.movement[this.state]
+    let cummulative = 0
+    let odd = Math.random() // random 0 - 1
+    for (let dir in options) {
+      cummulative += options[dir]
+      if (odd < cummulative) { // Found
+        option = dir
+        break
+      }
+    }
+
+    // Change the direction
+    if (option === "stop") {
+      this.stop()
+    } else {
+      if (this.acceleration.magnitude === 0) { // Not moving
+        this.acceleration = new Coord(0, 1)
+      }
+      this.acceleration.magnitude = this.traits.acceleration
+      switch (option) {
+        case "continue":
+          break
+        case "left":
+          this.acceleration.rotate("left")
+          break
+        case "right":
+          this.acceleration.rotate("right")
+          break
+        case "back":
+          this.acceleration.rotate("left")
+          this.acceleration.rotate("left")
+          break
+      }
+    }
+  }
+
+  // Main movement function, overwrites parent method (L)
+  move () {
+    this.step += 1
+    if (this.step >= view.fps) { // Reduces the number of decisions in direction (1 per second)
+      this.chooseDirection()
+      this.step = 0
+    }
+
+    super.move() // Call parent method
+  }
+
+  borders () {
+    if (super.borders()) { // Call parent method
+      this.chooseDirection()
+    }
   }
 }
 
@@ -404,7 +498,8 @@ doc.canvas.height = view.height = view.screen.height = document.body.clientHeigh
 // Create player
 let squirrel = new Squirrel(new Coord(50, 50)) // TEST
 let wolf = new Wolf(new Coord(100, 100)) // TEST
-const PC = new Player(wolf)
+animals[0] = new NPC(wolf) // TESt
+const PC = new Player(squirrel)
 
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
@@ -422,6 +517,9 @@ view.refresh = window.setInterval(() => {
    // Draw plants
 
    // Draw animals
+   for (let animal of animals) {
+     animal.move()
+   }
    PC.move()
  }
 }, Math.ceil(1000 / view.fps)) // Executes a certain amount of times per second
