@@ -334,6 +334,14 @@ class Squirrel extends Animal {
     this.traits = {
       maxSpeed: 15,
       acceleration: 0.05,
+      area: "land",
+      health: 25,
+      mass: 0.3,
+      diet: "herbivore",
+      camouflage: 0.6,
+      perception: 0.8,
+      aggressiveness: 0.1,
+      attack: 0.2,
       name: name
     }
   }
@@ -347,6 +355,35 @@ class Wolf extends Animal {
     this.traits = {
       maxSpeed: 10,
       acceleration: 0.01,
+      area: "land",
+      health: 100,
+      mass: 60.0,
+      diet: "carnivore",
+      camouflage: 0.6,
+      perception: 0.6,
+      aggressiveness: 0.7,
+      attack: 0.8,
+      name: name
+    }
+  }
+}
+
+class Deer extends Animal {
+  constructor (loc) {
+    let name = "Deer
+    super(loc, name)
+    // the animal's traits, in SI units
+    this.traits = {
+      maxSpeed: 7,
+      acceleration: 0.07,
+      area: "land",
+      health: 70,
+      mass: 50,
+      diet: "herbivore",
+      camouflage: 0.7,
+      perception: 0.7,
+      aggressiveness: 0.2,
+      attack: 0.3,
       name: name
     }
   }
@@ -509,7 +546,6 @@ let squirrel = new Squirrel(view.middle) // TEST
 let wolf = new Wolf(new Coord(3000, 3000)) // TEST
 animals[0] = new NPC(wolf) // TESt
 const PC = new Player(squirrel)
-
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
 // |  _| \ \ / / _ \ '_ \| __/ __|
