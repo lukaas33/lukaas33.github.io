@@ -49,12 +49,7 @@ const map = {
   size: 200, // Meters wide and heigh
   width: null,
   height: null,
-  get tiles () {
-    store.get("map")
-  },
-  set tiles (value) {
-    store.set("map", value)
-  }
+  tiles: []
 }
 
 // Store all instances
@@ -238,10 +233,8 @@ class Entity {
     this.sprites.size.height = sprite.height
 
     // Location from absolute (map) to relative (view)
-    let zero = new Coord(view.middle.x, view.middle.y)
-    zero.subtract(new Coord(view.width/2, view.height/2)) // Zero of the view
-    let x = Math.floor(this.loc.x - zero.x)
-    let y = Math.floor(this.loc.y - zero.y)
+    let x = Math.floor(this.loc.x - (view.middle.x - view.width/2))
+    let y = Math.floor(this.loc.y - (view.middle.y - view.height/2))
     view.screen.drawImage(sprite, x, y)
   }
 }
@@ -330,7 +323,7 @@ class Squirrel extends Animal {
   constructor (loc) {
     let name = "Squirrel"
     super(loc, name)
-    // The animal's traits, in SI units
+    // The animal's traits, in SI units (A)
     this.traits = {
       maxSpeed: 15,
       acceleration: 0.05,
@@ -351,7 +344,7 @@ class Wolf extends Animal {
   constructor (loc) {
     let name = "Wolf"
     super(loc, name)
-    // The animal's traits, in SI units
+    // The animal's traits, in SI units (A)
     this.traits = {
       maxSpeed: 10,
       acceleration: 0.01,
@@ -370,9 +363,9 @@ class Wolf extends Animal {
 
 class Deer extends Animal {
   constructor (loc) {
-    let name = "Deer
+    let name = "Deer"
     super(loc, name)
-    // the animal's traits, in SI units
+    // the animal's traits, in SI units (A)
     this.traits = {
       maxSpeed: 7,
       acceleration: 0.07,
@@ -397,9 +390,9 @@ class Plant {
 }
 
 // Background texture objects
-class Texture {
-  constructor () {
-
+class Texture extends Entity {
+  constructor (loc, name) {
+    super(loc, new Sprites(name, false, false))
   }
 }
 
@@ -411,7 +404,7 @@ class Player extends Obj {
     this.pressed = false // Key is being pressed
   }
 
-  // Control function, called on key press
+  // Control function, called on key press (L)
   control (key) {
     if (key === false) { // Stop moving
       this.pressed = false
@@ -470,6 +463,7 @@ class NPC extends Obj {
     this.chooseDirection() // Start moving
   }
 
+  // Choose a direction at random from the decision matrix (L)
   chooseDirection () {
     let option = null
     // Choose random with different chances
@@ -542,10 +536,11 @@ view.middle = new Coord(map.width, map.height)
 view.middle.divide(2)
 
 // Create player
-let squirrel = new Squirrel(view.middle) // TEST
-let wolf = new Wolf(new Coord(3000, 3000)) // TEST
-animals[0] = new NPC(wolf) // TESt
-const PC = new Player(squirrel)
+// View.middle reference passed so when the player location is updated the player view is as well
+const PC = new Player(new Squirrel(view.middle))
+animals[0] = new NPC(new Wolf(new Coord(3000, 3000))) // TEST
+animals[1] = new NPC(new Wolf(new Coord(3100, 3100))) // TEST
+
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
 // |  _| \ \ / / _ \ '_ \| __/ __|
@@ -557,13 +552,15 @@ view.refresh = window.setInterval(() => {
  if (settings.started) {
    // Draw background
    view.screen.fillStyle = '#eeeeee'
-   view.screen.fillRect(0, 0, view.screen.width, view.screen.height)
+   view.screen.fillRect(0, 0, view.screen.width, view.screen.height) // TEST
 
    // Draw plants
 
    // Draw animals
    for (let animal of animals) {
-     animal.move()
+     if (animal) {
+       animal.move()
+     }
    }
    PC.move()
  }
@@ -574,7 +571,7 @@ document.addEventListener('keydown', (event) => {
   PC.control(event.keyCode)
 })
 
-document.addEventListener('keyup', (event) => {
+document.addEventListener('keyup', () => {
   PC.control(false) // Stop signal
 })
 
