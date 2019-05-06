@@ -39,13 +39,14 @@ const doc = {
 const view = {
     width: null,
     height: null,
+    middle: null,
     screen: doc.canvas.getContext('2d'),
     fps: 20, // Frames per second
 }
 
 // The entire map
 const map = {
-  size: 0,
+  size: 200, // Meters wide and heigh
   width: null,
   height: null,
   get tiles () {
@@ -101,7 +102,7 @@ class Coord {
     this.x += coord.x
     this.y += coord.y
   }
-  substract (coord) {
+  subtract (coord) {
     this.x -= coord.x
     this.y -= coord.y
   }
@@ -235,7 +236,13 @@ class Entity {
 
     this.sprites.size.width = sprite.width
     this.sprites.size.height = sprite.height
-    view.screen.drawImage(sprite, this.loc.x, this.loc.y)
+
+    // Location from absolute (map) to relative (view)
+    let zero = new Coord(view.middle.x, view.middle.y)
+    zero.subtract(new Coord(view.width/2, view.height/2)) // Zero of the view
+    let x = Math.floor(this.loc.x - zero.x)
+    let y = Math.floor(this.loc.y - zero.y)
+    view.screen.drawImage(sprite, x, y)
   }
 }
 
@@ -285,21 +292,20 @@ class Obj extends Entity {
   }
 
   // Stops objects from moving past borders (L)
-  // TODO switch with map values
   borders () {
     let colliding = false
     if (this.direction === 'right' || this.direction === 'left') {
-      if (this.loc.x + this.sprites.size.width >= view.width) { // Right
-        this.loc.x = view.width - this.sprites.size.width
+      if (this.loc.x + this.sprites.size.width >= map.width) { // Right
+        this.loc.x = map.width - this.sprites.size.width
         colliding = true
-      } else if (this.loc.x < 0) { // Left
+      } else if (this.loc.x <= 0) { // Left
         this.loc.x = 0
         colliding = true
       }
     }
     if (this.direction === 'up' || this.direction === 'down') {
-      if (this.loc.y + this.sprites.size.height >= view.height) { // Bottom
-        this.loc.y = view.height - this.sprites.size.height
+      if (this.loc.y + this.sprites.size.height >= map.height) { // Bottom
+        this.loc.y = map.height - this.sprites.size.height
         colliding = true
       } else if (this.loc.y <= 0) { // Top
         this.loc.y = 0
@@ -494,10 +500,13 @@ class NPC extends Obj {
 // Set the canvas to the screen size, via css gives stretching effect (L)
 doc.canvas.width = view.width = view.screen.width = document.body.clientWidth
 doc.canvas.height = view.height = view.screen.height = document.body.clientHeight
+map.width = map.height = map.size * constants.scale
+view.middle = new Coord(map.width, map.height)
+view.middle.divide(2)
 
 // Create player
-let squirrel = new Squirrel(new Coord(50, 50)) // TEST
-let wolf = new Wolf(new Coord(100, 100)) // TEST
+let squirrel = new Squirrel(view.middle) // TEST
+let wolf = new Wolf(new Coord(3000, 3000)) // TEST
 animals[0] = new NPC(wolf) // TESt
 const PC = new Player(squirrel)
 
