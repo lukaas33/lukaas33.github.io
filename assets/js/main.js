@@ -433,17 +433,26 @@ class Player extends Obj {
     }
   }
 
-  // View adapts when you get close to the edge (L)
+  // View adapts when you get close to the edge, not in the center (L)
   move () {
     // Near the edge
-    let nearEdgeX = this.loc.x >= map.width - view.width/2 || this.loc.x <= view.width/2
-    let nearEdgeY = this.loc.y >= map.height - view.width/2 || this.loc.y <= view.height/2
+    let nearEdgeX = (this.loc.x >= map.width - view.width / 2) || (this.loc.x <= view.width / 2)
+    let nearEdgeY = (this.loc.y >= map.height - view.width / 2) || (this.loc.y <= view.height / 2)
 
-    // if (nearEdgeX) {
-    //   this.loc = new Coord(this.loc.x, this.loc.y) // Use value instead of reference
-    // } else {
-    //   this.loc = view.middle // Use reference
-    // }
+    if (nearEdgeX || nearEdgeY) {
+      if (this.loc === view.middle) {
+        this.loc = new Coord(this.loc.x, this.loc.y) // Use value instead of reference
+      }
+
+      // View follows on one axis
+      if (nearEdgeX && !nearEdgeY) {
+        view.middle.y = this.loc.y
+      } else if (!nearEdgeX && nearEdgeY) {
+        view.middle.x = this.loc.x
+      }
+    } else {
+      this.loc = view.middle // Use reference
+    }
 
     super.move()
   }
