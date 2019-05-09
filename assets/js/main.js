@@ -4,7 +4,7 @@
 //    / ___ \| | | | | | | | | | (_| | | | . \| | | | | (_| | (_| | (_) | | | | | |
 //   /_/   \_\_| |_|_|_| |_| |_|\__,_|_| |_|\_\_|_| |_|\__, |\__,_|\___/|_| |_| |_|
 //                                                     |___/
-// A game by Anne du Croo de Jong and Lucas van Osenbruggen
+// A game by Anne du Croo de Jongh and Lucas van Osenbruggen
 // Code blocks are attributed to the author using (A) and (L) respectively.
 //
 
@@ -49,7 +49,7 @@ const map = {
   size: 200, // Meters wide and heigh
   width: null,
   height: null,
-  tiles: []
+  tiles: null
 }
 
 // Store all instances
@@ -77,6 +77,10 @@ const store = {
     const string = JSON.stringify(value) // Convert value
     localStorage.setItem(name, string)
   }
+}
+
+map.generate = function () {
+
 }
 
 //   ____ _
@@ -396,6 +400,27 @@ class Texture extends Entity {
   }
 }
 
+class Water extends Texture {
+  constructor (loc) {
+    let name = "water"
+    super(loc, name)
+  }
+}
+
+class Land extends Texture {
+  constructor (loc) {
+    let name = "land"
+    super(loc, name)
+  }
+}
+
+class Tree extends Texture {
+  constructor (loc) {
+    let name = "tree"
+    super(loc, name)
+  }
+}
+
 // Player class, will have one instance
 class Player extends Obj {
   constructor (animal) {
@@ -559,11 +584,14 @@ map.width = map.height = map.size * constants.scale
 view.middle = new Coord(map.width, map.height)
 view.middle.divide(2)
 
+// Generate map
+map.generate()
+
 // Create player
 // View.middle reference passed so when the player location is updated the player view is as well
 const PC = new Player(new Squirrel(view.middle))
 animals[0] = new NPC(new Wolf(new Coord(3000, 3000))) // TEST
-animals[1] = new NPC(new Wolf(new Coord(3100, 3100))) // TEST
+animals[1] = new NPC(new Deer(new Coord(3100, 3100))) // TEST
 
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
@@ -577,6 +605,8 @@ view.refresh = window.setInterval(() => {
    // Draw background
    view.screen.fillStyle = '#eeeeee'
    view.screen.fillRect(0, 0, view.screen.width, view.screen.height) // TEST
+
+
 
    // Draw plants
 
