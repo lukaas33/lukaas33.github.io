@@ -77,18 +77,8 @@ self.addEventListener('fetch', function (event) {
         return response
       }
 
-      let header = new Headers()
-      header.append("Content-Security-Policy", "upgrade-insecure-requests")
-      event.request = new Request(event.request.url, {
-        headers: header,
-        method: event.request.method,
-        credentials: event.request.credentials,
-        redirect: 'manual'   // let browser handle redirects
-      })
-
       return fetch(event.request).then(
         function (response) {
-          console.log(response)
           // Check if we received a valid response
           if (response.ok || response.type === 'opaque') {
             return response
