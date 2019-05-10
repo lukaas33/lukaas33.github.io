@@ -152,7 +152,6 @@ header .tag {
     border-radius: 50%;
     box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.1), 0px 6px 6px rgba(0, 0, 0, 0.2); }
     #navigator svg #compass {
-      r: 15.75vh;
       fill: #43a047 !important;
       stroke: #2e7d32 !important;
       stroke-width: 3.5vh; }

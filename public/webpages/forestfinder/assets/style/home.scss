@@ -57,7 +57,7 @@ header {
     @include shadow(8, 8);
 
     #compass {
-      r: ($nav-height / 2) * 0.9; // x% of container
+      // r: ($nav-height / 2) * 0.9; // x% of container
       fill: $primary-600 !important;
       stroke: $primary-800 !important;
       stroke-width: ($nav-height * 0.1); // x% of container
