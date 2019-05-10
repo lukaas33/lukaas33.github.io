@@ -92,7 +92,7 @@ const database = {
     const stringValue = JSON.stringify(value) // Convert to string
     const time = (5 * 24 * 60 * 60 * 1000) // x days
     const expire = new Date((new Date()).getTime() + time) // Won't expire when browser window closes
-    document.cookie = `${name}=${stringValue}; path=/webpages/forestfinder; expires=${expire.toUTCString()}` // Add to cookies
+    document.cookie = `${name}=${stringValue}; expires=${expire.toUTCString()}` // Add to cookies
   },
   // Cache functions
   checkCachedImages (data) {
