@@ -27,20 +27,20 @@ const menu = {
       min = 0
       sec = 0
 
-      if (database.getCookie('ended') !== true) {
-        confirm("De speurtocht is afgelopen.")
-        if (typeof(game) !== 'undefined') { // At the home page
-          game.end()
-        } else {
-          window.setTimeout(() => {
-            location.href = '' // Home
-          }, 1000)
-        }
-      }
-    } else if (min == 5 && !this.timeLeftWarning) {
-      confirm("Pas op. Je hebt nog 5 minuten tot het einde van de speurtocht.")
-      this.timeLeftWarning = true
-    }
+    //   if (database.getCookie('ended') !== true) {
+    //     confirm("De speurtocht is afgelopen.")
+    //     if (typeof(game) !== 'undefined') { // At the home page
+    //       game.end()
+    //     } else {
+    //       window.setTimeout(() => {
+    //         location.href = '' // Home
+    //       }, 1000)
+    //     }
+    //   }
+    // } else if (min == 5 && !this.timeLeftWarning) {
+    //   confirm("Pas op. Je hebt nog 5 minuten tot het einde van de speurtocht.")
+    //   this.timeLeftWarning = true
+    // }
 
     if (min < 10) {
       min = '0' + min // 08, 09, 10, 11
