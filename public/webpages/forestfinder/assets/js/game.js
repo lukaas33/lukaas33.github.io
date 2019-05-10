@@ -68,7 +68,9 @@ const game = {
         navigation.destination = new Coord(option) // Store only the coordinate here
       }
     }
+    console.log(id, options)
     this.destinationInfo = this.getInfo(id, options)
+    debugger
     // Display
     if (navigation.loc !== null) {
       const directions = navigation.directions()
