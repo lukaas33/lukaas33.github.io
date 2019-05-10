@@ -62,7 +62,6 @@ const urlsToCache = [
 self.addEventListener('install', function (event) {
   event.waitUntil(
     caches.open(cacheName).then((cache) => {
-      console.log('Opened cache')
       return cache.addAll(urlsToCache)
     })
   )
@@ -70,25 +69,33 @@ self.addEventListener('install', function (event) {
 
 // Get data from cache
 // https://developers.google.com/web/fundamentals/primers/service-workers/
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', function (event) {
   event.respondWith(
-    caches.match(event.request).then(function(response) {
+    caches.match(event.request).then(function (response) {
       // Cache hit - return response
       if (response) {
         return response
       }
 
+      let header = new Headers()
+      header.append("Content-Security-Policy", "upgrade-insecure-requests")
+      event.request = new Request(event.request.url, {
+        headers: header,
+        method: event.request.method,
+        credentials: event.request.credentials,
+        redirect: 'manual'   // let browser handle redirects
+      })
+
       return fetch(event.request).then(
-        function(response) {
+        function (response) {
+          console.log(response)
           // Check if we received a valid response
-          if(!response || response.status !== 200 || response.type !== 'basic') {
+          if (response.ok || response.type === 'opaque') {
             return response
+          } else if (response.status === 404) {
+            return fetch("assets/images/placeholder.svg")
           }
 
-          // IMPORTANT: Clone the response. A response is a stream
-          // and because we want the browser to consume the response
-          // as well as the cache consuming the response, we need
-          // to clone it so we have two streams.
           let responseToCache = response.clone()
 
           caches.open(cacheName).then(function (cache) {
@@ -98,7 +105,12 @@ self.addEventListener('fetch', function(event) {
           return response
         }
       )
-    })
+    }).catch(
+      function (error) {
+        console.warn(error)
+        return fetch("assets/images/placeholder.svg")
+      }
+    )
   )
 })
 
