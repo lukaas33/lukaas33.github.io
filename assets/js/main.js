@@ -46,7 +46,7 @@ const view = {
 
 // The entire map
 const map = {
-  size: 200, // Meters wide and heigh
+  size: 100, // Meters wide and heigh
   width: null,
   height: null,
   tiles: null
@@ -95,6 +95,7 @@ const random = {
 
 // Generate the map (L)
 map.generate = function () {
+  // Create 2D-array of sizexsize
   map.tiles = new Array(map.size)
   for (let a = 0; a < map.size; a++) {
     map.tiles[a] = new Array(map.size)
@@ -107,15 +108,19 @@ map.generate = function () {
   }
 }
 map.add = function (loc) {
-  if (map.tiles[loc.y][loc.x] === undefined) {
+  if (map.tiles[loc.y][loc.x] === undefined) { // Spot still empty
     const options = {
-      "grass": 0.85,
-      "water": 0.1,
-      "tree": 0.05
+      "grass": 0.9,
+      "water": 0.09,
+      "tree": 0.01
     }
 
-    const type = random.choose(options)
-    const place = new Coord(loc.x * 32, loc.y * 32)
+    const type = random.choose(options) // Choose random tile from options
+
+    // Absolute place on map
+    const place = new Coord(loc.x, loc.y)
+    place.multiply(constants.scale)
+
     switch (type) {
       case "grass":
         map.tiles[loc.y][loc.x] = new Grass(place)
@@ -126,9 +131,12 @@ map.add = function (loc) {
       case "tree":
         if ((loc.y + 1) < map.size && (loc.x + 1) < map.size) { // Not at edge
           map.tiles[loc.y][loc.x] = new Tree(place)
+          // Clear other spots because a tree is 4 tiles big
           map.tiles[loc.y + 1][loc.x] = null
           map.tiles[loc.y][loc.x + 1] = null
           map.tiles[loc.y + 1][loc.x + 1] = null
+        } else {
+          map.add(loc) // Try again
         }
         break
     }
@@ -291,7 +299,13 @@ class Entity {
     // Location from absolute (map) to relative (view)
     let x = Math.floor(this.loc.x - (view.middle.x - view.width/2))
     let y = Math.floor(this.loc.y - (view.middle.y - view.height/2))
-    view.screen.drawImage(sprite, x, y)
+
+    // Only draw when in view, with edges for smoother loading
+    let edge = 64
+    if (-edge < x && x < view.width + edge && -edge < y && y < view.height + edge) {
+      // performance: drawing is an intensive task
+      view.screen.drawImage(sprite, x, y)
+    }
   }
 }
 
@@ -512,26 +526,39 @@ class Player extends Obj {
 
   // View adapts when you get close to the edge, not in the center (L)
   move () {
-    // Near the edge
-    let nearEdgeX = (this.loc.x >= map.width - view.width / 2) || (this.loc.x <= view.width / 2)
-    let nearEdgeY = (this.loc.y >= map.height - view.width / 2) || (this.loc.y <= view.height / 2)
+    super.move()
 
-    if (nearEdgeX || nearEdgeY) {
+    // Near the edge
+    let xZero = (view.width / 2)
+    let xTop = (map.width - view.width / 2)
+    let yZero = (view.height / 2)
+    let yTop = (map.height - view.height / 2)
+
+    if (this.loc.x <= xZero || this.loc.x >= xTop || this.loc.y <= yZero || this.loc.y >= yTop) {
+      // View not complely following PC
       if (this.loc === view.middle) {
         this.loc = new Coord(this.loc.x, this.loc.y) // Use value instead of reference
       }
 
       // View follows on one axis
-      if (nearEdgeX && !nearEdgeY) {
+      if (this.loc.x <= xZero && !(this.loc.y <= yZero || this.loc.y >= yTop)) {
+        view.middle.x = xZero
         view.middle.y = this.loc.y
-      } else if (!nearEdgeX && nearEdgeY) {
+      } else if (this.loc.x >= xTop && !(this.loc.y <= yZero || this.loc.y >= yTop)) {
+        view.middle.x = xTop
+        view.middle.y = this.loc.y
+      }
+      if (this.loc.y <= yZero  && !(this.loc.x <= xZero || this.loc.x >= xTop)) {
+        view.middle.y = yZero
+        view.middle.x = this.loc.x
+      } else if (this.loc.y >= yTop  && !(this.loc.x <= xZero || this.loc.x >= xTop)) {
+        view.middle.y = yTop
         view.middle.x = this.loc.x
       }
+
     } else {
       this.loc = view.middle // Use reference
     }
-
-    super.move()
   }
 }
 
@@ -633,8 +660,8 @@ map.generate()
 // Create player
 // View.middle reference passed so when the player location is updated the player view is as well
 const PC = new Player(new Squirrel(view.middle))
-animals[0] = new NPC(new Wolf(new Coord(3000, 3000))) // TEST
-animals[1] = new NPC(new Deer(new Coord(3100, 3100))) // TEST
+animals[0] = new NPC(new Wolf(new Coord(1600, 1700))) // TEST
+animals[1] = new NPC(new Deer(new Coord(1700, 1600))) // TEST
 
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
