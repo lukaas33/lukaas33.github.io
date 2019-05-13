@@ -79,8 +79,60 @@ const store = {
   }
 }
 
-map.generate = function () {
+// Random functions
+const random = {
+  choose: function (options) {
+    let cummulative = 0
+    let odd = Math.random() // random 0 - 1
+    for (let dir in options) {
+      cummulative += options[dir]
+      if (odd < cummulative) { // Found
+        return dir
+      }
+    }
+  }
+}
 
+// Generate the map (L)
+map.generate = function () {
+  map.tiles = new Array(map.size)
+  for (let a = 0; a < map.size; a++) {
+    map.tiles[a] = new Array(map.size)
+  }
+
+  for (let y = 0; y < map.size; y++) {
+    for (let x = 0; x < map.size; x++) {
+      map.add(new Coord(x, y))
+    }
+  }
+}
+map.add = function (loc) {
+  if (map.tiles[loc.y][loc.x] === undefined) {
+    const options = {
+      "grass": 0.85,
+      "water": 0.1,
+      "tree": 0.05
+    }
+
+    const type = random.choose(options)
+    const place = new Coord(loc.x * 32, loc.y * 32)
+    switch (type) {
+      case "grass":
+        map.tiles[loc.y][loc.x] = new Grass(place)
+        break
+      case "water":
+        map.tiles[loc.y][loc.x] = new Water(place)
+        break
+      case "tree":
+        if ((loc.y + 1) < map.size && (loc.x + 1) < map.size) { // Not at edge
+          map.tiles[loc.y][loc.x] = new Tree(place)
+          map.tiles[loc.y + 1][loc.x] = null
+          map.tiles[loc.y][loc.x + 1] = null
+          map.tiles[loc.y + 1][loc.x + 1] = null
+        }
+        break
+    }
+  }
 }
 
 //   ____ _
@@ -407,9 +459,9 @@ class Water extends Texture {
   }
 }
 
-class Land extends Texture {
+class Grass extends Texture {
   constructor (loc) {
-    let name = "land"
+    let name = "grass"
     super(loc, name)
   }
 }
@@ -514,18 +566,9 @@ class NPC extends Obj {
 
   // Choose a direction at random from the decision matrix (L)
   chooseDirection () {
-    let option = null
     // Choose random with different chances
     const options = this.movement[this.state]
-    let cummulative = 0
-    let odd = Math.random() // random 0 - 1
-    for (let dir in options) {
-      cummulative += options[dir]
-      if (odd < cummulative) { // Found
-        option = dir
-        break
-      }
-    }
+    const option = random.choose(options)
 
     // Change the direction
     if (option === "stop") {
@@ -606,7 +649,14 @@ view.refresh = window.setInterval(() => {
    view.screen.fillStyle = '#eeeeee'
    view.screen.fillRect(0, 0, view.screen.width, view.screen.height) // TEST
 
-
+   // Draw the map
+   for (let y = 0; y < map.size; y++) {
+     for (let x = 0; x < map.size; x++) {
+       if (map.tiles[y][x]) { // Not null, not undefined
+         map.tiles[y][x].update()
+       }
+     }
+   }
 
    // Draw plants
 
