@@ -108,23 +108,23 @@ map.generate = function () {
     }
   }
 }
-// Add a random texture to the map
+// Add a random texture to the map (L)
 map.add = function (loc) {
   if (map.tiles[loc.y][loc.x] === undefined) { // Spot still empty
     // Standard generation odds
     const options = {
       "grass": 0.97,
-      "water": 0.02,
-      "tree": 0.01
+      "water": 0.006,
+      "tree": 0.024
     }
 
     // Check nearby for water tiles
     if (loc.x > 0 && loc.y > 0) {
       const near = [map.tiles[loc.y - 1][loc.x - 1], map.tiles[loc.y - 1][loc.x], map.tiles[loc.y][loc.x - 1]]
-      const nearby = near.filter((x) => x !== null && x.type === "water").length // Number of nearby
-      // Odd for water increases near water tiles
-      const factor = 15
-      options["water"] = options["water"] * ((nearby * factor) + 1)
+      const nearby = near.filter((x) => x !== null && x.type === "water").length // Number of nearby water tiles
+      // More adjecent tiles makes water spawing more likely
+      const factor = 60
+      options["water"] += options["water"] * (nearby * factor)
       options["grass"] = 1 - options["tree"] - options["water"]
     }
 
@@ -467,7 +467,7 @@ class Deer extends Animal {
 
 // Plant objects, food for the animals
 class Plant extends Entity {
-  constructor (loc, sprites) {
+  constructor (loc, name) {
     super(loc, new Sprites(name, false, false))
     this.name = name
   }
@@ -478,7 +478,7 @@ class Berry extends Plant {
     let name = "Berry"
     super(loc, name)
     this.traits = {
-      nutrition: 0,4
+      nutrition: 0.4
     }
   }
 }
