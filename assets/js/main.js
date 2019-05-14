@@ -101,26 +101,39 @@ map.generate = function () {
     map.tiles[a] = new Array(map.size)
   }
 
+  // Loop through all
   for (let y = 0; y < map.size; y++) {
     for (let x = 0; x < map.size; x++) {
       map.add(new Coord(x, y))
     }
   }
 }
+// Add a random texture to the map
 map.add = function (loc) {
   if (map.tiles[loc.y][loc.x] === undefined) { // Spot still empty
+    // Standard generation odds
     const options = {
-      "grass": 0.9,
-      "water": 0.09,
+      "grass": 0.97,
+      "water": 0.02,
       "tree": 0.01
     }
 
-    const type = random.choose(options) // Choose random tile from options
+    // Check nearby for water tiles
+    if (loc.x > 0 && loc.y > 0) {
+      const near = [map.tiles[loc.y - 1][loc.x - 1], map.tiles[loc.y - 1][loc.x], map.tiles[loc.y][loc.x - 1]]
+      const nearby = near.filter((x) => x !== null && x.type === "water").length // Number of nearby
+      // Odd for water increases near water tiles
+      const factor = 15
+      options["water"] = options["water"] * ((nearby * factor) + 1)
+      options["grass"] = 1 - options["tree"] - options["water"]
+    }
 
-    // Absolute place on map
+    // Choose random texture from options
+    const type = random.choose(options)
+
+    // Add location and add to map
     const place = new Coord(loc.x, loc.y)
     place.multiply(constants.scale)
-
     switch (type) {
       case "grass":
         map.tiles[loc.y][loc.x] = new Grass(place)
@@ -460,30 +473,27 @@ class Plant {
 }
 
 // Background texture objects
-class Texture extends Entity {
-  constructor (loc, name) {
-    super(loc, new Sprites(name, false, false))
-  }
-}
-
-class Water extends Texture {
+class Water extends Entity {
   constructor (loc) {
     let name = "water"
-    super(loc, name)
+    super(loc, new Sprites(name, false, false)) // TODO make changing
+    this.type = name
   }
 }
 
-class Grass extends Texture {
+class Grass extends Entity {
   constructor (loc) {
     let name = "grass"
-    super(loc, name)
+    super(loc, new Sprites(name, false, false))
+    this.type = name
   }
 }
 
-class Tree extends Texture {
+class Tree extends Entity {
   constructor (loc) {
     let name = "tree"
-    super(loc, name)
+    super(loc, new Sprites(name, false, false))
+    this.type = name
   }
 }
 
