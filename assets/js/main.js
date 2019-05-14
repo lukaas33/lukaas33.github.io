@@ -453,9 +453,20 @@ class Deer extends Animal {
 }
 
 // Plant objects, food for the animals
-class Plant {
-  constructor () {
+class Plant extends Entity {
+  constructor (loc, sprites) {
+    super(loc, new Sprites(name, false, false))
+    this.name = name
+  }
+}
 
+class Berry extends Plant {
+  constructor (loc) {
+    let name = "Berry"
+    super(loc, name)
+    this.traits = {
+      nutrition: 0,4
+    }
   }
 }
 
