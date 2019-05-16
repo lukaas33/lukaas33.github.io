@@ -362,10 +362,18 @@ class Obj extends Entity {
       this.direction = this.sprites.dirs[index] // Direction in text form
     }
 
-    // Update on screen
-    if (this.borders()) {
-      this.stop()
+    // Check if legal
+    this.borders()
+    for (let animal of animals) { // Collide with animal
+      if (animal !== this) {
+        if (this.collide(animal)) {
+
+        }
+      }
     }
+
+
+    // Update on screen
     this.update()
   }
 
@@ -375,29 +383,38 @@ class Obj extends Entity {
     this.acceleration.magnitude = 0
   }
 
-  // Stops objects from moving past borders (L)
+  // check if colliding with another object (L)
+  collide (obj) {
+    let collideX = this.loc.x <= obj.loc.x + obj.sprites.size.width && this.loc.x >= obj.loc.x
+    collideX = collideX || this.loc.x + this.sprites.size.width <= obj.loc.x + obj.sprites.size.width && this.loc.x + this.sprites.size.width >= obj.loc.x
+    let collideY = this.loc.y <= obj.loc.y + obj.sprites.size.height && this.loc.y >= obj.loc.y
+    collideY = collideY || this.loc.y + this.sprites.size.height <= obj.loc.y + obj.sprites.size.height && this.loc.y + this.sprites.size.height >= obj.loc.y
+    return collideX && collideY
+  }
+
+  // Checks and stops object if objects moving past borders (L)
   borders () {
-    let colliding = false
+    let atBorder = false
     if (this.direction === 'right' || this.direction === 'left') {
       if (this.loc.x + this.sprites.size.width >= map.width) { // Right
         this.loc.x = map.width - this.sprites.size.width
-        colliding = true
+        atBorder = true
       } else if (this.loc.x <= 0) { // Left
         this.loc.x = 0
-        colliding = true
+        atBorder = true
       }
     }
     if (this.direction === 'up' || this.direction === 'down') {
       if (this.loc.y + this.sprites.size.height >= map.height) { // Bottom
         this.loc.y = map.height - this.sprites.size.height
-        colliding = true
+        atBorder = true
       } else if (this.loc.y <= 0) { // Top
         this.loc.y = 0
-        colliding = true
+        atBorder = true
       }
     }
 
-    return colliding
+    return atBorder
   }
 }
 
@@ -664,6 +681,8 @@ class NPC extends Obj {
     super.move() // Call parent method
   }
 
+
+  // Different behaviour when colliding (L)
   borders () {
     if (super.borders()) { // Call parent method
       this.chooseDirection()
@@ -691,8 +710,9 @@ map.generate()
 // Create player
 // View.middle reference passed so when the player location is updated the player view is as well
 const PC = new Player(new Squirrel(view.middle))
-animals[0] = new NPC(new Wolf(new Coord(1600, 1700))) // TEST
-animals[1] = new NPC(new Deer(new Coord(1700, 1600))) // TEST
+animals[0] = PC
+animals[1] = new NPC(new Wolf(new Coord(1600, 1700))) // TEST
+animals[2] = new NPC(new Deer(new Coord(1700, 1600))) // TEST
 plants[0] = new Mushroom(new Coord(1500, 1500))
 
 
@@ -731,7 +751,6 @@ view.refresh = window.setInterval(() => {
        animal.move()
      }
    }
-   PC.move()
  }
 }, Math.ceil(1000 / view.fps)) // Executes a certain amount of times per second
 
