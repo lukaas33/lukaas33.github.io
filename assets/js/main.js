@@ -156,6 +156,14 @@ map.add = function (loc) {
   }
 }
 
+// godmode function (A)
+const godMode = function () {
+  PC.traits.health = Math.infinity,
+  PC.traits.maxSpeed = 20,
+  PC.traits.acceleration = 0.1
+  PC.traits.attack = 1
+}
+
 //   ____ _
 //  / ___| | __ _ ___ ___  ___  ___
 // | |   | |/ _` / __/ __|/ _ \/ __|
@@ -465,7 +473,7 @@ class Deer extends Animal {
   }
 }
 
-// Plant objects, food for the animals
+// Plant objects, food for the animals (A)
 class Plant extends Entity {
   constructor (loc, name) {
     super(loc, new Sprites(name, false, false))
@@ -473,12 +481,14 @@ class Plant extends Entity {
   }
 }
 
-class Berry extends Plant {
+// All plant classes
+class Mushroom extends Plant {
   constructor (loc) {
-    let name = "Berry"
+    let name = "Mushroom"
     super(loc, name)
     this.traits = {
-      nutrition: 0.4
+      nutrition: 0.3,
+      rarity: 0.1
     }
   }
 }
@@ -683,6 +693,8 @@ map.generate()
 const PC = new Player(new Squirrel(view.middle))
 animals[0] = new NPC(new Wolf(new Coord(1600, 1700))) // TEST
 animals[1] = new NPC(new Deer(new Coord(1700, 1600))) // TEST
+plants[0] = new Mushroom(new Coord(1500, 1500))
+
 
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
@@ -707,6 +719,11 @@ view.refresh = window.setInterval(() => {
    }
 
    // Draw plants
+   for (let plant of plants) {
+     if (plant) {
+       plant.update()
+     }
+   }
 
    // Draw animals
    for (let animal of animals) {
