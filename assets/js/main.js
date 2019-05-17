@@ -27,7 +27,7 @@ const settings = {
 
 // Fhysical constants, not changing
 const constants = {
-  scale: 32 // pixels in one meter
+  scale: 32, // pixels in one meter
 }
 
 // Related to document, for example html elements
@@ -41,12 +41,14 @@ const view = {
     height: null,
     middle: null,
     screen: doc.canvas.getContext('2d'),
-    fps: 20, // Frames per second
+    fps: 30, // Frames per second
 }
 
 // The entire map
 const map = {
   size: 100, // Meters wide and heigh
+  populationDensity: 500, // 1 animal per x square meters
+  growthDensity: 100, // 1 plant per x square meters
   width: null,
   height: null,
   tiles: null
@@ -79,11 +81,12 @@ const store = {
   }
 }
 
-// Random functions
+// Random functions (L)
 const random = {
   choose: function (options) {
     let cummulative = 0
-    let odd = Math.random() // random 0 - 1
+    let total = Object.values(options).reduce((a, b) => a + b, 0)
+    let odd = Math.random() * total // random number between 0 and max
     for (let dir in options) {
       cummulative += options[dir]
       if (odd < cummulative) { // Found
@@ -108,12 +111,13 @@ map.generate = function () {
     }
   }
 }
+
 // Add a random texture to the map (L)
 map.add = function (loc) {
   if (map.tiles[loc.y][loc.x] === undefined) { // Spot still empty
     // Standard generation odds
     const options = {
-      "grass": 0.97,
+      "grass": 1, // Depends on other odds
       "water": 0.006,
       "tree": 0.024
     }
@@ -125,8 +129,8 @@ map.add = function (loc) {
       // More adjecent tiles makes water spawing more likely
       const factor = 60
       options["water"] += options["water"] * (nearby * factor)
-      options["grass"] = 1 - options["tree"] - options["water"]
     }
+    options["grass"] -= options["tree"] + options["water"]
 
     // Choose random texture from options
     const type = random.choose(options)
@@ -156,11 +160,85 @@ map.add = function (loc) {
   }
 }
 
-// godmode function (A)
+// Animal and plants spawn on the map (L)
+map.spawn = function () {
+  // Rarity of different animals
+  const animalSpecies = {
+    "deer": 0.2,
+    "squirrel": 0.4,
+    "wolf": 0.1
+  }
+  const animalConstructors = {
+    "deer": Deer,
+    "squirrel": Squirrel,
+    "wolf": Wolf
+  }
+
+  // Add animals
+  while (animals.length < (map.size**2) / map.populationDensity) { // Based on map size
+    animals.push(new NPC(map.create(animalSpecies, animalConstructors)))
+  }
+
+  // Rarity of different plants
+  const plantSpecies = {
+    "mushroom": 0.1,
+    "bush": 0.2,
+    "berry": 0.2,
+    "shrub": 0.5,
+    "cactus": 0.05,
+  }
+  const plantConstructors = {
+    "mushroom": Mushroom,
+    "bush": Bush,
+    "berry": Berry,
+    "shrub": Shrub,
+    "cactus": Cactus,
+  }
+
+  // Add plants
+  while (plants.length < (map.size**2) / map.growthDensity) {
+    plants.push(map.create(plantSpecies, plantConstructors))
+  }
+}
+
+// Create a new animal or plant
+map.create = function (species, constructors) {
+  const isLegal = function (loc, object) {
+    // Must be outside view
+    let inView = (loc.x < view.middle.x - view.width / 2 || loc.x > view.middle.x + view.width / 2)
+    inView = inView || (loc.y < view.middle.y - view.height / 2 || loc.y > view.middle.y + view.height / 2)
+
+    // Legal terrain
+    let habitat = false
+    let row = Math.floor(loc.y / constants.scale)
+    let col = Math.floor(loc.x / constants.scale)
+    if (map.tiles[row][col]) {
+      habitat = map.tiles[row][col].area === object.traits.area
+    }
+    return inView && habitat
+  }
+
+  // Choose random based on rarity
+  const name = random.choose(species)
+  const creature = new constructors[name]
+
+  // Choose random location
+  let loc = null
+  do {
+    // Two random values on the map
+    let x = Math.floor(Math.random() * (map.size * constants.scale))
+    let y = Math.floor(Math.random() * (map.size * constants.scale))
+    loc = new Coord(x, y)
+  } while (!isLegal(loc, creature)) // Check condition after initialising
+
+  return new creature.constructor(loc)
+}
+
+// Godmode function, called via console (A)
 const godMode = function () {
   PC.traits.health = Math.infinity,
-  PC.traits.maxSpeed = 20,
-  PC.traits.acceleration = 0.1
+  PC.traits.maxSpeed = 35,
+  PC.traits.acceleration = 1
   PC.traits.attack = 1
 }
 
@@ -372,7 +450,6 @@ class Obj extends Entity {
       }
     }
 
-
     // Update on screen
     this.update()
   }
@@ -505,7 +582,51 @@ class Mushroom extends Plant {
     super(loc, name)
     this.traits = {
       nutrition: 0.3,
-      rarity: 0.1
+      area: "land"
+    }
+  }
+}
+
+class Berry extends Plant {
+  constructor (loc) {
+    let name = "Berry"
+    super(loc, name)
+    this.traits = {
+      nutrition: 0.5,
+      area: "land"
+    }
+  }
+}
+
+class Cactus extends Plant {
+  constructor (loc) {
+    let name = "Cactus"
+    super(loc, name)
+    this.traits = {
+      nutrition: 0.2,
+      area: "land"
+    }
+  }
+}
+
+class Shrub extends Plant {
+  constructor (loc) {
+    let name = "Shrub"
+    super(loc, name)
+    this.traits = {
+      nutrition: 0.1,
+      area: "land"
+    }
+  }
+}
+
+class Bush extends Plant {
+  constructor (loc) {
+    let name = "Bush"
+    super(loc, name)
+    this.traits = {
+      nutrition: 0.1,
+      area: "land"
     }
   }
 }
@@ -516,6 +637,7 @@ class Water extends Entity {
     let name = "water"
     super(loc, new Sprites(name, false, false)) // TODO make changing
     this.type = name
+    this.area = "water"
   }
 }
 
@@ -524,6 +646,7 @@ class Grass extends Entity {
     let name = "grass"
     super(loc, new Sprites(name, false, false))
     this.type = name
+    this.area = "land"
   }
 }
 
@@ -532,6 +655,7 @@ class Tree extends Entity {
     let name = "tree"
     super(loc, new Sprites(name, false, false))
     this.type = name
+    this.area = "sky"
   }
 }
 
@@ -544,30 +668,34 @@ class Player extends Obj {
   }
 
   // Control function, called on key press (L)
-  control (key) {
-    if (key === false) { // Stop moving
-      this.pressed = false
-      this.stop()
-    } else if (!this.pressed) { // Start moving if not already a key pressed
-      this.pressed = true
-      let movement = null
-      switch (key) {
-        case 37: // Left
-          movement = new Coord(-1, 0)
-          break
-        case 38: // Up
-          movement = new Coord(0, -1)
-          break
-        case 39: // Right
-          movement = new Coord(1, 0)
-          break
-        case 40: // Down
-          movement = new Coord(0, 1)
-          break
-      }
-      if (movement !== null) {
-        movement.magnitude = this.traits.acceleration
-        this.acceleration = movement // Set the acceleration
+  control (key, action) {
+    let movement = null
+    switch (key) {
+      case 37: // Left
+        movement = new Coord(-1, 0)
+        break
+      case 38: // Up
+        movement = new Coord(0, -1)
+        break
+      case 39: // Right
+        movement = new Coord(1, 0)
+        break
+      case 40: // Down
+        movement = new Coord(0, 1)
+        break
+    }
+    if (movement !== null) {
+      if (!this.pressed) {
+        if (action) {
+          this.pressed = true // No two at the same time
+          movement.magnitude = this.traits.acceleration
+          this.acceleration = movement // Set the acceleration
+        }
+      } else {
+        if (!action) {
+          this.pressed = false
+          this.stop()
+        }
       }
     }
   }
@@ -704,16 +832,14 @@ map.width = map.height = map.size * constants.scale
 view.middle = new Coord(map.width, map.height)
 view.middle.divide(2)
 
-// Generate map
+// Generate map and initial animals/plants
 map.generate()
+map.spawn()
 
 // Create player
 // View.middle reference passed so when the player location is updated the player view is as well
 const PC = new Player(new Squirrel(view.middle))
 animals[0] = PC
-animals[1] = new NPC(new Wolf(new Coord(1600, 1700))) // TEST
-animals[2] = new NPC(new Deer(new Coord(1700, 1600))) // TEST
-plants[0] = new Mushroom(new Coord(1500, 1500))
 
 
 //  _____                 _
@@ -751,16 +877,19 @@ view.refresh = window.setInterval(() => {
        animal.move()
      }
    }
+
+   // Spawn new creatures when below the max
+   map.spawn()
  }
 }, Math.ceil(1000 / view.fps)) // Executes a certain amount of times per second
 
 // Setup keyboard controls
 document.addEventListener('keydown', (event) => {
-  PC.control(event.keyCode)
+  PC.control(event.keyCode, true)
 })
 
 document.addEventListener('keyup', () => {
-  PC.control(false) // Stop signal
+  PC.control(event.keyCode, false) // Stop signal
 })
 
 // Everything loaded
