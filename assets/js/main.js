@@ -450,7 +450,13 @@ class Obj extends Entity {
     for (let animal of animals) { // Collide with animal
       if (animal !== this) {
         if (this.collide(animal)) {
-
+          // Get component going in the direction of the animal
+          let distance = new Coord(animal.loc.x - this.loc.x, animal.loc.y - this.loc.y)
+          let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
+          distance.magnitude = inproduct
+          distance.divide(view.fps)
+          // Subtract from speed
+          this.speed.subtract(distance)
         }
       }
     }
