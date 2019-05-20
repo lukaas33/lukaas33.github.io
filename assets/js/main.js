@@ -33,6 +33,7 @@ const constants = {
 // Related to document, for example html elements
 const doc = {
   canvas: document.getElementById('canvas'),
+  startButton: document.getElementById("startButton")
 }
 
 // Related to the view and drawing
@@ -241,6 +242,10 @@ const godMode = function () {
   PC.traits.acceleration = 1
   PC.traits.attack = 1
 }
+
+// const button = function () {
+
+//}
 
 //   ____ _
 //  / ___| | __ _ ___ ___  ___  ___
@@ -832,15 +837,13 @@ map.width = map.height = map.size * constants.scale
 view.middle = new Coord(map.width, map.height)
 view.middle.divide(2)
 
-// Generate map and initial animals/plants
-map.generate()
-map.spawn()
+
+
 
 // Create player
 // View.middle reference passed so when the player location is updated the player view is as well
 const PC = new Player(new Squirrel(view.middle))
 animals[0] = PC
-
 
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
@@ -892,9 +895,16 @@ document.addEventListener('keyup', () => {
   PC.control(event.keyCode, false) // Stop signal
 })
 
+
+
 // Everything loaded
 document.onreadystatechange = function () {
   if (document.readyState === 'complete') {
-    settings.started = true
+    doc.startButton.addEventListener("click", function () {
+      // Generate map and initial animals/plants
+      map.generate()
+      map.spawn()
+      settings.started = true
+    })
   }
 }
