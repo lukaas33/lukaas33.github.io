@@ -4,6 +4,7 @@ const urlsToCache = [
   ".",
   "herbarium/",
   "opties/",
+  "?action=save",
   "manifest.json",
   "index.html",
   "herbarium/index.html",
@@ -68,41 +69,63 @@ self.addEventListener('install', function (event) {
 })
 
 // Get data from cache
-// https://developers.google.com/web/fundamentals/primers/service-workers/
-self.addEventListener('fetch', function (event) {
+// https://developers.google.com/web/ilt/pwa/lab-caching-files-with-service-worker
+self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(function (response) {
-      // Cache hit - return response
+    caches.match(event.request)
+    .then(response => {
       if (response) {
         return response
       }
+      return fetch(event.request)
 
-      return fetch(event.request).then(
-        function (response) {
-          // Check if we received a valid response
-          if (response.ok || response.type === 'opaque') {
-            return response
-          } else if (response.status === 404) {
-            return fetch("assets/images/placeholder.svg")
-          }
+      .then(response => {
+        return caches.open(cacheName).then(cache => {
+          cache.put(event.request.url, response.clone())
+          return response;
+        })
+      })
 
-          let responseToCache = response.clone()
-
-          caches.open(cacheName).then(function (cache) {
-            cache.put(event.request, responseToCache)
-          })
-
-          return response
-        }
-      )
-    }).catch(
-      function (error) {
-        console.warn(error)
-        return fetch("assets/images/placeholder.svg")
-      }
-    )
+    }).catch(error => {
+      console.warn(error)
+      return fetch("assets/images/placeholder.svg") // Return the placeholder
+    })
   )
 })
+
+// self.addEventListener('fetch', function (event) {
+//   event.respondWith(
+//     caches.match(event.request).then(function (response) {
+//       // Cache hit - return response
+//       if (response) {
+//         return response
+//       }
+//
+//       return fetch(event.request).then(
+//         function (response) {
+//           // Check if we received a valid response
+//           if (response.ok || response.type === 'opaque') {
+//             return response
+//           } else if (response.status === 404) {
+//             return fetch("assets/images/placeholder.svg")
+//           }
+//
+//           let responseToCache = response.clone()
+//
+//           caches.open(cacheName).then(function (cache) {
+//             cache.put(event.request, responseToCache)
+//           })
+//
+//           return response
+//         }
+//       )
+//     }).catch(
+//       function (error) {
+//         return fetch("assets/images/placeholder.svg") // Return the placeholder
+//       }
+//     )
+//   )
+// })
 
 // Activate cache management
 self.addEventListener('activate', function (event) {
