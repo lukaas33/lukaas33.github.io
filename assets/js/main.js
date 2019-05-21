@@ -931,11 +931,13 @@ document.addEventListener('keyup', () => {
 // Everything loaded
 document.onreadystatechange = function () {
   if (document.readyState === 'complete') {
+    // Start game (A)
     doc.startButton.addEventListener("click", function () {
       // Generate map and initial animals/plants
       map.generate()
       map.spawn()
       settings.started = true
+      doc.startButton.style.display = "none"
     })
   }
 }
