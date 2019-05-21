@@ -44,7 +44,7 @@ const herbarium = {
   plants () { // Display all plants
     const part = location.href.split('?id=')[1]
     const id = part ? parseInt(part) : part
-    const ended = database.getCookie("ended") === true
+    const ended = database.getStorage("ended") === true
 
     if (database.progress.length > 0 || ended) { // Not empty
       if (id === undefined) { // Home
@@ -81,7 +81,7 @@ const herbarium = {
   },
   recents () { // Display some plants
     const overview = document.querySelector('#overview-page')
-    const ended = database.getCookie("ended") === true
+    const ended = database.getStorage("ended") === true
     if (overview) {
       overview.innerHTML = '' // First reset
       const trees = this.filter(database.locations, database.progress, ended)

@@ -27,8 +27,7 @@ const menu = {
       min = 0
       sec = 0
 
-      if (database.getCookie('ended') !== true) {
-        confirm("De speurtocht is afgelopen.")
+      if (database.getStorage('ended') !== true) {
         if (typeof(game) !== 'undefined') { // At the home page
           game.end()
         } else {
@@ -59,7 +58,7 @@ const menu = {
 // Run
 menu.insert()
 
-if (database.startTime === null && database.getCookie("ended") !== true) { // Game not started
+if (database.startTime === null && database.getStorage("ended") !== true) { // Game not started
   window.setTimeout(() => {
     location.href = '' // Home
   }, 1000)

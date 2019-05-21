@@ -14,11 +14,11 @@ document.querySelector("button[name=end]").addEventListener('click', (event) => 
 document.querySelector("button[name=reset]").addEventListener('click', (event) => {
   this.disabled = true // No clicking twice
 
-  database.setCookie("ended", false)
+  database.setStorage("ended", false)
   database.startTime = null
 
-  database.setCookie("visited", [])
-  database.setCookie("route", [])
+  database.setStorage("visited", [])
+  database.setStorage("route", [])
 
   database.setStorage("gameProgress", null)
   database.setStorage("points", 0)
@@ -52,6 +52,6 @@ if (database.getStorage("userData")) {
   doc.appendChild(names)
 }
 
-if (database.getCookie("ended") === true) { // Doesn't work if game already ended
+if (database.getStorage("ended") === true) { // Doesn't work if game already ended
   document.querySelector("button[name=end]").disabled = true
 }

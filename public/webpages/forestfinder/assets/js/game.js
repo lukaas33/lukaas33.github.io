@@ -5,8 +5,8 @@
 const game = {
   // IDs of visited location
   get visited () {
-    let visited = database.getCookie("visited")
-    if (visited === undefined) { // Need to init
+    let visited = database.getStorage("visited")
+    if (visited === null) { // Need to init
       visited = []
     }
     return visited
@@ -14,24 +14,24 @@ const game = {
   set visited (value) {
     let visited = this.visited
     visited.push(value) // Add instead of overwrite
-    database.setCookie("visited", visited)
+    database.setStorage("visited", visited)
   },
   // ID of the destination
   get route () {
-    let res = database.getCookie("route")
-    if (res === undefined) {
+    let res = database.getStorage("route")
+    if (res === null) {
       res = []
     }
     return res
   },
   set route (id) {
-    database.setCookie("route", id)
+    database.setStorage("route", id)
   },
   get ended () {
-    return database.getCookie("ended") === true // Boolean value
+    return database.getStorage("ended") === true // Boolean value
   },
   set ended (value) {
-    database.setCookie("ended", value)
+    database.setStorage("ended", value)
   },
 
   waiting: null,

@@ -25,14 +25,11 @@ const database = {
     this.setStorage('gameProgress', progress)
   },
   get startTime () {
-    let res = this.getCookie("startTime")
-    if (res === undefined) {
-      res = null
-    }
+    let res = this.getStorage("startTime")
     return res
   },
   set startTime (time) {
-    this.setCookie("startTime", time)
+    this.setStorage("startTime", time)
   },
   duration: 40 * 60,
   getUserData (callback) {
@@ -92,7 +89,7 @@ const database = {
     const stringValue = JSON.stringify(value) // Convert to string
     const time = (5 * 24 * 60 * 60 * 1000) // x days
     const expire = new Date((new Date()).getTime() + time) // Won't expire when browser window closes
-    document.cookie = `${name}=${stringValue}; expires=${expire.toUTCString()}` // Add to cookies
+    document.cookie = `${name}=${stringValue}; path=${location.origin}; expires=${expire.toUTCString()};` // Add to cookies
   },
   // Cache functions
   checkCachedImages (data) {
