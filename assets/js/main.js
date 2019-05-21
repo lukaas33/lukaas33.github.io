@@ -243,10 +243,6 @@ const godMode = function () {
   PC.traits.attack = 1
 }
 
-// const button = function () {
-
-//}
-
 //   ____ _
 //  / ___| | __ _ ___ ___  ___  ___
 // | |   | |/ _` / __/ __|/ _ \/ __|
@@ -483,23 +479,20 @@ class Obj extends Entity {
   // Checks and stops object if objects moving past borders (L)
   borders () {
     let atBorder = false
-    if (this.direction === 'right' || this.direction === 'left') {
-      if (this.loc.x + this.sprites.size.width >= map.width) { // Right
-        this.loc.x = map.width - this.sprites.size.width
-        atBorder = true
-      } else if (this.loc.x <= 0) { // Left
-        this.loc.x = 0
-        atBorder = true
-      }
+    if (this.loc.x + this.sprites.size.width >= map.width) { // Right
+      this.loc.x = map.width - this.sprites.size.width
+      atBorder = true
+    } else if (this.loc.x <= 0) { // Left
+      this.loc.x = 0
+      atBorder = true
     }
-    if (this.direction === 'up' || this.direction === 'down') {
-      if (this.loc.y + this.sprites.size.height >= map.height) { // Bottom
-        this.loc.y = map.height - this.sprites.size.height
-        atBorder = true
-      } else if (this.loc.y <= 0) { // Top
-        this.loc.y = 0
-        atBorder = true
-      }
+
+    if (this.loc.y + this.sprites.size.height >= map.height) { // Bottom
+      this.loc.y = map.height - this.sprites.size.height
+      atBorder = true
+    } else if (this.loc.y <= 0) { // Top
+      this.loc.y = 0
+      atBorder = true
     }
 
     return atBorder
@@ -524,7 +517,7 @@ class Squirrel extends Animal {
       maxSpeed: 15,
       acceleration: 0.05,
       area: "land",
-      health: 25,
+      maxHealth: 0.25,
       mass: 0.3,
       diet: "herbivore",
       camouflage: 0.6,
@@ -545,7 +538,7 @@ class Wolf extends Animal {
       maxSpeed: 10,
       acceleration: 0.01,
       area: "land",
-      health: 100,
+      maxHealth: 0.6,
       mass: 60.0,
       diet: "carnivore",
       camouflage: 0.6,
@@ -566,7 +559,7 @@ class Deer extends Animal {
       maxSpeed: 7,
       acceleration: 0.07,
       area: "land",
-      health: 70,
+      maxHealth: 0.5,
       mass: 50,
       diet: "herbivore",
       camouflage: 0.7,
@@ -593,7 +586,8 @@ class Mushroom extends Plant {
     super(loc, name)
     this.traits = {
       nutrition: 0.3,
-      area: "land"
+      area: "land",
+      maxHealth: 0.2
     }
   }
 }
@@ -604,7 +598,8 @@ class Berry extends Plant {
     super(loc, name)
     this.traits = {
       nutrition: 0.5,
-      area: "land"
+      area: "land",
+      maxHealth: 0.3
     }
   }
 }
@@ -615,7 +610,8 @@ class Cactus extends Plant {
     super(loc, name)
     this.traits = {
       nutrition: 0.2,
-      area: "land"
+      area: "land",
+      maxHealth: 0.5
     }
   }
 }
@@ -626,7 +622,8 @@ class Shrub extends Plant {
     super(loc, name)
     this.traits = {
       nutrition: 0.1,
-      area: "land"
+      area: "land",
+      maxHealth: 0.5
     }
   }
 }
@@ -670,11 +667,42 @@ class Tree extends Entity {
   }
 }
 
-// Player class, will have one instance
-class Player extends Obj {
+// Functionality for NPC and PC
+class Creature extends Obj {
   constructor (animal) {
     super(animal.loc, animal.sprites)
     this.traits = animal.traits
+    this.health = animal.traits.maxHealth
+  }
+
+  // Display health (L)
+  update () {
+    super.update()
+
+    const health = (this.health / this.traits.maxHealth)
+    if (health < 1) {
+      const height = 10 // height of health bar
+      const width = 50 // width of health bar
+      // Health bar at the center above the animal
+      let x = this.loc.x + (this.sprites.size.width / 2) - (width / 2)
+      let y = this.loc.y - (height * 3)
+      // Convert map coords to view coords
+      x = Math.floor(x - (view.middle.x - view.width/2))
+      y = Math.floor(y - (view.middle.y - view.height/2))
+      // Display background
+      view.screen.fillStyle = '#eeeeee'
+      view.screen.fillRect(x, y, width, height)
+      // Display health
+      view.screen.fillStyle = '#f44336'
+      view.screen.fillRect(x, y, (width * health), height)
+    }
+  }
+}
+
+// Player class, will have one instance
+class Player extends Creature {
+  constructor (animal) {
+    super(animal)
     this.pressed = false // Key is being pressed
   }
 
@@ -750,10 +778,9 @@ class Player extends Obj {
 }
 
 
-class NPC extends Obj {
+class NPC extends Creature {
   constructor (animal) {
-    super(animal.loc, animal.sprites)
-    this.traits = animal.traits
+    super(animal)
     this.state = "stop" // Start state
     this.step = 0
 
@@ -842,8 +869,6 @@ doc.canvas.height = view.height = view.screen.height = document.body.clientHeigh
 map.width = map.height = map.size * constants.scale
 view.middle = new Coord(map.width, map.height)
 view.middle.divide(2)
-
-
 
 
 // Create player
