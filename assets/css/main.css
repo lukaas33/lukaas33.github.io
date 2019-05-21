@@ -30,15 +30,16 @@ body {
 }
 
 #startButton {
+  position: absolute;
+  right: 50%;
+  top: 50%;
   margin-top: 20px;
   line-height: 60px;
   font-weight: bold;
   padding: 0 40px;
   background: green;
-  border: none;
-  position: absolute;
-  left: 0;
+  border: 2px solid;
 }
 #startButton:hover {
-  background: green;
+  background: blue;
 }
