@@ -446,25 +446,53 @@ class Obj extends Entity {
     for (let animal of animals) { // Collide with animal
       if (animal !== this) {
         if (this.collide(animal)) {
-          // Get component going in the direction of the animal
-          let distance = new Coord(animal.loc.x - this.loc.x, animal.loc.y - this.loc.y)
-          let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
-          distance.magnitude = inproduct
-          distance.divide(view.fps)
-          // Subtract from speed
-          this.speed.subtract(distance)
+          this.block(animal)
         }
       }
     }
+
+    for (let y = 0; y < map.size; y++) {
+      for (let x = 0; x < map.size; x++) {
+        let object = map.tiles[y][x]
+        if (object !== null && object.type == "tree") {
+          if (this.collide(object)) {
+            this.block(object)
+          }
+        }
+      }
+    }
+
 
     // Update on screen
     this.update()
   }
 
-  // Stop moving
+  // Stop moving completely
   stop () {
     this.speed.magnitude = 0
     this.acceleration.magnitude = 0
+  }
+
+  // Blocked from moving further (L)
+  block (object) {
+    // Get component going in the direction of the animal
+    let distance = new Coord(object.loc.x - this.loc.x, object.loc.y - this.loc.y)
+    let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
+      distance.magnitude = inproduct
+    distance.divide(view.fps)
+    // Subtract from speed
+
+    this.speed.subtract(distance)
+    if(this.moving != undefined){
+    console.log(object.loc.x, this.loc.x, object.loc.y, this.loc.y)
+    console.log(this.speed.x, distance.x, this.speed.y, distance.y)
+    console.log(inproduct)
+    console.log(distance)
+    console.log(this.speed)
+    console.log(this.collide(object), object , this)
+    console.log(this.loc.x <= object.loc.x + object.sprites.size.width && this.loc.x >= object.loc.x)
+    console.log(this.loc.x , object.loc.x , object.sprites.size.width, this.loc.x , object.loc.x)
+  }
   }
 
   // check if colliding with another object (L)
