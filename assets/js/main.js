@@ -381,30 +381,36 @@ class Entity {
 
     if (this.sprites.moving) { // Moving object
       sprite = this.sprites[this.direction]
-      if (this.speed.magnitude > 0) {
-        this.sprites.frame += 1 // New frame
+      if (sprite) { // Loaded
+        if (this.speed.magnitude > 0) {
+          this.sprites.frame += 1 // New frame
+        }
+        sprite = sprite[Math.floor(this.sprites.frame / switchRate) % (sprite.length)]
       }
-      sprite = sprite[Math.floor(this.sprites.frame / switchRate) % (sprite.length)]
     } else if (this.sprites.changing) { // Changing object
       sprite = this.sprites.sprite
-      this.sprites.frame += 1
-      sprite = sprite[Math.floor(this.sprites.frame / switchRate) % (sprite.length)]
+      if (sprite) {
+        this.sprites.frame += 1
+        sprite = sprite[Math.floor(this.sprites.frame / switchRate) % (sprite.length)]
+      }
     } else { // Static object
       sprite = this.sprites.sprite
     }
 
-    this.sprites.size.width = sprite.width
-    this.sprites.size.height = sprite.height
+    if (sprite) { // Loaded
+      this.sprites.size.width = sprite.width
+      this.sprites.size.height = sprite.height
 
-    // Location from absolute (map) to relative (view)
-    let x = Math.floor(this.loc.x - (view.middle.x - view.width/2))
-    let y = Math.floor(this.loc.y - (view.middle.y - view.height/2))
+      // Location from absolute (map) to relative (view)
+      let x = Math.floor(this.loc.x - (view.middle.x - view.width/2))
+      let y = Math.floor(this.loc.y - (view.middle.y - view.height/2))
 
-    // Only draw when in view, with edges for smoother loading
-    let edge = 64
-    if (-edge < x && x < view.width + edge && -edge < y && y < view.height + edge) {
-      // performance: drawing is an intensive task
-      view.screen.drawImage(sprite, x, y)
+      // Only draw when in view, with edges for smoother loading
+      let edge = 64
+      if (-edge < x && x < view.width + edge && -edge < y && y < view.height + edge) {
+        // performance: drawing is an intensive task
+        view.screen.drawImage(sprite, x, y)
+      }
     }
   }
 }
@@ -667,6 +673,7 @@ class Tree extends Entity {
   }
 }
 
+
 // Functionality for NPC and PC
 class Creature extends Obj {
   constructor (animal) {
@@ -692,10 +699,29 @@ class Creature extends Obj {
       // Display background
       view.screen.fillStyle = '#eeeeee'
       view.screen.fillRect(x, y, width, height)
-      // Display health
-      view.screen.fillStyle = '#f44336'
-      view.screen.fillRect(x, y, (width * health), height)
+      if (health > 0) {
+        // Display health
+        view.screen.fillStyle = '#f44336'
+        view.screen.fillRect(x, y, (width * health), height)
+      }
     }
+  }
+
+  // Attack another animal or plant (L)
+  attack (object) {
+    if (object !== this) { // Not self
+      // Other location and self location
+      let distance = new Coord(object.loc.x + object.sprites.size.width / 2, object.loc.y + object.sprites.size.height / 2)
+      let middleSelf = new Coord(this.loc.x + this.sprites.size.width / 2, this.loc.y + this.sprites.size.height / 2)
+      distance.subtract(middleSelf) // Distance
+      if (distance.magnitude <= (constants.scale * 2)) { // Max one meter attack
+        let difference = Math.abs(object.loc.angle - this.loc.angle) // Difference in angles
+        if (difference < (Math.PI / 3)) { // Difference in angle lower than x degrees
+          object.health -= this.traits.attack
+        }
+      }
+    }
+
   }
 }
 
@@ -703,7 +729,8 @@ class Creature extends Obj {
 class Player extends Creature {
   constructor (animal) {
     super(animal)
-    this.pressed = false // Key is being pressed
+    this.moving = false // Move key
+    this.attacking = false // Attack key
   }
 
   // Control function, called on key press (L)
@@ -722,17 +749,35 @@ class Player extends Creature {
       case 40: // Down
         movement = new Coord(0, 1)
         break
+      case 32: // Spacebar
+        if (!this.attacking) { // Not already on
+          if (action) { // Key pressed
+            this.attacking = true
+            for (let animal of animals) {
+              this.attack(animal) // If close
+            }
+            for (let plant of plants) {
+              this.attack(plant) // If close
+            }
+          }
+        } else { // already on
+          if (!action) { // Key release
+            this.attacking = false
+          }
+        }
+        break
     }
-    if (movement !== null) {
-      if (!this.pressed) {
-        if (action) {
-          this.pressed = true // No two at the same time
+
+    if (movement !== null) { // Key for moving
+      if (!this.moving) { // Not already on
+        if (action) { // Key pressed
+          this.moving = true
           movement.magnitude = this.traits.acceleration
           this.acceleration = movement // Set the acceleration
         }
-      } else {
-        if (!action) {
-          this.pressed = false
+      } else { // Already on
+        if (!action) { // Key release
+          this.moving = false
           this.stop()
         }
       }
