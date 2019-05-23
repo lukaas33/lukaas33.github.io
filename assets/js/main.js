@@ -415,13 +415,59 @@ class Entity {
   }
 }
 
+// Plant and animals share properties and methods
+class Living extends Entity {
+  constructor (loc, sprites) {
+    super(loc, sprites)
+  }
+
+  // Living being's general actions (L)
+  live () {
+    if (this.health <= 0) {
+      this.die()
+    }
+  }
+
+  // Display health (L)
+  update () {
+    super.update()
+
+    const health = (this.health / this.traits.maxHealth)
+    if (health < 1) {
+      const height = 10 // height of health bar
+      const width = 50 // width of health bar
+      // Health bar at the center above the animal
+      let x = this.loc.x + (this.sprites.size.width / 2) - (width / 2)
+      let y = this.loc.y - (height * 3)
+      // Convert map coords to view coords
+      x = Math.floor(x - (view.middle.x - view.width/2))
+      y = Math.floor(y - (view.middle.y - view.height/2))
+
+      // Display background
+      view.screen.fillStyle = '#eeeeee'
+      view.screen.fillRect(x, y, width, height)
+      if (health > 0) {
+        // Display health
+        view.screen.fillStyle = '#f44336'
+        view.screen.fillRect(x, y, (width * health), height)
+      }
+    }
+  }
+}
+
 // Objects, main movement functionality
-class Obj extends Entity {
+class Obj extends Living {
   constructor (loc, sprites) {
     super(loc, sprites)
     this.speed = new Coord()
     this.acceleration = new Coord()
     this.direction = "down" // Starting position first draw
+  }
+
+  // Additional functionality for moving creatures (L)
+  live () {
+    this.move()
+    super.live()
   }
 
   // Change position (L)
@@ -505,11 +551,17 @@ class Obj extends Entity {
   }
 }
 
-// Parent class for all animals
+// Parent class for all animals (L)
 class Animal extends Obj {
   constructor (loc, name) {
     super(loc, new Sprites(name, true, false))
     this.name = name
+  }
+
+  // Additional functionality for animal lives (L)
+  live () {
+    // TODO implement hunger
+    super.live()
   }
 }
 
@@ -577,11 +629,26 @@ class Deer extends Animal {
   }
 }
 
-// Plant objects, food for the animals (A)
-class Plant extends Entity {
+// Parent class for all plant objects, food for the animals (A)
+class Plant extends Living {
   constructor (loc, name) {
     super(loc, new Sprites(name, false, false))
     this.name = name
+  }
+
+  // Additional functionality for plant lives (L)
+  live () {
+    this.update()
+    super.live()
+  }
+
+  // Plant dies (L)
+  die () {
+    for (let i = 0; i < plants.length; i++) {
+      if (plants[i] === this) {
+        plants.splice(i, 1)
+      }
+    }
   }
 }
 
@@ -595,6 +662,7 @@ class Mushroom extends Plant {
       area: "land",
       maxHealth: 0.2
     }
+    this.health = this.traits.maxHealth
   }
 }
 
@@ -607,6 +675,7 @@ class Berry extends Plant {
       area: "land",
       maxHealth: 0.3
     }
+    this.health = this.traits.maxHealth
   }
 }
 
@@ -619,6 +688,7 @@ class Cactus extends Plant {
       area: "land",
       maxHealth: 0.5
     }
+    this.health = this.traits.maxHealth
   }
 }
 
@@ -631,6 +701,7 @@ class Shrub extends Plant {
       area: "land",
       maxHealth: 0.5
     }
+    this.health = this.traits.maxHealth
   }
 }
 
@@ -640,8 +711,10 @@ class Bush extends Plant {
     super(loc, name)
     this.traits = {
       nutrition: 0.1,
-      area: "land"
+      area: "land",
+      maxHealth: 0.6
     }
+    this.health = this.traits.maxHealth
   }
 }
 
@@ -679,49 +752,43 @@ class Creature extends Obj {
   constructor (animal) {
     super(animal.loc, animal.sprites)
     this.traits = animal.traits
-    this.health = animal.traits.maxHealth
+    this.health = this.traits.maxHealth
   }
 
-  // Display health (L)
-  update () {
-    super.update()
-
-    const health = (this.health / this.traits.maxHealth)
-    if (health < 1) {
-      const height = 10 // height of health bar
-      const width = 50 // width of health bar
-      // Health bar at the center above the animal
-      let x = this.loc.x + (this.sprites.size.width / 2) - (width / 2)
-      let y = this.loc.y - (height * 3)
-      // Convert map coords to view coords
-      x = Math.floor(x - (view.middle.x - view.width/2))
-      y = Math.floor(y - (view.middle.y - view.height/2))
-      // Display background
-      view.screen.fillStyle = '#eeeeee'
-      view.screen.fillRect(x, y, width, height)
-      if (health > 0) {
-        // Display health
-        view.screen.fillStyle = '#f44336'
-        view.screen.fillRect(x, y, (width * health), height)
+  // Animal dies (L)
+  die () {
+    for (let i = 0; i < animals.length; i++) {
+      if (animals[i] === this) {
+        animals.splice(i, 1)
       }
     }
+  }
+
+  // Sucesfull hit on another object or animal (L)
+  hit (object) {
+    object.health -= this.traits.attack
   }
 
   // Attack another animal or plant (L)
   attack (object) {
     if (object !== this) { // Not self
-      // Other location and self location
+      // Distance to object
       let distance = new Coord(object.loc.x + object.sprites.size.width / 2, object.loc.y + object.sprites.size.height / 2)
-      let middleSelf = new Coord(this.loc.x + this.sprites.size.width / 2, this.loc.y + this.sprites.size.height / 2)
-      distance.subtract(middleSelf) // Distance
-      if (distance.magnitude <= (constants.scale * 2)) { // Max one meter attack
-        let difference = Math.abs(object.loc.angle - this.loc.angle) // Difference in angles
-        if (difference < (Math.PI / 3)) { // Difference in angle lower than x degrees
-          object.health -= this.traits.attack
+      distance.subtract(new Coord(this.loc.x + this.sprites.size.width / 2, this.loc.y + this.sprites.size.height / 2))
+
+      if (distance.magnitude <= (constants.scale * 2)) { // Max x meter range for attack
+        if (this.speed.magnitude > 0) {
+          let difference = Math.abs(distance.angle - this.speed.angle) // Difference in angles
+          if (difference < (Math.PI / 3)) { // Difference in angle lower than x degrees
+            this.hit(object)
+            return true
+          }
+        } else {
+          this.hit(object)
+          return true
         }
       }
     }
-
   }
 }
 
@@ -754,10 +821,14 @@ class Player extends Creature {
           if (action) { // Key pressed
             this.attacking = true
             for (let animal of animals) {
-              this.attack(animal) // If close
-            }
+              if (this.attack(animal)) { // Hit
+                return // One at the times
+              }
+             }
             for (let plant of plants) {
-              this.attack(plant) // If close
+              if (this.attack(plant)) { // Hit
+                return
+              }
             }
           }
         } else { // already on
@@ -946,14 +1017,14 @@ view.refresh = window.setInterval(() => {
    // Draw plants
    for (let plant of plants) {
      if (plant) {
-       plant.update()
+       plant.live()
      }
    }
 
    // Draw animals
    for (let animal of animals) {
      if (animal) {
-       animal.move()
+       animal.live()
      }
    }
 
