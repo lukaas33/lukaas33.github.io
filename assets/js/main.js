@@ -48,8 +48,8 @@ const view = {
 // The entire map
 const map = {
   size: 100, // Meters wide and heigh
-  populationDensity: 500, // 1 animal per x square meters
-  growthDensity: 100, // 1 plant per x square meters
+  populationDensity: 1000, // 1 animal per x square meters
+  growthDensity: 50, // 1 plant per x square meters
   width: null,
   height: null,
   tiles: null
@@ -165,9 +165,9 @@ map.add = function (loc) {
 map.spawn = function () {
   // Rarity of different animals
   const animalSpecies = {
-    "deer": 0.2,
-    "squirrel": 0.4,
-    "wolf": 0.1
+    "deer": 0.25,
+    "squirrel": 0.35,
+    "wolf": 0.2
   }
   const animalConstructors = {
     "deer": Deer,
@@ -275,9 +275,9 @@ class Coord {
   }
 
   distance (coord) {
-    let self = new Coord(this.x, this.y)
-    self.subtract(coord)
-    return self
+    let other = new Coord(coord.x, coord.y)
+    other.subtract(this)
+    return other
   }
 
   rotate (dir) { // Rotate the vector
@@ -436,6 +436,8 @@ class Living extends Entity {
     if (this.health <= 0) {
       this.die()
     }
+
+    // TODO implement hunger
   }
 
   // Display health (L)
@@ -472,6 +474,7 @@ class Obj extends Living {
     this.speed = new Coord()
     this.acceleration = new Coord()
     this.direction = "down" // Starting position first draw
+    this.speedFactor = 1 // Can change the max speed
   }
 
   // Additional functionality for moving creatures (L)
@@ -484,12 +487,12 @@ class Obj extends Living {
   move () {
     // Add to speed
     if (this.acceleration.magnitude >= 0) {
-      if (this.speed.magnitude < this.traits.maxSpeed) { // Accelerating
+      if (this.speed.magnitude < this.traits.maxSpeed * this.speedFactor) { // Accelerating
         this.acceleration.divide(view.fps) // From px/frame to px/second
         this.acceleration.multiply(constants.scale) // From px/seond to m/s
         this.speed.add(this.acceleration)
       } else { // At max speed
-        this.speed.magnitude = this.traits.maxSpeed // Set to max to correct if over
+        this.speed.magnitude = this.traits.maxSpeed * this.speedFactor // Set to max to correct if over
       }
     }
 
@@ -761,6 +764,7 @@ class Tree extends Entity {
 class Creature extends Obj {
   constructor (animal) {
     super(animal.loc, animal.sprites)
+    this.target = null // Target when hunting
     this.traits = animal.traits
     this.health = this.traits.maxHealth
   }
@@ -777,24 +781,30 @@ class Creature extends Obj {
   // Sucesfull hit on another object or animal (L)
   hit (object) {
     object.health -= this.traits.attack
+    this.cooldown = true
+    window.setTimeout((object) => {
+      object.cooldown = false // Cooldown over
+    }, 400, this)
   }
 
   // Attack another animal or plant (L)
   attack (object) {
-    if (object !== this) { // Not self
-      // Distance to object
-      let distance = this.sprites.middle.distance(object.sprites.middle)
+    if (!this.cooldown) { // Wait until attack again
+      if (object !== this) { // Not self
+        // Distance to object
+        let distance = this.sprites.middle.distance(object.sprites.middle)
 
-      if (distance.magnitude <= (constants.scale * 2)) { // Max x meter range for attack
-        if (this.speed.magnitude > 0) {
-          let difference = Math.abs(distance.angle - this.speed.angle) // Difference in angles
-          if (difference < (Math.PI / 3)) { // Difference in angle lower than x degrees
+        if (distance.magnitude <= (constants.scale * 2)) { // Max x meter range for attack
+          if (this.speed.magnitude > 0) {
+            let difference = Math.abs(distance.angle - this.speed.angle) // Difference in angles
+            if (difference < (Math.PI / 3)) { // Difference in angle lower than x degrees
+              this.hit(object)
+              return true
+            }
+          } else {
             this.hit(object)
             return true
           }
-        } else {
-          this.hit(object)
-          return true
         }
       }
     }
@@ -836,11 +846,13 @@ class Player extends Creature {
             this.attacking = true
             for (let animal of animals) {
               if (this.attack(animal)) { // Hit
+                this.target = animal
                 return // One at the times
               }
              }
             for (let plant of plants) {
               if (this.attack(plant)) { // Hit
+                this.target = plant
                 return
               }
             }
@@ -911,12 +923,12 @@ class Player extends Creature {
 class NPC extends Creature {
   constructor (animal) {
     super(animal)
-    this.behaviour = "wandering" // Start bevaviour
+    this.currentBehaviour = "wandering" // Start bevaviour
     this.previousBehaviour = null
     this.state = "stop" // Start state
     this.step = 0
-    // Sight based on perception trait, from 1 to x
-    this.sightRadius = (1 + (9 * constants.scale * this.traits.perception) )
+    // Sight based on perception trait, from 1 to x m
+    this.sightRadius = (1 + (34 * constants.scale * (this.traits.perception)) )
 
     // Movement matrix (L)
     this.movement = {
@@ -939,40 +951,25 @@ class NPC extends Creature {
     this.chooseDirection() // Start moving
   }
 
-  // Store previous when setting a behaviour
+  // Store previous when setting a behaviour (L)
   set behaviour (value) {
-    if (this.behaviour !== value) {
-      this.previousBehaviour = this.behaviour
-      this.behaviour = value
-    }
-  }
-
-  // Respond to another animal (L)
-  found (animal) {
-    if (this.traits.diet === "carnivore") {
-      
-    } else if (this.traits.diet === "herbivore") {
-
-    }
-  }
-
-  // Check if predators or prey close (L)
-  look () {
-    for (let animal of animals) {
-      if (animal !== this) {
-        if (this.sprites.middle && animal.sprites.middle) { // For first iteration
-          let distance = this.sprites.middle.distance(animal.sprites.middle)
-          if (distance.magnitude <= this.sightRadius) { // Another animal is close
-            this.found(animal)
-          }
-        }
+    if (value) {
+      if (this.currentBehaviour !== value) {
+        this.previousBehaviour = this.currentBehaviour
+        this.currentBehaviour = value
       }
     }
   }
 
-  // Additional functionality for NPC live determines behaviour (L)
+  get behaviour () {
+    return this.currentBehaviour
+  }
+
+  // Additional functionality for live - determines behaviour (L)
   live () {
     if (this.behaviour === "wandering") {
+      this.speedFactor = 0.75 // Not at max speed
+
       this.step += 1
       // Reduces the number of decisions in direction (x per second)
       if (this.step >= 2 * view.fps) {
@@ -980,9 +977,34 @@ class NPC extends Creature {
         this.step = 0
       }
 
-      this.look() // Look around, can change behaviour
+      this.look() // Look around - can change behaviour
     } else if (this.behaviour === "hunting") {
+      if (this.target && animals.includes(this.target) && this.target.health > 0) { // Exists
+        let distance = this.sprites.middle.distance(this.target.sprites.middle)
 
+        // Check if still in range
+        let range = this.sightRadius * (1 - this.target.traits.camouflage)
+        if (distance.magnitude >= range) {
+          this.behaviour = "wandering"
+        }
+
+        // Follow prey
+        if (Math.abs(distance.angle - this.speed.angle) < Math.PI / 6) { // Roughly the same direction
+          // Use component going in the direction of the animal
+          let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
+          distance.magnitude = inproduct
+          this.speed.add(distance)
+        } else {
+          // Start moving
+          this.stop()
+          distance.magnitude = this.traits.acceleration
+          this.acceleration = distance
+        }
+        // Try to attack
+        this.attack(this.target)
+      } else {
+        this.behaviour = "wandering"
+      }
     } else if (this.behaviour === "fleeing") {
 
     } else if (this.behaviour === "eating") {
@@ -994,6 +1016,41 @@ class NPC extends Creature {
     // TODO implement obstacle avoidance
 
     super.live() // Normal actions
+  }
+
+  // Respond to another animal (L)
+  found (animal) {
+    if (this.traits.diet === "carnivore") { // Can attack first
+      if (this.traits.name !== animal.traits.name) { // No canibalism
+        // Will attack based on agression
+        let odds = {
+          "true": this.traits.aggressiveness,
+          "false": 1 - this.traits.aggressiveness
+        }
+
+        if (random.choose(odds) === "true") {
+          // Hunt the animal
+          this.behaviour = "hunting"
+          this.target = animal
+        }
+      }
+    }
+  }
+
+  // Check if predators or prey close (L)
+  look () {
+    for (let animal of animals) {
+      if (animal !== this) {
+        if (this.sprites.middle && animal.sprites.middle) { // For first iteration
+          let distance = this.sprites.middle.distance(animal.sprites.middle)
+          // Animal is within sight radius, has to be closer when animal camo is high
+          let range = this.sightRadius * (1 - animal.traits.camouflage)
+          if (distance.magnitude <= range) {
+            this.found(animal)
+          }
+        }
+      }
+    }
   }
 
   // Choose a direction at random from the decision matrix (L)
