@@ -42,7 +42,7 @@ const view = {
     height: null,
     middle: null,
     screen: doc.canvas.getContext('2d'),
-    fps: 30, // Frames per second
+    fps: 25, // Frames per second
 }
 
 // The entire map
@@ -161,7 +161,7 @@ map.add = function (loc) {
   }
 }
 
-// Animal and plants spawn on the map (L)
+// Animal and plants spawn on the map, add species to make them spawn (L)
 map.spawn = function () {
   // Rarity of different animals
   const animalSpecies = {
@@ -274,6 +274,12 @@ class Coord {
     this.y *= value
   }
 
+  distance (coord) {
+    let self = new Coord(this.x, this.y)
+    self.subtract(coord)
+    return self
+  }
+
   rotate (dir) { // Rotate the vector
     if (dir === "right") {
       [this.x, this.y] = [this.y, -this.x]
@@ -316,6 +322,7 @@ class Sprites {
     this.moving = moving // Moves in all directions
     this.changing = changing // Changes over time
     this.frame = 0 // Track frame displayed
+    this.middle = null
     this.size = {
       width: null,
       height: null
@@ -398,8 +405,11 @@ class Entity {
     }
 
     if (sprite) { // Loaded
+      // Store important variables
       this.sprites.size.width = sprite.width
       this.sprites.size.height = sprite.height
+
+      this.sprites.middle = new Coord(this.loc.x + this.sprites.size.width / 2, this.loc.y + this.sprites.size.height / 2)
 
       // Location from absolute (map) to relative (view)
       let x = Math.floor(this.loc.x - (view.middle.x - view.width/2))
@@ -466,7 +476,7 @@ class Obj extends Living {
 
   // Additional functionality for moving creatures (L)
   live () {
-    this.move()
+    this.move() // Moving, not just displaying
     super.live()
   }
 
@@ -629,14 +639,14 @@ class Deer extends Animal {
   }
 }
 
-// Parent class for all plant objects, food for the animals (A)
+// Parent class for all plant objects, food for the animals
 class Plant extends Living {
   constructor (loc, name) {
     super(loc, new Sprites(name, false, false))
     this.name = name
   }
 
-  // Additional functionality for plant lives (L)
+  // Functionality for plant lives (L)
   live () {
     this.update()
     super.live()
@@ -718,7 +728,7 @@ class Bush extends Plant {
   }
 }
 
-// Background texture objects
+// Background texture objects (A)
 class Water extends Entity {
   constructor (loc) {
     let name = "water"
@@ -773,8 +783,7 @@ class Creature extends Obj {
   attack (object) {
     if (object !== this) { // Not self
       // Distance to object
-      let distance = new Coord(object.loc.x + object.sprites.size.width / 2, object.loc.y + object.sprites.size.height / 2)
-      distance.subtract(new Coord(this.loc.x + this.sprites.size.width / 2, this.loc.y + this.sprites.size.height / 2))
+      let distance = this.sprites.middle.distance(object.sprites.middle)
 
       if (distance.magnitude <= (constants.scale * 2)) { // Max x meter range for attack
         if (this.speed.magnitude > 0) {
@@ -798,6 +807,11 @@ class Player extends Creature {
     super(animal)
     this.moving = false // Move key
     this.attacking = false // Attack key
+  }
+
+  // Different behaviour when dying
+  die () {
+    // TODO implement end of game
   }
 
   // Control function, called on key press (L)
@@ -897,8 +911,12 @@ class Player extends Creature {
 class NPC extends Creature {
   constructor (animal) {
     super(animal)
+    this.behaviour = "wandering" // Start bevaviour
+    this.previousBehaviour = null
     this.state = "stop" // Start state
     this.step = 0
+    // Sight based on perception trait, from 1 to x
+    this.sightRadius = (1 + (9 * constants.scale * this.traits.perception) )
 
     // Movement matrix (L)
     this.movement = {
@@ -919,6 +937,63 @@ class NPC extends Creature {
     }
 
     this.chooseDirection() // Start moving
+  }
+
+  // Store previous when setting a behaviour
+  set behaviour (value) {
+    if (this.behaviour !== value) {
+      this.previousBehaviour = this.behaviour
+      this.behaviour = value
+    }
+  }
+
+  // Respond to another animal (L)
+  found (animal) {
+    if (this.traits.diet === "carnivore") {
+      
+    } else if (this.traits.diet === "herbivore") {
+
+    }
+  }
+
+  // Check if predators or prey close (L)
+  look () {
+    for (let animal of animals) {
+      if (animal !== this) {
+        if (this.sprites.middle && animal.sprites.middle) { // For first iteration
+          let distance = this.sprites.middle.distance(animal.sprites.middle)
+          if (distance.magnitude <= this.sightRadius) { // Another animal is close
+            this.found(animal)
+          }
+        }
+      }
+    }
+  }
+
+  // Additional functionality for NPC live determines behaviour (L)
+  live () {
+    if (this.behaviour === "wandering") {
+      this.step += 1
+      // Reduces the number of decisions in direction (x per second)
+      if (this.step >= 2 * view.fps) {
+        this.chooseDirection()
+        this.step = 0
+      }
+
+      this.look() // Look around, can change behaviour
+    } else if (this.behaviour === "hunting") {
+
+    } else if (this.behaviour === "fleeing") {
+
+    } else if (this.behaviour === "eating") {
+      // TODO implement eat
+    } else if (this.behaviour === "hiding") {
+      // TODO implement hide
+    }
+
+    // TODO implement obstacle avoidance
+
+    super.live() // Normal actions
   }
 
   // Choose a direction at random from the decision matrix (L)
@@ -950,17 +1025,6 @@ class NPC extends Creature {
           break
       }
     }
-  }
-
-  // Main movement function, overwrites parent method (L)
-  move () {
-    this.step += 1
-    if (this.step >= view.fps) { // Reduces the number of decisions in direction (1 per second)
-      this.chooseDirection()
-      this.step = 0
-    }
-
-    super.move() // Call parent method
   }
 
 
