@@ -167,7 +167,7 @@ map.spawn = function () {
   const animalSpecies = {
     "deer": 0.25,
     "squirrel": 0.35,
-    "wolf": 0.2
+    "wolf": 0.15
   }
   const animalConstructors = {
     "deer": Deer,
@@ -237,7 +237,7 @@ map.create = function (species, constructors) {
 
 // Godmode function, called via console (A)
 const godMode = function () {
-  PC.traits.health = Math.infinity,
+  PC.health = 1000,
   PC.traits.maxSpeed = 35,
   PC.traits.acceleration = 1
   PC.traits.attack = 1
@@ -588,7 +588,7 @@ class Squirrel extends Animal {
       maxSpeed: 15,
       acceleration: 0.05,
       area: "land",
-      maxHealth: 0.25,
+      maxHealth: 3,
       mass: 0.3,
       diet: "herbivore",
       camouflage: 0.6,
@@ -609,7 +609,7 @@ class Wolf extends Animal {
       maxSpeed: 10,
       acceleration: 0.01,
       area: "land",
-      maxHealth: 0.6,
+      maxHealth: 15,
       mass: 60.0,
       diet: "carnivore",
       camouflage: 0.6,
@@ -630,7 +630,7 @@ class Deer extends Animal {
       maxSpeed: 7,
       acceleration: 0.07,
       area: "land",
-      maxHealth: 0.5,
+      maxHealth: 8,
       mass: 50,
       diet: "herbivore",
       camouflage: 0.7,
@@ -765,6 +765,7 @@ class Creature extends Obj {
   constructor (animal) {
     super(animal.loc, animal.sprites)
     this.target = null // Target when hunting
+    this.hunter = null // Is hunting you
     this.traits = animal.traits
     this.health = this.traits.maxHealth
   }
@@ -790,18 +791,18 @@ class Creature extends Obj {
   // Attack another animal or plant (L)
   attack (object) {
     if (!this.cooldown) { // Wait until attack again
-      if (object !== this) { // Not self
+      if (object !== this && object) { // Not self and exists
         // Distance to object
         let distance = this.sprites.middle.distance(object.sprites.middle)
 
         if (distance.magnitude <= (constants.scale * 2)) { // Max x meter range for attack
           if (this.speed.magnitude > 0) {
             let difference = Math.abs(distance.angle - this.speed.angle) // Difference in angles
-            if (difference < (Math.PI / 3)) { // Difference in angle lower than x degrees
+            if (difference < (Math.PI / 3)) { // Difference in angle of attack lower than x degrees
               this.hit(object)
               return true
             }
-          } else {
+          } else { // Standing still
             this.hit(object)
             return true
           }
@@ -817,6 +818,7 @@ class Player extends Creature {
     super(animal)
     this.moving = false // Move key
     this.attacking = false // Attack key
+    this.speedFactor = 0.65 // Not at max speed
   }
 
   // Different behaviour when dying
@@ -861,6 +863,13 @@ class Player extends Creature {
           if (!action) { // Key release
             this.attacking = false
           }
+        }
+        break
+      case 16: // Shift
+        if (action) {
+          this.speedFactor = 1 // Sprint
+        } else if (!action){
+          this.speedFactor = 0.65
         }
         break
     }
@@ -927,8 +936,10 @@ class NPC extends Creature {
     this.previousBehaviour = null
     this.state = "stop" // Start state
     this.step = 0
+    this.speedFactor = 0.65 // Not at max speed
     // Sight based on perception trait, from 1 to x m
-    this.sightRadius = (1 + (34 * constants.scale * (this.traits.perception)) )
+    let x = 40
+    this.sightRadius = (1 + ((x - 1) * constants.scale * (this.traits.perception)) )
 
     // Movement matrix (L)
     this.movement = {
@@ -968,24 +979,26 @@ class NPC extends Creature {
   // Additional functionality for live - determines behaviour (L)
   live () {
     if (this.behaviour === "wandering") {
-      this.speedFactor = 0.75 // Not at max speed
+      this.speedFactor = 0.65 // Not at max speed
 
       this.step += 1
-      // Reduces the number of decisions in direction (x per second)
-      if (this.step >= 2 * view.fps) {
-        this.chooseDirection()
+      if (this.step >= 2 * view.fps) { // Reduces the number of decisions in direction (x per second)
+        this.chooseDirection() // Choose on new direction
         this.step = 0
       }
 
       this.look() // Look around - can change behaviour
     } else if (this.behaviour === "hunting") {
       if (this.target && animals.includes(this.target) && this.target.health > 0) { // Exists
+        this.speedFactor = 1
+
         let distance = this.sprites.middle.distance(this.target.sprites.middle)
 
         // Check if still in range
         let range = this.sightRadius * (1 - this.target.traits.camouflage)
         if (distance.magnitude >= range) {
           this.behaviour = "wandering"
+          this.target = null
         }
 
         // Follow prey
@@ -993,7 +1006,7 @@ class NPC extends Creature {
           // Use component going in the direction of the animal
           let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
           distance.magnitude = inproduct
-          this.speed.add(distance)
+          this.speed.add(distance) // Move toward
         } else {
           // Start moving
           this.stop()
@@ -1004,9 +1017,34 @@ class NPC extends Creature {
         this.attack(this.target)
       } else {
         this.behaviour = "wandering"
+        this.target = null
       }
     } else if (this.behaviour === "fleeing") {
+      if (this.hunter.target === this && animals.includes(this.hunter) && this.hunter.health > 0) { // Exists
+        this.speedFactor = 1
+        
+        let distance = this.sprites.middle.distance(this.hunter.sprites.middle)
+        // Check if still close
+        let range = this.sightRadius * (1 - this.hunter.traits.camouflage)
+        if (distance.magnitude >= range) {
+          this.behaviour = "wandering"
+          this.hunter = null
+        }
 
+        // Go in the reverse direction
+        distance.rotate("right")
+        distance.rotate("right")
+        if (this.speed.magnitude > 0) {
+          distance.magnitude = this.speed.magnitude
+          this.speed.add(distance) // Move away
+        } else {
+          distance.magnitude = this.traits.acceleration
+          this.acceleration = distance
+        }
+      } else {
+        this.behaviour = "wandering"
+        this.hunter = null
+      }
     } else if (this.behaviour === "eating") {
       // TODO implement eat
     } else if (this.behaviour === "hiding") {
@@ -1022,7 +1060,7 @@ class NPC extends Creature {
   found (animal) {
     if (this.traits.diet === "carnivore") { // Can attack first
       if (this.traits.name !== animal.traits.name) { // No canibalism
-        // Will attack based on agression
+        // Will attack odd based on agression
         let odds = {
           "true": this.traits.aggressiveness,
           "false": 1 - this.traits.aggressiveness
@@ -1035,6 +1073,11 @@ class NPC extends Creature {
         }
       }
     }
+
+    if (animal.target === this) { // NPC is being hunted
+      this.behaviour = "fleeing"
+      this.hunter = animal
+    }
   }
 
   // Check if predators or prey close (L)
@@ -1043,7 +1086,7 @@ class NPC extends Creature {
       if (animal !== this) {
         if (this.sprites.middle && animal.sprites.middle) { // For first iteration
           let distance = this.sprites.middle.distance(animal.sprites.middle)
-          // Animal is within sight radius, has to be closer when animal camo is high
+          // Animal is within sight radius, depends on camo trait
           let range = this.sightRadius * (1 - animal.traits.camouflage)
           if (distance.magnitude <= range) {
             this.found(animal)
