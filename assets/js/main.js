@@ -42,7 +42,7 @@ const view = {
     height: null,
     middle: null,
     screen: doc.canvas.getContext('2d'),
-    fps: 25, // Frames per second
+    fps: 30, // Frames per second
 }
 
 // The entire map
@@ -475,6 +475,7 @@ class Obj extends Living {
     this.acceleration = new Coord()
     this.direction = "down" // Starting position first draw
     this.speedFactor = 1 // Can change the max speed
+    this.terrainFactor = 1 // Can change the max speed
   }
 
   // Additional functionality for moving creatures (L)
@@ -487,12 +488,13 @@ class Obj extends Living {
   move () {
     // Add to speed
     if (this.acceleration.magnitude >= 0) {
-      if (this.speed.magnitude < this.traits.maxSpeed * this.speedFactor) { // Accelerating
+      let maxSpeed = this.traits.maxSpeed * this.speedFactor * this.terrainFactor // Modfied maximum
+      if (this.speed.magnitude < maxSpeed) { // Accelerating
         this.acceleration.divide(view.fps) // From px/frame to px/second
         this.acceleration.multiply(constants.scale) // From px/seond to m/s
         this.speed.add(this.acceleration)
       } else { // At max speed
-        this.speed.magnitude = this.traits.maxSpeed * this.speedFactor // Set to max to correct if over
+        this.speed.magnitude = maxSpeed // Set to max to correct if over
       }
     }
 
@@ -522,9 +524,9 @@ class Obj extends Living {
     for (let y = 0; y < map.size; y++) {
       for (let x = 0; x < map.size; x++) {
         let object = map.tiles[y][x]
-        if (object !== null && object.type == "tree") {
-          if (this.collide(object)) {
-            this.block(object)
+        if (object !== null && object.type == "tree") { // In a tree
+          if (this.collide(object)) { // If colliding
+            this.block(object) // Stop moving
           }
         }
       }
@@ -542,14 +544,16 @@ class Obj extends Living {
 
   // Blocked from moving further (A)
   block (object) {
-    // Get component going in the direction of the animal
-    let distance = new Coord(object.loc.x - this.loc.x, object.loc.y - this.loc.y)
-    let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
-    inproduct /= distance.magnitude
-    distance.magnitude = inproduct
+    if (this.speed.magnitude > 0) {
+      // Get component going in the direction of the object
+      let distance = new Coord(object.loc.x - this.loc.x, object.loc.y - this.loc.y)
+      let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
+      inproduct /= distance.magnitude
+      distance.magnitude = inproduct
 
-    // Remove component
-    this.speed.subtract(distance)
+      // Remove component
+      this.speed.subtract(distance)
+    }
   }
 
   // check if colliding with another object (L)
@@ -558,7 +562,7 @@ class Obj extends Living {
     collideX = collideX || this.loc.x + this.sprites.size.width <= obj.loc.x + obj.sprites.size.width && this.loc.x + this.sprites.size.width >= obj.loc.x
     let collideY = this.loc.y <= obj.loc.y + obj.sprites.size.height && this.loc.y >= obj.loc.y
     collideY = collideY || this.loc.y + this.sprites.size.height <= obj.loc.y + obj.sprites.size.height && this.loc.y + this.sprites.size.height >= obj.loc.y
-    return collideX && collideY
+    return collideX && collideY // Collding in Y-axis and X-axis
   }
 
   // Checks and stops object if objects moving past borders (L)
@@ -799,6 +803,31 @@ class Creature extends Obj {
     }
   }
 
+  // Terrain modifies maxSpeed (L)
+  move () {
+    // Current tile
+    let x = Math.floor(this.loc.x / constants.scale)
+    let y = Math.floor(this.loc.y / constants.scale)
+    let terrain = map.tiles[y][x]
+    // Current area
+    let area = null
+    if (terrain === null) {
+      area = "sky" // Is a tree
+    } else {
+      area = terrain.area
+    }
+    // Land animals move slowly in water
+    if (this.traits.area === "land") {
+      if (area === "water") {
+        this.terrainFactor = 0.5
+      } else {
+        this.terrainFactor = 1
+      }
+    }
+
+    super.move()
+  }
+
   // Sucesfull hit on another object or animal (L)
   hit (object) {
     object.health -= this.traits.attack
@@ -855,44 +884,7 @@ class Player extends Creature {
         movement = new Coord(0, 1)
         break
       case 32: // Spacebar
-        if (!this.attacking) { // Have to release and press again
-          if (action) { // Key pressed
-            this.attacking = true
-            for (let animal of animals) {
-              if (this.attack(animal)) { // Hit
-                if (!this.targeting) {
-                  this.target = animal
-                  // Remove as target after some time (animal will forget being hunted)
-                  this.targeting = window.setInterval(() => {
-                    let distance = this.sprites.middle.distance(this.target.sprites.middle)
-                    // Check if still in range
-                    let range = animal.sightRadius * (1 - this.traits.camouflage)
-                    if (distance.magnitude >= range) {
-                      this.target = null
-                      clearInterval(this.targeting)
-                      this.targeting = null
-                    }
-                  }, 1000)
-                } else { // Is hunting animal
-                  if (animal !== this.target) { // Attack the same
-                    this.target = animal
-                    window.clearInterval(this.targeting)
-                  }
-                }
-                return // One at the times
-              }
-             }
-            for (let plant of plants) {
-              if (this.attack(plant)) { // Hit
-                return
-              }
-            }
-          }
-        } else { // already on
-          if (!action) { // Key release
-            this.attacking = false
-          }
-        }
+        this.attackButton()
         break
       case 16: // Shift
         if (action) {
@@ -915,6 +907,48 @@ class Player extends Creature {
           this.moving = false
           this.stop()
         }
+      }
+    }
+  }
+
+  // Player tries to attack behaviour - NPC's need to respond (L)
+  attackButton () {
+    if (!this.attacking) { // Have to release and press again
+      if (action) { // Key pressed
+        this.attacking = true
+        for (let animal of animals) {
+          if (this.attack(animal)) { // Hit
+            if (!this.targeting) {
+              this.target = animal
+              // Remove as target after some time (animal will forget being hunted)
+              this.targeting = window.setInterval(() => {
+                let distance = this.sprites.middle.distance(this.target.sprites.middle)
+                // Check if still in range
+                let range = animal.sightRadius * (1 - this.traits.camouflage)
+                if (distance.magnitude >= range) {
+                  this.target = null
+                  clearInterval(this.targeting)
+                  this.targeting = null
+                }
+              }, 1000)
+            } else { // Is hunting animal
+              if (animal !== this.target) { // Attack the same
+                this.target = animal
+                window.clearInterval(this.targeting)
+              }
+            }
+            return // One at the times
+          }
+         }
+        for (let plant of plants) {
+          if (this.attack(plant)) { // Hit
+            return
+          }
+        }
+      }
+    } else { // already on
+      if (!action) { // Key release
+        this.attacking = false
       }
     }
   }
@@ -1000,7 +1034,6 @@ class NPC extends Creature {
       }
     }
   }
-
   get behaviour () {
     return this.currentBehaviour
   }
@@ -1025,7 +1058,7 @@ class NPC extends Creature {
 
         // Check if still in range
         let range = this.sightRadius * (1 - this.target.traits.camouflage)
-        if (distance.magnitude >= range) {
+        if (distance.magnitude >= range) { // Lost target
           this.behaviour = "wandering"
           this.target = null
           this.chooseDirection()
@@ -1045,7 +1078,7 @@ class NPC extends Creature {
         }
         // Try to attack
         this.attack(this.target)
-      } else {
+      } else { // Lost target
         this.behaviour = "wandering"
         this.target = null
         this.chooseDirection()
@@ -1057,7 +1090,7 @@ class NPC extends Creature {
         let distance = this.sprites.middle.distance(this.hunter.sprites.middle)
         // Check if still close
         let range = this.sightRadius * (1 - this.hunter.traits.camouflage)
-        if (distance.magnitude >= range) {
+        if (distance.magnitude >= range) { // Lost hunter
           this.behaviour = "wandering"
           this.hunter = null
           this.chooseDirection()
@@ -1073,7 +1106,7 @@ class NPC extends Creature {
           distance.magnitude = this.traits.acceleration
           this.acceleration = distance
         }
-      } else {
+      } else { // Lost hunter
         this.behaviour = "wandering"
         this.hunter = null
         this.chooseDirection()
@@ -1103,7 +1136,6 @@ class NPC extends Creature {
           // Hunt the animal
           this.behaviour = "hunting"
           this.target = animal
-
         }
       }
 
