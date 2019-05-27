@@ -30,12 +30,12 @@ document.querySelector("button[name=reset]").addEventListener('click', (event) =
 // Not used anymore
 // document.querySelector("button[name=mail]").addEventListener('click', (event) => {
 //   this.disabled = true // No clicking twice
-//   location.href = 'assets/elements/export.html/?action=mail'
+//   location.href = 'assets/elements/export.html?action=mail'
 // })
 
   document.querySelector("button[name=save]").addEventListener('click', (event) => {
     this.disabled = true // No clicking twice
-    location.href = 'assets/elements/export.html/?action=save'
+    location.href = 'assets/elements/export.html?action=save'
 })
 
 // Run

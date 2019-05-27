@@ -4,7 +4,6 @@ const urlsToCache = [
   ".",
   "herbarium/",
   "opties/",
-  "?action=save",
   "manifest.json",
   "index.html",
   "herbarium/index.html",
