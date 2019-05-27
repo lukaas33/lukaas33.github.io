@@ -443,7 +443,9 @@ class Obj extends Entity {
 
     // Check if legal
     this.borders()
-    for (let animal of animals) { // Collide with animal
+
+    // Collide with animal
+    for (let animal of animals) {
       if (animal !== this) {
         if (this.collide(animal)) {
           this.block(animal)
@@ -451,6 +453,7 @@ class Obj extends Entity {
       }
     }
 
+    // Collide with tree (A) TODO make dependend on size
     for (let y = 0; y < map.size; y++) {
       for (let x = 0; x < map.size; x++) {
         let object = map.tiles[y][x]
@@ -462,7 +465,6 @@ class Obj extends Entity {
       }
     }
 
-
     // Update on screen
     this.update()
   }
@@ -473,26 +475,16 @@ class Obj extends Entity {
     this.acceleration.magnitude = 0
   }
 
-  // Blocked from moving further (L)
+  // Blocked from moving further (A)
   block (object) {
     // Get component going in the direction of the animal
     let distance = new Coord(object.loc.x - this.loc.x, object.loc.y - this.loc.y)
     let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
-      distance.magnitude = inproduct
-    distance.divide(view.fps)
-    // Subtract from speed
+    inproduct /= distance.magnitude
+    distance.magnitude = inproduct
 
+    // Remove component
     this.speed.subtract(distance)
-    if(this.moving != undefined){
-    console.log(object.loc.x, this.loc.x, object.loc.y, this.loc.y)
-    console.log(this.speed.x, distance.x, this.speed.y, distance.y)
-    console.log(inproduct)
-    console.log(distance)
-    console.log(this.speed)
-    console.log(this.collide(object), object , this)
-    console.log(this.loc.x <= object.loc.x + object.sprites.size.width && this.loc.x >= object.loc.x)
-    console.log(this.loc.x , object.loc.x , object.sprites.size.width, this.loc.x , object.loc.x)
-  }
   }
 
   // check if colliding with another object (L)
