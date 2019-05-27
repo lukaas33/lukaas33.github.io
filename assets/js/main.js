@@ -508,16 +508,24 @@ class Obj extends Living {
 
     // Check if legal
     this.borders()
-    for (let animal of animals) { // Collide with animal
+
+    // Collide with animal
+    for (let animal of animals) {
       if (animal !== this) {
         if (this.collide(animal)) {
-          // Get component going in the direction of the animal
-          let distance = new Coord(animal.loc.x - this.loc.x, animal.loc.y - this.loc.y)
-          let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
-          distance.magnitude = inproduct
-          distance.divide(view.fps)
-          // Subtract from speed
-          this.speed.subtract(distance)
+          this.block(animal)
+        }
+      }
+    }
+
+    // Collide with tree (A) TODO make dependend on size
+    for (let y = 0; y < map.size; y++) {
+      for (let x = 0; x < map.size; x++) {
+        let object = map.tiles[y][x]
+        if (object !== null && object.type == "tree") {
+          if (this.collide(object)) {
+            this.block(object)
+          }
         }
       }
     }
@@ -526,10 +534,22 @@ class Obj extends Living {
     this.update()
   }
 
-  // Stop moving
+  // Stop moving completely
   stop () {
     this.speed.magnitude = 0
     this.acceleration.magnitude = 0
+  }
+
+  // Blocked from moving further (A)
+  block (object) {
+    // Get component going in the direction of the animal
+    let distance = new Coord(object.loc.x - this.loc.x, object.loc.y - this.loc.y)
+    let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
+    inproduct /= distance.magnitude
+    distance.magnitude = inproduct
+
+    // Remove component
+    this.speed.subtract(distance)
   }
 
   // check if colliding with another object (L)
