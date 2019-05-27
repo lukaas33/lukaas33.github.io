@@ -75,8 +75,15 @@ document.querySelector('button[name=menu]').addEventListener('click', (event) =>
 })
 
 
-
 // Time loop function for game
 const wait = window.setInterval(() => {
   menu.clock()
 }, 750) // Refresh time less than 1 sec for smooth display
+
+// Remove loader from screen after first page load
+const loading = window.setInterval(() => {
+  if (document.readyState === "interactive" || document.readyState === "complete") {
+    document.getElementById("loading").style.display = 'none'
+    window.clearInterval(loading)
+  }
+}, 5)

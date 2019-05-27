@@ -28,7 +28,7 @@ const game = {
     database.setStorage("route", id)
   },
   get ended () {
-    return database.getStorage("ended") === true // Boolean value
+    return database.getStorage("ended") // Boolean value
   },
   set ended (value) {
     database.setStorage("ended", value)
@@ -181,8 +181,8 @@ const game = {
     document.querySelector('#history h4').textContent = "overzicht"
     herbarium.recents()
     doc.name.textContent = 'Game over'
-    doc.image.src = "assets/images/game-over.jpg"
     doc.nav.innerHTML = `<h4>Punten</h4><div class="tag">${quiz.points}</div>`
+    doc.image.setAttribute('data-img', "assets/images/game-over.jpg")
   }
 }
 

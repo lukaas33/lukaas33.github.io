@@ -75,7 +75,10 @@ const herbarium = {
       }
     } else { // No progress
       const text = document.createElement('div')
-      text.textContent = "Nog geen bomen gevonden"
+      text.innerHTML = `<div id="empty">
+        <img src="assets/images/placeholder.svg"/>
+        <p>Nog geen bomen gevonden</p>
+      </div>`
       document.querySelector('main').appendChild(text)
     }
   },

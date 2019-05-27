@@ -120,6 +120,15 @@ header .tag {
   width: 2rem;
   opacity: 0; }
 
+#empty img {
+  width: 70%;
+  margin: 15%;
+  border-radius: 50%;
+  border: 2rem solid #a5d6a7; }
+
+#empty p {
+  text-align: center; }
+
 #overview-page {
   display: flex;
   flex-wrap: wrap;

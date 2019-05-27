@@ -13,6 +13,19 @@ header {
   }
 }
 
+#empty {
+  img {
+    width: 70%;
+    margin: 15%;
+    border-radius: 50%;
+    border: 2rem solid $primary-200;
+  }
+
+  p {
+    text-align: center;
+  }
+}
+
 
 #overview-page {
   display: flex;
