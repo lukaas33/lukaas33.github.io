@@ -10,7 +10,7 @@
 
 (function () { // Closure for scope limited to browser
   'use strict' // Js strict mode
-
+  // TODO enclose code after testing
 })()
 
 
@@ -33,7 +33,7 @@ const constants = {
 // Related to document, for example html elements
 const doc = {
   canvas: document.getElementById('canvas'),
-  startButton: document.getElementById("startButton")
+  startButton: document.getElementById("start")
 }
 
 // Related to the view and drawing
@@ -70,14 +70,14 @@ const plants = []
 const store = {
   get: function (name) {
     const string = localStorage.getItem(name)
-    try { // Won't work if the data is only a string
-      return JSON.parse(string) // Return converted value
-    } catch (e) {
+    try {
+      return JSON.parse(string) // To object
+    } catch (e) { // Won't work if the data is only a string
       return string
     }
   },
   set: function (name, value) {
-    const string = JSON.stringify(value) // Convert value
+    const string = JSON.stringify(value) // To string
     localStorage.setItem(name, string)
   }
 }
@@ -85,12 +85,13 @@ const store = {
 // Random functions (L)
 const random = {
   choose: function (options) {
+    let total = Object.values(options).reduce((a, b) => a + b, 0) // Total of odds
+    let odd = Math.random() * total // random number between 0 and total
+
     let cummulative = 0
-    let total = Object.values(options).reduce((a, b) => a + b, 0)
-    let odd = Math.random() * total // random number between 0 and max
     for (let dir in options) {
       cummulative += options[dir]
-      if (odd < cummulative) { // Found
+      if (odd < cummulative) { // Found random option
         return dir
       }
     }
@@ -99,16 +100,16 @@ const random = {
 
 // Generate the map (L)
 map.generate = function () {
-  // Create 2D-array of sizexsize
+  // Create 2D-array of size x size
   map.tiles = new Array(map.size)
   for (let a = 0; a < map.size; a++) {
     map.tiles[a] = new Array(map.size)
   }
 
-  // Loop through all
+  // Loop through 2D-array
   for (let y = 0; y < map.size; y++) {
     for (let x = 0; x < map.size; x++) {
-      map.add(new Coord(x, y))
+      map.add(new Coord(x, y)) // Random texture
     }
   }
 }
@@ -118,27 +119,30 @@ map.add = function (loc) {
   if (map.tiles[loc.y][loc.x] === undefined) { // Spot still empty
     // Standard generation odds
     const options = {
-      "grass": 1, // Depends on other odds
+      "grass": null,
       "water": 0.006,
       "tree": 0.024
     }
 
-    // Check nearby for water tiles
+    // Check nearby tiles for water
     if (loc.x > 0 && loc.y > 0) {
-      const near = [map.tiles[loc.y - 1][loc.x - 1], map.tiles[loc.y - 1][loc.x], map.tiles[loc.y][loc.x - 1]]
-      const nearby = near.filter((x) => x !== null && x.type === "water").length // Number of nearby water tiles
-      // More adjecent tiles makes water spawing more likely
-      const factor = 60
-      options["water"] += options["water"] * (nearby * factor)
+      const near = [
+        map.tiles[loc.y - 1][loc.x - 1],
+        map.tiles[loc.y - 1][loc.x],
+        map.tiles[loc.y][loc.x - 1]
+      ]
+      const nearby = near.filter((x) => x !== null && x.type === "water")
+      // More adjecent water tiles makes water spawing more likely
+      const factor = 65 // Increase odd of water spawning
+      options["water"] += options["water"] * (nearby.length * factor)
     }
-    options["grass"] -= options["tree"] + options["water"]
+    options["grass"] = 1 - (options["tree"] + options["water"])
 
-    // Choose random texture from options
-    const type = random.choose(options)
+    const type = random.choose(options) // Choose random texture from options
 
-    // Add location and add to map
+    // Add texture to map
     const place = new Coord(loc.x, loc.y)
-    place.multiply(constants.scale)
+    place.multiply(constants.scale) // Index to map coordinates
     switch (type) {
       case "grass":
         map.tiles[loc.y][loc.x] = new Grass(place)
@@ -153,7 +157,7 @@ map.add = function (loc) {
           map.tiles[loc.y + 1][loc.x] = null
           map.tiles[loc.y][loc.x + 1] = null
           map.tiles[loc.y + 1][loc.x + 1] = null
-        } else {
+        } else { // At the edge
           map.add(loc) // Try again
         }
         break
@@ -161,7 +165,7 @@ map.add = function (loc) {
   }
 }
 
-// Animal and plants spawn on the map, add species to make them spawn (L)
+// Animal and plants spawn on the map (L)
 map.spawn = function () {
   // Rarity of different animals
   const animalSpecies = {
@@ -202,21 +206,19 @@ map.spawn = function () {
   }
 }
 
-// Create a new animal or plant
+// Create a random new animal or plant (L)
 map.create = function (species, constructors) {
+  // Check if position is legal
   const isLegal = function (loc, object) {
     // Must be outside view
     let inView = (loc.x < view.middle.x - view.width / 2 || loc.x > view.middle.x + view.width / 2)
     inView = inView || (loc.y < view.middle.y - view.height / 2 || loc.y > view.middle.y + view.height / 2)
 
-    // Legal terrain
-    let habitat = false
+    // Legal terrain for the object
     let row = Math.floor(loc.y / constants.scale)
     let col = Math.floor(loc.x / constants.scale)
-    if (map.tiles[row][col]) {
-      habitat = map.tiles[row][col].area === object.traits.area
-    }
-    return inView && habitat
+    let area = map.tiles[row][col] === null ? "sky" : map.tiles[row][col].area // null value means tree
+    return inView && area === object.traits.area
   }
 
   // Choose random based on rarity
@@ -226,13 +228,12 @@ map.create = function (species, constructors) {
   // Choose random location
   let loc = null
   do {
-    // Two random values on the map
     let x = Math.floor(Math.random() * (map.size * constants.scale))
     let y = Math.floor(Math.random() * (map.size * constants.scale))
     loc = new Coord(x, y)
-  } while (!isLegal(loc, creature)) // Check condition after initialising
+  } while (!isLegal(loc, creature)) // Check condition after initialising loc
 
-  return new creature.constructor(loc)
+  return new creature.constructor(loc) // Call constructor again with location
 }
 
 // Godmode function, called via console (A)
@@ -249,14 +250,14 @@ const godMode = function () {
 // | |___| | (_| \__ \__ \  __/\__ \
 //  \____|_|\__,_|___/___/\___||___/
 
-// Coordinates
+// Coordinates / vectors (L)
 class Coord {
   constructor (x = 0, y = 0) {
     this.x = x
     this.y = y
   }
 
-  // Several vector math methods (L)
+  // Several vector math methods
   add (coord) {
     this.x += coord.x
     this.y += coord.y
@@ -273,55 +274,57 @@ class Coord {
     this.x *= value
     this.y *= value
   }
-
-  distance (coord) {
-    let other = new Coord(coord.x, coord.y)
-    other.subtract(this)
-    return other
-  }
-
-  rotate (dir) { // Rotate the vector
+  // Rotate the vector
+  rotate (dir) {
     if (dir === "right") {
       [this.x, this.y] = [this.y, -this.x]
     } else if (dir === "left") {
       [this.x, this.y] = [-this.y, this.x]
     }
   }
-
-  get magnitude () { // Calculate the length of the vector
-    return Math.sqrt(this.x**2 + this.y**2)
-  }
-  set magnitude (value) { // Change the length of the vector
+  // Change the length of the vector
+  set magnitude (value) {
     let vector = this.normalized
     vector.multiply(value)
     this.x = vector.x
     this.y = vector.y
   }
 
-  get angle () { // Return the angle in radians
+  // Distance to another coordinate
+  distance (coord) {
+    let other = new Coord(coord.x, coord.y)
+    other.subtract(this)
+    return other
+  }
+  // Calculate the length of the vector
+  get magnitude () {
+    return Math.sqrt(this.x**2 + this.y**2)
+  }
+  // Return the angle in radians
+  get angle () {
     return Math.atan2(this.y, this.x)
   }
-
-  get normalized () { // Return the unit vector
+  // Return the unit vector
+  get normalized () {
     let mag = this.magnitude
-    if (mag > 0) {
+    if (mag > 0) { // Can't divide by 0
       let norm = new Coord(this.x, this.y)
       norm.divide(mag)
       return norm
     } else {
-      return new Coord() // 0-vector
+      return new Coord() // Vector of 0
     }
   }
 }
 
-// Multiple sprites from a name (L)
+// Multiple sprites from a given name (L)
 class Sprites {
   dirs = ["right", "down", "left", "up"]
 
   constructor (name, moving, changing) {
     this.moving = moving // Moves in all directions
     this.changing = changing // Changes over time
-    this.frame = 0 // Track frame displayed
+    this.frame = 0 // Frame displayed
     this.middle = null
     this.size = {
       width: null,
@@ -378,7 +381,7 @@ class Sprites {
 class Entity {
   constructor (loc, sprites) {
     this.loc = loc
-    this.sprites = sprites // Store locations of image
+    this.sprites = sprites
   }
 
   // Display a sprite on the screen (L)
@@ -412,13 +415,12 @@ class Entity {
       this.sprites.middle = new Coord(this.loc.x + this.sprites.size.width / 2, this.loc.y + this.sprites.size.height / 2)
 
       // Location from absolute (map) to relative (view)
-      let x = Math.floor(this.loc.x - (view.middle.x - view.width/2))
-      let y = Math.floor(this.loc.y - (view.middle.y - view.height/2))
+      let x = Math.floor(this.loc.x - (view.middle.x - view.width / 2))
+      let y = Math.floor(this.loc.y - (view.middle.y - view.height / 2))
 
-      // Only draw when in view, with edges for smoother loading
+      // Only draw when in view (with edges) for smoother rendering (drawing is intensive)
       let edge = 64
       if (-edge < x && x < view.width + edge && -edge < y && y < view.height + edge) {
-        // performance: drawing is an intensive task
         view.screen.drawImage(sprite, x, y)
       }
     }
@@ -436,31 +438,29 @@ class Living extends Entity {
     if (this.health <= 0) {
       this.die()
     }
-
-    // TODO implement hunger
   }
 
   // Display health (L)
   update () {
     super.update()
 
-    const health = (this.health / this.traits.maxHealth)
+    const health = (this.health / this.traits.maxHealth) // Factor: 0 - 1
     if (health < 1) {
-      const height = 10 // height of health bar
-      const width = 50 // width of health bar
+      const height = 10
+      const width = 50
       // Health bar at the center above the animal
       let x = this.loc.x + (this.sprites.size.width / 2) - (width / 2)
       let y = this.loc.y - (height * 3)
       // Convert map coords to view coords
-      x = Math.floor(x - (view.middle.x - view.width/2))
-      y = Math.floor(y - (view.middle.y - view.height/2))
+      x = Math.floor(x - (view.middle.x - view.width / 2))
+      y = Math.floor(y - (view.middle.y - view.height / 2))
 
-      // Display background
-      view.screen.fillStyle = '#eeeeee'
+      // Display bar
+      view.screen.fillStyle = '#eeeeee' // Grey
       view.screen.fillRect(x, y, width, height)
       if (health > 0) {
         // Display health
-        view.screen.fillStyle = '#f44336'
+        view.screen.fillStyle = '#f44336' // Red
         view.screen.fillRect(x, y, (width * health), height)
       }
     }
@@ -474,8 +474,10 @@ class Obj extends Living {
     this.speed = new Coord()
     this.acceleration = new Coord()
     this.direction = "down" // Starting position first draw
-    this.speedFactor = 1 // Can change the max speed
-    this.terrainFactor = 1 // Can change the max speed
+    this.angle = 0.5 * Math.PI
+    // Can change the max speed
+    this.speedFactor = 1
+    this.terrainFactor = 1
   }
 
   // Additional functionality for moving creatures (L)
@@ -486,26 +488,28 @@ class Obj extends Living {
 
   // Change position (L)
   move () {
-    // Add to speed
+    // Add acceleration to speed
     if (this.acceleration.magnitude >= 0) {
       let maxSpeed = this.traits.maxSpeed * this.speedFactor * this.terrainFactor // Modfied maximum
       if (this.speed.magnitude < maxSpeed) { // Accelerating
-        this.acceleration.divide(view.fps) // From px/frame to px/second
-        this.acceleration.multiply(constants.scale) // From px/seond to m/s
+        // From px/frame to m/second
+        this.acceleration.divide(view.fps)
+        this.acceleration.multiply(constants.scale)
         this.speed.add(this.acceleration)
       } else { // At max speed
         this.speed.magnitude = maxSpeed // Set to max to correct if over
       }
     }
 
-    // Add to location
+    // Add speed to location
     if (this.speed.magnitude > 0) {
-      this.loc.add(this.speed) // Change in location per frame
+      this.loc.add(this.speed)
 
       // Get direction
-      let angle = (this.speed.angle + 2 * Math.PI) % (2 * Math.PI) // Angle from 0 to 2 * Pi
+      let angle = (this.speed.angle + 2 * Math.PI) % (2 * Math.PI) // Angle from 0 to 2Pi
       let index = Math.round(2 * (angle / Math.PI)) % 4 // Angle to values 0, 1, 2, 3
-      this.direction = this.sprites.dirs[index] // Direction in text form
+      this.angle = angle
+      this.direction = this.sprites.dirs[index] // Direction as text
     }
 
     // Check if legal
@@ -515,7 +519,7 @@ class Obj extends Living {
     for (let animal of animals) {
       if (animal !== this) {
         if (this.collide(animal)) {
-          this.block(animal)
+          this.block(animal) // Stop moving
         }
       }
     }
@@ -525,7 +529,7 @@ class Obj extends Living {
       for (let x = 0; x < map.size; x++) {
         let object = map.tiles[y][x]
         if (object !== null && object.type == "tree") { // In a tree
-          if (this.collide(object)) { // If colliding
+          if (this.collide(object)) {
             this.block(object) // Stop moving
           }
         }
@@ -558,11 +562,16 @@ class Obj extends Living {
 
   // check if colliding with another object (L)
   collide (obj) {
-    let collideX = this.loc.x <= obj.loc.x + obj.sprites.size.width && this.loc.x >= obj.loc.x
-    collideX = collideX || this.loc.x + this.sprites.size.width <= obj.loc.x + obj.sprites.size.width && this.loc.x + this.sprites.size.width >= obj.loc.x
-    let collideY = this.loc.y <= obj.loc.y + obj.sprites.size.height && this.loc.y >= obj.loc.y
-    collideY = collideY || this.loc.y + this.sprites.size.height <= obj.loc.y + obj.sprites.size.height && this.loc.y + this.sprites.size.height >= obj.loc.y
-    return collideX && collideY // Collding in Y-axis and X-axis
+    return ((this.loc.x <= obj.loc.x + obj.sprites.size.width &&
+      this.loc.x >= obj.loc.x) || // Left x between other left and right x
+    (this.loc.x + this.sprites.size.width <= obj.loc.x + obj.sprites.size.width &&
+      this.loc.x + this.sprites.size.width >= obj.loc.x)) // Right x between other left and right x
+      && // Both x and y
+    ((this.loc.y <= obj.loc.y + obj.sprites.size.height &&
+      this.loc.y >= obj.loc.y) || // Left y between other left and right y
+    (this.loc.y + this.sprites.size.height <= obj.loc.y + obj.sprites.size.height &&
+      this.loc.y + this.sprites.size.height >= obj.loc.y)) // Right y between other left and right y
+
   }
 
   // Checks and stops object if objects moving past borders (L)
@@ -598,6 +607,7 @@ class Animal extends Obj {
   // Additional functionality for animal lives (L)
   live () {
     // TODO implement hunger
+
     super.live()
   }
 }
@@ -610,7 +620,7 @@ class Squirrel extends Animal {
     // The animal's traits, in SI units (A)
     this.traits = {
       maxSpeed: 15,
-      acceleration: 0.05,
+      acceleration: 0.5,
       area: "land",
       maxHealth: 3,
       mass: 0.3,
@@ -631,7 +641,7 @@ class Wolf extends Animal {
     // The animal's traits, in SI units (A)
     this.traits = {
       maxSpeed: 10,
-      acceleration: 0.01,
+      acceleration: 0.1,
       area: "land",
       maxHealth: 15,
       mass: 60.0,
@@ -652,7 +662,7 @@ class Deer extends Animal {
     // the animal's traits, in SI units (A)
     this.traits = {
       maxSpeed: 7,
-      acceleration: 0.07,
+      acceleration: 0.7,
       area: "land",
       maxHealth: 8,
       mass: 50,
@@ -694,6 +704,7 @@ class Mushroom extends Plant {
   constructor (loc) {
     let name = "Mushroom"
     super(loc, name)
+    // The plant's traits in SI units (A)
     this.traits = {
       nutrition: 0.3,
       area: "land",
@@ -707,6 +718,7 @@ class Berry extends Plant {
   constructor (loc) {
     let name = "Berry"
     super(loc, name)
+    // The plant's traits in SI units (L)
     this.traits = {
       nutrition: 0.5,
       area: "land",
@@ -720,6 +732,7 @@ class Cactus extends Plant {
   constructor (loc) {
     let name = "Cactus"
     super(loc, name)
+    // The plant's traits in SI units (L)
     this.traits = {
       nutrition: 0.2,
       area: "land",
@@ -733,9 +746,10 @@ class Shrub extends Plant {
   constructor (loc) {
     let name = "Shrub"
     super(loc, name)
+    // The plant's traits in SI units (L)
     this.traits = {
       nutrition: 0.1,
-      area: "land",
+      area: "water",
       maxHealth: 0.5
     }
     this.health = this.traits.maxHealth
@@ -746,6 +760,7 @@ class Bush extends Plant {
   constructor (loc) {
     let name = "Bush"
     super(loc, name)
+    // The plant's traits in SI units (L)
     this.traits = {
       nutrition: 0.1,
       area: "land",
@@ -759,12 +774,11 @@ class Bush extends Plant {
 class Water extends Entity {
   constructor (loc) {
     let name = "water"
-    super(loc, new Sprites(name, false, false)) // TODO make changing
+    super(loc, new Sprites(name, false, false)) // TODO make into changing sprite
     this.type = name
     this.area = "water"
   }
 }
-
 class Grass extends Entity {
   constructor (loc) {
     let name = "grass"
@@ -773,7 +787,6 @@ class Grass extends Entity {
     this.area = "land"
   }
 }
-
 class Tree extends Entity {
   constructor (loc) {
     let name = "tree"
@@ -803,19 +816,15 @@ class Creature extends Obj {
     }
   }
 
-  // Terrain modifies maxSpeed (L)
+  // Terrain modifies maximum speed (L)
   move () {
     // Current tile
     let x = Math.floor(this.loc.x / constants.scale)
     let y = Math.floor(this.loc.y / constants.scale)
     let terrain = map.tiles[y][x]
     // Current area
-    let area = null
-    if (terrain === null) {
-      area = "sky" // Is a tree
-    } else {
-      area = terrain.area
-    }
+    let area = terrain === null ? "sky" : terrain.area // Null value is a tree
+
     // Land animals move slowly in water
     if (this.traits.area === "land") {
       if (area === "water") {
@@ -830,22 +839,24 @@ class Creature extends Obj {
 
   // Sucesfull hit on another object or animal (L)
   hit (object) {
-    object.health -= this.traits.attack
+    object.health -= this.traits.attack // TODO implement object noticing begin hit (and fight back)
+    // TODO implement eating --> hunger needs to go down
+    // Can't hit for a cooldown period
     this.cooldown = true
     window.setTimeout((object) => {
-      object.cooldown = false // Cooldown over
+      object.cooldown = false
     }, 400, this)
   }
 
   // Attack another animal or plant (L)
   attack (object) {
     if (!this.cooldown) { // Wait until attack again
-      if (object !== this && object) { // Not self and exists
+      if (object && object !== this) { // Not self and object exists
         // Distance to object
         let distance = this.sprites.middle.distance(object.sprites.middle)
         if (distance.magnitude <= (constants.scale * 2)) { // Min x meter range for attack
           this.hit(object)
-          return true
+          return true // Hit sucessful
         }
       }
     }
@@ -856,9 +867,9 @@ class Creature extends Obj {
 class Player extends Creature {
   constructor (animal) {
     super(animal)
-    this.moving = false // Move key
-    this.attacking = false // Attack key
-    this.speedFactor = 0.65 // Not at max speed
+    this.moving = false // Move key being pressed
+    this.attacking = false // Attack key begin pressed
+    this.speedFactor = 0.65 // Starts at slow walking pace
     this.targeting = null // Currently targeting animal
   }
 
@@ -868,6 +879,7 @@ class Player extends Creature {
   }
 
   // Control function, called on key press (L)
+  // TODO different system of movement, controls hard to use now
   control (key, action) {
     let movement = null
     switch (key) {
@@ -884,23 +896,24 @@ class Player extends Creature {
         movement = new Coord(0, 1)
         break
       case 32: // Spacebar
-        this.attackButton()
+        this.attackButton(action)
         break
       case 16: // Shift
         if (action) {
           this.speedFactor = 1 // Sprint
         } else if (!action){
-          this.speedFactor = 0.65
+          this.speedFactor = 0.65 // Walk
         }
         break
     }
 
-    if (movement !== null) { // Key for moving
+    if (movement !== null) {
       if (!this.moving) { // Not already on
-        if (action) { // Key pressed
+        if (action) { // Key press
+          // Set the acceleration
           this.moving = true
           movement.magnitude = this.traits.acceleration
-          this.acceleration = movement // Set the acceleration
+          this.acceleration = movement
         }
       } else { // Already on
         if (!action) { // Key release
@@ -911,38 +924,38 @@ class Player extends Creature {
     }
   }
 
-  // Player tries to attack behaviour - NPC's need to respond (L)
-  attackButton () {
+  // Player tries to attack NPC's will respond (L)
+  attackButton (action) {
     if (!this.attacking) { // Have to release and press again
       if (action) { // Key pressed
         this.attacking = true
         for (let animal of animals) {
           if (this.attack(animal)) { // Hit
-            if (!this.targeting) {
+            if (!this.targeting) { // Not hunting an animal
               this.target = animal
-              // Remove as target after some time (animal will forget being hunted)
+              // Remove as target after some time (NPC will forget being hunted)
               this.targeting = window.setInterval(() => {
                 let distance = this.sprites.middle.distance(this.target.sprites.middle)
                 // Check if still in range
                 let range = animal.sightRadius * (1 - this.traits.camouflage)
                 if (distance.magnitude >= range) {
-                  this.target = null
                   clearInterval(this.targeting)
                   this.targeting = null
+                  this.target = null
                 }
               }, 1000)
             } else { // Is hunting animal
-              if (animal !== this.target) { // Attack the same
+              if (animal !== this.target) { // Attack different animal
                 this.target = animal
                 window.clearInterval(this.targeting)
               }
             }
-            return // One at the times
+            return // Attack one at the time
           }
          }
         for (let plant of plants) {
           if (this.attack(plant)) { // Hit
-            return
+            return // Attack one at the time
           }
         }
       }
@@ -1025,7 +1038,7 @@ class NPC extends Creature {
     this.chooseDirection() // Start moving
   }
 
-  // Store previous when setting a behaviour (L)
+  // Store previous when setting the behaviour (L)
   set behaviour (value) {
     if (value) {
       if (this.currentBehaviour !== value) {
@@ -1038,18 +1051,18 @@ class NPC extends Creature {
     return this.currentBehaviour
   }
 
-  // Additional functionality for live - determines behaviour (L)
+  // Additional functionality for live, determines behaviour (L)
   live () {
     if (this.behaviour === "wandering") {
       this.speedFactor = 0.65 // Not at max speed
 
       this.step += 1
-      if (this.step >= 2 * view.fps) { // Reduces the number of decisions in direction (x per second)
+      if (this.step >= 3 * view.fps) { // Reduces the number of decisions in direction (x per second)
         this.chooseDirection() // Choose on new direction
         this.step = 0
       }
 
-      this.look() // Look around - can change behaviour
+      this.look() // Look around, can change behaviour
     } else if (this.behaviour === "hunting") {
       if (this.target && animals.includes(this.target) && this.target.health > 0) { // Exists
         this.speedFactor = 1
@@ -1119,7 +1132,7 @@ class NPC extends Creature {
 
     // TODO implement obstacle avoidance
 
-    super.live() // Normal actions
+    super.live()
   }
 
   // Respond to another animal (L)
@@ -1140,6 +1153,7 @@ class NPC extends Creature {
       }
 
       if (animal.traits.diet === "carnivore") { // spots a meat eater
+        // TODO make dependend on agression
         this.behaviour = "fleeing"
         this.hunter = animal
       }
@@ -1149,15 +1163,17 @@ class NPC extends Creature {
       this.behaviour = "fleeing"
       this.hunter = animal
     }
+
+    // TODO add looking for plants
   }
 
   // Check if predators or prey close (L)
   look () {
     for (let animal of animals) {
-      if (animal !== this) {
-        if (this.sprites.middle && animal.sprites.middle) { // For first iteration
+      if (animal !== this) { // Not self
+        if (this.sprites.middle && animal.sprites.middle) { // Exist
           let distance = this.sprites.middle.distance(animal.sprites.middle)
-          // Animal is within sight radius, depends on camo trait
+          // Animal is within sight radius, depends on camouflage trait
           let range = this.sightRadius * (1 - animal.traits.camouflage)
           if (distance.magnitude <= range) {
             this.found(animal)
@@ -1217,7 +1233,7 @@ class NPC extends Creature {
 // Set the canvas to the screen size, via css gives stretching effect (L)
 doc.canvas.width = view.width = view.screen.width = document.body.clientWidth
 doc.canvas.height = view.height = view.screen.height = document.body.clientHeight
-map.width = map.height = map.size * constants.scale
+map.width = map.height = (map.size * constants.scale)
 view.middle = new Coord(map.width, map.height)
 view.middle.divide(2)
 
@@ -1236,10 +1252,6 @@ animals[0] = PC
 // Main drawing function
 view.refresh = window.setInterval(() => {
  if (settings.started) {
-   // Draw background
-   view.screen.fillStyle = '#eeeeee'
-   view.screen.fillRect(0, 0, view.screen.width, view.screen.height) // TEST
-
    // Draw the map
    for (let y = 0; y < map.size; y++) {
      for (let x = 0; x < map.size; x++) {
@@ -1277,18 +1289,17 @@ document.addEventListener('keyup', () => {
   PC.control(event.keyCode, false) // Stop signal
 })
 
-
-
 // Everything loaded
 document.onreadystatechange = function () {
   if (document.readyState === 'complete') {
+
     // Start game (A)
     doc.startButton.addEventListener("click", function () {
       // Generate map and initial animals/plants
       map.generate()
       map.spawn()
+      doc.startButton.style.display = "none" // Hide
       settings.started = true
-      doc.startButton.style.display = "none"
     })
   }
 }

@@ -29,7 +29,7 @@ body {
   display: block;
 }
 
-#startButton {
+#start {
   position: absolute;
   right: 50%;
   top: 50%;
@@ -40,6 +40,6 @@ body {
   background: green;
   border: 2px solid;
 }
-#startButton:hover {
+#start:hover {
   background: blue;
 }
