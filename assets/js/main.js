@@ -774,7 +774,7 @@ class Bush extends Plant {
 class Water extends Entity {
   constructor (loc) {
     let name = "water"
-    super(loc, new Sprites(name, false, false)) // TODO make into changing sprite
+    super(loc, new Sprites(name, false, true)) // TODO make into changing sprite
     this.type = name
     this.area = "water"
   }
@@ -792,7 +792,7 @@ class Tree extends Entity {
     let name = "tree"
     super(loc, new Sprites(name, false, false))
     this.type = name
-    this.area = "sky"
+    this.area = "land"
   }
 }
 
