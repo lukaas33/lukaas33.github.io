@@ -607,7 +607,14 @@ class Animal extends Obj {
   // Additional functionality for animal lives (L)
   live () {
     // TODO implement hunger
-
+    // if (time == 5) {
+    //   this.hunger = this.hunger - 0.05
+    //    time = 0
+    //  }
+    //  else {
+    //    time = time + 1
+    //  }
+    console.log(this.hunger)
     super.live()
   }
 }
@@ -629,6 +636,7 @@ class Squirrel extends Animal {
       perception: 0.8,
       aggressiveness: 0.1,
       attack: 0.2,
+      hunger: 0.4,
       name: name
     }
   }
@@ -650,6 +658,7 @@ class Wolf extends Animal {
       perception: 0.6,
       aggressiveness: 0.7,
       attack: 0.8,
+      hunger: 0.8,
       name: name
     }
   }
@@ -671,6 +680,7 @@ class Deer extends Animal {
       perception: 0.7,
       aggressiveness: 0.2,
       attack: 0.3,
+      hunger: 0.6,
       name: name
     }
   }
@@ -774,7 +784,7 @@ class Bush extends Plant {
 class Water extends Entity {
   constructor (loc) {
     let name = "water"
-    super(loc, new Sprites(name, false, false)) // TODO make into changing sprite
+    super(loc, new Sprites(name, false, true)) // TODO make into changing sprite
     this.type = name
     this.area = "water"
   }
@@ -792,7 +802,7 @@ class Tree extends Entity {
     let name = "tree"
     super(loc, new Sprites(name, false, false))
     this.type = name
-    this.area = "sky"
+    this.area = "land"
   }
 }
 
