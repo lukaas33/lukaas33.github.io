@@ -124,7 +124,7 @@ map.add = function (loc) {
     const options = {
       "grass": null,
       "water": 0.006,
-      "tree": 0.024
+      "tree": 0.020
     }
 
     // Check nearby tiles for water
@@ -443,8 +443,11 @@ class Living extends Entity {
 
   // Living being's general actions (L)
   live () {
-    if (this.health <= 0) {
+    if (this.health <= 0 || this.hunger <= 0) {
       this.die()
+    }
+    if (this.hunger > 100) {
+      this.hunger = 100
     }
   }
 
@@ -452,17 +455,17 @@ class Living extends Entity {
   update () {
     super.update()
 
+    const height = 10
+    const width = 50
+    // Health bar at the center above the animal
+    let x = this.loc.x + (this.sprites.size.width / 2) - (width / 2)
+    let y = this.loc.y - (height * 4)
+    // Convert map coords to view coords
+    x = Math.floor(x - (view.middle.x - view.width / 2))
+    y = Math.floor(y - (view.middle.y - view.height / 2))
+
     const health = (this.health / this.traits.maxHealth) // Factor: 0 - 1
     if (health < 1) {
-      const height = 10
-      const width = 50
-      // Health bar at the center above the animal
-      let x = this.loc.x + (this.sprites.size.width / 2) - (width / 2)
-      let y = this.loc.y - (height * 3)
-      // Convert map coords to view coords
-      x = Math.floor(x - (view.middle.x - view.width / 2))
-      y = Math.floor(y - (view.middle.y - view.height / 2))
-
       // Display bar
       view.screen.fillStyle = '#eeeeee' // Grey
       view.screen.fillRect(x, y, width, height)
@@ -470,6 +473,21 @@ class Living extends Entity {
         // Display health
         view.screen.fillStyle = '#f44336' // Red
         view.screen.fillRect(x, y, (width * health), height)
+      }
+    }
+
+    if (this.hunger) {
+      const hunger = (this.hunger / 100) // 0-1
+      if (hunger < 1) {
+        // Display bar
+        y += height // Below healthbar
+        view.screen.fillStyle = '#eeeeee' // Grey
+        view.screen.fillRect(x, y, width, height)
+        if (hunger > 0) {
+          // Display health
+          view.screen.fillStyle = '#ff9800' // Red
+          view.screen.fillRect(x, y, (width * hunger), height)
+        }
       }
     }
   }
@@ -614,15 +632,6 @@ class Animal extends Obj {
 
   // Additional functionality for animal lives (L)
   live () {
-    // TODO implement hunger
-    // if (time == 5) {
-    //   this.hunger = this.hunger - 0.05
-    //    time = 0
-    //  }
-    //  else {
-    //    time = time + 1
-    //  }
-    console.log(this.hunger)
     super.live()
   }
 }
@@ -636,15 +645,15 @@ class Squirrel extends Animal {
     this.traits = {
       maxSpeed: 15,
       acceleration: 0.5,
-      area: "land",
-      maxHealth: 3,
+      area: "land", // Slower in water
+      maxHealth: 3, // Start health
       mass: 0.3,
       diet: "herbivore",
-      camouflage: 0.6,
+      camouflage: 0.6, // More difficult to see
       perception: 0.8,
       aggressiveness: 0.1,
-      attack: 0.2,
-      hunger: 0.4,
+      attack: 0.2, // Attack removes health
+      hunger: 0.4, // Hunger per second
       name: name
     }
   }
@@ -832,6 +841,13 @@ class Creature extends Obj {
     this.hunter = null // Is hunting you
     this.traits = animal.traits
     this.health = this.traits.maxHealth
+    this.hunger = 100 // Percentage, the same for every animal
+  }
+
+  // Animal gets hungry (L)
+  live () {
+    this.hunger -= (this.traits.hunger / view.fps) // Remove per second
+    super.live()
   }
 
   // Animal dies (L)
@@ -850,7 +866,7 @@ class Creature extends Obj {
     let y = Math.floor(this.loc.y / constants.scale)
     let terrain = map.tiles[y][x]
     // Current area
-    let area = terrain === null ? "sky" : terrain.area // Null value is a tree
+    let area = (terrain === null || terrain === undefined) ? "sky" : terrain.area // Null value is a tree
 
     // Land animals move slowly in water
     if (this.traits.area === "land") {
@@ -866,8 +882,14 @@ class Creature extends Obj {
 
   // Sucesfull hit on another object or animal (L)
   hit (object) {
-    object.health -= this.traits.attack // TODO implement object noticing begin hit (and fight back)
-    // TODO implement eating --> hunger needs to go down
+    // TODO implement object noticing begin hit (and fight back)
+    object.health -= this.traits.attack
+    // TODO implement eating mode to replace next lines
+    if (object.traits.nutrition) { // Plant
+      this.hunger += object.traits.nutrition * 10
+    } else { // Animal
+      this.hunger += object.traits.mass * 10
+    }
     // Can't hit for a cooldown period
     this.cooldown = true
     window.setTimeout((object) => {
