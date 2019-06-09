@@ -22,7 +22,7 @@ const menu = {
     let min = Math.floor(timeLeft / 60)
     let sec = min != 0 ? timeLeft % (min * 60) : elapsed // If min == 0 the mod operator will return NaN
 
-    if (min <= 0) { // End of game
+    if (min <= 0 && sec <= 0) { // End of game
       clearInterval(wait)
       min = 0
       sec = 0
@@ -36,7 +36,7 @@ const menu = {
           }, 1000)
         }
       }
-    } else if (min == 5 && !this.timeLeftWarning) {
+    } else if (min == 5 && sec <= 0 && !this.timeLeftWarning) {
       confirm("Pas op. Je hebt nog 5 minuten tot het einde van de speurtocht.")
       this.timeLeftWarning = true
     }
