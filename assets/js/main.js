@@ -116,6 +116,9 @@ map.generate = function () {
 
 // Add a random texture to the map (L)
 map.add = function (loc) {
+  const place = new Coord(loc.x, loc.y)
+  place.multiply(constants.scale) // Index to map coordinates
+
   if (map.tiles[loc.y][loc.x] === undefined) { // Spot still empty
     // Standard generation odds
     const options = {
@@ -141,8 +144,6 @@ map.add = function (loc) {
     const type = random.choose(options) // Choose random texture from options
 
     // Add texture to map
-    const place = new Coord(loc.x, loc.y)
-    place.multiply(constants.scale) // Index to map coordinates
     switch (type) {
       case "grass":
         map.tiles[loc.y][loc.x] = new Grass(place)
@@ -157,6 +158,13 @@ map.add = function (loc) {
           map.tiles[loc.y + 1][loc.x] = null
           map.tiles[loc.y][loc.x + 1] = null
           map.tiles[loc.y + 1][loc.x + 1] = null
+          // Add tiles as background
+          map.tiles[loc.y][loc.x].background = [
+            new Grass(place),
+            new Grass(new Coord(place.x + constants.scale, place.y)),
+            new Grass(new Coord(place.x + constants.scale, place.y + constants.scale)),
+            new Grass(new Coord(place.x, place.y + constants.scale)),
+          ]
         } else { // At the edge
           map.add(loc) // Try again
         }
@@ -803,6 +811,15 @@ class Tree extends Entity {
     super(loc, new Sprites(name, false, false))
     this.type = name
     this.area = "land"
+    this.background = null
+  }
+
+  // Tree needs to display background tiles
+  update () {
+    for (let tile of this.background) {
+      tile.update()
+    }
+    super.update()
   }
 }
 
