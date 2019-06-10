@@ -179,12 +179,18 @@ map.spawn = function () {
   const animalSpecies = {
     "deer": 0.25,
     "squirrel": 0.35,
-    "wolf": 0.15
+    "wolf": 0.15,
+    "fish": 0.30,
+    "bird": 0.25,
+    "bear": 0.20
   }
   const animalConstructors = {
     "deer": Deer,
     "squirrel": Squirrel,
-    "wolf": Wolf
+    "wolf": Wolf,
+    "fish": Fish,
+    "bird": Bird,
+    "bear": Bear
   }
 
   // Add animals
@@ -698,6 +704,69 @@ class Deer extends Animal {
       aggressiveness: 0.2,
       attack: 0.3,
       hunger: 0.6,
+      name: name
+    }
+  }
+}
+
+class Bird extends Animal {
+  constructor (loc) {
+    let name = "Bird"
+    super(loc, name)
+    this.traits = {
+      maxSpeed: 9,
+      acceleration: 0.9,
+      area: "sky",
+      maxHealth: 3,
+      mass: 0.5,
+      diet: "herbivore",
+      camouflage: 0.8,
+      perception: 0.9,
+      agressiveness: 0.1,
+      attack: 0.2,
+      hunger: 0.2,
+      name: name
+    }
+  }
+}
+
+class Fish extends Animal {
+  constructor (loc) {
+    let name = "Fish"
+    super(loc, name)
+    this.traits = {
+      maxSpeed: 6,
+      acceleration: 0.6,
+      area: "water",
+      maxHealth: 2,
+      mass: 0.7,
+      diet: "herbivore",
+      camouflage: 0.7,
+      perception: 0.3,
+      agressiveness: 0.1,
+      attack: 0.1,
+      hunger: 0.3,
+      name: name
+    }
+  }
+}
+
+class Bear extends Animal {
+  constructor (loc) {
+    let name = "Bear"
+    super(loc, name)
+    this.traits = {
+      maxSpeed: 7,
+      acceleration: 0.5,
+      area: "land",
+      maxHealth: 9,
+      mass: 200,
+      diet: "carnivore",
+      camouflage: 0.5,
+      perception: 0.6,
+      agressiveness: 0.5,
+      attack: 0.9,
+      hunger: 0.5,
       name: name
     }
   }
