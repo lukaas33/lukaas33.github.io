@@ -42,7 +42,7 @@ const view = {
     height: null,
     middle: null,
     screen: doc.canvas.getContext('2d'),
-    fps: 30, // Frames per second
+    fps: 40, // Frames per second
 }
 
 // The entire map
@@ -152,7 +152,10 @@ map.add = function (loc) {
         map.tiles[loc.y][loc.x] = new Water(place)
         break
       case "tree":
-        if ((loc.y + 1) < map.size && (loc.x + 1) < map.size) { // Not at edge
+        if ((loc.y + 1) < map.size && (loc.x + 1) < map.size &&
+            map.tiles[loc.y + 1][loc.x] !== null &&
+            map.tiles[loc.y][loc.x + 1] !== null &&
+            map.tiles[loc.y + 1][loc.x + 1] !== null) { // Not at edge or too close to another tree
           map.tiles[loc.y][loc.x] = new Tree(place)
           // Clear other spots because a tree is 4 tiles big
           map.tiles[loc.y + 1][loc.x] = null
@@ -517,19 +520,18 @@ class Obj extends Living {
     // Add acceleration to speed
     if (this.acceleration.magnitude >= 0) {
       let maxSpeed = this.traits.maxSpeed * this.speedFactor * this.terrainFactor // Modfied maximum
-      if (this.speed.magnitude < maxSpeed) { // Accelerating
-        // From px/frame to m/second
-        this.acceleration.divide(view.fps)
-        this.acceleration.multiply(constants.scale)
-        this.speed.add(this.acceleration)
-      } else { // At max speed
-        this.speed.magnitude = maxSpeed // Set to max to correct if over
-      }
+      this.speed.multiply(0.5) // Friction, increases movement in direction and decreases bouncing
+      this.speed.add(this.acceleration)
+      this.speed.magnitude = maxSpeed // Set to max to correct if over
     }
 
     // Add speed to location
     if (this.speed.magnitude > 0) {
-      this.loc.add(this.speed)
+      // From px/frame to m/second
+      let speed = new Coord(this.speed.x, this.speed.y)
+      speed.divide(view.fps)
+      speed.multiply(constants.scale)
+      this.loc.add(speed)
 
       // Get direction
       let angle = (this.speed.angle + 2 * Math.PI) % (2 * Math.PI) // Angle from 0 to 2Pi
@@ -583,6 +585,7 @@ class Obj extends Living {
 
       // Remove component
       this.speed.subtract(distance)
+      // this.speed.multiply(1.5) // Stops object from orbiting
     }
   }
 
@@ -950,26 +953,29 @@ class Player extends Creature {
       case 16: // Shift
         if (action) {
           this.speedFactor = 1 // Sprint
-        } else if (!action){
+        } else if (!action) {
           this.speedFactor = 0.65 // Walk
         }
         break
     }
 
-    if (movement !== null) {
-      if (!this.moving) { // Not already on
-        if (action) { // Key press
-          // Set the acceleration
-          this.moving = true
-          movement.magnitude = this.traits.acceleration
+    if (movement) {
+      movement.magnitude = this.traits.acceleration
+      if (action) { // Press key
+        if (this.moving) {
+          this.acceleration.add(movement)
+          this.acceleration.magnitude = this.traits.acceleration
+        } else {
           this.acceleration = movement
+          this.moving = true
         }
-      } else { // Already on
-        if (!action) { // Key release
-          this.moving = false
+      } else { // Release key
+        if (this.moving) {
           this.stop()
+          this.moving = false
         }
       }
+      this.acceleration.magnitude = this.traits.acceleration
     }
   }
 
