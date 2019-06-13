@@ -136,7 +136,7 @@ map.add = function (loc) {
       ]
       const nearby = near.filter((x) => x !== null && x.type === "water")
       // More adjecent water tiles makes water spawing more likely
-      const factor = 65 // Increase odd of water spawning
+      const factor = 60 // Increase odd of water spawning
       options["water"] += options["water"] * (nearby.length * factor)
     }
     options["grass"] = 1 - (options["tree"] + options["water"])
@@ -156,6 +156,7 @@ map.add = function (loc) {
             map.tiles[loc.y + 1][loc.x] !== null &&
             map.tiles[loc.y][loc.x + 1] !== null &&
             map.tiles[loc.y + 1][loc.x + 1] !== null) { // Not at edge or too close to another tree
+
           map.tiles[loc.y][loc.x] = new Tree(place)
           // Clear other spots because a tree is 4 tiles big
           map.tiles[loc.y + 1][loc.x] = null
@@ -178,14 +179,14 @@ map.add = function (loc) {
 
 // Animal and plants spawn on the map (L)
 map.spawn = function () {
-  // Rarity of different animals
+  // Rarity of different animals (smaller animals more common, carnivores rarer)
   const animalSpecies = {
-    "deer": 0.25,
+    "deer": 0.20,
     "squirrel": 0.35,
     "wolf": 0.15,
-    "fish": 0.30,
-    "bird": 0.25,
-    "bear": 0.20
+    "fish": 0.40,
+    "bird": 0.30,
+    "bear": 0.10
   }
   map.animalConstructors = {
     "deer": Deer,
@@ -255,10 +256,10 @@ map.create = function (species, constructors) {
 
 // Godmode function, called via console (A)
 const godMode = function () {
-  PC.health = 1000,
-  PC.traits.maxSpeed = 35,
-  PC.traits.acceleration = 1
-  PC.traits.attack = 1
+  animals[0].health = 1000,
+  animals[0].traits.maxSpeed = 35,
+  animals[0].traits.acceleration = 1
+  animals[0].traits.attack = 1
 }
 
 //   ____ _
@@ -549,7 +550,7 @@ class Obj extends Living {
     // Check if legal
     this.borders()
 
-    // Collide with animal
+    // Collide with animal (A)
     for (let animal of animals) {
       if (animal !== this) {
         if (this.collide(animal)) {
@@ -558,17 +559,21 @@ class Obj extends Living {
       }
     }
 
-    // Collide with tree (A) TODO make dependend on size
+    // Collide with terrain (A) - TODO make dependend on size
     for (let y = 0; y < map.size; y++) {
       for (let x = 0; x < map.size; x++) {
         let object = map.tiles[y][x]
-        if (object !== null) {
-          if (object.type == "tree") { // In a tree
+        let area = object !== null ? object.area : "sky"
+        if (object !== null) { // TODO use connected tree object
+          if (area === "sky" && this.traits.area !== "sky") { // Animal meets a tree
             if (this.collide(object)) {
               this.block(object) // Stop moving
             }
-          } else if (object.type == "grass") { // TODO fish can't go on land
-
+          }
+          if (area === "land" && this.traits.area === "water") { // Water-animal meets land
+            if (this.collide(object)) {
+              this.block(object)
+            }
           }
         }
       }
@@ -590,12 +595,15 @@ class Obj extends Living {
       // Get component going in the direction of the object
       let distance = new Coord(object.loc.x - this.loc.x, object.loc.y - this.loc.y)
       let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
-      inproduct /= distance.magnitude
-      distance.magnitude = inproduct
+      if (distance.magnitude > 0) {
+        inproduct /= distance.magnitude
+        distance.magnitude = inproduct
 
-      // Remove component
-      this.speed.subtract(distance)
-      this.speed.multiply(1.5) // Stops object from orbiting
+        // Remove component
+        this.loc.subtract(distance) // Undo movement
+        // this.speed.subtract(distance) // Stop moving here
+        // this.speed.multiply(1.5) // Stops orbiting
+      }
     }
   }
 
@@ -678,14 +686,14 @@ class Wolf extends Animal {
     super(loc, name)
     // The animal's traits, in SI units (A)
     this.traits = {
-      maxSpeed: 10,
+      maxSpeed: 8,
       acceleration: 0.1,
       area: "land",
       maxHealth: 15,
       mass: 60.0,
       diet: "carnivore",
       camouflage: 0.6,
-      perception: 0.6,
+      perception: 0.7,
       aggressiveness: 0.7,
       attack: 0.8,
       hunger: 0.8,
@@ -700,7 +708,7 @@ class Deer extends Animal {
     super(loc, name)
     // the animal's traits, in SI units (A)
     this.traits = {
-      maxSpeed: 7,
+      maxSpeed: 10,
       acceleration: 0.7,
       area: "land",
       maxHealth: 8,
@@ -729,7 +737,7 @@ class Bird extends Animal {
       diet: "herbivore",
       camouflage: 0.8,
       perception: 0.9,
-      agressiveness: 0.1,
+      aggressiveness: 0.1,
       attack: 0.2,
       hunger: 0.2,
       name: name
@@ -750,7 +758,7 @@ class Fish extends Animal {
       diet: "herbivore",
       camouflage: 0.7,
       perception: 0.3,
-      agressiveness: 0.1,
+      aggressiveness: 0.1,
       attack: 0.1,
       hunger: 0.3,
       name: name
@@ -770,10 +778,10 @@ class Bear extends Animal {
       mass: 200,
       diet: "carnivore",
       camouflage: 0.5,
-      perception: 0.6,
-      agressiveness: 0.5,
-      attack: 0.9,
-      hunger: 0.5,
+      perception: 0.3,
+      aggressiveness: 0.6,
+      attack: 0.95,
+      hunger: 1,
       name: name
     }
   }
@@ -895,8 +903,8 @@ class Tree extends Entity {
     let name = "tree"
     super(loc, new Sprites(name, false, false))
     this.type = name
-    this.area = "land"
-    this.background = null
+    this.area = "sky"
+    this.background = null // Stores tiles beneath it
   }
 
   // Tree needs to display background tiles
@@ -953,6 +961,12 @@ class Creature extends Obj {
       } else {
         this.terrainFactor = 1
       }
+    } else if (this.traits.area === "water") {
+      if (area === "water") {
+        this.terrainFactor = 1
+      } else {
+        this.terrainFactor = 0.4
+      }
     }
 
     super.move()
@@ -966,7 +980,7 @@ class Creature extends Obj {
     if (object.traits.nutrition) { // Plant
       this.hunger += object.traits.nutrition * 10
     } else { // Animal
-      this.hunger += object.traits.mass * 50
+      this.hunger += object.traits.mass * 50 * this.traits.attack
     }
     // Can't hit for a cooldown period
     this.cooldown = true
@@ -1017,9 +1031,9 @@ class Player extends Creature {
       }
 
       // TODO make option menu for this
-      // let animal = new map.animalConstructors[name]
-      // animal = new animal.constructor(this.loc)
-      // this = new this.constructor(animal)
+      let change = new map.animalConstructors[name]
+      change = new change.constructor(this.loc) // Call the animal constructor with location
+      animals[animals.indexOf(this)] = new this.constructor(change) // Replace with new version of self
     }
   }
 
@@ -1369,6 +1383,10 @@ class NPC extends Creature {
       this.chooseDirection()
     }
   }
+  block (object) {
+    super.block(object)
+    this.chooseDirection()
+  }
 }
 
 //  ____       _
@@ -1388,8 +1406,7 @@ view.middle.divide(2)
 
 // Create player
 // View.middle reference passed so when the player location is updated the player view is as well
-const PC = new Player(new Squirrel(view.middle))
-animals[0] = PC
+animals[0] =  new Player(new Squirrel(view.middle))
 
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
@@ -1430,11 +1447,11 @@ view.refresh = window.setInterval(() => {
 
 // Setup keyboard controls
 document.addEventListener('keydown', (event) => {
-  PC.control(event.keyCode, true)
+  animals[0].control(event.keyCode, true)
 })
 
 document.addEventListener('keyup', () => {
-  PC.control(event.keyCode, false) // Stop signal
+  animals[0].control(event.keyCode, false) // Stop signal
 })
 
 // Everything loaded
