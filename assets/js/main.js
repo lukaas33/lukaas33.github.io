@@ -42,7 +42,7 @@ const view = {
     height: null,
     middle: null,
     screen: doc.canvas.getContext('2d'),
-    fps: 30, // Frames per second
+    fps: 40, // Frames per second
 }
 
 // The entire map
@@ -152,7 +152,10 @@ map.add = function (loc) {
         map.tiles[loc.y][loc.x] = new Water(place)
         break
       case "tree":
-        if ((loc.y + 1) < map.size && (loc.x + 1) < map.size) { // Not at edge
+        if ((loc.y + 1) < map.size && (loc.x + 1) < map.size &&
+            map.tiles[loc.y + 1][loc.x] !== null &&
+            map.tiles[loc.y][loc.x + 1] !== null &&
+            map.tiles[loc.y + 1][loc.x + 1] !== null) { // Not at edge or too close to another tree
           map.tiles[loc.y][loc.x] = new Tree(place)
           // Clear other spots because a tree is 4 tiles big
           map.tiles[loc.y + 1][loc.x] = null
@@ -184,7 +187,7 @@ map.spawn = function () {
     "bird": 0.25,
     "bear": 0.20
   }
-  const animalConstructors = {
+  map.animalConstructors = {
     "deer": Deer,
     "squirrel": Squirrel,
     "wolf": Wolf,
@@ -195,7 +198,7 @@ map.spawn = function () {
 
   // Add animals
   while (animals.length < (map.size**2) / map.populationDensity) { // Based on map size
-    animals.push(new NPC(map.create(animalSpecies, animalConstructors)))
+    animals.push(new NPC(map.create(animalSpecies, map.animalConstructors)))
   }
 
   // Rarity of different plants
@@ -206,7 +209,7 @@ map.spawn = function () {
     "shrub": 0.5,
     "cactus": 0.05,
   }
-  const plantConstructors = {
+  map.plantConstructors = {
     "mushroom": Mushroom,
     "bush": Bush,
     "berry": Berry,
@@ -216,7 +219,7 @@ map.spawn = function () {
 
   // Add plants
   while (plants.length < (map.size**2) / map.growthDensity) {
-    plants.push(map.create(plantSpecies, plantConstructors))
+    plants.push(map.create(plantSpecies, map.plantConstructors))
   }
 }
 
@@ -449,11 +452,12 @@ class Living extends Entity {
 
   // Living being's general actions (L)
   live () {
-    if (this.health <= 0 || this.hunger <= 0) {
+    if (this.health <= 0 || this.hunger <= 0) { // RIP
       this.die()
     }
-    if (this.hunger > 100) {
-      this.hunger = 100
+    this.hunger = this.hunger > 100 ? 100 : this.hunger // Not higher than 100
+    if (this.hunger > 75) { // Regenerate health
+      this.health += (this.traits.maxHealth / 100) / view.fps // 1% per second
     }
   }
 
@@ -483,16 +487,15 @@ class Living extends Entity {
     }
 
     if (this.hunger) {
-      const hunger = (this.hunger / 100) // 0-1
-      if (hunger < 1) {
+      if (this.hunger < 75) { // Only display after certain threshold
         // Display bar
         y += height // Below healthbar
         view.screen.fillStyle = '#eeeeee' // Grey
         view.screen.fillRect(x, y, width, height)
-        if (hunger > 0) {
+        if (this.hunger > 0) {
           // Display health
           view.screen.fillStyle = '#ff9800' // Red
-          view.screen.fillRect(x, y, (width * hunger), height)
+          view.screen.fillRect(x, y, (width * (this.hunger / 100)), height)
         }
       }
     }
@@ -523,19 +526,18 @@ class Obj extends Living {
     // Add acceleration to speed
     if (this.acceleration.magnitude >= 0) {
       let maxSpeed = this.traits.maxSpeed * this.speedFactor * this.terrainFactor // Modfied maximum
-      if (this.speed.magnitude < maxSpeed) { // Accelerating
-        // From px/frame to m/second
-        this.acceleration.divide(view.fps)
-        this.acceleration.multiply(constants.scale)
-        this.speed.add(this.acceleration)
-      } else { // At max speed
-        this.speed.magnitude = maxSpeed // Set to max to correct if over
-      }
+      this.speed.multiply(0.5) // Friction, increases movement in direction and decreases bouncing
+      this.speed.add(this.acceleration)
+      this.speed.magnitude = maxSpeed // Set to max to correct if over
     }
 
     // Add speed to location
     if (this.speed.magnitude > 0) {
-      this.loc.add(this.speed)
+      // From px/frame to m/second
+      let speed = new Coord(this.speed.x, this.speed.y)
+      speed.divide(view.fps)
+      speed.multiply(constants.scale)
+      this.loc.add(speed)
 
       // Get direction
       let angle = (this.speed.angle + 2 * Math.PI) % (2 * Math.PI) // Angle from 0 to 2Pi
@@ -560,9 +562,13 @@ class Obj extends Living {
     for (let y = 0; y < map.size; y++) {
       for (let x = 0; x < map.size; x++) {
         let object = map.tiles[y][x]
-        if (object !== null && object.type == "tree") { // In a tree
-          if (this.collide(object)) {
-            this.block(object) // Stop moving
+        if (object !== null) {
+          if (object.type == "tree") { // In a tree
+            if (this.collide(object)) {
+              this.block(object) // Stop moving
+            }
+          } else if (object.type == "grass") { // TODO fish can't go on land
+
           }
         }
       }
@@ -589,6 +595,7 @@ class Obj extends Living {
 
       // Remove component
       this.speed.subtract(distance)
+      this.speed.multiply(1.5) // Stops object from orbiting
     }
   }
 
@@ -870,7 +877,7 @@ class Bush extends Plant {
 class Water extends Entity {
   constructor (loc) {
     let name = "water"
-    super(loc, new Sprites(name, false, true)) // TODO make into changing sprite
+    super(loc, new Sprites(name, false, true))
     this.type = name
     this.area = "water"
   }
@@ -908,9 +915,11 @@ class Creature extends Obj {
     super(animal.loc, animal.sprites)
     this.target = null // Target when hunting
     this.hunter = null // Is hunting you
+    this.hitted = null // Just hit you
     this.traits = animal.traits
+    this.constructor
     this.health = this.traits.maxHealth
-    this.hunger = 100 // Percentage, the same for every animal
+    this.hunger = 100 // Percentage, the same value for every animal
   }
 
   // Animal gets hungry (L)
@@ -940,7 +949,7 @@ class Creature extends Obj {
     // Land animals move slowly in water
     if (this.traits.area === "land") {
       if (area === "water") {
-        this.terrainFactor = 0.5
+        this.terrainFactor = 0.65
       } else {
         this.terrainFactor = 1
       }
@@ -957,13 +966,13 @@ class Creature extends Obj {
     if (object.traits.nutrition) { // Plant
       this.hunger += object.traits.nutrition * 10
     } else { // Animal
-      this.hunger += object.traits.mass * 10
+      this.hunger += object.traits.mass * 50
     }
     // Can't hit for a cooldown period
     this.cooldown = true
-    window.setTimeout((object) => {
-      object.cooldown = false
-    }, 400, this)
+    window.setTimeout((self, object) => {
+      self.cooldown = false
+    }, 400, this, object)
   }
 
   // Attack another animal or plant (L)
@@ -989,11 +998,29 @@ class Player extends Creature {
     this.attacking = false // Attack key begin pressed
     this.speedFactor = 0.65 // Starts at slow walking pace
     this.targeting = null // Currently targeting animal
+    this.spirits = [animal.name.toLowerCase()] // Animals to change into
   }
 
   // Different behaviour when dying
   die () {
     // TODO implement end of game
+  }
+
+
+  // PC hit animal (L)
+  hit (object) {
+    super.hit(object)
+    if (object.health < 0 && !object.traits.nutrition) { // Just killed an animal
+      let name = object.traits.name.toLowerCase()
+      if (this.spirits.indexOf(name) === -1) { // Not killed before
+        this.spirits.push(name)
+      }
+
+      // TODO make option menu for this
+      // let animal = new map.animalConstructors[name]
+      // animal = new animal.constructor(this.loc)
+      // this = new this.constructor(animal)
+    }
   }
 
   // Control function, called on key press (L)
@@ -1019,26 +1046,29 @@ class Player extends Creature {
       case 16: // Shift
         if (action) {
           this.speedFactor = 1 // Sprint
-        } else if (!action){
+        } else if (!action) {
           this.speedFactor = 0.65 // Walk
         }
         break
     }
 
-    if (movement !== null) {
-      if (!this.moving) { // Not already on
-        if (action) { // Key press
-          // Set the acceleration
-          this.moving = true
-          movement.magnitude = this.traits.acceleration
+    if (movement) {
+      movement.magnitude = this.traits.acceleration
+      if (action) { // Press key
+        if (this.moving) {
+          this.acceleration.add(movement)
+          this.acceleration.magnitude = this.traits.acceleration
+        } else {
           this.acceleration = movement
+          this.moving = true
         }
-      } else { // Already on
-        if (!action) { // Key release
-          this.moving = false
+      } else { // Release key
+        if (this.moving) {
           this.stop()
+          this.moving = false
         }
       }
+      this.acceleration.magnitude = this.traits.acceleration
     }
   }
 
