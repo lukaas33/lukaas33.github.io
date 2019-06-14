@@ -30,16 +30,30 @@ body {
 }
 
 #start {
+  width: 120px;
+  height: 70px;
   position: absolute;
-  right: 50%;
+  left: 50%;
   top: 50%;
+  transform: translate(-50%, -50%);
   margin-top: 20px;
   line-height: 60px;
   font-weight: bold;
   padding: 0 40px;
-  background: green;
+  background: #006400;
   border: 2px solid;
+  font-family: ceasar dressing, papyrus, arial;
 }
 #start:hover {
-  background: blue;
+  background: #9ACD32;
+}
+
+#title {
+  font-size: 72px;
+  position: absolute;
+  left: 30%;
+  right: 25%;
+  top: 25%;
+  font-family: ceasar dressing, papyrus, arial;
+  color: #006400;
 }

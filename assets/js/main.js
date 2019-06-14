@@ -33,6 +33,7 @@ const constants = {
 // Related to document, for example html elements
 const doc = {
   canvas: document.getElementById('canvas'),
+  title: document.getElementById("title"),
   startButton: document.getElementById("start")
 }
 
@@ -1556,8 +1557,10 @@ document.addEventListener('keyup', () => {
 document.onreadystatechange = function () {
   if (document.readyState === 'complete') {
     // Start game (A)
-    doc.startButton.addEventListener("click", function () {
+      doc.title
+      doc.startButton.addEventListener("click", function () {
       // Generate map and initial animals/plants
+      doc.title.style.display = "none"
       map.generate()
       map.spawn()
       doc.startButton.style.display = "none" // Hide
