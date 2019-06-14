@@ -256,10 +256,12 @@ map.create = function (species, constructors) {
 
 // Godmode function, called via console (A)
 const godMode = function () {
-  animals[0].health = 1000,
-  animals[0].traits.maxSpeed = 35,
+  animals[0].health = 1000
+  animals[0].hunger = 100
+  animals[0].traits.maxSpeed = 30,
   animals[0].traits.acceleration = 1
   animals[0].traits.attack = 1
+  animals[0].traits.hunger = 0
 }
 
 //   ____ _
@@ -400,6 +402,7 @@ class Entity {
   constructor (loc, sprites) {
     this.loc = loc
     this.sprites = sprites
+    this.sheltered = false // Hidden by terrain
   }
 
   // Display a sprite on the screen (L)
@@ -440,6 +443,9 @@ class Entity {
       let edge = 64
       if (-edge < x && x < view.width + edge && -edge < y && y < view.height + edge) {
         view.screen.drawImage(sprite, x, y)
+        if (this.sheltered !== false) { // Draw another over self
+          this.sheltered.update()
+        }
       }
     }
   }
@@ -564,10 +570,17 @@ class Obj extends Living {
       for (let x = 0; x < map.size; x++) {
         let object = map.tiles[y][x]
         let area = object !== null ? object.area : "sky"
-        if (object !== null) { // TODO use connected tree object
+        if (object !== null) {
           if (area === "sky" && this.traits.area !== "sky") { // Animal meets a tree
+            // Bigger animals can't go through tree
             if (this.collide(object)) {
-              this.block(object) // Stop moving
+              if (this.traits.mass > 10) {
+                this.block(object) // Stop moving
+              } else {
+                this.sheltered = object // Will be beneath the tree
+              }
+            } else if (object === this.sheltered) {
+              this.sheltered = false
             }
           }
           if (area === "land" && this.traits.area === "water") { // Water-animal meets land
@@ -906,14 +919,6 @@ class Tree extends Entity {
     this.area = "sky"
     this.background = null // Stores tiles beneath it
   }
-
-  // Tree needs to display background tiles
-  update () {
-    for (let tile of this.background) {
-      tile.update()
-    }
-    super.update()
-  }
 }
 
 
@@ -923,7 +928,7 @@ class Creature extends Obj {
     super(animal.loc, animal.sprites)
     this.target = null // Target when hunting
     this.hunter = null // Is hunting you
-    this.hitted = null // Just hit you
+    this.hitted = false // Just hit you
     this.traits = animal.traits
     this.constructor
     this.health = this.traits.maxHealth
@@ -958,6 +963,8 @@ class Creature extends Obj {
     if (this.traits.area === "land") {
       if (area === "water") {
         this.terrainFactor = 0.65
+      } else if (area === "sky") { // Beneath tree
+        this.terrainFactor = 0.8
       } else {
         this.terrainFactor = 1
       }
@@ -968,7 +975,6 @@ class Creature extends Obj {
         this.terrainFactor = 0.4
       }
     }
-
     super.move()
   }
 
@@ -984,6 +990,7 @@ class Creature extends Obj {
     }
     // Can't hit for a cooldown period
     this.cooldown = true
+    object.hitted = true
     window.setTimeout((self, object) => {
       self.cooldown = false
     }, 400, this, object)
@@ -1213,9 +1220,9 @@ class NPC extends Creature {
     return this.currentBehaviour
   }
 
-  // Additional functionality for live, determines behaviour (L)
+  // Additional functionality for live, determines behaviour
   live () {
-    if (this.behaviour === "wandering") {
+    if (this.behaviour === "wandering") { // (L)
       this.speedFactor = 0.65 // Not at max speed
 
       this.step += 1
@@ -1225,7 +1232,7 @@ class NPC extends Creature {
       }
 
       this.look() // Look around, can change behaviour
-    } else if (this.behaviour === "hunting") {
+    } else if (this.behaviour === "hunting") { // (L)
       if (this.target && animals.includes(this.target) && this.target.health > 0) { // Exists
         this.speedFactor = 1
 
@@ -1236,6 +1243,7 @@ class NPC extends Creature {
         if (distance.magnitude >= range) { // Lost target
           this.behaviour = "wandering"
           this.target = null
+          this.hitted = false
           this.chooseDirection()
         }
 
@@ -1258,28 +1266,32 @@ class NPC extends Creature {
         this.target = null
         this.chooseDirection()
       }
-    } else if (this.behaviour === "fleeing") {
+    } else if (this.behaviour === "fleeing") { // (L)
       if (this.hunter.target === this && animals.includes(this.hunter) && this.hunter.health > 0) { // Exists
-        this.speedFactor = 1
+        if (this.hitted) { // Start self defense
 
-        let distance = this.sprites.middle.distance(this.hunter.sprites.middle)
-        // Check if still close
-        let range = this.sightRadius * (1 - this.hunter.traits.camouflage)
-        if (distance.magnitude >= range) { // Lost hunter
-          this.behaviour = "wandering"
-          this.hunter = null
-          this.chooseDirection()
-        }
+        } else { // Keep running
+          this.speedFactor = 1
 
-        // Go in the reverse direction
-        distance.rotate("right")
-        distance.rotate("right")
-        if (this.speed.magnitude > 0) {
-          distance.magnitude = this.speed.magnitude
-          this.speed.add(distance) // Move away
-        } else {
-          distance.magnitude = this.traits.acceleration
-          this.acceleration = distance
+          let distance = this.sprites.middle.distance(this.hunter.sprites.middle)
+          // Check if still close
+          let range = this.sightRadius * (1 - this.hunter.traits.camouflage)
+          if (distance.magnitude >= range) { // Lost hunter
+            this.behaviour = "wandering"
+            this.hunter = null
+            this.chooseDirection()
+          }
+
+          // Go in the reverse direction
+          distance.rotate("right")
+          distance.rotate("right")
+          if (this.speed.magnitude > 0) {
+            distance.magnitude = this.speed.magnitude
+            this.speed.add(distance) // Move away
+          } else {
+            distance.magnitude = this.traits.acceleration
+            this.acceleration = distance
+          }
         }
       } else { // Lost hunter
         this.behaviour = "wandering"
@@ -1290,6 +1302,8 @@ class NPC extends Creature {
       // TODO implement eat
     } else if (this.behaviour === "hiding") {
       // TODO implement hide
+    } else if (this.behaviour === "defending") { // (L)
+
     }
 
     // TODO implement obstacle avoidance
@@ -1299,14 +1313,14 @@ class NPC extends Creature {
 
   // Respond to another animal (L)
   found (animal) {
+    let odds = {
+      "true": this.traits.aggressiveness,
+      "false": 1 - this.traits.aggressiveness
+    }
+
     if (this.traits.name !== animal.traits.name) { // No canibalism
       if (this.traits.diet === "carnivore") { // Can attack first
         // Will attack odd based on agression
-        let odds = {
-          "true": this.traits.aggressiveness,
-          "false": 1 - this.traits.aggressiveness
-        }
-
         if (random.choose(odds) === "true") {
           // Hunt the animal
           this.behaviour = "hunting"
@@ -1315,15 +1329,23 @@ class NPC extends Creature {
       }
 
       if (animal.traits.diet === "carnivore") { // spots a meat eater
-        // TODO make dependend on agression
-        this.behaviour = "fleeing"
-        this.hunter = animal
+        // Will run odd based on agression
+        if (random.choose(odds) === "true") {
+          this.behaviour = "fleeing"
+          this.hunter = animal
+        }
       }
     }
 
     if (animal.target === this) { // NPC is being hunted
-      this.behaviour = "fleeing"
-      this.hunter = animal
+      // Will run or fight back based on agression
+      if (random.choose(odds) === "true") {
+        this.behaviour = "fleeing"
+        this.hunter = animal
+      } else {
+        this.behaviour = "defending"
+        this.hunter = animal
+      }
     }
 
     // TODO add looking for plants
@@ -1417,11 +1439,19 @@ animals[0] =  new Player(new Squirrel(view.middle))
 // Main drawing function
 view.refresh = window.setInterval(() => {
  if (settings.started) {
-   // Draw the map
+   // Draw the map (L)
    for (let y = 0; y < map.size; y++) {
      for (let x = 0; x < map.size; x++) {
-       if (map.tiles[y][x]) { // Not null, not undefined
-         map.tiles[y][x].update()
+       let object = map.tiles[y][x]
+       if (object) { // Not null, not undefined
+        // Tree have a background
+         if (object.type === "tree") {
+           for (let tile of object.background) {
+             tile.update()
+           }
+         }
+
+         object.update()
        }
      }
    }
