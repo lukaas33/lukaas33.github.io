@@ -136,7 +136,7 @@ map.add = function (loc) {
       ]
       const nearby = near.filter((x) => x !== null && x.type === "water")
       // More adjecent water tiles makes water spawing more likely
-      const factor = 60 // Increase odd of water spawning
+      const factor = 64 // Increase odd of water spawning
       options["water"] += options["water"] * (nearby.length * factor)
     }
     options["grass"] = 1 - (options["tree"] + options["water"])
@@ -560,7 +560,7 @@ class Obj extends Living {
     for (let animal of animals) {
       if (animal !== this) {
         if (this.collide(animal)) {
-          this.block(animal) // Stop moving
+          this.block(animal, true)
         }
       }
     }
@@ -575,7 +575,7 @@ class Obj extends Living {
             // Bigger animals can't go through tree
             if (this.collide(object)) {
               if (this.traits.mass > 10) {
-                this.block(object) // Stop moving
+                this.block(object, false)
               } else {
                 this.sheltered = object // Will be beneath the tree
               }
@@ -585,7 +585,7 @@ class Obj extends Living {
           }
           if (area === "land" && this.traits.area === "water") { // Water-animal meets land
             if (this.collide(object)) {
-              this.block(object)
+              this.block(object, true)
             }
           }
         }
@@ -603,7 +603,7 @@ class Obj extends Living {
   }
 
   // Blocked from moving further (A)
-  block (object) {
+  block (object, complete) {
     if (this.speed.magnitude > 0) {
       // Get component going in the direction of the object
       let distance = new Coord(object.loc.x - this.loc.x, object.loc.y - this.loc.y)
@@ -613,8 +613,11 @@ class Obj extends Living {
         distance.magnitude = inproduct
 
         // Remove component
-        this.loc.subtract(distance) // Undo movement
-        // this.speed.subtract(distance) // Stop moving here
+        if (complete) { // Full stop
+          this.loc.subtract(distance) // Undo movement
+        } else {
+          this.speed.subtract(distance) // Stop moving here
+        }
         // this.speed.multiply(1.5) // Stops orbiting
       }
     }
@@ -742,7 +745,7 @@ class Bird extends Animal {
     let name = "Bird"
     super(loc, name)
     this.traits = {
-      maxSpeed: 9,
+      maxSpeed: 11,
       acceleration: 0.9,
       area: "sky",
       maxHealth: 3,
@@ -980,8 +983,8 @@ class Creature extends Obj {
 
   // Sucesfull hit on another object or animal (L)
   hit (object) {
-    // TODO implement object noticing begin hit (and fight back)
     object.health -= this.traits.attack
+    object.hitted = true
     // TODO implement eating mode to replace next lines
     if (object.traits.nutrition) { // Plant
       this.hunger += object.traits.nutrition * 10
@@ -990,7 +993,6 @@ class Creature extends Obj {
     }
     // Can't hit for a cooldown period
     this.cooldown = true
-    object.hitted = true
     window.setTimeout((self, object) => {
       self.cooldown = false
     }, 400, this, object)
@@ -1266,44 +1268,51 @@ class NPC extends Creature {
         this.target = null
         this.chooseDirection()
       }
-    } else if (this.behaviour === "fleeing") { // (L)
+    } else if (this.behaviour === "fleeing" || this.behaviour === "defending") { // (L)
       if (this.hunter.target === this && animals.includes(this.hunter) && this.hunter.health > 0) { // Exists
-        if (this.hitted) { // Start self defense
+        let distance = this.sprites.middle.distance(this.hunter.sprites.middle)
+        // Check if still close
+        let range = this.sightRadius * (1 - this.hunter.traits.camouflage)
+        if (distance.magnitude >= range) { // Lost hunter
+          this.behaviour = "wandering"
+          this.hunter = null
+          this.hitted = false
+          this.chooseDirection()
+        }
 
-        } else { // Keep running
-          this.speedFactor = 1
-
-          let distance = this.sprites.middle.distance(this.hunter.sprites.middle)
-          // Check if still close
-          let range = this.sightRadius * (1 - this.hunter.traits.camouflage)
-          if (distance.magnitude >= range) { // Lost hunter
-            this.behaviour = "wandering"
-            this.hunter = null
-            this.chooseDirection()
+        // Self defense based on agression
+        if (this.hitted) {
+          let odds = {
+            "true": this.traits.aggressiveness,
+            "false": 1 - this.traits.aggressiveness
           }
-
-          // Go in the reverse direction
-          distance.rotate("right")
-          distance.rotate("right")
-          if (this.speed.magnitude > 0) {
-            distance.magnitude = this.speed.magnitude
-            this.speed.add(distance) // Move away
-          } else {
-            distance.magnitude = this.traits.acceleration
-            this.acceleration = distance
+          if (random.choose(odds) === "true") { // Defend
+            this.behaviour = "hunting"
+            this.target = this.hunter
+          } else { // Keep running
+            // Go in the reverse direction
+            distance.rotate("right")
+            distance.rotate("right")
+            if (this.speed.magnitude > 0) {
+              distance.magnitude = this.speed.magnitude
+              this.speed.add(distance) // Move away
+              this.speedFactor = 1
+            } else {
+              distance.magnitude = this.traits.acceleration
+              this.acceleration = distance
+            }
           }
         }
       } else { // Lost hunter
         this.behaviour = "wandering"
         this.hunter = null
+        this.hitted = false
         this.chooseDirection()
       }
     } else if (this.behaviour === "eating") {
       // TODO implement eat
     } else if (this.behaviour === "hiding") {
       // TODO implement hide
-    } else if (this.behaviour === "defending") { // (L)
-
     }
 
     // TODO implement obstacle avoidance
@@ -1405,9 +1414,11 @@ class NPC extends Creature {
       this.chooseDirection()
     }
   }
-  block (object) {
-    super.block(object)
-    this.chooseDirection()
+  block (object, complete) {
+    super.block(object, complete)
+    if (complete) {
+      this.chooseDirection()
+    }
   }
 }
 
