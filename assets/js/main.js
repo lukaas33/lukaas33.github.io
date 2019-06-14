@@ -794,7 +794,7 @@ class Bear extends Animal {
       mass: 200,
       diet: "carnivore",
       camouflage: 0.5,
-      perception: 0.3,
+      perception: 0.5,
       aggressiveness: 0.6,
       attack: 0.95,
       hunger: 1,
@@ -1047,7 +1047,7 @@ class Player extends Creature {
     super.hit(object)
     if (object.health < 0 && !object.traits.nutrition) { // Just killed an animal
       let name = object.traits.name.toLowerCase()
-      if (this.spirits.indexOf(name) === -1) { // Not killed before
+      if (!this.spirits.includes(name)) { // Not killed before
         this.spirits.push(name)
       }
 
@@ -1197,7 +1197,7 @@ class NPC extends Creature {
     this.step = 0
     this.speedFactor = 0.65 // Not at max speed
     // Sight based on perception trait, from 1 to x m
-    let x = 40
+    let x = 50
     this.sightRadius = (1 + ((x - 1) * constants.scale * (this.traits.perception)) )
 
     // Movement matrix (L)
@@ -1234,93 +1234,14 @@ class NPC extends Creature {
     return this.currentBehaviour
   }
 
-  // Additional functionality for live, determines behaviour
+  // Additional functionality for live, determines NPC behaviour (L)
   live () {
-    if (this.behaviour === "wandering") { // (L)
-      this.speedFactor = 0.65 // Not at max speed
-
-      this.step += 1
-      if (this.step >= 3 * view.fps) { // Reduces the number of decisions in direction (x per second)
-        this.chooseDirection() // Choose on new direction
-        this.step = 0
-      }
-
-      this.look() // Look around, can change behaviour
-    } else if (this.behaviour === "hunting") { // (L)
-      if (this.target && animals.includes(this.target) && this.target.health > 0) { // Exists
-        this.speedFactor = 1
-
-        let distance = this.sprites.middle.distance(this.target.sprites.middle)
-
-        // Check if still in range
-        let range = this.sightRadius * (1 - this.target.traits.camouflage)
-        if (distance.magnitude >= range) { // Lost target
-          this.behaviour = "wandering"
-          this.target = null
-          this.hitted = false
-          this.chooseDirection()
-        }
-
-        // Follow prey
-        if (Math.abs(distance.angle - this.speed.angle) < Math.PI / 3) { // Roughly the same direction
-          // Use component going in the direction of the animal
-          let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
-          distance.magnitude = inproduct
-          this.speed.add(distance) // Move toward
-        } else {
-          // Start moving
-          this.stop()
-          distance.magnitude = this.traits.acceleration
-          this.acceleration = distance
-        }
-        // Try to attack
-        this.attack(this.target)
-      } else { // Lost target
-        this.behaviour = "wandering"
-        this.target = null
-        this.chooseDirection()
-      }
-    } else if (this.behaviour === "fleeing" || this.behaviour === "defending") { // (L)
-      if (this.hunter.target === this && animals.includes(this.hunter) && this.hunter.health > 0) { // Exists
-        let distance = this.sprites.middle.distance(this.hunter.sprites.middle)
-        // Check if still close
-        let range = this.sightRadius * (1 - this.hunter.traits.camouflage)
-        if (distance.magnitude >= range) { // Lost hunter
-          this.behaviour = "wandering"
-          this.hunter = null
-          this.hitted = false
-          this.chooseDirection()
-        }
-
-        // Self defense based on agression
-        if (this.hitted) {
-          let odds = {
-            "true": this.traits.aggressiveness,
-            "false": 1 - this.traits.aggressiveness
-          }
-          if (random.choose(odds) === "true") { // Defend
-            this.behaviour = "hunting"
-            this.target = this.hunter
-          } else { // Keep running
-            // Go in the reverse direction
-            distance.rotate("right")
-            distance.rotate("right")
-            if (this.speed.magnitude > 0) {
-              distance.magnitude = this.speed.magnitude
-              this.speed.add(distance) // Move away
-              this.speedFactor = 1
-            } else {
-              distance.magnitude = this.traits.acceleration
-              this.acceleration = distance
-            }
-          }
-        }
-      } else { // Lost hunter
-        this.behaviour = "wandering"
-        this.hunter = null
-        this.hitted = false
-        this.chooseDirection()
-      }
+    if (this.behaviour === "wandering") {
+      this.wander()
+    } else if (this.behaviour === "hunting") {
+      this.hunt()
+    } else if (this.behaviour === "fleeing" || this.behaviour === "defending") {
+      this.fightFlight()
     } else if (this.behaviour === "eating") {
       // TODO implement eat
     } else if (this.behaviour === "hiding") {
@@ -1332,30 +1253,107 @@ class NPC extends Creature {
     super.live()
   }
 
+  // Wandering behaviour (L)
+  wander () {
+    this.speedFactor = 0.65 // Not at max speed
+    this.step += 1
+    if (this.step >= 3 * view.fps) { // Reduces the number of decisions in direction (x per second)
+      this.chooseDirection() // Choose new direction
+      this.step = 0
+    }
+    this.look() // Look around, can change behaviour
+  }
+
+  // Hunts another creature (L)
+  hunt () {
+    if (this.target && (animals.includes(this.target) || plants.includes(this.target)) && this.target.health > 0) { // Exists
+      let distance = this.sprites.middle.distance(this.target.sprites.middle)
+
+      // Check if still in range
+      let range = this.sightRadius * (1 - this.target.traits.camouflage)
+      if (distance.magnitude >= range) { // Lost target
+        this.behaviour = "wandering"
+        this.target = null
+        this.hitted = false
+        this.chooseDirection()
+      }
+
+      // Follow prey
+      if (Math.abs(distance.angle - this.speed.angle) < Math.PI / 3) { // Roughly the same direction
+        if (distance.magnitude > 2 * constants.scale) { // Prevents animal shaking on contact
+          // Use component going in the direction of the animal
+          let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
+          distance.magnitude = inproduct
+          this.speed.add(distance) // Move toward
+        } else {
+          this.acceleration.magnitude = 0
+          this.speed.magnitude = 0
+        }
+      } else {
+        // Start moving
+        this.stop()
+        distance.magnitude = this.traits.acceleration
+        this.acceleration = distance
+      }
+      // Try to attack
+      this.attack(this.target)
+    } else { // Lost target
+      this.behaviour = "wandering"
+      this.target = null
+      this.hitted = false
+      this.chooseDirection()
+    }
+  }
+
+  // Fight or flight response (L)
+  fightFlight () {
+    if (this.hunter.target === this && animals.includes(this.hunter) && this.hunter.health > 0) { // Exists
+      let distance = this.sprites.middle.distance(this.hunter.sprites.middle)
+      // Check if still close
+      let range = this.sightRadius * (1 - this.hunter.traits.camouflage)
+      if (distance.magnitude >= range) { // Lost hunter
+        this.behaviour = "wandering"
+        this.hunter = null
+        this.hitted = false
+        this.chooseDirection()
+      }
+
+      // Self defense based on agression
+      if (this.hitted) {
+        let odds = {
+          "true": this.traits.aggressiveness,
+          "false": 1 - this.traits.aggressiveness
+        }
+        if (random.choose(odds) === "true") { // Defend
+          this.behaviour = "hunting"
+          this.target = this.hunter
+        } else { // Keep running
+          // Go in the reverse direction
+          distance.rotate("right")
+          distance.rotate("right")
+          if (this.speed.magnitude > 0) {
+            distance.magnitude = this.speed.magnitude
+            this.speed.add(distance) // Move away
+            this.speedFactor = 1
+          } else {
+            distance.magnitude = this.traits.acceleration
+            this.acceleration = distance
+          }
+        }
+      }
+    } else { // Lost hunter
+      this.behaviour = "wandering"
+      this.hunter = null
+      this.hitted = false
+      this.chooseDirection()
+    }
+  }
+
   // Respond to another animal (L)
   found (animal) {
     let odds = {
       "true": this.traits.aggressiveness,
       "false": 1 - this.traits.aggressiveness
-    }
-
-    if (this.traits.name !== animal.traits.name) { // No canibalism
-      if (this.traits.diet === "carnivore") { // Can attack first
-        // Will attack odd based on agression
-        if (random.choose(odds) === "true") {
-          // Hunt the animal
-          this.behaviour = "hunting"
-          this.target = animal
-        }
-      }
-
-      if (animal.traits.diet === "carnivore") { // spots a meat eater
-        // Will run odd based on agression
-        if (random.choose(odds) === "true") {
-          this.behaviour = "fleeing"
-          this.hunter = animal
-        }
-      }
     }
 
     if (animal.target === this) { // NPC is being hunted
@@ -1367,12 +1365,33 @@ class NPC extends Creature {
         this.behaviour = "defending"
         this.hunter = animal
       }
+      return true// No other actions
     }
 
-    // TODO add looking for plants
+    if (this.traits.name !== animal.traits.name) { // No canibalism
+      if (this.traits.diet === "carnivore") { // Can attack first
+        if (this.hunger < 75) { // Is hungry enough
+          // Will attack odd based on agression
+          if (random.choose(odds) === "true") {
+            // Hunt the animal
+            this.behaviour = "hunting"
+            this.speedFactor = 1
+            this.target = animal
+          }
+        }
+      }
+
+      if (animal.traits.diet === "carnivore") { // spots a meat eater
+        // Will run odd based on agression
+        if (random.choose(odds) === "true") {
+          this.behaviour = "fleeing"
+          this.hunter = animal
+        }
+      }
+    }
   }
 
-  // Check if predators or prey close (L)
+  // Check if predators or prey close / look for plants (L)
   look () {
     for (let animal of animals) {
       if (animal !== this) { // Not self
@@ -1381,9 +1400,35 @@ class NPC extends Creature {
           // Animal is within sight radius, depends on camouflage trait
           let range = this.sightRadius * (1 - animal.traits.camouflage)
           if (distance.magnitude <= range) {
-            this.found(animal)
+            if (this.found(animal)) { // React to different kinds of animals
+              return // No other actions if being hunted
+            }
           }
         }
+      }
+    }
+
+    // Herbivores look at plants when hungry
+    if (this.traits.diet === "herbivore" && this.hunger < 75) {
+      const close = []
+      const distances = []
+      for (let plant of plants) {
+        if (this.sprites.middle && plant.sprites.middle) { // Exist
+          if (!(this.traits.area === "water" && plant.traits.area !== "water")) { // Water animals can't eat land plants
+            let distance = this.sprites.middle.distance(plant.sprites.middle)
+            if (distance.magnitude <= this.sightRadius / 10) { // In close view
+              close.push(plant)
+              distances.push(distance.magnitude)
+            }
+          }
+        }
+      }
+
+      if (close.length > 0) {
+        const min = Math.min(...distances)
+        const plant = close[distances.indexOf(min)] // Closest plant
+        this.target = plant
+        this.behaviour = "hunting"
       }
     }
   }
