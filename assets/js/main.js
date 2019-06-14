@@ -42,7 +42,7 @@ const view = {
     height: null,
     middle: null,
     screen: doc.canvas.getContext('2d'),
-    fps: 40, // Frames per second
+    fps: 45, // Frames per second
 }
 
 // The entire map
@@ -560,7 +560,7 @@ class Obj extends Living {
     for (let animal of animals) {
       if (animal !== this) {
         if (this.collide(animal)) {
-          this.block(animal, true)
+          this.block(animal, false)
         }
       }
     }
@@ -575,7 +575,7 @@ class Obj extends Living {
             // Bigger animals can't go through tree
             if (this.collide(object)) {
               if (this.traits.mass > 10) {
-                this.block(object, false)
+                this.block(object, true)
               } else {
                 this.sheltered = object // Will be beneath the tree
               }
@@ -706,7 +706,7 @@ class Wolf extends Animal {
       acceleration: 0.1,
       area: "land",
       maxHealth: 15,
-      mass: 60.0,
+      mass: 60,
       diet: "carnivore",
       camouflage: 0.6,
       perception: 0.7,
@@ -933,7 +933,6 @@ class Creature extends Obj {
     this.hunter = null // Is hunting you
     this.hitted = false // Just hit you
     this.traits = animal.traits
-    this.constructor
     this.health = this.traits.maxHealth
     this.hunger = 100 // Percentage, the same value for every animal
   }
@@ -958,11 +957,13 @@ class Creature extends Obj {
     // Current tile
     let x = Math.floor(this.loc.x / constants.scale)
     let y = Math.floor(this.loc.y / constants.scale)
+    x = x < map.size ? x : map.size - 1
+    y = y < map.size ? y : map.size - 1
     let terrain = map.tiles[y][x]
     // Current area
     let area = (terrain === null || terrain === undefined) ? "sky" : terrain.area // Null value is a tree
 
-    // Land animals move slowly in water
+    // Terrain influences speed
     if (this.traits.area === "land") {
       if (area === "water") {
         this.terrainFactor = 0.65
@@ -1024,9 +1025,20 @@ class Player extends Creature {
     this.spirits = [animal.name.toLowerCase()] // Animals to change into
   }
 
-  // Different behaviour when dying
+  // Game over
   die () {
-    // TODO implement end of game
+    // TODO add styled screen
+    if (!this.notification) {
+      let alive = Math.round(((new Date()) - constants.startTime) / 1000)
+      alert(`
+        You were killed as a(n) ${this.traits.name}.
+        You were alive for ${Math.floor(alive / 60)} minutes and ${alive % 60} seconds.
+        Game will automatically restart.
+        `
+      )
+      this.notification = true
+      location.reload()
+    }
   }
 
 
@@ -1414,12 +1426,12 @@ class NPC extends Creature {
       this.chooseDirection()
     }
   }
-  block (object, complete) {
-    super.block(object, complete)
-    if (complete) {
-      this.chooseDirection()
-    }
-  }
+  // block (object, complete) {
+  //   super.block(object, complete)
+  //   if (complete) {
+  //     this.chooseDirection()
+  //   }
+  // }
 }
 
 //  ____       _
@@ -1498,7 +1510,6 @@ document.addEventListener('keyup', () => {
 // Everything loaded
 document.onreadystatechange = function () {
   if (document.readyState === 'complete') {
-
     // Start game (A)
     doc.startButton.addEventListener("click", function () {
       // Generate map and initial animals/plants
@@ -1506,6 +1517,7 @@ document.onreadystatechange = function () {
       map.spawn()
       doc.startButton.style.display = "none" // Hide
       settings.started = true
+      constants.startTime = new Date()
     })
   }
 }
