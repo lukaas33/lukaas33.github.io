@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Caesar+Dressing&display=swap');
+
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -11,6 +13,9 @@
 
   /* Variables */
   --grey-200: #eeeeee;
+  --green: #006400;
+  --light-green: #9ACD32;
+  --light-brown: #DEE0C0;
 }
 
 body {
@@ -20,40 +25,49 @@ body {
   position: relative;
 }
 
-:root, main, #screen, body {
+:root, main, body, #screen, #begin {
   width: 100%;
   height: 100%;
+}
+
+#menu {
+  position: absolute;
 }
 
 #canvas {
   display: block;
 }
 
-#start {
-  width: 120px;
-  height: 70px;
+#begin {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  margin-top: 20px;
-  line-height: 60px;
-  font-weight: bold;
-  padding: 0 40px;
-  background: #006400;
-  border: 2px solid;
-  font-family: ceasar dressing, papyrus, arial;
-}
-#start:hover {
-  background: #9ACD32;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  left: 0;
+  top: 0;
+  display: flex;
+  font-family: 'Caesar Dressing', arial;
 }
 
 #title {
-  font-size: 72px;
-  position: absolute;
-  left: 30%;
-  right: 25%;
-  top: 25%;
-  font-family: ceasar dressing, papyrus, arial;
-  color: #006400;
+  transition: 400ms;
+  font-family: inherit;
+  font-size: 6.5rem;
+  color: var(--green);
+}
+
+#start {
+  transition: 400ms;
+  width: 40%;
+  height: 15%;
+  font-size: 4rem;
+  margin-top: 2rem;
+  border-radius: 1rem;
+  background-color: var(--green);
+  color: var(--light-brown);
+  border: none;
+  font-family: inherit;
+}
+#start:hover {
+  background: var(--light-green);
 }

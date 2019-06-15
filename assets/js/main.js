@@ -31,7 +31,7 @@ const constants = {
 // Related to document, for example html elements
 const doc = {
   canvas: document.getElementById('canvas'),
-  title: document.getElementById("title"),
+  startScreen: document.getElementById("begin"),
   startButton: document.getElementById("start")
 }
 
@@ -41,14 +41,14 @@ const view = {
     height: null,
     middle: null,
     screen: doc.canvas.getContext('2d'),
-    fps: 35, // Frames per second
+    fps: 40, // Frames per second
 }
 
 // The entire map
 const map = {
   size: 100, // Meters wide and heigh
-  populationDensity: 1000, // 1 animal per x square meters
-  growthDensity: 50, // 1 plant per x square meters
+  populationDensity: 500, // 1 animal per x square meters
+  growthDensity: 100, // 1 plant per x square meters
   width: null,
   height: null,
   tiles: null
@@ -95,6 +95,15 @@ const random = {
       }
     }
   }
+}
+
+// Set the canvas to the screen size, via css gives stretching effect (L)
+view.sizes = function () {
+  doc.canvas.width = view.width = view.screen.width = document.body.clientWidth
+  doc.canvas.height = view.height = view.screen.height = document.body.clientHeight
+  map.width = map.height = (map.size * constants.scale)
+  view.middle = new Coord(map.width, map.height)
+  view.middle.divide(2)
 }
 
 // Generate the map (L)
@@ -592,7 +601,7 @@ class Obj extends Living {
           }
           if (object.area === "land" && this.traits.area === "water") { // Water-animal meets land
             if (this.collide(object)) {
-              this.block(object, true)
+              this.block(object, false)
             }
           }
         }
@@ -754,7 +763,7 @@ class Bird extends Animal {
       maxSpeed: 11,
       acceleration: 0.9,
       area: "sky",
-      maxHealth: 3,
+      maxHealth: 2,
       mass: 0.5,
       diet: "herbivore",
       camouflage: 0.8,
@@ -1288,13 +1297,12 @@ class NPC extends Creature {
 
       // Follow prey
       if (Math.abs(distance.angle - this.speed.angle) < Math.PI / 3) { // Roughly the same direction
-        if (distance.magnitude > 2 * constants.scale) { // Prevents animal shaking on contact
+        if (this.target && distance.magnitude > 2 * constants.scale) { // Prevents animal shaking on contact
           // Use component going in the direction of the animal
           let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
           distance.magnitude = inproduct
           this.speed.add(distance) // Move toward
         } else {
-          this.acceleration.magnitude = 0
           this.speed.magnitude = 0
         }
       } else {
@@ -1337,19 +1345,22 @@ class NPC extends Creature {
         if (random.choose(odds) === "true") { // Defend
           this.behaviour = "hunting"
           this.target = this.hunter
+          return // Don't run
         } else { // Keep running
-          // Go in the reverse direction
-          distance.rotate("right")
-          distance.rotate("right")
-          if (this.speed.magnitude > 0) {
-            distance.magnitude = this.speed.magnitude
-            this.speed.add(distance) // Move away
-            this.speedFactor = 1
-          } else {
-            distance.magnitude = this.traits.acceleration
-            this.acceleration = distance
-          }
+          this.hitted = false
         }
+      }
+
+      // Go in the reverse direction
+      distance.rotate("right")
+      distance.rotate("right")
+      if (this.speed.magnitude > 0) {
+        distance.magnitude = this.speed.magnitude
+        this.speed.add(distance) // Move away
+        this.speedFactor = 1
+      } else {
+        distance.magnitude = this.traits.acceleration
+        this.acceleration = distance
       }
     } else { // Lost hunter
       this.behaviour = "wandering"
@@ -1483,25 +1494,6 @@ class NPC extends Creature {
   }
 }
 
-//  ____       _
-// / ___|  ___| |_ _   _ _ __
-// \___ \ / _ \ __| | | | '_ \
-//  ___) |  __/ |_| |_| | |_) |
-// |____/ \___|\__|\__,_| .__/
-//                      |_|
-
-// Set the canvas to the screen size, via css gives stretching effect (L)
-doc.canvas.width = view.width = view.screen.width = document.body.clientWidth
-doc.canvas.height = view.height = view.screen.height = document.body.clientHeight
-map.width = map.height = (map.size * constants.scale)
-view.middle = new Coord(map.width, map.height)
-view.middle.divide(2)
-
-
-// Create player
-// View.middle reference passed so when the player location is updated the player view is as well
-animals[0] =  new Player(new Squirrel(view.middle))
-
 //  _____                 _
 // | ____|_   _____ _ __ | |_ ___
 // |  _| \ \ / / _ \ '_ \| __/ __|
@@ -1528,14 +1520,12 @@ view.refresh = window.setInterval(() => {
        }
      }
    }
-
    // Draw plants
    for (let plant of plants) {
      if (plant) {
        plant.live()
      }
    }
-
    // Draw animals
    for (let animal of animals) {
      if (animal) {
@@ -1548,28 +1538,40 @@ view.refresh = window.setInterval(() => {
  }
 }, Math.ceil(1000 / view.fps)) // Executes a certain amount of times per second
 
+// Resize window
+window.onresize = function (event) {
+  view.sizes()
+}
+
 // Setup keyboard controls
 document.addEventListener('keydown', (event) => {
-  animals[0].control(event.keyCode, true)
+  if (animals[0]) {
+    animals[0].control(event.keyCode, true)
+  }
 })
 
 document.addEventListener('keyup', () => {
-  animals[0].control(event.keyCode, false) // Stop signal
+  if (animals[0]) {
+    animals[0].control(event.keyCode, false) // Stop signal
+  }
 })
 
 // Everything loaded
 document.onreadystatechange = function () {
   if (document.readyState === 'complete') {
     // Start game (A)
-      doc.title
-      doc.startButton.addEventListener("click", function () {
+    doc.startButton.addEventListener("click", function () {
+      // Screen sizes
+      view.sizes()
+      // View.middle reference passed so when the player location is updated the player view is as well
+      animals[0] =  new Player(new Squirrel(view.middle))
       // Generate map and initial animals/plants
       map.generate()
       map.spawn()
+      // Start game
       settings.started = true
       settings.startTime = new Date()
-      doc.title.style.display = "none"
-      doc.startButton.style.display = "none" // Hide
+      doc.startScreen.style.display = "none" // Hide
     })
   }
 }
