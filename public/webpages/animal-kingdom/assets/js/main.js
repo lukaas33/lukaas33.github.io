@@ -623,16 +623,18 @@ class Obj extends Living {
     if (this.speed.magnitude > 0) {
       // Get component going in the direction of the object
       let distance = new Coord(object.loc.x - this.loc.x, object.loc.y - this.loc.y)
-      let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
       if (distance.magnitude > 0) {
-        inproduct /= distance.magnitude
-        distance.magnitude = inproduct
+        if (Math.abs(distance.angle - this.speed.angle) < Math.PI / 2) { // Same direction
+          let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
+          inproduct /= distance.magnitude
+          distance.magnitude = inproduct
 
-        // Remove component
-        if (complete) { // Full stop
-          this.loc.subtract(distance) // Undo movement
-        } else {
-          this.speed.subtract(distance) // Stop moving here
+          // Remove component
+          if (complete) { // Full stop
+            this.loc.subtract(distance) // Undo movement
+          } else {
+            this.speed.subtract(distance) // Stop moving here
+          }
         }
       }
     }
