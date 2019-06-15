@@ -6,13 +6,10 @@
 //                                                     |___/
 // A game by Anne du Croo de Jongh and Lucas van Osenbruggen
 // Code blocks are attributed to the author using (A) and (L) respectively.
-//
 
-(function () { // Closure for scope limited to browser
-  'use strict' // Js strict mode
-  // TODO enclose code after testing
-})()
 
+(function () { // Closure
+'use strict' // Js strict mode
 
 // __     __         _       _     _
 // \ \   / /_ _ _ __(_) __ _| |__ | | ___  ___
@@ -22,7 +19,8 @@
 
 // Changing values related to setup
 const settings = {
-  started: false
+  started: false,
+  startTime: null
 }
 
 // Fhysical constants, not changing
@@ -43,7 +41,7 @@ const view = {
     height: null,
     middle: null,
     screen: doc.canvas.getContext('2d'),
-    fps: 45, // Frames per second
+    fps: 35, // Frames per second
 }
 
 // The entire map
@@ -61,24 +59,24 @@ const animals = []
 const plants = []
 
 
- //  _____                 _   _
- // |  ___|   _ _ __   ___| |_(_) ___  _ __  ___
- // | |_ | | | | '_ \ / __| __| |/ _ \| '_ \/ __|
- // |  _|| |_| | | | | (__| |_| | (_) | | | \__ \
- // |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+//  _____                 _   _
+// |  ___|   _ _ __   ___| |_(_) ___  _ __  ___
+// | |_ | | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+// |  _|| |_| | | | | (__| |_| | (_) | | | \__ \
+// |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
- // Functions for storing data in localStorage (L)
-const store = {
+// Functions for storing data in localStorage (L)
+const store = { // TODO, use for saving of progress between sessions
   get: function (name) {
     const string = localStorage.getItem(name)
     try {
-      return JSON.parse(string) // To object
+      return JSON.parse(string)
     } catch (e) { // Won't work if the data is only a string
       return string
     }
   },
   set: function (name, value) {
-    const string = JSON.stringify(value) // To string
+    const string = JSON.stringify(value)
     localStorage.setItem(name, string)
   }
 }
@@ -90,10 +88,10 @@ const random = {
     let odd = Math.random() * total // random number between 0 and total
 
     let cummulative = 0
-    for (let dir in options) {
-      cummulative += options[dir]
+    for (let option in options) {
+      cummulative += options[option]
       if (odd < cummulative) { // Found random option
-        return dir
+        return option
       }
     }
   }
@@ -101,7 +99,7 @@ const random = {
 
 // Generate the map (L)
 map.generate = function () {
-  // Create 2D-array of size x size
+  // Create 2D-array
   map.tiles = new Array(map.size)
   for (let a = 0; a < map.size; a++) {
     map.tiles[a] = new Array(map.size)
@@ -128,19 +126,18 @@ map.add = function (loc) {
       "tree": 0.020
     }
 
-    // Check nearby tiles for water
+    // More adjecent water tiles makes water spawing more likely
     if (loc.x > 0 && loc.y > 0) {
       const near = [
         map.tiles[loc.y - 1][loc.x - 1],
         map.tiles[loc.y - 1][loc.x],
         map.tiles[loc.y][loc.x - 1]
       ]
-      const nearby = near.filter((x) => x !== null && x.type === "water")
-      // More adjecent water tiles makes water spawing more likely
+      const nearby = near.filter((x) => x !== null && x.type === "water") // Number of nearby
       const factor = 64 // Increase odd of water spawning
       options["water"] += options["water"] * (nearby.length * factor)
     }
-    options["grass"] = 1 - (options["tree"] + options["water"])
+    options["grass"] = 1 - (options["tree"] + options["water"]) // Default
 
     const type = random.choose(options) // Choose random texture from options
 
@@ -153,17 +150,18 @@ map.add = function (loc) {
         map.tiles[loc.y][loc.x] = new Water(place)
         break
       case "tree":
+        // Not at edge or too close to another tree
         if ((loc.y + 1) < map.size && (loc.x + 1) < map.size &&
             map.tiles[loc.y + 1][loc.x] !== null &&
             map.tiles[loc.y][loc.x + 1] !== null &&
-            map.tiles[loc.y + 1][loc.x + 1] !== null) { // Not at edge or too close to another tree
+            map.tiles[loc.y + 1][loc.x + 1] !== null) {
 
-          map.tiles[loc.y][loc.x] = new Tree(place)
           // Clear other spots because a tree is 4 tiles big
+          map.tiles[loc.y][loc.x] = new Tree(place)
           map.tiles[loc.y + 1][loc.x] = null
           map.tiles[loc.y][loc.x + 1] = null
           map.tiles[loc.y + 1][loc.x + 1] = null
-          // Add tiles as background
+          // Add tiles as background for the tree
           map.tiles[loc.y][loc.x].background = [
             new Grass(place),
             new Grass(new Coord(place.x + constants.scale, place.y)),
@@ -171,7 +169,7 @@ map.add = function (loc) {
             new Grass(new Coord(place.x, place.y + constants.scale)),
           ]
         } else { // At the edge
-          map.add(loc) // Try again
+          map.add(loc)
         }
         break
     }
@@ -181,14 +179,6 @@ map.add = function (loc) {
 // Animal and plants spawn on the map (L)
 map.spawn = function () {
   // Rarity of different animals (smaller animals more common, carnivores rarer)
-  const animalSpecies = {
-    "deer": 0.20,
-    "squirrel": 0.35,
-    "wolf": 0.15,
-    "fish": 0.40,
-    "bird": 0.30,
-    "bear": 0.10
-  }
   map.animalConstructors = {
     "deer": Deer,
     "squirrel": Squirrel,
@@ -197,26 +187,35 @@ map.spawn = function () {
     "bird": Bird,
     "bear": Bear
   }
+  const animalSpecies = {
+    "deer": 0.20,
+    "squirrel": 0.35,
+    "wolf": 0.15,
+    "fish": 0.40,
+    "bird": 0.30,
+    "bear": 0.10
+  }
 
   // Add animals
   while (animals.length < (map.size**2) / map.populationDensity) { // Based on map size
     animals.push(new NPC(map.create(animalSpecies, map.animalConstructors)))
   }
 
+
   // Rarity of different plants
-  const plantSpecies = {
-    "mushroom": 0.1,
-    "bush": 0.2,
-    "berry": 0.2,
-    "shrub": 0.5,
-    "cactus": 0.05,
-  }
   map.plantConstructors = {
     "mushroom": Mushroom,
     "bush": Bush,
     "berry": Berry,
     "shrub": Shrub,
     "cactus": Cactus,
+  }
+  const plantSpecies = {
+    "mushroom": 0.1,
+    "bush": 0.2,
+    "berry": 0.2,
+    "shrub": 0.5,
+    "cactus": 0.05,
   }
 
   // Add plants
@@ -234,8 +233,8 @@ map.create = function (species, constructors) {
     inView = inView || (loc.y < view.middle.y - view.height / 2 || loc.y > view.middle.y + view.height / 2)
 
     // Legal terrain for the object
-    let row = Math.floor(loc.y / constants.scale)
-    let col = Math.floor(loc.x / constants.scale)
+    const row = Math.floor(loc.y / constants.scale)
+    const col = Math.floor(loc.x / constants.scale)
     let area = map.tiles[row][col] === null ? "sky" : map.tiles[row][col].area // null value means tree
     return inView && area === object.traits.area
   }
@@ -256,7 +255,7 @@ map.create = function (species, constructors) {
 }
 
 // Godmode function, called via console (A)
-const godMode = function () {
+window.godMode = function () {
   animals[0].health = 1000
   animals[0].hunger = 100
   animals[0].traits.maxSpeed = 30,
@@ -295,6 +294,7 @@ class Coord {
     this.x *= value
     this.y *= value
   }
+
   // Rotate the vector
   rotate (dir) {
     if (dir === "right") {
@@ -303,6 +303,7 @@ class Coord {
       [this.x, this.y] = [-this.y, this.x]
     }
   }
+
   // Change the length of the vector
   set magnitude (value) {
     let vector = this.normalized
@@ -317,6 +318,7 @@ class Coord {
     other.subtract(this)
     return other
   }
+
   // Calculate the length of the vector
   get magnitude () {
     return Math.sqrt(this.x**2 + this.y**2)
@@ -328,7 +330,7 @@ class Coord {
   // Return the unit vector
   get normalized () {
     let mag = this.magnitude
-    if (mag > 0) { // Can't divide by 0
+    if (mag > 0) {
       let norm = new Coord(this.x, this.y)
       norm.divide(mag)
       return norm
@@ -389,10 +391,10 @@ class Sprites {
     const file = `${path}-${i}.png`
     this.getImage(file, (result) => {
       if (result === null) {
-        callback(sprites) // Return
+        callback(sprites)
       } else {
         sprites.push(result)
-        this.getImages(path, i+1, sprites, callback) // Next image, recurse
+        this.getImages(path, i+1, sprites, callback) // Next image - recurse
       }
     })
   }
@@ -434,7 +436,10 @@ class Entity {
       this.sprites.size.width = sprite.width
       this.sprites.size.height = sprite.height
 
-      this.sprites.middle = new Coord(this.loc.x + this.sprites.size.width / 2, this.loc.y + this.sprites.size.height / 2)
+      this.sprites.middle = new Coord(
+        this.loc.x + this.sprites.size.width / 2,
+        this.loc.y + this.sprites.size.height / 2
+      )
 
       // Location from absolute (map) to relative (view)
       let x = Math.floor(this.loc.x - (view.middle.x - view.width / 2))
@@ -463,7 +468,8 @@ class Living extends Entity {
     if (this.health <= 0 || this.hunger <= 0) { // RIP
       this.die()
     }
-    this.hunger = this.hunger > 100 ? 100 : this.hunger // Not higher than 100
+    this.hunger = this.hunger > 100 ? 100 : this.hunger // Can't be higher than 100
+
     if (this.hunger > 75) { // Regenerate health
       this.health += (this.traits.maxHealth / 100) / view.fps // 1% per second
     }
@@ -482,13 +488,12 @@ class Living extends Entity {
     x = Math.floor(x - (view.middle.x - view.width / 2))
     y = Math.floor(y - (view.middle.y - view.height / 2))
 
-    const health = (this.health / this.traits.maxHealth) // Factor: 0 - 1
+    const health = (this.health / this.traits.maxHealth)
     if (health < 1) {
       // Display bar
       view.screen.fillStyle = '#eeeeee' // Grey
       view.screen.fillRect(x, y, width, height)
       if (health > 0) {
-        // Display health
         view.screen.fillStyle = '#f44336' // Red
         view.screen.fillRect(x, y, (width * health), height)
       }
@@ -496,13 +501,11 @@ class Living extends Entity {
 
     if (this.hunger) {
       if (this.hunger < 75) { // Only display after certain threshold
-        // Display bar
         y += height // Below healthbar
         view.screen.fillStyle = '#eeeeee' // Grey
         view.screen.fillRect(x, y, width, height)
         if (this.hunger > 0) {
-          // Display health
-          view.screen.fillStyle = '#ff9800' // Red
+          view.screen.fillStyle = '#ff9800' // Orange
           view.screen.fillRect(x, y, (width * (this.hunger / 100)), height)
         }
       }
@@ -516,7 +519,8 @@ class Obj extends Living {
     super(loc, sprites)
     this.speed = new Coord()
     this.acceleration = new Coord()
-    this.direction = "down" // Starting position first draw
+    // Starting position first draw
+    this.direction = "down"
     this.angle = 0.5 * Math.PI
     // Can change the max speed
     this.speedFactor = 1
@@ -533,23 +537,26 @@ class Obj extends Living {
   move () {
     // Add acceleration to speed
     if (this.acceleration.magnitude >= 0) {
-      let maxSpeed = this.traits.maxSpeed * this.speedFactor * this.terrainFactor // Modfied maximum
-      this.speed.multiply(0.5) // Friction, increases movement in direction and decreases bouncing
+      const maxSpeed = this.traits.maxSpeed * this.speedFactor * this.terrainFactor
+      // this.speed.multiply(0.75) // Friction, increases influence of acceleration (decreases bouncing)
       this.speed.add(this.acceleration)
-      this.speed.magnitude = maxSpeed // Set to max to correct if over
+      // Correct if over
+      if (this.speed.magnitude > maxSpeed) {
+        this.speed.magnitude = maxSpeed
+      }
     }
 
     // Add speed to location
     if (this.speed.magnitude > 0) {
       // From px/frame to m/second
-      let speed = new Coord(this.speed.x, this.speed.y)
+      const speed = new Coord(this.speed.x, this.speed.y)
       speed.divide(view.fps)
       speed.multiply(constants.scale)
       this.loc.add(speed)
 
       // Get direction
-      let angle = (this.speed.angle + 2 * Math.PI) % (2 * Math.PI) // Angle from 0 to 2Pi
-      let index = Math.round(2 * (angle / Math.PI)) % 4 // Angle to values 0, 1, 2, 3
+      const angle = (this.speed.angle + 2 * Math.PI) % (2 * Math.PI) // 0 to 2PI
+      const index = Math.round(2 * (angle / Math.PI)) % 4 // values 0, 1, 2, 3
       this.angle = angle
       this.direction = this.sprites.dirs[index] // Direction as text
     }
@@ -566,13 +573,12 @@ class Obj extends Living {
       }
     }
 
-    // Collide with terrain (A) - TODO make dependend on size
+    // Collide with terrain (A)
     for (let y = 0; y < map.size; y++) {
       for (let x = 0; x < map.size; x++) {
         let object = map.tiles[y][x]
-        let area = object !== null ? object.area : "sky"
         if (object !== null) {
-          if (area === "sky" && this.traits.area !== "sky") { // Animal meets a tree
+          if (object.area === "sky" && this.traits.area !== "sky") { // Animal meets a tree
             // Bigger animals can't go through tree
             if (this.collide(object)) {
               if (this.traits.mass > 10) {
@@ -581,10 +587,10 @@ class Obj extends Living {
                 this.sheltered = object // Will be beneath the tree
               }
             } else if (object === this.sheltered) {
-              this.sheltered = false
+              this.sheltered = false // Not under the tree
             }
           }
-          if (area === "land" && this.traits.area === "water") { // Water-animal meets land
+          if (object.area === "land" && this.traits.area === "water") { // Water-animal meets land
             if (this.collide(object)) {
               this.block(object, true)
             }
@@ -619,7 +625,6 @@ class Obj extends Living {
         } else {
           this.speed.subtract(distance) // Stop moving here
         }
-        // this.speed.multiply(1.5) // Stops orbiting
       }
     }
   }
@@ -985,19 +990,21 @@ class Creature extends Obj {
 
   // Sucesfull hit on another object or animal (L)
   hit (object) {
-    object.health -= this.traits.attack
-    object.hitted = true
-    // TODO implement eating mode to replace next lines
-    if (object.traits.nutrition) { // Plant
-      this.hunger += object.traits.nutrition * 10
-    } else { // Animal
-      this.hunger += object.traits.mass * 50 * this.traits.attack
-    }
     // Can't hit for a cooldown period
     this.cooldown = true
-    window.setTimeout((self, object) => {
+    window.setTimeout((self) => {
       self.cooldown = false
-    }, 400, this, object)
+    }, 400, this)
+
+    object.health -= this.traits.attack
+    object.hitted = true
+
+    // TODO implement eating mode to replace next lines
+    if (object.traits.nutrition) { // Plant
+      this.hunger += object.traits.nutrition * 25
+    } else { // Animal
+      this.hunger += object.traits.mass * this.traits.attack * 50
+    }
   }
 
   // Attack another animal or plant (L)
@@ -1006,7 +1013,7 @@ class Creature extends Obj {
       if (object && object !== this) { // Not self and object exists
         // Distance to object
         let distance = this.sprites.middle.distance(object.sprites.middle)
-        if (distance.magnitude <= (constants.scale * 2)) { // Min x meter range for attack
+        if (distance.magnitude <= (constants.scale * 2)) { // Minimaly x meter range for attack
           this.hit(object)
           return true // Hit sucessful
         }
@@ -1030,7 +1037,7 @@ class Player extends Creature {
   die () {
     // TODO add styled screen
     if (!this.notification) {
-      let alive = Math.round(((new Date()) - constants.startTime) / 1000)
+      let alive = Math.round(((new Date()) - settings.startTime) / 1000)
       alert(`
         You were killed as a(n) ${this.traits.name}.
         You were alive for ${Math.floor(alive / 60)} minutes and ${alive % 60} seconds.
@@ -1060,7 +1067,6 @@ class Player extends Creature {
   }
 
   // Control function, called on key press (L)
-  // TODO different system of movement, controls hard to use now
   control (key, action) {
     let movement = null
     switch (key) {
@@ -1192,13 +1198,13 @@ class Player extends Creature {
 class NPC extends Creature {
   constructor (animal) {
     super(animal)
-    this.currentBehaviour = "wandering" // Start bevaviour
-    this.previousBehaviour = null
     this.state = "stop" // Start state
+    this.currentBehaviour = "wandering" // Startbevaviour
+    this.previousBehaviour = null
     this.step = 0
     this.speedFactor = 0.65 // Not at max speed
     // Sight based on perception trait, from 1 to x m
-    let x = 50
+    const x = 50
     this.sightRadius = (1 + ((x - 1) * constants.scale * (this.traits.perception)) )
 
     // Movement matrix (L)
@@ -1259,7 +1265,7 @@ class NPC extends Creature {
     this.speedFactor = 0.65 // Not at max speed
     this.step += 1
     if (this.step >= 3 * view.fps) { // Reduces the number of decisions in direction (x per second)
-      this.chooseDirection() // Choose new direction
+      this.chooseDirection()
       this.step = 0
     }
     this.look() // Look around, can change behaviour
@@ -1267,7 +1273,8 @@ class NPC extends Creature {
 
   // Hunts another creature (L)
   hunt () {
-    if (this.target && (animals.includes(this.target) || plants.includes(this.target)) && this.target.health > 0) { // Exists
+    // If exists
+    if (this.target && (animals.includes(this.target) || plants.includes(this.target)) && this.target.health > 0) {
       let distance = this.sprites.middle.distance(this.target.sprites.middle)
 
       // Check if still in range
@@ -1308,8 +1315,10 @@ class NPC extends Creature {
 
   // Fight or flight response (L)
   fightFlight () {
-    if (this.hunter.target === this && animals.includes(this.hunter) && this.hunter.health > 0) { // Exists
+    // If exists
+    if (this.hunter.target === this && animals.includes(this.hunter) && this.hunter.health > 0) {
       let distance = this.sprites.middle.distance(this.hunter.sprites.middle)
+
       // Check if still close
       let range = this.sightRadius * (1 - this.hunter.traits.camouflage)
       if (distance.magnitude >= range) { // Lost hunter
@@ -1320,7 +1329,7 @@ class NPC extends Creature {
       }
 
       // Self defense based on agression
-      if (this.hitted) {
+      if (this.hitted) { // Got hit
         let odds = {
           "true": this.traits.aggressiveness,
           "false": 1 - this.traits.aggressiveness
@@ -1472,12 +1481,6 @@ class NPC extends Creature {
       this.chooseDirection()
     }
   }
-  // block (object, complete) {
-  //   super.block(object, complete)
-  //   if (complete) {
-  //     this.chooseDirection()
-  //   }
-  // }
 }
 
 //  ____       _
@@ -1512,8 +1515,9 @@ view.refresh = window.setInterval(() => {
    for (let y = 0; y < map.size; y++) {
      for (let x = 0; x < map.size; x++) {
        let object = map.tiles[y][x]
+
        if (object) { // Not null, not undefined
-        // Tree have a background
+         // Trees have a background
          if (object.type === "tree") {
            for (let tile of object.background) {
              tile.update()
@@ -1560,12 +1564,14 @@ document.onreadystatechange = function () {
       doc.title
       doc.startButton.addEventListener("click", function () {
       // Generate map and initial animals/plants
-      doc.title.style.display = "none"
       map.generate()
       map.spawn()
-      doc.startButton.style.display = "none" // Hide
       settings.started = true
-      constants.startTime = new Date()
+      settings.startTime = new Date()
+      doc.title.style.display = "none"
+      doc.startButton.style.display = "none" // Hide
     })
   }
 }
+
+})() // Enclosed
