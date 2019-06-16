@@ -474,13 +474,17 @@ class Living extends Entity {
 
   // Living being's general actions (L)
   live () {
-    if (this.health <= 0 || this.hunger <= 0) { // RIP
+    if (this.health <= 0) { // RIP
+      this.health = 0
       this.die()
     }
     this.hunger = this.hunger > 100 ? 100 : this.hunger // Can't be higher than 100
 
     if (this.hunger > 75) { // Regenerate health
       this.health += (this.traits.maxHealth / 100) / view.fps // 1% per second
+    } else if (this.hunger <= 0) {
+      this.hunger = 0
+      this.health -= (5 * this.traits.maxHealth / 100) / view.fps // 5% per second
     }
   }
 
@@ -601,7 +605,7 @@ class Obj extends Living {
           }
           if (object.area === "land" && this.traits.area === "water") { // Water-animal meets land
             if (this.collide(object)) {
-              this.block(object, false)
+              this.block(object, true)
             }
           }
         }
@@ -728,7 +732,7 @@ class Wolf extends Animal {
       camouflage: 0.6,
       perception: 0.7,
       aggressiveness: 0.7,
-      attack: 0.8,
+      attack: 1.2,
       hunger: 0.8,
       name: name
     }
@@ -750,7 +754,7 @@ class Deer extends Animal {
       camouflage: 0.7,
       perception: 0.7,
       aggressiveness: 0.2,
-      attack: 0.3,
+      attack: 0.4,
       hunger: 0.6,
       name: name
     }
@@ -807,13 +811,13 @@ class Bear extends Animal {
       maxSpeed: 7,
       acceleration: 0.5,
       area: "land",
-      maxHealth: 9,
+      maxHealth: 20,
       mass: 200,
       diet: "carnivore",
       camouflage: 0.5,
       perception: 0.5,
       aggressiveness: 0.6,
-      attack: 0.95,
+      attack: 2,
       hunger: 1,
       name: name
     }
@@ -974,8 +978,11 @@ class Creature extends Obj {
     // Current tile
     let x = Math.floor(this.loc.x / constants.scale)
     let y = Math.floor(this.loc.y / constants.scale)
+    // Fix illegal positions
     x = x < map.size ? x : map.size - 1
+    x = x > 0 ? x : 0
     y = y < map.size ? y : map.size - 1
+    y = y > 0 ? y : 0
     let terrain = map.tiles[y][x]
     // Current area
     let area = (terrain === null || terrain === undefined) ? "sky" : terrain.area // Null value is a tree
