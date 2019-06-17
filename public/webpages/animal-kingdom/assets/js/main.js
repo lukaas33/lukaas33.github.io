@@ -48,7 +48,7 @@ const view = {
 const map = {
   size: 100, // Meters wide and heigh
   populationDensity: 500, // 1 animal per x square meters
-  growthDensity: 100, // 1 plant per x square meters
+  growthDensity: 75, // 1 plant per x square meters
   width: null,
   height: null,
   tiles: null
@@ -198,7 +198,7 @@ map.spawn = function () {
   }
   const animalSpecies = {
     "deer": 0.20,
-    "squirrel": 0.35,
+    "squirrel": 0.30,
     "wolf": 0.15,
     "fish": 0.40,
     "bird": 0.30,
@@ -458,9 +458,6 @@ class Entity {
       let edge = 64
       if (-edge < x && x < view.width + edge && -edge < y && y < view.height + edge) {
         view.screen.drawImage(sprite, x, y)
-        if (this.sheltered !== false) { // Draw another over self
-          this.sheltered.update()
-        }
       }
     }
   }
@@ -592,15 +589,11 @@ class Obj extends Living {
         let object = map.tiles[y][x]
         if (object !== null) {
           if (object.area === "sky" && this.traits.area !== "sky") { // Animal meets a tree
-            // Bigger animals can't go through tree
+            // Bigger animals and water animals can't go through tree
             if (this.collide(object)) {
-              if (this.traits.mass > 10) {
+              if (this.traits.mass > 10 || this.traits.area === "water") {
                 this.block(object, true)
-              } else {
-                this.sheltered = object // Will be beneath the tree
               }
-            } else if (object === this.sheltered) {
-              this.sheltered = false // Not under the tree
             }
           }
           if (object.area === "land" && this.traits.area === "water") { // Water-animal meets land
@@ -716,7 +709,6 @@ class Squirrel extends Animal {
     }
   }
 }
-
 class Wolf extends Animal {
   constructor (loc) {
     let name = "Wolf"
@@ -738,7 +730,6 @@ class Wolf extends Animal {
     }
   }
 }
-
 class Deer extends Animal {
   constructor (loc) {
     let name = "Deer"
@@ -760,7 +751,6 @@ class Deer extends Animal {
     }
   }
 }
-
 class Bird extends Animal {
   constructor (loc) {
     let name = "Bird"
@@ -781,13 +771,12 @@ class Bird extends Animal {
     }
   }
 }
-
 class Fish extends Animal {
   constructor (loc) {
     let name = "Fish"
     super(loc, name)
     this.traits = {
-      maxSpeed: 6,
+      maxSpeed: 10,
       acceleration: 0.6,
       area: "water",
       maxHealth: 2,
@@ -802,7 +791,6 @@ class Fish extends Animal {
     }
   }
 }
-
 class Bear extends Animal {
   constructor (loc) {
     let name = "Bear"
@@ -861,7 +849,6 @@ class Mushroom extends Plant {
     this.health = this.traits.maxHealth
   }
 }
-
 class Berry extends Plant {
   constructor (loc) {
     let name = "Berry"
@@ -875,7 +862,6 @@ class Berry extends Plant {
     this.health = this.traits.maxHealth
   }
 }
-
 class Cactus extends Plant {
   constructor (loc) {
     let name = "Cactus"
@@ -889,7 +875,6 @@ class Cactus extends Plant {
     this.health = this.traits.maxHealth
   }
 }
-
 class Shrub extends Plant {
   constructor (loc) {
     let name = "Shrub"
@@ -903,7 +888,6 @@ class Shrub extends Plant {
     this.health = this.traits.maxHealth
   }
 }
-
 class Bush extends Plant {
   constructor (loc) {
     let name = "Bush"
@@ -996,12 +980,6 @@ class Creature extends Obj {
       } else {
         this.terrainFactor = 1
       }
-    } else if (this.traits.area === "water") {
-      if (area === "water") {
-        this.terrainFactor = 1
-      } else {
-        this.terrainFactor = 0.4
-      }
     }
     super.move()
   }
@@ -1019,9 +997,9 @@ class Creature extends Obj {
 
     // TODO implement eating mode to replace next lines
     if (object.traits.nutrition) { // Plant
-      this.hunger += object.traits.nutrition * 25
+      this.hunger += object.traits.nutrition * 20
     } else { // Animal
-      this.hunger += object.traits.mass * this.traits.attack * 50
+      this.hunger += object.traits.mass * this.traits.attack * 10
     }
   }
 
@@ -1029,11 +1007,13 @@ class Creature extends Obj {
   attack (object) {
     if (!this.cooldown) { // Wait until attack again
       if (object && object !== this) { // Not self and object exists
-        // Distance to object
-        let distance = this.sprites.middle.distance(object.sprites.middle)
-        if (distance.magnitude <= (constants.scale * 2)) { // Minimaly x meter range for attack
-          this.hit(object)
-          return true // Hit sucessful
+        if (this.sprites.middle && object.sprites.middle) {
+          // Distance to object
+          let distance = this.sprites.middle.distance(object.sprites.middle)
+          if (distance.magnitude <= (constants.scale * 2.5)) { // Minimaly x meter range for attack
+            this.hit(object)
+            return true // Hit sucessful
+          }
         }
       }
     }
@@ -1134,8 +1114,8 @@ class Player extends Creature {
 
   // Player tries to attack NPC's will respond (L)
   attackButton (action) {
-    if (!this.attacking) { // Have to release and press again
-      if (action) { // Key pressed
+    if (action) { // Key pressed
+      if (!this.attacking) { // Have to release and press again
         this.attacking = true
         for (let animal of animals) {
           if (this.attack(animal)) { // Hit
@@ -1151,7 +1131,7 @@ class Player extends Creature {
                   this.targeting = null
                   this.target = null
                 }
-              }, 1000)
+              }, 500)
             } else { // Is hunting animal
               if (animal !== this.target) { // Attack different animal
                 this.target = animal
@@ -1168,9 +1148,7 @@ class Player extends Creature {
         }
       }
     } else { // already on
-      if (!action) { // Key release
-        this.attacking = false
-      }
+      this.attacking = false
     }
   }
 
@@ -1222,7 +1200,7 @@ class NPC extends Creature {
     this.step = 0
     this.speedFactor = 0.65 // Not at max speed
     // Sight based on perception trait, from 1 to x m
-    const x = 50
+    const x = 70
     this.sightRadius = (1 + ((x - 1) * constants.scale * (this.traits.perception)) )
 
     // Movement matrix (L)
@@ -1262,10 +1240,12 @@ class NPC extends Creature {
   // Additional functionality for live, determines NPC behaviour (L)
   live () {
     if (this.behaviour === "wandering") {
+      this.look() // Look around, can change behaviour
       this.wander()
     } else if (this.behaviour === "hunting") {
       this.hunt()
     } else if (this.behaviour === "fleeing" || this.behaviour === "defending") {
+      this.look() // Look around, can change behaviour
       this.fightFlight()
     } else if (this.behaviour === "eating") {
       // TODO implement eat
@@ -1286,7 +1266,6 @@ class NPC extends Creature {
       this.chooseDirection()
       this.step = 0
     }
-    this.look() // Look around, can change behaviour
   }
 
   // Hunts another creature (L)
@@ -1352,6 +1331,7 @@ class NPC extends Creature {
           "false": 1 - this.traits.aggressiveness
         }
         if (random.choose(odds) === "true") { // Defend
+          this.speedFactor = 1
           this.behaviour = "hunting"
           this.target = this.hunter
           return // Don't run
@@ -1453,7 +1433,7 @@ class NPC extends Creature {
           }
         }
       }
-
+      // React to closest
       if (close.length > 0) {
         const min = Math.min(...distances)
         const plant = close[distances.indexOf(min)] // Closest plant
@@ -1516,16 +1496,15 @@ view.refresh = window.setInterval(() => {
    for (let y = 0; y < map.size; y++) {
      for (let x = 0; x < map.size; x++) {
        let object = map.tiles[y][x]
-
-       if (object) { // Not null, not undefined
+       if (object) {
          // Trees have a background
          if (object.type === "tree") {
            for (let tile of object.background) {
              tile.update()
            }
+         } else {
+           object.update()
          }
-
-         object.update()
        }
      }
    }
@@ -1539,6 +1518,17 @@ view.refresh = window.setInterval(() => {
    for (let animal of animals) {
      if (animal) {
        animal.live()
+     }
+   }
+   // Draw trees over other objects.
+   for (let y = 0; y < map.size; y++) {
+     for (let x = 0; x < map.size; x++) {
+       let object = map.tiles[y][x]
+       if (object) {
+         if (object.type === "tree") {
+           object.update()
+         }
+       }
      }
    }
 
