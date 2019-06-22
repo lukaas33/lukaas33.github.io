@@ -351,9 +351,8 @@ class Coord {
 
 // Multiple sprites from a given name (L)
 class Sprites {
-  dirs = ["right", "down", "left", "up"]
-
   constructor (name, moving, changing) {
+    this.dirs = ["right", "down", "left", "up"]
     this.moving = moving // Moves in all directions
     this.changing = changing // Changes over time
     this.frame = 0 // Frame displayed
