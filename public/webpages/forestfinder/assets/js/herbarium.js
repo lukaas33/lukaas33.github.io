@@ -204,8 +204,9 @@ const herbarium = {
     map.textContent = `Locatie op de kaart`
     elements.info.appendChild(map)
 
-    const urls = data.link.split(',')
+    const urls = data.link.split('+')
     for (let url of urls) {
+      url = url.trim()
       let link = document.createElement('a')
       link.href = url
       link.textContent = url
