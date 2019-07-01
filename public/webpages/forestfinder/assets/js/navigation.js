@@ -26,39 +26,41 @@ const navigation = {
   orientation: null,
   options: {
     enableHighAccuracy: true,
-    maximumAge: 5 * 1000 // Minimum location refresh time
+    maximumAge: 0,
+    timeout: 5000
   },
-  humanSpeed: 1.806, // Walking speed for humans (number found at https://en.wikipedia.org/wiki/Walking)
+  humanSpeed: 1.508333, // Walking speed (m/s) for humans (number found at https://en.wikipedia.org/wiki/Walking)
 
   track (callback) {
-    trackOrientation()
     trackLocation(this.options, (loc) => { // Execute when called
       if (this.loc !== null) {
-        const elapsed = (loc.time - this.loc.time) / 1000 // Since last measured
-        const maxDistance = (this.humanSpeed * elapsed) // Max distance crossed
-        const diff = geolib.getDistance(loc, this.loc) // Distance between coords
+        const speed = geolib.getSpeed(this.loc, loc)
 
-        if (diff <= (maxDistance + this.loc.accuracy)) { // Valid measurement
+        if (speed < this.humanSpeed * 1.25) { // Valid measurement
           this.loc = loc // Update
         }
       } else {
         this.loc = loc // Init
       }
 
-      callback()
+      callback() // Display
     })
   },
   dist (loc) {
-    return geolib.getDistance(loc, this.destination)
+    return geolib.getPreciseDistance(loc, this.destination)
+  },
+  arrived () {
+    const threshold = 10 // Within 10 m
+    return geolib.isPointWithinRadius(this.loc, this.destination, threshold)
   },
   directions () {
     const dist = this.dist(this.loc)
-    const bearing = geolib.getBearing(this.loc, this.destination) // N,E,S,W 0,90,180,270 direction, relative to north
+    const bearing = geolib.getGreatCircleBearing(this.loc, this.destination) // N,E,S,W 0,90,180,270 direction, relative to north
     let angle = null
     if (navigation.orientation) { // Value available
       // Make direction to go relative to user orientation instead of relative to north
       angle = this.orientation - bearing
-      angle = (360 + angle) % 360 // Remove < 0 or > 360
+      angle = (360 + angle) % 360 // Remove <0 or >360
     }
 
     const direction = {distance: dist, angle: angle, bearing: bearing}
@@ -70,7 +72,6 @@ const navigation = {
 // Tracks the location
 const trackLocation = function (options, callback) {
   if ("geolocation" in navigator) {
-    // geolocation is available
     // Continualy track the user location
     navigation.trackId = navigator.geolocation.watchPosition((position) => {
       let loc = new Coord(position.coords) // Pass coords object directly
@@ -85,12 +86,11 @@ const trackLocation = function (options, callback) {
   }
 }
 
-const trackOrientation = function () {
-  if(window.DeviceOrientationEvent) { // Available
-    window.addEventListener("deviceorientationabsolute", (event) => {
-      navigation.orientation = event.alpha
-    }, true)
-  } else {
 
-  }
+if (window.DeviceOrientationEvent) { // Available
+  window.addEventListener("deviceorientationabsolute", (event) => {
+    navigation.orientation = event.alpha
+  }, true)
+} else {
+  navigation.orientation = null
 }

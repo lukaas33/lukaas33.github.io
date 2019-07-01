@@ -112,7 +112,7 @@ const game = {
   // Check if arrived
   check (directions) {
     // Within x meters of an object will be considered the same location
-    if (directions.distance < navigation.loc.accuracy) { // Uses GPS accuracy
+    if (navigation.arrived()) {
       if (game.waiting !== null) {
         const x = 5000
         game.waiting = window.setTimeout(() => { // Must be x seconds in the area
@@ -173,7 +173,7 @@ const game = {
       }
     }
   },
-  end() {
+  end () {
     this.ended = true
     navigation.track = () => {} // No actions on new gps data
     database.startTime = (new Date()).getTime() - (database.duration * 1000) // Clock will be 0
@@ -216,6 +216,7 @@ const refresh = function (directions) { // The screen refresh
   if (directions.angle !== null) { // Relative to orientation
     doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
   } else { // Relative to north
+    // TODO display north on screen
     doc.arrow.style.transform = `rotate(${Math.floor(directions.bearing)}deg)`
   }
 }
@@ -224,16 +225,21 @@ const refresh = function (directions) { // The screen refresh
 // === Execute ===
 // Async loading of different information
 // Start tracking location
-navigation.track(() => { // When location is retrieved, main loop runs
+navigation.track(() => { // When location is retrieved, this runs:
   if (navigation.loc !== null && navigation.destination !== null) { // Two points available
     const directions = navigation.directions()
     refresh(directions) // Run the sceen refresh
     game.check(directions) // Check if arrived
+    console.log("At:")
+    console.log(navigation.loc)
+    console.log("To:")
+    console.log(navigation.destination)
+    console.log(directions)
   }
 })
 
 // Get the data, online if needed
-if (database.locations === null) { // Available offline
+if (database.locations === null || database.locations.length > 0) { // Available offline
 // if (true) { // Always refresh for testing
   database.getOnline((data) => { // Get the data online
     console.log(data)
