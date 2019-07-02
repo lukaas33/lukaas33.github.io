@@ -47,8 +47,8 @@ const view = {
 // The entire map
 const map = {
   size: 100, // Meters wide and heigh
-  populationDensity: 500, // 1 animal per x square meters
-  growthDensity: 75, // 1 plant per x square meters
+  populationDensity: 350, // 1 animal per x square meters
+  growthDensity: 65, // 1 plant per x square meters
   width: null,
   height: null,
   tiles: null
@@ -192,17 +192,103 @@ map.spawn = function () {
     "deer": Deer,
     "squirrel": Squirrel,
     "wolf": Wolf,
-    "fish": Fish,
-    "bird": Bird,
-    "bear": Bear
+    "bass": Bass,
+    "sparrow": Sparrow,
+    "bear": Bear,
+    "badger": Badger,
+    "panda": Panda,
+    "lion": Lion,
+    "tiger": Tiger,
+    "duck": Duck,
+    "crow": Crow,
+    "dove": Dove,
+    "bison": Bison,
+    "bull": Bull,
+    "bunny": Bunny,
+    "butterfly": Butterfly,
+    "cat": Cat,
+    "chicken": Chicken,
+    "cobra": Cobra,
+    "cheeta": Cheeta,
+    "corgi": Corgi,
+    "chinchilla": Chinchilla,
+    "cow": Cow,
+    "crab": Crab,
+    "crocodile": Crocodile,
+    "goose": Goose,
+    "fox": Fox,
+    "frog": Frog,
+    "goat": Goat,
+    "pig": Pig,
+    "dog": Dog,
+    "sheep": Sheep,
+    "raccoon": Raccoon,
+    "ferret": Ferret,
+    "salmon": Salmon,
+    "owl": Owl,
+    "shark": Shark,
+    "hippo": Hippo,
+    "turtle": Turtle,
+    "mole": Mole,
+    "monkey": Monkey,
+    "mouse": Mouse,
+    "horse": Horse,
+    "ostrich": Ostrich,
+    "seagull": Seagull,
+    "carp": Carp,
+    "snake": Snake,
+    "lizard": Lizard,
   }
   const animalSpecies = {
-    "deer": 0.20,
-    "squirrel": 0.30,
-    "wolf": 0.15,
-    "fish": 0.40,
-    "bird": 0.30,
-    "bear": 0.10
+    "deer": 0.15,
+    "squirrel": 0.3,
+    "wolf": 0.1,
+    "bass": 0.2,
+    "sparrow": 0.3,
+    "bear": 0.1,
+    "badger": 0.25,
+    "panda": 0.1,
+    "lion": 0.1,
+    "tiger": 0.1,
+    "duck": 0.3,
+    "crow": 0.3,
+    "dove": 0.2,
+    "bison": 0.15,
+    "bull": 0.1,
+    "bunny": 0.4,
+    "butterfly": 0.2,
+    "cat": 0.25,
+    "chicken": 0.2,
+    "cobra": 0.15,
+    "cheeta": 0.1,
+    "corgi": 0.2,
+    "chinchilla": 0.4,
+    "cow": 0.2,
+    "crab": 0.3,
+    "crocodile": 0.1,
+    "goose": 0.4,
+    "fox": 0.35,
+    "frog": 0.45,
+    "goat": 0.2,
+    "pig": 0.2,
+    "dog": 0.15,
+    "sheep": 0.3,
+    "raccoon": 0.1,
+    "ferret": 0.5,
+    "salmon": 0.4,
+    "owl": 0.4,
+    "shark": 0.05,
+    "hippo": 0.05,
+    "turtle": 0.15,
+    "mole": 0.25,
+    "monkey": 0.3,
+    "mouse": 0.5,
+    "horse": 0.1,
+    "ostrich": 0.1,
+    "seagull": 0.3,
+    "carp": 0.35,
+    "snake": 0.2,
+    "lizard": 0.4,
   }
 
   // Add animals
@@ -697,7 +783,7 @@ class Squirrel extends Animal {
       acceleration: 0.5,
       area: "land", // Slower in water
       maxHealth: 3, // Start health
-      mass: 0.3,
+      mass: 0.6,
       diet: "herbivore",
       camouflage: 0.6, // More difficult to see
       perception: 0.8,
@@ -714,10 +800,10 @@ class Wolf extends Animal {
     super(loc, name)
     // The animal's traits, in SI units (A)
     this.traits = {
-      maxSpeed: 8,
-      acceleration: 0.1,
+      maxSpeed: 10,
+      acceleration: 0.8,
       area: "land",
-      maxHealth: 15,
+      maxHealth: 10,
       mass: 60,
       diet: "carnivore",
       camouflage: 0.6,
@@ -750,12 +836,12 @@ class Deer extends Animal {
     }
   }
 }
-class Bird extends Animal {
+class Sparrow extends Animal {
   constructor (loc) {
-    let name = "Bird"
+    let name = "Sparrow"
     super(loc, name)
     this.traits = {
-      maxSpeed: 11,
+      maxSpeed: 9,
       acceleration: 0.9,
       area: "sky",
       maxHealth: 2,
@@ -770,16 +856,16 @@ class Bird extends Animal {
     }
   }
 }
-class Fish extends Animal {
+class Bass extends Animal {
   constructor (loc) {
-    let name = "Fish"
+    let name = "Bass"
     super(loc, name)
     this.traits = {
       maxSpeed: 10,
       acceleration: 0.6,
       area: "water",
       maxHealth: 2,
-      mass: 0.7,
+      mass: 5.5,
       diet: "herbivore",
       camouflage: 0.7,
       perception: 0.3,
@@ -795,7 +881,7 @@ class Bear extends Animal {
     let name = "Bear"
     super(loc, name)
     this.traits = {
-      maxSpeed: 7,
+      maxSpeed: 6,
       acceleration: 0.5,
       area: "land",
       maxHealth: 20,
@@ -810,6 +896,911 @@ class Bear extends Animal {
     }
   }
 }
+class Badger extends Animal {
+  constructor (loc) {
+    let name = "Badger"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 4,
+      acceleration: 0.2,
+      area: "land",
+      maxHealth: 28,
+      mass: 8.6,
+      diet: "herbivore",
+      camouflage: 0.3,
+      perception: 0.4,
+      aggressiveness: 0.85,
+      attack: 0.9,
+      hunger: 0.8,
+      name: name
+    }
+  }
+}
+class Panda extends Animal {
+  constructor (loc) {
+    let name = "Panda"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 4,
+      acceleration: 0.5,
+      area: "land",
+      maxHealth: 16,
+      mass: 100,
+      diet: "herbivore",
+      camouflage: 0.2,
+      perception: 0.2,
+      aggressiveness: 0.1,
+      attack: 0.5,
+      hunger: 1,
+      name: name
+    }
+  }
+}
+class Lion extends Animal {
+  constructor (loc) {
+    let name = "Lion"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 12,
+      acceleration: 0.8,
+      area: "land",
+      maxHealth: 10,
+      mass: 150,
+      diet: "carnivore",
+      camouflage: 0.85,
+      perception: 0.7,
+      aggressiveness: 0.8,
+      attack: 1.4,
+      hunger: 0.7,
+      name: name
+    }
+  }
+}
+class Tiger extends Animal {
+  constructor (loc) {
+    let name = "Tiger"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 11,
+      acceleration: 0.9,
+      area: "land",
+      maxHealth: 10,
+      mass: 200,
+      diet: "carnivore",
+      camouflage: 0.8,
+      perception: 0.9,
+      aggressiveness: 0.75,
+      attack: 1.5,
+      hunger: 0.7,
+      name: name
+    }
+  }
+}
+class Duck extends Animal {
+  constructor (loc) {
+    let name = "Duck"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 9,
+      acceleration: 0.4,
+      area: "land",
+      maxHealth: 5,
+      mass: 2,
+      diet: "herbivore",
+      camouflage: 0.4,
+      perception: 0.6,
+      aggressiveness: 0.3,
+      attack: 0.3,
+      hunger: 0.4,
+      name: name
+    }
+  }
+}
+class Crow extends Animal {
+  constructor (loc) {
+    let name = "Crow"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 12,
+      acceleration: 0.6,
+      area: "sky",
+      maxHealth: 2,
+      mass: 0.5,
+      diet: "herbivore",
+      camouflage: 0.3,
+      perception: 0.7,
+      aggressiveness: 0.2,
+      attack: 0.2,
+      hunger: 0.3,
+      name: name
+    }
+  }
+}
+class Dove extends Animal {
+  constructor (loc) {
+    let name = "Dove"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 10,
+      acceleration: 0.4,
+      area: "sky",
+      maxHealth: 1.5,
+      mass: 0.9,
+      diet: "herbivore",
+      camouflage: 0.2,
+      perception: 0.5,
+      aggressiveness: 0.1,
+      attack: 0.2,
+      hunger: 0.2,
+      name: name
+    }
+  }
+}
+class Bison extends Animal {
+  constructor (loc) {
+    let name = "Bison"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 7,
+      acceleration: 0.2,
+      area: "land",
+      maxHealth: 25,
+      mass: 1600,
+      diet: "herbivore",
+      camouflage: 0.3,
+      perception: 0.6,
+      aggressiveness: 0.6,
+      attack: 0.7,
+      hunger: 0.8,
+      name: name
+    }
+  }
+}
+class Bull extends Animal {
+  constructor (loc) {
+    let name = "Bull"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 8,
+      acceleration: 0.3,
+      area: "land",
+      maxHealth: 22,
+      mass: 1100,
+      diet: "herbivore",
+      camouflage: 0.2,
+      perception: 0.6,
+      aggressiveness: 0.65,
+      attack: 0.85,
+      hunger: 0.75,
+      name: name
+    }
+  }
+}
+class Bunny extends Animal {
+  constructor (loc) {
+    let name = "Bunny"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 11,
+      acceleration: 0.6,
+      area: "land",
+      maxHealth: 4,
+      mass: 0.8,
+      diet: "herbivore",
+      camouflage: 0.7,
+      perception: 0.8,
+      aggressiveness: 0.1,
+      attack: 0.1,
+      hunger: 0.4,
+      name: name
+    }
+  }
+}
+class Butterfly extends Animal {
+  constructor (loc) {
+    let name = "Buterfly"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 5,
+      acceleration: 0.6,
+      area: "sky",
+      maxHealth: 0.1,
+      mass: 0.05,
+      diet: "herbivore",
+      camouflage: 0.2,
+      perception: 0.4,
+      aggressiveness: 0,
+      attack: 0,
+      hunger: 0.1,
+      name: name
+    }
+  }
+}
+class Cat extends Animal {
+  constructor (loc) {
+    let name = "Cat"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 12,
+      acceleration: 0.4,
+      area: "land",
+      maxHealth: 6,
+      mass: 4.5,
+      diet: "carnivore",
+      camouflage: 0.7,
+      perception: 0.8,
+      aggressiveness: 0.4,
+      attack: 0.5,
+      hunger: 0.3,
+      name: name
+    }
+  }
+}
+class Chicken extends Animal {
+  constructor (loc) {
+    let name = "Chicken"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 7,
+      acceleration: 0.4,
+      area: "land",
+      maxHealth: 3,
+      mass: 2,
+      diet: "herbivore",
+      camouflage: 0.2,
+      perception: 0.3,
+      aggressiveness: 0.2,
+      attack: 0.3,
+      hunger: 0.2,
+      name: name
+    }
+  }
+}
+class Cobra extends Animal {
+  constructor (loc) {
+    let name = "Cobra"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 4,
+      acceleration: 0.2,
+      area: "land",
+      maxHealth: 4,
+      mass: 6,
+      diet: "carnivore",
+      camouflage: 0.7,
+      perception: 0.4,
+      aggressiveness: 0.6,
+      attack: 2,
+      hunger: 0.2,
+      name: name
+    }
+  }
+}
+class Cheeta extends Animal {
+  constructor (loc) {
+    let name = "Cheeta"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 22,
+      acceleration: 2,
+      area: "land",
+      maxHealth: 8,
+      mass: 50,
+      diet: "carnivore",
+      camouflage: 0.7,
+      perception: 0.6,
+      aggressiveness: 0.5,
+      attack: 0.6,
+      hunger: 0.5,
+      name: name
+    }
+  }
+}
+class Corgi extends Animal {
+  constructor (loc) {
+    let name = "Corgi"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 6,
+      acceleration: 0.4,
+      area: "land",
+      maxHealth: 5,
+      mass: 10,
+      diet: "carnivore",
+      camouflage: 0.2,
+      perception: 0.3,
+      aggressiveness: 0.4,
+      attack: 0.3,
+      hunger: 0.2,
+      name: name
+    }
+  }
+}
+class Chinchilla extends Animal {
+  constructor (loc) {
+    let name = "Chinchilla"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 10,
+      acceleration: 0.6,
+      area: "land",
+      maxHealth: 2,
+      mass: 0.4,
+      diet: "herbivore",
+      camouflage: 0.6,
+      perception: 0.4,
+      aggressiveness: 0.1,
+      attack: 0.1,
+      hunger: 0.3,
+      name: name
+    }
+  }
+}
+class Cow extends Animal {
+  constructor (loc) {
+    let name = "Cow"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 6,
+      acceleration: 0.3,
+      area: "land",
+      maxHealth: 10,
+      mass: 1100,
+      diet: "herbivore",
+      camouflage: 0.2,
+      perception: 0.4,
+      aggressiveness: 0.4,
+      attack: 0.6,
+      hunger: 0.8,
+      name: name
+    }
+  }
+}
+class Crab extends Animal {
+  constructor (loc) {
+    let name = "Crab"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 5,
+      acceleration: 0.4,
+      area: "water",
+      maxHealth: 3,
+      mass: 1.1,
+      diet: "herbivore",
+      camouflage: 0.4,
+      perception: 0.5,
+      aggressiveness: 0.3,
+      attack: 0.2,
+      hunger: 0.4,
+      name: name
+    }
+  }
+}
+class Crocodile extends Animal {
+  constructor (loc) {
+    let name = "Crocodile"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 8,
+      acceleration: 0.8,
+      area: "land",
+      maxHealth: 15,
+      mass: 500,
+      diet: "carnivore",
+      camouflage: 0.75,
+      perception: 0.2,
+      aggressiveness: 0.8,
+      attack: 1.8,
+      hunger: 0.5,
+      name: name
+    }
+  }
+}
+class Goose extends Animal {
+  constructor (loc) {
+    let name = "Goose"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 10,
+      acceleration: 0.6,
+      area: "land",
+      maxHealth: 7,
+      mass: 6,
+      diet: "herbivore",
+      camouflage: 0.5,
+      perception: 0.3,
+      aggressiveness: 0.75,
+      attack: 0.3,
+      hunger: 0.7,
+      name: name
+    }
+  }
+}
+class Fox extends Animal {
+  constructor (loc) {
+    let name = "Fox"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 12,
+      acceleration: 0.5,
+      area: "land",
+      maxHealth: 6,
+      mass: 10,
+      diet: "carnivore",
+      camouflage: 0.4,
+      perception: 0.5,
+      aggressiveness: 0.3,
+      attack: 0.5,
+      hunger: 0.2,
+      name: name
+    }
+  }
+}
+class Frog extends Animal {
+  constructor (loc) {
+    let name = "Frog"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 6,
+      acceleration: 0.4,
+      area: "land",
+      maxHealth: 2,
+      mass: 0.2,
+      diet: "herbivore",
+      camouflage: 0.6,
+      perception: 0.3,
+      aggressiveness: 0.1,
+      attack: 0.1,
+      hunger: 0.2,
+      name: name
+    }
+  }
+}
+class Goat extends Animal {
+  constructor (loc) {
+    let name = "Goat"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 6,
+      acceleration: 0.4,
+      area: "land",
+      maxHealth: 4,
+      mass: 100,
+      diet: "herbivore",
+      camouflage: 0.4,
+      perception: 0.5,
+      aggressiveness: 0.3,
+      attack: 0.6,
+      hunger: 0.3,
+      name: name
+    }
+  }
+}
+class Pig extends Animal {
+  constructor (loc) {
+    let name = "Pig"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 8,
+      acceleration: 0.3,
+      area: "land",
+      maxHealth: 8,
+      mass: 100,
+      diet: "herbivore",
+      camouflage: 0.2,
+      perception: 0.2,
+      aggressiveness: 0.4,
+      attack: 0.6,
+      hunger: 0.8,
+      name: name
+    }
+  }
+}
+class Dog extends Animal {
+  constructor (loc) {
+    let name = "Dog"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 11,
+      acceleration: 0.7,
+      area: "land",
+      maxHealth: 6,
+      mass: 22,
+      diet: "carnivore",
+      camouflage: 0.5,
+      perception: 0.8,
+      aggressiveness: 0.4,
+      attack: 0.8,
+      hunger: 0.4,
+      name: name
+    }
+  }
+}
+class Sheep extends Animal {
+  constructor (loc) {
+    let name = "Sheep"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 6,
+      acceleration: 0.4,
+      area: "land",
+      maxHealth: 4,
+      mass: 160,
+      diet: "herbivore",
+      camouflage: 0.2,
+      perception: 0.2,
+      aggressiveness: 0.1,
+      attack: 0.4,
+      hunger: 0.3,
+      name: name
+    }
+  }
+}
+class Raccoon extends Animal {
+  constructor (loc) {
+    let name = "Raccoon"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 9,
+      acceleration: 0.5,
+      area: "land",
+      maxHealth: 4,
+      mass: 9,
+      diet: "herbivore",
+      camouflage: 0.6,
+      perception: 0.8,
+      aggressiveness: 0.3,
+      attack: 0.4,
+      hunger: 0.7,
+      name: name
+    }
+  }
+}
+class Ferret extends Animal {
+  constructor (loc) {
+    let name = "Ferret"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 8,
+      acceleration: 0.7,
+      area: "land",
+      maxHealth: 2,
+      mass: 2,
+      diet: "herbivore",
+      camouflage: 0.6,
+      perception: 0.6,
+      aggressiveness: 0.3,
+      attack: 0.2,
+      hunger: 0.4,
+      name: name
+    }
+  }
+}
+class Salmon extends Animal {
+  constructor (loc) {
+    let name = "Salmon"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 8,
+      acceleration: 0.3,
+      area: "water",
+      maxHealth: 3,
+      mass: 20,
+      diet: "herbivore",
+      camouflage: 0.2,
+      perception: 0.5,
+      aggressiveness: 0.1,
+      attack: 0.1,
+      hunger: 0.4,
+      name: name
+    }
+  }
+}
+class Owl extends Animal {
+  constructor (loc) {
+    let name = "Owl"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 7,
+      acceleration: 0.8,
+      area: "sky",
+      maxHealth: 4,
+      mass: 0.6,
+      diet: "carnivore",
+      camouflage: 0.8,
+      perception: 0.9,
+      aggressiveness: 0.3,
+      attack: 0.7,
+      hunger: 0.3,
+      name: name
+    }
+  }
+}
+class Shark extends Animal {
+  constructor (loc) {
+    let name = "Shark"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 12,
+      acceleration: 0.8,
+      area: "water",
+      maxHealth: 20,
+      mass: 1100,
+      diet: "carnivore",
+      camouflage: 0.6,
+      perception: 0.8,
+      aggressiveness: 0.8,
+      attack: 1.5,
+      hunger: 1,
+      name: name
+    }
+  }
+}
+class Hippo extends Animal {
+  constructor (loc) {
+    let name = "Hippo"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 4,
+      acceleration: 0.6,
+      area: "land",
+      maxHealth: 30,
+      mass: 1800,
+      diet: "herbivore",
+      camouflage: 0.3,
+      perception: 0.4,
+      aggressiveness: 0.9,
+      attack: 1.4,
+      hunger: 2,
+      name: name
+    }
+  }
+}
+class Turtle extends Animal {
+  constructor (loc) {
+    let name = "Turtle"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 2,
+      acceleration: 0.4,
+      area: "land",
+      maxHealth: 30,
+      mass: 0.7,
+      diet: "herbivore",
+      camouflage: 0.6,
+      perception: 0.2,
+      aggressiveness: 0.1,
+      attack: 0.1,
+      hunger: 0.1,
+      name: name
+    }
+  }
+}
+class Mole extends Animal {
+  constructor (loc) {
+    let name = "Mole"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 4,
+      acceleration: 0.6,
+      area: "land",
+      maxHealth: 3,
+      mass: 0.09,
+      diet: "herbivore",
+      camouflage: 0.5,
+      perception: 0.1,
+      aggressiveness: 0.1,
+      attack: 0.2,
+      hunger: 0.3,
+      name: name
+    }
+  }
+}
+class Monkey extends Animal {
+  constructor (loc) {
+    let name = "Monkey"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 10,
+      acceleration: 0.5,
+      area: "land",
+      maxHealth: 4,
+      mass: 10,
+      diet: "herbivore",
+      camouflage: 0.5,
+      perception: 0.8,
+      aggressiveness: 0.2,
+      attack: 0.7,
+      hunger: 0.4,
+      name: name
+    }
+  }
+}
+class Mouse extends Animal {
+  constructor (loc) {
+    let name = "Mouse"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 12,
+      acceleration: 0.4,
+      area: "land",
+      maxHealth: 2,
+      mass: 0.02,
+      diet: "herbivore",
+      camouflage: 0.5,
+      perception: 0.5,
+      aggressiveness: 0.1,
+      attack: 0.3,
+      hunger: 0.4,
+      name: name
+    }
+  }
+}
+class Horse extends Animal {
+  constructor (loc) {
+    let name = "Horse"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 14,
+      acceleration: 1,
+      area: "land",
+      maxHealth: 7,
+      mass: 1000,
+      diet: "herbivore",
+      camouflage: 0.4,
+      perception: 0.5,
+      aggressiveness: 0.2,
+      attack: 0.8,
+      hunger: 0.5,
+      name: name
+    }
+  }
+}
+class Ostrich extends Animal {
+  constructor (loc) {
+    let name = "Ostrich"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 11,
+      acceleration: 0.5,
+      area: "land",
+      maxHealth: 10,
+      mass: 120,
+      diet: "herbivore",
+      camouflage: 0.5,
+      perception: 0.4,
+      aggressiveness: 0.6,
+      attack: 1,
+      hunger: 0.5,
+      name: name
+    }
+  }
+}
+class Seagull extends Animal {
+  constructor (loc) {
+    let name = "Seagull"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 10,
+      acceleration: 0.5,
+      area: "sky",
+      maxHealth: 2,
+      mass: 1.5,
+      diet: "herbivore",
+      camouflage: 0.3,
+      perception: 0.7,
+      aggressiveness: 0.3,
+      attack: 0.25,
+      hunger: 0.6,
+      name: name
+    }
+  }
+}
+class Carp extends Animal {
+  constructor (loc) {
+    let name = "Carp"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 8,
+      acceleration: 0.4,
+      area: "water",
+      maxHealth: 4,
+      mass: 14,
+      diet: "herbivore",
+      camouflage: 0.6,
+      perception: 0.3,
+      aggressiveness: 0.1,
+      attack: 0.1,
+      hunger: 0.3,
+      name: name
+    }
+  }
+}
+class Snake extends Animal {
+  constructor (loc) {
+    let name = "Snake"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 4,
+      acceleration: 0.2,
+      area: "land",
+      maxHealth: 2,
+      mass: 0.8,
+      diet: "carnivore",
+      camouflage: 0.9,
+      perception: 0.3,
+      aggressiveness: 0.4,
+      attack: 1,
+      hunger: 0.3,
+      name: name
+    }
+  }
+}
+class Lizard extends Animal {
+  constructor (loc) {
+    let name = "Lizard"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 8,
+      acceleration: 0.4,
+      area: "land",
+      maxHealth: 2,
+      mass: 0.5,
+      diet: "herbivore",
+      camouflage: 0.8,
+      perception: 0.3,
+      aggressiveness: 0.1,
+      attack: 0.2,
+      hunger: 0.2,
+      name: name
+    }
+  }
+}
+
+
 
 // Parent class for all plant objects, food for the animals
 class Plant extends Living {
