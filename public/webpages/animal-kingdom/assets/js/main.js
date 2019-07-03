@@ -8,7 +8,6 @@
 // Code blocks are attributed to the author using (A) and (L) respectively.
 
 
-(function () { // Closure
 'use strict' // Js strict mode
 
 // __     __         _       _     _
@@ -32,16 +31,18 @@ const constants = {
 const doc = {
   canvas: document.getElementById('canvas'),
   startScreen: document.getElementById("begin"),
-  startButton: document.getElementById("start")
+  startButton: document.getElementById("start"),
+  sound: document.getElementById("soundtrack")
 }
 
 // Related to the view and drawing
 const view = {
-    width: null,
-    height: null,
-    middle: null,
-    screen: doc.canvas.getContext('2d'),
-    fps: 40, // Frames per second
+  width: null,
+  height: null,
+  middle: null,
+  screen: doc.canvas.getContext('2d'),
+  fps: 40, // Frames per second
+  sprites: {} // Store sprite references
 }
 
 // The entire map
@@ -296,7 +297,6 @@ map.spawn = function () {
     animals.push(new NPC(map.create(animalSpecies, map.animalConstructors)))
   }
 
-
   // Rarity of different plants
   map.plantConstructors = {
     "mushroom": Mushroom,
@@ -438,32 +438,36 @@ class Coord {
 // Multiple sprites from a given name (L)
 class Sprites {
   constructor (name, moving, changing) {
-    this.dirs = ["right", "down", "left", "up"]
-    this.moving = moving // Moves in all directions
-    this.changing = changing // Changes over time
-    this.frame = 0 // Frame displayed
-    this.middle = null
-    this.size = {
-      width: null,
-      height: null
-    }
+    if (view.sprites.hasOwnProperty(name)) { // Already created
+      return view.sprites[name] // Return instead of recreating
+    } else {
+      this.dirs = ["right", "down", "left", "up"]
+      this.moving = moving // Moves in all directions
+      this.changing = changing // Changes over time
+      this.size = {
+        width: null,
+        height: null
+      }
 
-    // Get the different sprites (L)
-    let path = `assets/sprites/${name.toLowerCase()}`
-    if (moving) {
-      for (let dir of this.dirs) { // All directions of movement
-        this.getImages(`${path}/${dir}`, 1, [], (result) => {
-          this[dir] = result
+      // Get the different sprites (L)
+      let path = `assets/sprites/${name.toLowerCase()}`
+      if (moving) {
+        for (let dir of this.dirs) { // All directions of movement
+          this.getImages(`${path}/${dir}`, 1, [], (result) => {
+            this[dir] = result
+          })
+        }
+      } else if (changing) {
+        this.getImages(`${path}/sprite`, 1, [], (result) => { // Changing over time
+          this.sprite = result
+        })
+      } else {
+        this.getImage(`${path}/sprite.png`, (result) => { // Static
+          this.sprite = result
         })
       }
-    } else if (changing) {
-      this.getImages(`${path}/sprite`, 1, [], (result) => { // Changing over time
-        this.sprite = result
-      })
-    } else {
-      this.getImage(`${path}/sprite.png`, (result) => { // Static
-        this.sprite = result
-      })
+
+      view.sprites[name] = this // Store reference
     }
   }
 
@@ -500,26 +504,27 @@ class Entity {
     this.loc = loc
     this.sprites = sprites
     this.sheltered = false // Hidden by terrain
+    this.frame = 0
   }
 
   // Display a sprite on the screen (L)
   update () {
-    let switchRate = 5 // Switch sprite every x frames
+    let switchRate = 10 // Switch sprite every x frames
     let sprite = null
 
     if (this.sprites.moving) { // Moving object
       sprite = this.sprites[this.direction]
       if (sprite) { // Loaded
         if (this.speed.magnitude > 0) {
-          this.sprites.frame += 1 // New frame
+          this.frame += 1 // New frame
         }
-        sprite = sprite[Math.floor(this.sprites.frame / switchRate) % (sprite.length)]
+        sprite = sprite[Math.floor(this.frame / switchRate) % (sprite.length)]
       }
     } else if (this.sprites.changing) { // Changing object
       sprite = this.sprites.sprite
       if (sprite) {
-        this.sprites.frame += 1
-        sprite = sprite[Math.floor(this.sprites.frame / switchRate) % (sprite.length)]
+        this.frame += 1
+        sprite = sprite[Math.floor(this.frame / switchRate) % (sprite.length)]
       }
     } else { // Static object
       sprite = this.sprites.sprite
@@ -530,7 +535,7 @@ class Entity {
       this.sprites.size.width = sprite.width
       this.sprites.size.height = sprite.height
 
-      this.sprites.middle = new Coord(
+      this.middle = new Coord(
         this.loc.x + this.sprites.size.width / 2,
         this.loc.y + this.sprites.size.height / 2
       )
@@ -1108,7 +1113,7 @@ class Bunny extends Animal {
 }
 class Butterfly extends Animal {
   constructor (loc) {
-    let name = "Buterfly"
+    let name = "Butterfly"
     super(loc, name)
     // The animal's traits, in SI units (L)
     this.traits = {
@@ -1196,7 +1201,7 @@ class Cheeta extends Animal {
     super(loc, name)
     // The animal's traits, in SI units (L)
     this.traits = {
-      maxSpeed: 22,
+      maxSpeed: 18,
       acceleration: 2,
       area: "land",
       maxHealth: 8,
@@ -1667,7 +1672,7 @@ class Mouse extends Animal {
       camouflage: 0.5,
       perception: 0.5,
       aggressiveness: 0.1,
-      attack: 0.3,
+      attack: 0.1,
       hunger: 0.4,
       name: name
     }
@@ -1997,9 +2002,9 @@ class Creature extends Obj {
   attack (object) {
     if (!this.cooldown) { // Wait until attack again
       if (object && object !== this) { // Not self and object exists
-        if (this.sprites.middle && object.sprites.middle) {
+        if (this.middle && object.middle) {
           // Distance to object
-          let distance = this.sprites.middle.distance(object.sprites.middle)
+          let distance = this.middle.distance(object.middle)
           if (distance.magnitude <= (constants.scale * 2.5)) { // Minimaly x meter range for attack
             this.hit(object)
             return true // Hit sucessful
@@ -2113,7 +2118,7 @@ class Player extends Creature {
               this.target = animal
               // Remove as target after some time (NPC will forget being hunted)
               this.targeting = window.setInterval(() => {
-                let distance = this.sprites.middle.distance(this.target.sprites.middle)
+                let distance = this.middle.distance(this.target.middle)
                 // Check if still in range
                 let range = animal.sightRadius * (1 - this.traits.camouflage)
                 if (distance.magnitude >= range) {
@@ -2203,8 +2208,8 @@ class NPC extends Creature {
         "back": 0.05,
       },
       "stop": { // Not moving
-        "continue": 0.3,
-        "stop": 0.25,
+        "continue": 0.45,
+        "stop": 0.1,
         "left": 0.2,
         "right": 0.2,
         "back": 0.05,
@@ -2252,7 +2257,7 @@ class NPC extends Creature {
   wander () {
     this.speedFactor = 0.65 // Not at max speed
     this.step += 1
-    if (this.step >= 3 * view.fps) { // Reduces the number of decisions in direction (x per second)
+    if (this.step >= 5 * view.fps) { // Reduces the number of decisions in direction (x per second)
       this.chooseDirection()
       this.step = 0
     }
@@ -2262,7 +2267,7 @@ class NPC extends Creature {
   hunt () {
     // If exists
     if (this.target && (animals.includes(this.target) || plants.includes(this.target)) && this.target.health > 0) {
-      let distance = this.sprites.middle.distance(this.target.sprites.middle)
+      let distance = this.middle.distance(this.target.middle)
 
       // Check if still in range
       let range = this.sightRadius * (1 - this.target.traits.camouflage)
@@ -2303,7 +2308,7 @@ class NPC extends Creature {
   fightFlight () {
     // If exists
     if (this.hunter.target === this && animals.includes(this.hunter) && this.hunter.health > 0) {
-      let distance = this.sprites.middle.distance(this.hunter.sprites.middle)
+      let distance = this.middle.distance(this.hunter.middle)
 
       // Check if still close
       let range = this.sightRadius * (1 - this.hunter.traits.camouflage)
@@ -2395,8 +2400,8 @@ class NPC extends Creature {
   look () {
     for (let animal of animals) {
       if (animal !== this) { // Not self
-        if (this.sprites.middle && animal.sprites.middle) { // Exist
-          let distance = this.sprites.middle.distance(animal.sprites.middle)
+        if (this.middle && animal.middle) { // Exist
+          let distance = this.middle.distance(animal.middle)
           // Animal is within sight radius, depends on camouflage trait
           let range = this.sightRadius * (1 - animal.traits.camouflage)
           if (distance.magnitude <= range) {
@@ -2413,9 +2418,9 @@ class NPC extends Creature {
       const close = []
       const distances = []
       for (let plant of plants) {
-        if (this.sprites.middle && plant.sprites.middle) { // Exist
+        if (this.middle && plant.middle) { // Exist
           if (!(this.traits.area === "water" && plant.traits.area !== "water")) { // Water animals can't eat land plants
-            let distance = this.sprites.middle.distance(plant.sprites.middle)
+            let distance = this.middle.distance(plant.middle)
             if (distance.magnitude <= this.sightRadius / 10) { // In close view
               close.push(plant)
               distances.push(distance.magnitude)
@@ -2530,6 +2535,9 @@ view.refresh = window.setInterval(() => {
 // Resize window
 window.onresize = function (event) {
   view.sizes()
+  if (animals[0]) {
+    animals[0].loc = view.middle
+  }
 }
 
 // Setup keyboard controls
@@ -2561,8 +2569,7 @@ document.onreadystatechange = function () {
       settings.started = true
       settings.startTime = new Date()
       doc.startScreen.style.display = "none" // Hide
+      doc.sound.play()
     })
   }
 }
-
-})() // Enclosed
