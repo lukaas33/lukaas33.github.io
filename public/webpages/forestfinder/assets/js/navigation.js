@@ -75,6 +75,11 @@ const trackLocation = function (options, callback) {
     // Continualy track the user location
     navigation.trackId = navigator.geolocation.watchPosition((position) => {
       let loc = new Coord(position.coords) // Pass coords object directly
+      // TEST
+      let end = document.querySelector("main")
+      let t = document.createElement('p')
+      t.textContent = `${loc.latitude}, ${loc.longitude}`
+      end.appendChild(t)
       callback(loc) // Return value somewhere else and continue
     }, () => {
       // Error
