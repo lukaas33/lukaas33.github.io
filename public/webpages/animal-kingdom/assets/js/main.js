@@ -19,7 +19,9 @@
 // Changing values related to setup
 const settings = {
   started: false,
-  startTime: null
+  startTime: null,
+  names: false,
+  music: true
 }
 
 // Fhysical constants, not changing
@@ -608,6 +610,17 @@ class Living extends Entity {
           view.screen.fillStyle = '#ff9800' // Orange
           view.screen.fillRect(x, y, (width * (this.hunger / 100)), height)
         }
+      }
+    }
+
+    if (settings.names) {
+      if (this.traits.name) {
+        view.screen.font = "12px 'Caesar Dressing'"
+        view.screen.fillStyle = "#ffffff"
+        view.screen.textAlign = "center"
+        y += 2 * height // below hunger bar
+        x += this.sprites.size.width / 2
+        view.screen.fillText(this.traits.name, x, y)
       }
     }
   }
@@ -2529,6 +2542,13 @@ view.refresh = window.setInterval(() => {
 
    // Spawn new creatures when below the max
    map.spawn()
+
+   // Sound control
+   if (settings.music) {
+     doc.sound.play()
+   } else {
+     doc.sound.pause()
+   }
  }
 }, Math.ceil(1000 / view.fps)) // Executes a certain amount of times per second
 
@@ -2569,7 +2589,6 @@ document.onreadystatechange = function () {
       settings.started = true
       settings.startTime = new Date()
       doc.startScreen.style.display = "none" // Hide
-      doc.sound.play()
     })
   }
 }
