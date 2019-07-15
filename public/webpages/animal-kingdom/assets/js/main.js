@@ -241,6 +241,9 @@ map.spawn = function () {
     "carp": Carp,
     "snake": Snake,
     "lizard": Lizard,
+    "beaver": Beaver,
+    "boar": Boar,
+    "pinguin": Pinguin
   }
   const animalSpecies = {
     "deer": 0.15,
@@ -288,10 +291,13 @@ map.spawn = function () {
     "mouse": 0.5,
     "horse": 0.1,
     "ostrich": 0.1,
-    "seagull": 0.3,
+    "seagull": 0.2,
     "carp": 0.35,
     "snake": 0.2,
     "lizard": 0.4,
+    "beaver": 0.3,
+    "boar": 0.25,
+    "pinguin": 0.1
   }
 
   // Add animals
@@ -1817,6 +1823,69 @@ class Lizard extends Animal {
     }
   }
 }
+class Pinguin extends Animal {
+  constructor (loc) {
+    let name = "Pinguin"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 4,
+      acceleration: 0.5,
+      area: "land",
+      maxHealth: 4,
+      mass: 24,
+      diet: "carnivore",
+      camouflage: 0.3,
+      perception: 0.3,
+      aggressiveness: 0.2,
+      attack: 0.4,
+      hunger: 0.2,
+      name: name
+    }
+  }
+}
+class Boar extends Animal {
+  constructor (loc) {
+    let name = "Boar"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 7,
+      acceleration: 0.8,
+      area: "land",
+      maxHealth:15,
+      mass: 75,
+      diet: "herbivore",
+      camouflage: 0.65,
+      perception: 0.4,
+      aggressiveness: 0.6,
+      attack: 1,
+      hunger: 0.5,
+      name: name
+    }
+  }
+}
+class Beaver extends Animal {
+  constructor (loc) {
+    let name = "Beaver"
+    super(loc, name)
+    // The animal's traits, in SI units (L)
+    this.traits = {
+      maxSpeed: 6,
+      acceleration: 0.4,
+      area: "land",
+      maxHealth: 8,
+      mass: 30,
+      diet: "herbivore",
+      camouflage: 0.85,
+      perception: 0.5,
+      aggressiveness: 0.2,
+      attack: 0.8,
+      hunger: 0.2,
+      name: name
+    }
+  }
+}
 
 
 
@@ -1987,6 +2056,12 @@ class Creature extends Obj {
         this.terrainFactor = 0.8
       } else {
         this.terrainFactor = 1
+      }
+    } else if (this.traits.area === "water") {
+      if (area === "water") {
+        this.terrainFactor = 1
+      } else {
+        this.terrainFactor = 0.65
       }
     }
     super.move()
