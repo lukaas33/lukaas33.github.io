@@ -51,7 +51,7 @@ const view = {
 const map = {
   size: 100, // Meters wide and heigh
   populationDensity: 350, // 1 animal per x square meters
-  growthDensity: 65, // 1 plant per x square meters
+  growthDensity: 60, // 1 plant per x square meters
   width: null,
   height: null,
   tiles: null
@@ -307,18 +307,50 @@ map.spawn = function () {
 
   // Rarity of different plants
   map.plantConstructors = {
-    "mushroom": Mushroom,
-    "bush": Bush,
+    "botelus": Botelus,
+    "maple": Maple,
     "berry": Berry,
-    "shrub": Shrub,
+    "seawead": Seaweed,
     "cactus": Cactus,
+    "tulip": Tulip,
+    "clematis": Clematis,
+    "daisy": Daisy,
+    "geranium": Geranium,
+    "lavender": Lavender,
+    "daffodil": Daffodil,
+    "vine": Vine,
+    "perennial": Perennial,
+    "sapling": Sapling,
+    "rice": Rice,
+    "magnolia": Magnolia,
+    "reed": Reed,
+    "setaria": Setaria,
+    "lily": Lily,
+    "agaric": Agaric,
+    "fern": Fern,
   }
   const plantSpecies = {
-    "mushroom": 0.1,
-    "bush": 0.2,
+    "botelus": 0.1,
+    "maple": 0.2,
     "berry": 0.2,
-    "shrub": 0.5,
+    "seawead": 0.5,
     "cactus": 0.05,
+    "tulip": 0.1,
+    "clematis": 0.1,
+    "daisy": 0.1,
+    "geranium": 0.1,
+    "lavender": 0.1,
+    "daffodil": 0.1,
+    "vine": 0.15,
+    "perennial": 0.2,
+    "sapling": 0.35,
+    "rice": 0.3,
+    "magnolia": 0.3,
+    "reed": 0.4,
+    "setaria": 0.2,
+    "lily": 0.3,
+    "agaric": 0.15,
+    "fern": 0.4,
   }
 
   // Add plants
@@ -1913,9 +1945,9 @@ class Plant extends Living {
 }
 
 // All plant classes
-class Mushroom extends Plant {
+class Botelus extends Plant {
   constructor (loc) {
-    let name = "Mushroom"
+    let name = "Botelus"
     super(loc, name)
     // The plant's traits in SI units (A)
     this.traits = {
@@ -1934,7 +1966,7 @@ class Berry extends Plant {
     this.traits = {
       nutrition: 0.5,
       area: "land",
-      maxHealth: 0.3
+      maxHealth: 1
     }
     this.health = this.traits.maxHealth
   }
@@ -1947,16 +1979,94 @@ class Cactus extends Plant {
     this.traits = {
       nutrition: 0.2,
       area: "land",
-      maxHealth: 0.5
+      maxHealth: 2
     }
     this.health = this.traits.maxHealth
   }
 }
-class Shrub extends Plant {
+class Seaweed extends Plant {
   constructor (loc) {
-    let name = "Shrub"
+    let name = "Seaweed"
     super(loc, name)
     // The plant's traits in SI units (L)
+    this.traits = {
+      nutrition: 0.2,
+      area: "water",
+      maxHealth: 1
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Maple extends Plant {
+  constructor (loc) {
+    let name = "Maple"
+    super(loc, name)
+    // The plant's traits in SI units (L)
+    this.traits = {
+      nutrition: 0.1,
+      area: "land",
+      maxHealth: 1.5
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Fern extends Plant {
+  constructor (loc) {
+    let name = "Fern"
+    super(loc, name)
+    // The plant's traits in SI units (L)
+    this.traits = {
+      nutrition: 0.2,
+      area: "land",
+      maxHealth: 1
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Agaric extends Plant {
+  constructor (loc) {
+    let name = "Agaric"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.4,
+      area: "land",
+      maxHealth: 0.3
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Lily extends Plant {
+  constructor (loc) {
+    let name = "Lily"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.3,
+      area: "water",
+      maxHealth: 0.2
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Setaria extends Plant {
+  constructor (loc) {
+    let name = "Setaria"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.2,
+      area: "land",
+      maxHealth: 0.6
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Reed extends Plant {
+  constructor (loc) {
+    let name = "Reed"
+    super(loc, name)
+    // The plant's traits in SI units (A)
     this.traits = {
       nutrition: 0.1,
       area: "water",
@@ -1965,19 +2075,150 @@ class Shrub extends Plant {
     this.health = this.traits.maxHealth
   }
 }
-class Bush extends Plant {
+class Magnolia extends Plant {
   constructor (loc) {
-    let name = "Bush"
+    let name = "Magnolia"
     super(loc, name)
-    // The plant's traits in SI units (L)
+    // The plant's traits in SI units (A)
     this.traits = {
       nutrition: 0.1,
+      area: "land",
+      maxHealth: 1
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Rice extends Plant {
+  constructor (loc) {
+    let name = "Rice"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.5,
+      area: "land",
+      maxHealth: 1
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Sapling extends Plant {
+  constructor (loc) {
+    let name = "Sapling"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.2,
+      area: "land",
+      maxHealth: 0.3
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Perennial extends Plant {
+  constructor (loc) {
+    let name = "Perennial"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.1,
+      area: "land",
+      maxHealth: 0.4
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Vine extends Plant {
+  constructor (loc) {
+    let name = "Vine"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.2,
+      area: "land",
+      maxHealth: 1
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Daffodil extends Plant {
+  constructor (loc) {
+    let name = "Daffodil"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.2,
+      area: "land",
+      maxHealth: 0.2
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Lavender extends Plant {
+  constructor (loc) {
+    let name = "Lavender"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.2,
+      area: "land",
+      maxHealth: 0.8
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Geranium extends Plant {
+  constructor (loc) {
+    let name = "Geranium"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.3,
+      area: "land",
+      maxHealth: 0.2
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Daisy extends Plant {
+  constructor (loc) {
+    let name = "Daisy"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.1,
+      area: "land",
+      maxHealth: 0.2
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Clematis extends Plant {
+  constructor (loc) {
+    let name = "Clematis"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.2,
+      area: "land",
+      maxHealth: 1.2
+    }
+    this.health = this.traits.maxHealth
+  }
+}
+class Tulip extends Plant {
+  constructor (loc) {
+    let name = "Tulip"
+    super(loc, name)
+    // The plant's traits in SI units (A)
+    this.traits = {
+      nutrition: 0.2,
       area: "land",
       maxHealth: 0.6
     }
     this.health = this.traits.maxHealth
   }
 }
+
 
 // Background texture objects (A)
 class Water extends Entity {
