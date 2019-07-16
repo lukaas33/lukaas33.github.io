@@ -549,7 +549,7 @@ class Entity {
 
   // Display a sprite on the screen (L)
   update () {
-    let switchRate = 10 // Switch sprite every x frames
+    let switchRate = 15 // Switch sprite every x frames
     let sprite = null
 
     if (this.sprites.moving) { // Moving object
