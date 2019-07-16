@@ -21,7 +21,7 @@ const settings = {
   started: false,
   startTime: null,
   names: false,
-  music: true
+  music: false
 }
 
 // Fhysical constants, not changing
@@ -43,15 +43,15 @@ const view = {
   height: null,
   middle: null,
   screen: doc.canvas.getContext('2d'),
-  fps: 40, // Frames per second
+  fps: 25, // Frames per second
   sprites: {} // Store sprite references
 }
 
 // The entire map
 const map = {
-  size: 100, // Meters wide and heigh
-  populationDensity: 350, // 1 animal per x square meters
-  growthDensity: 60, // 1 plant per x square meters
+  size: 250, // Meters wide and heigh
+  populationDensity: 500, // 1 animal per x square meters
+  growthDensity: 50, // 1 plant per x square meters
   width: null,
   height: null,
   tiles: null
@@ -107,6 +107,19 @@ view.sizes = function () {
   map.width = map.height = (map.size * constants.scale)
   view.middle = new Coord(map.width, map.height)
   view.middle.divide(2)
+}
+
+// Location from absolute (map) to relative (view)
+view.absolute = function (loc) {
+  const x = Math.floor(loc.x - (view.middle.x - view.width / 2))
+  const y = Math.floor(loc.y - (view.middle.y - view.height / 2))
+  return new Coord(x, y)
+}
+
+// Check if location in view, with edges included
+view.inside = function (loc, edge) {
+  const pos = view.absolute(loc)
+  return (-edge < pos.x && pos.x < view.width + edge && -edge < pos.y && pos.y < view.height + edge)
 }
 
 // Generate the map (L)
@@ -190,7 +203,7 @@ map.add = function (loc) {
 
 // Animal and plants spawn on the map (L)
 map.spawn = function () {
-  // Rarity of different animals (smaller animals more common, carnivores rarer)
+  // Relative rarity of different animals (smaller animals more common, carnivores rarer)
   map.animalConstructors = {
     "deer": Deer,
     "squirrel": Squirrel,
@@ -302,10 +315,10 @@ map.spawn = function () {
 
   // Add animals
   while (animals.length < (map.size**2) / map.populationDensity) { // Based on map size
-    animals.push(new NPC(map.create(animalSpecies, map.animalConstructors)))
+    animals.push(new NPC(map.create(animalSpecies, map.animalConstructors, false)))
   }
 
-  // Rarity of different plants
+  // Relative rarity of different plants
   map.plantConstructors = {
     "botelus": Botelus,
     "maple": Maple,
@@ -333,7 +346,7 @@ map.spawn = function () {
     "botelus": 0.1,
     "maple": 0.2,
     "berry": 0.2,
-    "seawead": 0.5,
+    "seawead": 0.8,
     "cactus": 0.05,
     "tulip": 0.1,
     "clematis": 0.1,
@@ -346,7 +359,7 @@ map.spawn = function () {
     "sapling": 0.35,
     "rice": 0.3,
     "magnolia": 0.3,
-    "reed": 0.4,
+    "reed": 0.6,
     "setaria": 0.2,
     "lily": 0.3,
     "agaric": 0.15,
@@ -355,12 +368,12 @@ map.spawn = function () {
 
   // Add plants
   while (plants.length < (map.size**2) / map.growthDensity) {
-    plants.push(map.create(plantSpecies, map.plantConstructors))
+    plants.push(map.create(plantSpecies, map.plantConstructors, true))
   }
 }
 
 // Create a random new animal or plant (L)
-map.create = function (species, constructors) {
+map.create = function (species, constructors, inScreen) {
   // Check if position is legal
   const isLegal = function (loc, object) {
     // Must be outside view
@@ -371,7 +384,7 @@ map.create = function (species, constructors) {
     const row = Math.floor(loc.y / constants.scale)
     const col = Math.floor(loc.x / constants.scale)
     let area = map.tiles[row][col] === null ? "sky" : map.tiles[row][col].area // null value means tree
-    return inView && area === object.traits.area
+    return (inView || inScreen) && area === object.traits.area
   }
 
   // Choose random based on rarity
@@ -484,6 +497,7 @@ class Sprites {
       this.dirs = ["right", "down", "left", "up"]
       this.moving = moving // Moves in all directions
       this.changing = changing // Changes over time
+      this.loaded = false
       this.size = {
         width: null,
         height: null
@@ -495,15 +509,20 @@ class Sprites {
         for (let dir of this.dirs) { // All directions of movement
           this.getImages(`${path}/${dir}`, 1, [], (result) => {
             this[dir] = result
+            if (dir === this.dirs[this.dirs.length - 1]) { // last
+              this.loaded = true
+            }
           })
         }
       } else if (changing) {
         this.getImages(`${path}/sprite`, 1, [], (result) => { // Changing over time
           this.sprite = result
+          this.loaded = true
         })
       } else {
         this.getImage(`${path}/sprite.png`, (result) => { // Static
           this.sprite = result
+          this.loaded = true
         })
       }
 
@@ -515,6 +534,8 @@ class Sprites {
   getImage (path, callback) {
       let image = new Image()
       image.onload = () => {
+        this.size.width = image.width
+        this.size.height = image.height
         callback(image) // Return
       }
       image.onerror = () => {
@@ -532,7 +553,7 @@ class Sprites {
         callback(sprites)
       } else {
         sprites.push(result)
-        this.getImages(path, i+1, sprites, callback) // Next image - recurse
+        this.getImages(path, i + 1, sprites, callback) // Next image - recurse
       }
     })
   }
@@ -549,45 +570,33 @@ class Entity {
 
   // Display a sprite on the screen (L)
   update () {
-    let switchRate = 15 // Switch sprite every x frames
-    let sprite = null
+    if (this.sprites.loaded) { // Loaded
+      const switchRate = 15 // Switch sprite every x frames
+      let sprite = null
 
-    if (this.sprites.moving) { // Moving object
-      sprite = this.sprites[this.direction]
-      if (sprite) { // Loaded
+      if (this.sprites.moving) { // Moving object
+        sprite = this.sprites[this.direction]
         if (this.speed.magnitude > 0) {
           this.frame += 1 // New frame
         }
         sprite = sprite[Math.floor(this.frame / switchRate) % (sprite.length)]
-      }
-    } else if (this.sprites.changing) { // Changing object
-      sprite = this.sprites.sprite
-      if (sprite) {
+      } else if (this.sprites.changing) { // Changing object
+        sprite = this.sprites.sprite
         this.frame += 1
         sprite = sprite[Math.floor(this.frame / switchRate) % (sprite.length)]
+      } else { // Static object
+        sprite = this.sprites.sprite
       }
-    } else { // Static object
-      sprite = this.sprites.sprite
-    }
-
-    if (sprite) { // Loaded
-      // Store important variables
-      this.sprites.size.width = sprite.width
-      this.sprites.size.height = sprite.height
 
       this.middle = new Coord(
         this.loc.x + this.sprites.size.width / 2,
         this.loc.y + this.sprites.size.height / 2
       )
 
-      // Location from absolute (map) to relative (view)
-      let x = Math.floor(this.loc.x - (view.middle.x - view.width / 2))
-      let y = Math.floor(this.loc.y - (view.middle.y - view.height / 2))
-
       // Only draw when in view (with edges) for smoother rendering (drawing is intensive)
-      let edge = 64
-      if (-edge < x && x < view.width + edge && -edge < y && y < view.height + edge) {
-        view.screen.drawImage(sprite, x, y)
+      let loc = view.absolute(this.loc)
+      if (view.inside(this.loc, 64)) {
+        view.screen.drawImage(sprite, loc.x, loc.y)
       }
     }
   }
@@ -653,11 +662,11 @@ class Living extends Entity {
 
     if (settings.names) {
       if (this.traits.name) {
-        view.screen.font = "12px 'Caesar Dressing'"
+        view.screen.font = "10px sans"
         view.screen.fillStyle = "#ffffff"
         view.screen.textAlign = "center"
         y += 2 * height // below hunger bar
-        x += this.sprites.size.width / 2
+        // x += this.sprites.size.width / 2
         view.screen.fillText(this.traits.name, x, y)
       }
     }
@@ -685,7 +694,7 @@ class Obj extends Living {
   }
 
   // Change position (L)
-  move () {
+  move () { // TODO make more efficient
     // Add acceleration to speed
     if (this.acceleration.magnitude >= 0) {
       const maxSpeed = this.traits.maxSpeed * this.speedFactor * this.terrainFactor
@@ -695,22 +704,23 @@ class Obj extends Living {
       if (this.speed.magnitude > maxSpeed) {
         this.speed.magnitude = maxSpeed
       }
+
+      // Add speed to location
+      if (this.speed.magnitude > 0) {
+        // From px/frame to m/second
+        const speed = new Coord(this.speed.x, this.speed.y)
+        speed.divide(view.fps)
+        speed.multiply(constants.scale)
+        this.loc.add(speed)
+
+        // Get direction
+        const angle = (this.speed.angle + 2 * Math.PI) % (2 * Math.PI) // 0 to 2PI
+        const index = Math.round(2 * (angle / Math.PI)) % 4 // values 0, 1, 2, 3
+        this.angle = angle
+        this.direction = this.sprites.dirs[index] // Direction as text
+      }
     }
 
-    // Add speed to location
-    if (this.speed.magnitude > 0) {
-      // From px/frame to m/second
-      const speed = new Coord(this.speed.x, this.speed.y)
-      speed.divide(view.fps)
-      speed.multiply(constants.scale)
-      this.loc.add(speed)
-
-      // Get direction
-      const angle = (this.speed.angle + 2 * Math.PI) % (2 * Math.PI) // 0 to 2PI
-      const index = Math.round(2 * (angle / Math.PI)) % 4 // values 0, 1, 2, 3
-      this.angle = angle
-      this.direction = this.sprites.dirs[index] // Direction as text
-    }
 
     // Check if legal
     this.borders()
@@ -2363,6 +2373,7 @@ class Player extends Creature {
       alert(`
         You were killed as a(n) ${this.traits.name}.
         You were alive for ${Math.floor(alive / 60)} minutes and ${alive % 60} seconds.
+        You obtained ${this.spirits.length - 1} animals.
         Game will automatically restart.
         `
       )
@@ -2832,16 +2843,22 @@ view.refresh = window.setInterval(() => {
        }
      }
    }
+   // Animals and plants only live close to the view to improve performance
+   const edge = 32 * 20
    // Draw plants
    for (let plant of plants) {
      if (plant) {
-       plant.live()
+       if (view.inside(plant.loc, edge)) {
+         plant.live()
+       }
      }
    }
    // Draw animals
    for (let animal of animals) {
      if (animal) {
-       animal.live()
+       if (view.inside(animal.loc, edge)) {
+         animal.live()
+       }
      }
    }
    // Draw trees over other objects.
