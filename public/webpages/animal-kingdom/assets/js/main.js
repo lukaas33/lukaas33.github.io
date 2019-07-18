@@ -54,7 +54,8 @@ const map = {
   growthDensity: 50, // 1 plant per x square meters
   width: null,
   height: null,
-  tiles: null
+  textures: null,
+  tiles: null,
 }
 
 // Store all instances
@@ -124,17 +125,29 @@ view.inside = function (loc, edge) {
 
 // Generate the map (L)
 map.generate = function () {
-  // Create 2D-array
-  map.tiles = new Array(map.size)
-  for (let a = 0; a < map.size; a++) {
-    map.tiles[a] = new Array(map.size)
+  map.textures = {
+    'g': new Grass(),
+    'w': new Water(),
+    't': new Tree()
   }
 
-  // Loop through 2D-array
-  for (let y = 0; y < map.size; y++) {
-    for (let x = 0; x < map.size; x++) {
-      map.add(new Coord(x, y)) // Random texture
+  if (store.get("tiles")) {
+    map.tiles = store.get("tiles")
+  } else {
+    // Create 2D-array
+    map.tiles = new Array(map.size)
+    for (let a = 0; a < map.size; a++) {
+      map.tiles[a] = new Array(map.size)
     }
+
+    // Loop through 2D-array
+    for (let y = 0; y < map.size; y++) {
+      for (let x = 0; x < map.size; x++) {
+        map.add(new Coord(x, y)) // Random texture
+      }
+    }
+
+    store.set("tiles", map.tiles)
   }
 }
 
@@ -158,7 +171,7 @@ map.add = function (loc) {
         map.tiles[loc.y - 1][loc.x],
         map.tiles[loc.y][loc.x - 1]
       ]
-      const nearby = near.filter((x) => x !== null && x.type === "water") // Number of nearby
+      const nearby = near.filter((x) => x === 'w') // Number of nearby
       const factor = 64 // Increase odd of water spawning
       options["water"] += options["water"] * (nearby.length * factor)
     }
@@ -169,10 +182,10 @@ map.add = function (loc) {
     // Add texture to map
     switch (type) {
       case "grass":
-        map.tiles[loc.y][loc.x] = new Grass(place)
+        map.tiles[loc.y][loc.x] = 'g'
         break
       case "water":
-        map.tiles[loc.y][loc.x] = new Water(place)
+        map.tiles[loc.y][loc.x] = 'w'
         break
       case "tree":
         // Not at edge or too close to another tree
@@ -182,17 +195,10 @@ map.add = function (loc) {
             map.tiles[loc.y + 1][loc.x + 1] !== null) {
 
           // Clear other spots because a tree is 4 tiles big
-          map.tiles[loc.y][loc.x] = new Tree(place)
+          map.tiles[loc.y][loc.x] = 't'
           map.tiles[loc.y + 1][loc.x] = null
           map.tiles[loc.y][loc.x + 1] = null
           map.tiles[loc.y + 1][loc.x + 1] = null
-          // Add tiles as background for the tree
-          map.tiles[loc.y][loc.x].background = [
-            new Grass(place),
-            new Grass(new Coord(place.x + constants.scale, place.y)),
-            new Grass(new Coord(place.x + constants.scale, place.y + constants.scale)),
-            new Grass(new Coord(place.x, place.y + constants.scale)),
-          ]
         } else { // At the edge
           map.add(loc)
         }
@@ -383,7 +389,7 @@ map.create = function (species, constructors, inScreen) {
     // Legal terrain for the object
     const row = Math.floor(loc.y / constants.scale)
     const col = Math.floor(loc.x / constants.scale)
-    let area = map.tiles[row][col] === null ? "sky" : map.tiles[row][col].area // null value means tree
+    let area = map.tiles[row][col] === null ? "sky" : map.textures[map.tiles[row][col]].area // null value means tree
     return (inView || inScreen) && area === object.traits.area
   }
 
@@ -564,14 +570,13 @@ class Entity {
   constructor (loc, sprites) {
     this.loc = loc
     this.sprites = sprites
-    this.sheltered = false // Hidden by terrain
     this.frame = 0
   }
 
   // Display a sprite on the screen (L)
   update () {
     if (this.sprites.loaded) { // Loaded
-      const switchRate = 15 // Switch sprite every x frames
+      const switchRate = 12 // Switch sprite every x frames
       let sprite = null
 
       if (this.sprites.moving) { // Moving object
@@ -580,9 +585,8 @@ class Entity {
           this.frame += 1 // New frame
         }
         sprite = sprite[Math.floor(this.frame / switchRate) % (sprite.length)]
-      } else if (this.sprites.changing) { // Changing object
+      } else if (this.sprites.changing) { // Changing object, frame updated elswhere
         sprite = this.sprites.sprite
-        this.frame += 1
         sprite = sprite[Math.floor(this.frame / switchRate) % (sprite.length)]
       } else { // Static object
         sprite = this.sprites.sprite
@@ -737,9 +741,15 @@ class Obj extends Living {
     // Collide with terrain (A)
     for (let y = 0; y < map.size; y++) {
       for (let x = 0; x < map.size; x++) {
-        let object = map.tiles[y][x]
-        if (object !== null) {
-          if (object.area === "sky" && this.traits.area !== "sky") { // Animal meets a tree
+        let symbol = map.tiles[y][x]
+        if (symbol !== null) {
+          // Get values of texture object
+          let area = map.textures[symbol].area
+          let object = {
+            loc: new Coord(x * constants.scale, y * constants.scale),
+            sprites: map.textures[symbol].sprites
+          }
+          if (area === "sky" && this.traits.area !== "sky") { // Animal meets a tree
             // Bigger animals and water animals can't go through tree
             if (this.collide(object)) {
               if (this.traits.mass > 10 || this.traits.area === "water") {
@@ -747,7 +757,7 @@ class Obj extends Living {
               }
             }
           }
-          if (object.area === "land" && this.traits.area === "water") { // Water-animal meets land
+          if (area === "land" && this.traits.area === "water") { // Water-animal meets land
             if (this.collide(object)) {
               this.block(object, true)
             }
@@ -1930,7 +1940,6 @@ class Beaver extends Animal {
 }
 
 
-
 // Parent class for all plant objects, food for the animals
 class Plant extends Living {
   constructor (loc, name) {
@@ -2230,27 +2239,39 @@ class Tulip extends Plant {
 }
 
 
-// Background texture objects (A)
-class Water extends Entity {
-  constructor (loc) {
+// Background texture objects
+class Texture extends Entity {
+  constructor (sprite) {
+    super(new Coord(0, 0), sprite)
+  }
+
+  // Texture instances are drawn in many locations (L)
+  update (loc) {
+    this.loc = loc
+    super.update()
+  }
+}
+
+class Water extends Texture {
+  constructor () {
     let name = "water"
-    super(loc, new Sprites(name, false, true))
+    super(new Sprites(name, false, true))
     this.type = name
     this.area = "water"
   }
 }
-class Grass extends Entity {
-  constructor (loc) {
+class Grass extends Texture {
+  constructor () {
     let name = "grass"
-    super(loc, new Sprites(name, false, false))
+    super(new Sprites(name, false, false))
     this.type = name
     this.area = "land"
   }
 }
-class Tree extends Entity {
-  constructor (loc) {
+class Tree extends Texture {
+  constructor () {
     let name = "tree"
-    super(loc, new Sprites(name, false, false))
+    super(new Sprites(name, false, false))
     this.type = name
     this.area = "sky"
     this.background = null // Stores tiles beneath it
@@ -2265,6 +2286,7 @@ class Creature extends Obj {
     this.target = null // Target when hunting
     this.hunter = null // Is hunting you
     this.hitted = false // Just hit you
+    this.sheltered = false // Hidden by terrain
     this.traits = animal.traits
     this.health = this.traits.maxHealth
     this.hunger = 100 // Percentage, the same value for every animal
@@ -2297,7 +2319,7 @@ class Creature extends Obj {
     y = y > 0 ? y : 0
     let terrain = map.tiles[y][x]
     // Current area
-    let area = (terrain === null || terrain === undefined) ? "sky" : terrain.area // Null value is a tree
+    let area = (terrain === null || terrain === undefined) ? "sky" : map.textures[terrain].area // Null value is a tree
 
     // Terrain influences speed
     if (this.traits.area === "land") {
@@ -2830,19 +2852,22 @@ view.refresh = window.setInterval(() => {
    // Draw the map (L)
    for (let y = 0; y < map.size; y++) {
      for (let x = 0; x < map.size; x++) {
-       let object = map.tiles[y][x]
-       if (object) {
-         // Trees have a background
-         if (object.type === "tree") {
-           for (let tile of object.background) {
-             tile.update()
-           }
+       let symbol = map.tiles[y][x]
+       if (symbol) {
+         if (symbol === 't') {
+           // trees have a background
+           map.textures['g'].update(new Coord(x * constants.scale, y * constants.scale))
+           map.textures['g'].update(new Coord((x + 1) * constants.scale, y * constants.scale))
+           map.textures['g'].update(new Coord(x * constants.scale, (y + 1) * constants.scale))
+           map.textures['g'].update(new Coord((x + 1) * constants.scale, (y + 1) * constants.scale))
          } else {
-           object.update()
+           map.textures[symbol].update(new Coord(x * constants.scale, y * constants.scale))
          }
        }
      }
    }
+   map.textures['w'].frame += 1
+
    // Animals and plants only live close to the view to improve performance
    const edge = 32 * 20
    // Draw plants
@@ -2861,19 +2886,18 @@ view.refresh = window.setInterval(() => {
        }
      }
    }
+
    // Draw trees over other objects.
    for (let y = 0; y < map.size; y++) {
      for (let x = 0; x < map.size; x++) {
-       let object = map.tiles[y][x]
-       if (object) {
-         if (object.type === "tree") {
-           object.update()
-         }
+       let symbol = map.tiles[y][x]
+       if (symbol === 't') {
+         map.textures['t'].update(new Coord(x * constants.scale, y * constants.scale))
        }
      }
    }
 
-   // Spawn new creatures when below the max
+   // // Spawn new creatures when below the max
    map.spawn()
 
    // Sound control
@@ -2914,7 +2938,7 @@ document.onreadystatechange = function () {
       // Screen sizes
       view.sizes()
       // View.middle reference passed so when the player location is updated the player view is as well
-      animals[0] =  new Player(new Squirrel(view.middle))
+      animals[0] = new Player(new Squirrel(view.middle))
       // Generate map and initial animals/plants
       map.generate()
       map.spawn()
