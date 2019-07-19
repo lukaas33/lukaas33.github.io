@@ -21,7 +21,8 @@ const settings = {
   started: false,
   startTime: null,
   names: false,
-  music: false
+  music: false,
+  progress: false
 }
 
 // Fhysical constants, not changing
@@ -49,8 +50,8 @@ const view = {
 
 // The entire map
 const map = {
-  size: 250, // Meters wide and heigh
-  populationDensity: 500, // 1 animal per x square meters
+  size: 350, // Meters wide and heigh
+  populationDensity: 750, // 1 animal per x square meters
   growthDensity: 50, // 1 plant per x square meters
   width: null,
   height: null,
@@ -111,7 +112,7 @@ view.sizes = function () {
 }
 
 // Location from absolute (map) to relative (view)
-view.absolute = function (loc) {
+view.relative = function (loc) {
   const x = Math.floor(loc.x - (view.middle.x - view.width / 2))
   const y = Math.floor(loc.y - (view.middle.y - view.height / 2))
   return new Coord(x, y)
@@ -119,7 +120,7 @@ view.absolute = function (loc) {
 
 // Check if location in view, with edges included
 view.inside = function (loc, edge) {
-  const pos = view.absolute(loc)
+  const pos = view.relative(loc)
   return (-edge < pos.x && pos.x < view.width + edge && -edge < pos.y && pos.y < view.height + edge)
 }
 
@@ -131,7 +132,7 @@ map.generate = function () {
     't': new Tree()
   }
 
-  if (store.get("tiles")) {
+  if (store.get("tiles") && settings.progress) {
     map.tiles = store.get("tiles")
   } else {
     // Create 2D-array
@@ -172,7 +173,7 @@ map.add = function (loc) {
         map.tiles[loc.y][loc.x - 1]
       ]
       const nearby = near.filter((x) => x === 'w') // Number of nearby
-      const factor = 64 // Increase odd of water spawning
+      const factor = 60 // Increase odd of water spawning
       options["water"] += options["water"] * (nearby.length * factor)
     }
     options["grass"] = 1 - (options["tree"] + options["water"]) // Default
@@ -515,7 +516,7 @@ class Sprites {
         for (let dir of this.dirs) { // All directions of movement
           this.getImages(`${path}/${dir}`, 1, [], (result) => {
             this[dir] = result
-            if (dir === this.dirs[this.dirs.length - 1]) { // last
+            if (this.dirs.every(d => d in this)) { // last
               this.loaded = true
             }
           })
@@ -597,11 +598,8 @@ class Entity {
         this.loc.y + this.sprites.size.height / 2
       )
 
-      // Only draw when in view (with edges) for smoother rendering (drawing is intensive)
-      let loc = view.absolute(this.loc)
-      if (view.inside(this.loc, 64)) {
-        view.screen.drawImage(sprite, loc.x, loc.y)
-      }
+      let loc = view.relative(this.loc)
+      view.screen.drawImage(sprite, loc.x, loc.y)
     }
   }
 }
@@ -2850,18 +2848,28 @@ class NPC extends Creature {
 view.refresh = window.setInterval(() => {
  if (settings.started) {
    // Draw the map (L)
+   let wait = [] // Draw over animals
    for (let y = 0; y < map.size; y++) {
      for (let x = 0; x < map.size; x++) {
-       let symbol = map.tiles[y][x]
-       if (symbol) {
-         if (symbol === 't') {
-           // trees have a background
-           map.textures['g'].update(new Coord(x * constants.scale, y * constants.scale))
-           map.textures['g'].update(new Coord((x + 1) * constants.scale, y * constants.scale))
-           map.textures['g'].update(new Coord(x * constants.scale, (y + 1) * constants.scale))
-           map.textures['g'].update(new Coord((x + 1) * constants.scale, (y + 1) * constants.scale))
-         } else {
-           map.textures[symbol].update(new Coord(x * constants.scale, y * constants.scale))
+
+       let loc = new Coord(x * constants.scale, y * constants.scale)
+       if (view.inside(loc, 96)) { // Only draw in view
+
+         let symbol = map.tiles[y][x]
+         if (symbol) {
+           if (symbol === 't') {
+             // trees have a background
+             map.textures['g'].update(loc)
+             loc.x += constants.scale
+             map.textures['g'].update(loc)
+             loc.y += constants.scale
+             map.textures['g'].update(loc)
+             loc.x -= constants.scale
+             map.textures['g'].update(loc)
+             wait.push(loc)
+           } else {
+             map.textures[symbol].update(loc)
+           }
          }
        }
      }
@@ -2869,7 +2877,7 @@ view.refresh = window.setInterval(() => {
    map.textures['w'].frame += 1
 
    // Animals and plants only live close to the view to improve performance
-   const edge = 32 * 20
+   const edge = 32 * 10
    // Draw plants
    for (let plant of plants) {
      if (plant) {
@@ -2887,14 +2895,9 @@ view.refresh = window.setInterval(() => {
      }
    }
 
-   // Draw trees over other objects.
-   for (let y = 0; y < map.size; y++) {
-     for (let x = 0; x < map.size; x++) {
-       let symbol = map.tiles[y][x]
-       if (symbol === 't') {
-         map.textures['t'].update(new Coord(x * constants.scale, y * constants.scale))
-       }
-     }
+   // Draw trees over other objects
+   for (let loc of wait) {
+     map.textures['t'].update(loc)
    }
 
    // // Spawn new creatures when below the max
