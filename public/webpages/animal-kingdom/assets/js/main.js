@@ -16,18 +16,52 @@
 //   \ V / (_| | |  | | (_| | |_) | |  __/\__ \
 //    \_/ \__,_|_|  |_|\__,_|_.__/|_|\___||___/
 
-// Changing values related to setup
+// Changing values related to setup, are stored between sessions (L)
 const settings = {
-  started: false,
-  startTime: null,
-  names: false,
-  music: false,
-  progress: false
-}
-
-// Fhysical constants, not changing
-const constants = {
-  scale: 32, // pixels in one meter
+  get started () {
+    let value = store.get("started")
+    return value !== null ? value : false // Default
+  },
+  set started (value) {
+    store.set("started", value)
+  },
+  run: false,
+  interacted: false,
+  get startTime () {
+    return this._startTime
+  },
+  set startTime (value) {
+    store.set("startTime", value) // Save, but access via variable for speed
+    this._startTime = value
+  },
+  get music () {
+    return this._music
+  },
+  set music (value) {
+    // Sound control
+    if (value) {
+      if (settings.interacted) {
+        doc.sound.play()
+        doc.sound.currentTime = store.get("musicTime")
+      } else { // Try again
+        window.setTimeout((value) => {
+          settings.music = value
+        }, 1000, value)
+        return
+      }
+    } else {
+      doc.sound.pause()
+    }
+    store.set("music", value)
+    this._music = value
+  },
+  get names () {
+    return this._names
+  },
+  set names (value) {
+    store.set("names", value)
+    this._names = value
+  },
 }
 
 // Related to document, for example html elements
@@ -45,6 +79,7 @@ const view = {
   middle: null,
   screen: doc.canvas.getContext('2d'),
   fps: 25, // Frames per second
+  scale: 32, // pixels in one meter
   sprites: {} // Store sprite references
 }
 
@@ -52,7 +87,7 @@ const view = {
 const map = {
   size: 350, // Meters wide and heigh
   populationDensity: 750, // 1 animal per x square meters
-  growthDensity: 50, // 1 plant per x square meters
+  growthDensity: 100, // 1 plant per x square meters
   width: null,
   height: null,
   textures: null,
@@ -60,8 +95,8 @@ const map = {
 }
 
 // Store all instances
-const animals = []
-const plants = []
+let animals = []
+let plants = []
 
 
 //  _____                 _   _
@@ -71,12 +106,12 @@ const plants = []
 // |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 // Functions for storing data in localStorage (L)
-const store = { // TODO, use for saving of progress between sessions
+const store = {
   get: function (name) {
     const string = localStorage.getItem(name)
     try {
       return JSON.parse(string)
-    } catch (e) { // Won't work if the data is only a string
+    } catch (e) { // Won't work if the data is a string
       return string
     }
   },
@@ -106,19 +141,23 @@ const random = {
 view.sizes = function () {
   doc.canvas.width = view.width = view.screen.width = document.body.clientWidth
   doc.canvas.height = view.height = view.screen.height = document.body.clientHeight
-  map.width = map.height = (map.size * constants.scale)
-  view.middle = new Coord(map.width, map.height)
-  view.middle.divide(2)
+  map.width = map.height = (map.size * view.scale)
+  if (view.middle === null) {
+    view.middle = new Coord(map.width, map.height)
+    view.middle.divide(2)
+  } else {
+
+  }
 }
 
-// Location from absolute (map) to relative (view)
+// Location from absolute (map) to relative (view) (L)
 view.relative = function (loc) {
   const x = Math.floor(loc.x - (view.middle.x - view.width / 2))
   const y = Math.floor(loc.y - (view.middle.y - view.height / 2))
   return new Coord(x, y)
 }
 
-// Check if location in view, with edges included
+// Check if location in view, with edges included (L)
 view.inside = function (loc, edge) {
   const pos = view.relative(loc)
   return (-edge < pos.x && pos.x < view.width + edge && -edge < pos.y && pos.y < view.height + edge)
@@ -132,7 +171,7 @@ map.generate = function () {
     't': new Tree()
   }
 
-  if (store.get("tiles") && settings.progress) {
+  if (store.get("tiles")) {
     map.tiles = store.get("tiles")
   } else {
     // Create 2D-array
@@ -155,7 +194,7 @@ map.generate = function () {
 // Add a random texture to the map (L)
 map.add = function (loc) {
   const place = new Coord(loc.x, loc.y)
-  place.multiply(constants.scale) // Index to map coordinates
+  place.multiply(view.scale) // Index to map coordinates
 
   if (map.tiles[loc.y][loc.x] === undefined) { // Spot still empty
     // Standard generation odds
@@ -211,60 +250,6 @@ map.add = function (loc) {
 // Animal and plants spawn on the map (L)
 map.spawn = function () {
   // Relative rarity of different animals (smaller animals more common, carnivores rarer)
-  map.animalConstructors = {
-    "deer": Deer,
-    "squirrel": Squirrel,
-    "wolf": Wolf,
-    "bass": Bass,
-    "sparrow": Sparrow,
-    "bear": Bear,
-    "badger": Badger,
-    "panda": Panda,
-    "lion": Lion,
-    "tiger": Tiger,
-    "duck": Duck,
-    "crow": Crow,
-    "dove": Dove,
-    "bison": Bison,
-    "bull": Bull,
-    "bunny": Bunny,
-    "butterfly": Butterfly,
-    "cat": Cat,
-    "chicken": Chicken,
-    "cobra": Cobra,
-    "cheeta": Cheeta,
-    "corgi": Corgi,
-    "chinchilla": Chinchilla,
-    "cow": Cow,
-    "crab": Crab,
-    "crocodile": Crocodile,
-    "goose": Goose,
-    "fox": Fox,
-    "frog": Frog,
-    "goat": Goat,
-    "pig": Pig,
-    "dog": Dog,
-    "sheep": Sheep,
-    "raccoon": Raccoon,
-    "ferret": Ferret,
-    "salmon": Salmon,
-    "owl": Owl,
-    "shark": Shark,
-    "hippo": Hippo,
-    "turtle": Turtle,
-    "mole": Mole,
-    "monkey": Monkey,
-    "mouse": Mouse,
-    "horse": Horse,
-    "ostrich": Ostrich,
-    "seagull": Seagull,
-    "carp": Carp,
-    "snake": Snake,
-    "lizard": Lizard,
-    "beaver": Beaver,
-    "boar": Boar,
-    "pinguin": Pinguin
-  }
   const animalSpecies = {
     "deer": 0.15,
     "squirrel": 0.3,
@@ -326,34 +311,11 @@ map.spawn = function () {
   }
 
   // Relative rarity of different plants
-  map.plantConstructors = {
-    "botelus": Botelus,
-    "maple": Maple,
-    "berry": Berry,
-    "seawead": Seaweed,
-    "cactus": Cactus,
-    "tulip": Tulip,
-    "clematis": Clematis,
-    "daisy": Daisy,
-    "geranium": Geranium,
-    "lavender": Lavender,
-    "daffodil": Daffodil,
-    "vine": Vine,
-    "perennial": Perennial,
-    "sapling": Sapling,
-    "rice": Rice,
-    "magnolia": Magnolia,
-    "reed": Reed,
-    "setaria": Setaria,
-    "lily": Lily,
-    "agaric": Agaric,
-    "fern": Fern,
-  }
   const plantSpecies = {
     "botelus": 0.1,
     "maple": 0.2,
     "berry": 0.2,
-    "seawead": 0.8,
+    "seaweed": 0.8,
     "cactus": 0.05,
     "tulip": 0.1,
     "clematis": 0.1,
@@ -388,8 +350,8 @@ map.create = function (species, constructors, inScreen) {
     inView = inView || (loc.y < view.middle.y - view.height / 2 || loc.y > view.middle.y + view.height / 2)
 
     // Legal terrain for the object
-    const row = Math.floor(loc.y / constants.scale)
-    const col = Math.floor(loc.x / constants.scale)
+    const row = Math.floor(loc.y / view.scale)
+    const col = Math.floor(loc.x / view.scale)
     let area = map.tiles[row][col] === null ? "sky" : map.textures[map.tiles[row][col]].area // null value means tree
     return (inView || inScreen) && area === object.traits.area
   }
@@ -401,12 +363,54 @@ map.create = function (species, constructors, inScreen) {
   // Choose random location
   let loc = null
   do {
-    let x = Math.floor(Math.random() * (map.size * constants.scale))
-    let y = Math.floor(Math.random() * (map.size * constants.scale))
+    let x = Math.floor(Math.random() * (map.size * view.scale))
+    let y = Math.floor(Math.random() * (map.size * view.scale))
     loc = new Coord(x, y)
   } while (!isLegal(loc, creature)) // Check condition after initialising loc
 
   return new creature.constructor(loc) // Call constructor again with location
+}
+
+// Gets Animals and plants from storage (L)
+map.getCreatures = function () {
+  // Creates NPC from properties
+  const recreate = function (object, instance, name) {
+    for (let property in object) {
+      if (["acceleration", "speed", "loc", "middle"].indexOf(property) !== -1) { // Coord objects
+        let pos = object[property]
+        instance[property] = new Coord(pos.x, pos.y)
+      } else if (property === "sprites") { // Sprites object
+        let spr = object[property]
+        instance[property] = new Sprites(name, spr.moving, spr.changing)
+      } else {
+        instance[property] = object[property]
+      }
+    }
+    return instance
+  }
+
+  let value = store.get("animals")
+  if (value !== null || value.length === 0) {
+    for (let object of value) {
+      // Reconstruct from saved data
+      let name = object.traits.name.toLowerCase()
+      let instance = new map.animalConstructors[name]
+      let creature = object.identity === "PC" ? new Player(instance) : new NPC(instance)
+      animals.push(recreate(object, creature, object.traits.name, name))
+      if (object.identity === "PC") {
+        view.middle = animals[animals.length - 1].loc // Update reference
+      }
+    }
+  }
+  value = store.get("plants")
+  if (value !== null || value.length === 0) {
+    for (let object of value) {
+      // Reconstruct from saved data
+      let name = object.name.toLowerCase()
+      let instance = new map.plantConstructors[name]
+      plants.push(recreate(object, instance, name))
+    }
+  }
 }
 
 // Godmode function, called via console (A)
@@ -417,6 +421,18 @@ window.godMode = function () {
   animals[0].traits.acceleration = 1
   animals[0].traits.attack = 1
   animals[0].traits.hunger = 0
+}
+
+// Get stored settings from progress (L)
+settings.getStorage = function () {
+  for (let property in settings) {
+    if (settings[property] === undefined) { // Not declared yet
+      let value = store.get(property)
+      if (value !== null) { // Exists
+        settings[property] = value
+      }
+    }
+  }
 }
 
 //   ____ _
@@ -712,7 +728,7 @@ class Obj extends Living {
         // From px/frame to m/second
         const speed = new Coord(this.speed.x, this.speed.y)
         speed.divide(view.fps)
-        speed.multiply(constants.scale)
+        speed.multiply(view.scale)
         this.loc.add(speed)
 
         // Get direction
@@ -744,7 +760,7 @@ class Obj extends Living {
           // Get values of texture object
           let area = map.textures[symbol].area
           let object = {
-            loc: new Coord(x * constants.scale, y * constants.scale),
+            loc: new Coord(x * view.scale, y * view.scale),
             sprites: map.textures[symbol].sprites
           }
           if (area === "sky" && this.traits.area !== "sky") { // Animal meets a tree
@@ -1937,6 +1953,61 @@ class Beaver extends Animal {
   }
 }
 
+// All constructors of animals
+map.animalConstructors = {
+  "deer": Deer,
+  "squirrel": Squirrel,
+  "wolf": Wolf,
+  "bass": Bass,
+  "sparrow": Sparrow,
+  "bear": Bear,
+  "badger": Badger,
+  "panda": Panda,
+  "lion": Lion,
+  "tiger": Tiger,
+  "duck": Duck,
+  "crow": Crow,
+  "dove": Dove,
+  "bison": Bison,
+  "bull": Bull,
+  "bunny": Bunny,
+  "butterfly": Butterfly,
+  "cat": Cat,
+  "chicken": Chicken,
+  "cobra": Cobra,
+  "cheeta": Cheeta,
+  "corgi": Corgi,
+  "chinchilla": Chinchilla,
+  "cow": Cow,
+  "crab": Crab,
+  "crocodile": Crocodile,
+  "goose": Goose,
+  "fox": Fox,
+  "frog": Frog,
+  "goat": Goat,
+  "pig": Pig,
+  "dog": Dog,
+  "sheep": Sheep,
+  "raccoon": Raccoon,
+  "ferret": Ferret,
+  "salmon": Salmon,
+  "owl": Owl,
+  "shark": Shark,
+  "hippo": Hippo,
+  "turtle": Turtle,
+  "mole": Mole,
+  "monkey": Monkey,
+  "mouse": Mouse,
+  "horse": Horse,
+  "ostrich": Ostrich,
+  "seagull": Seagull,
+  "carp": Carp,
+  "snake": Snake,
+  "lizard": Lizard,
+  "beaver": Beaver,
+  "boar": Boar,
+  "pinguin": Pinguin
+}
 
 // Parent class for all plant objects, food for the animals
 class Plant extends Living {
@@ -2236,17 +2307,35 @@ class Tulip extends Plant {
   }
 }
 
+// All constructors of plants
+map.plantConstructors = {
+  "botelus": Botelus,
+  "maple": Maple,
+  "berry": Berry,
+  "seaweed": Seaweed,
+  "cactus": Cactus,
+  "tulip": Tulip,
+  "clematis": Clematis,
+  "daisy": Daisy,
+  "geranium": Geranium,
+  "lavender": Lavender,
+  "daffodil": Daffodil,
+  "vine": Vine,
+  "perennial": Perennial,
+  "sapling": Sapling,
+  "rice": Rice,
+  "magnolia": Magnolia,
+  "reed": Reed,
+  "setaria": Setaria,
+  "lily": Lily,
+  "agaric": Agaric,
+  "fern": Fern,
+}
 
 // Background texture objects
 class Texture extends Entity {
   constructor (sprite) {
-    super(new Coord(0, 0), sprite)
-  }
-
-  // Texture instances are drawn in many locations (L)
-  update (loc) {
-    this.loc = loc
-    super.update()
+    super(null, sprite)
   }
 }
 
@@ -2308,8 +2397,8 @@ class Creature extends Obj {
   // Terrain modifies maximum speed (L)
   move () {
     // Current tile
-    let x = Math.floor(this.loc.x / constants.scale)
-    let y = Math.floor(this.loc.y / constants.scale)
+    let x = Math.floor(this.loc.x / view.scale)
+    let y = Math.floor(this.loc.y / view.scale)
     // Fix illegal positions
     x = x < map.size ? x : map.size - 1
     x = x > 0 ? x : 0
@@ -2364,7 +2453,7 @@ class Creature extends Obj {
         if (this.middle && object.middle) {
           // Distance to object
           let distance = this.middle.distance(object.middle)
-          if (distance.magnitude <= (constants.scale * 2.5)) { // Minimaly x meter range for attack
+          if (distance.magnitude <= (view.scale * 2.5)) { // Minimaly x meter range for attack
             this.hit(object)
             return true // Hit sucessful
           }
@@ -2378,6 +2467,7 @@ class Creature extends Obj {
 class Player extends Creature {
   constructor (animal) {
     super(animal)
+    this.identity = "PC"
     this.moving = false // Move key being pressed
     this.attacking = false // Attack key begin pressed
     this.speedFactor = 0.65 // Starts at slow walking pace
@@ -2389,7 +2479,7 @@ class Player extends Creature {
   die () {
     // TODO add styled screen
     if (!this.notification) {
-      let alive = Math.round(((new Date()) - settings.startTime) / 1000)
+      let alive = Math.round(((new Date()) - new Date(settings.startTime)) / 1000)
       alert(`
         You were killed as a(n) ${this.traits.name}.
         You were alive for ${Math.floor(alive / 60)} minutes and ${alive % 60} seconds.
@@ -2398,6 +2488,11 @@ class Player extends Creature {
         `
       )
       this.notification = true
+      // Reset
+      settings.started = false
+      store.set("tiles", null)
+      store.set("animals", null)
+      store.set("plants", null)
       location.reload()
     }
   }
@@ -2549,6 +2644,7 @@ class Player extends Creature {
 class NPC extends Creature {
   constructor (animal) {
     super(animal)
+    this.identity = "NPC"
     this.state = "stop" // Start state
     this.currentBehaviour = "wandering" // Startbevaviour
     this.previousBehaviour = null
@@ -2556,7 +2652,7 @@ class NPC extends Creature {
     this.speedFactor = 0.65 // Not at max speed
     // Sight based on perception trait, from 1 to x m
     const x = 70
-    this.sightRadius = (1 + ((x - 1) * constants.scale * (this.traits.perception)) )
+    this.sightRadius = (1 + ((x - 1) * view.scale * (this.traits.perception)) )
 
     // Movement matrix (L)
     this.movement = {
@@ -2640,7 +2736,7 @@ class NPC extends Creature {
 
       // Follow prey
       if (Math.abs(distance.angle - this.speed.angle) < Math.PI / 3) { // Roughly the same direction
-        if (this.target && distance.magnitude > 2 * constants.scale) { // Prevents animal shaking on contact
+        if (this.target && distance.magnitude > 2 * view.scale) { // Prevents animal shaking on contact
           // Use component going in the direction of the animal
           let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
           distance.magnitude = inproduct
@@ -2846,38 +2942,44 @@ class NPC extends Creature {
 
 // Main drawing function
 view.refresh = window.setInterval(() => {
- if (settings.started) {
+ if (settings.run) {
    // Draw the map (L)
    let wait = [] // Draw over animals
+
+   let loc = new Coord(0, 0)
+   for (let name in map.textures) {
+     map.textures[name].loc = loc // Reference
+   }
    for (let y = 0; y < map.size; y++) {
      for (let x = 0; x < map.size; x++) {
-
-       let loc = new Coord(x * constants.scale, y * constants.scale)
        if (view.inside(loc, 96)) { // Only draw in view
-
          let symbol = map.tiles[y][x]
          if (symbol) {
            if (symbol === 't') {
              // trees have a background
-             map.textures['g'].update(loc)
-             loc.x += constants.scale
-             map.textures['g'].update(loc)
-             loc.y += constants.scale
-             map.textures['g'].update(loc)
-             loc.x -= constants.scale
-             map.textures['g'].update(loc)
-             wait.push(loc)
+             map.textures['g'].update()
+             loc.x += view.scale
+             map.textures['g'].update()
+             loc.y += view.scale
+             map.textures['g'].update()
+             loc.x -= view.scale
+             map.textures['g'].update()
+             loc.y -= view.scale
+             wait.push({x: loc.x, y: loc.y})
            } else {
-             map.textures[symbol].update(loc)
+             map.textures[symbol].update()
            }
          }
        }
+       loc.x += view.scale
      }
+     loc.x = 0
+     loc.y += view.scale
    }
    map.textures['w'].frame += 1
 
    // Animals and plants only live close to the view to improve performance
-   const edge = 32 * 10
+   const edge = 32 * 20
    // Draw plants
    for (let plant of plants) {
      if (plant) {
@@ -2896,28 +2998,35 @@ view.refresh = window.setInterval(() => {
    }
 
    // Draw trees over other objects
-   for (let loc of wait) {
-     map.textures['t'].update(loc)
+   for (let coord of wait) {
+     map.textures['t'].loc.x = coord.x
+     map.textures['t'].loc.y = coord.y
+     map.textures['t'].update()
    }
 
-   // // Spawn new creatures when below the max
+   // Spawn new creatures when below the max
    map.spawn()
-
-   // Sound control
-   if (settings.music) {
-     doc.sound.play()
-   } else {
-     doc.sound.pause()
-   }
  }
 }, Math.ceil(1000 / view.fps)) // Executes a certain amount of times per second
 
+
+// // Store creatures (settings and map are saved differently) every x seconds (L)
+// window.setTimeout(() => {
+//   store.set("animals", animals)
+//   store.set("plants", plants)
+// }, 30 * 1000)
+
+// Save before exiting (L)
+window.onbeforeunload = () => {
+  store.set("animals", animals)
+  store.set("plants", plants)
+  store.set("musicTime", doc.sound.currentTime)
+  return
+}
+
 // Resize window
-window.onresize = function (event) {
+window.onresize = () => {
   view.sizes()
-  if (animals[0]) {
-    animals[0].loc = view.middle
-  }
 }
 
 // Setup keyboard controls
@@ -2935,20 +3044,41 @@ document.addEventListener('keyup', () => {
 
 // Everything loaded
 document.onreadystatechange = function () {
-  if (document.readyState === 'complete') {
-    // Start game (A)
-    doc.startButton.addEventListener("click", function () {
-      // Screen sizes
-      view.sizes()
-      // View.middle reference passed so when the player location is updated the player view is as well
-      animals[0] = new Player(new Squirrel(view.middle))
-      // Generate map and initial animals/plants
-      map.generate()
-      map.spawn()
-      // Start game
-      settings.started = true
-      settings.startTime = new Date()
-      doc.startScreen.style.display = "none" // Hide
-    })
+  // Start game (A)
+  const start = function () {
+    view.sizes()
+    map.generate()
+    settings.run = true
+    doc.startScreen.style.display = "none" // Hide
   }
+
+  // Initialise or continue (L)
+  if (document.readyState === 'complete') {
+    if (settings.started) {
+      settings.getStorage()
+      start()
+      map.getCreatures()
+    } else {
+      doc.startButton.addEventListener("click", function () {
+        // Init settings if not a value
+        settings.started = true
+        settings.startTime = new Date()
+        settings.music = settings.music === undefined ? true : settings.music
+        settings.names = settings.names === undefined ? false : settings.names
+        start()
+        // View.middle reference passed so when the player location is updated the player view is as well
+        animals[0] = new Player(new Squirrel(view.middle))
+        map.spawn()
+        store.set("animals", animals)
+        store.set("plants", plants)
+      })
+    }
+  }
+
+  document.addEventListener("keydown", () => {
+    settings.interacted = true
+  })
+  document.addEventListener("click", () => {
+    settings.interacted = true
+  })
 }
