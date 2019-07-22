@@ -32,6 +32,7 @@ body {
 
 #menu {
   position: absolute;
+  z-index: 1;
 }
 
 #canvas {
@@ -47,6 +48,8 @@ body {
   top: 0;
   display: flex;
   font-family: 'Caesar Dressing', arial;
+  background-color: var(--grey-200);
+  z-index: 3;
 }
 
 #title {
@@ -70,4 +73,23 @@ body {
 }
 #start:hover {
   background: var(--light-green);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#loading {
+  border: 0.5rem solid var(--grey-200);
+  border-top: 0.5rem solid var(--green);
+  border-bottom: 0.5rem solid var(--green);
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+  animation: spin 2.5s linear infinite;
+  position: absolute;
+  left: calc(50% - 4.5rem);
+  top: calc(50% - 4.5rem);
+  z-index: 2;
 }

@@ -25,7 +25,8 @@ const settings = {
   set started (value) {
     store.set("started", value)
   },
-  run: false,
+  run: false, // Sequence of true in control flow: started/interacted, run, loaded
+  loaded: false,
   interacted: false,
   get startTime () {
     return this._startTime
@@ -34,8 +35,15 @@ const settings = {
     store.set("startTime", value) // Save, but access via variable for speed
     this._startTime = value
   },
+  get names () {
+    return this._names
+  },
+  set names (value) {
+    store.set("names", value)
+    this._names = value
+  },
   get music () {
-    return this._music
+    return store.get("musicTime")
   },
   set music (value) {
     // Sound control
@@ -53,14 +61,6 @@ const settings = {
       doc.sound.pause()
     }
     store.set("music", value)
-    this._music = value
-  },
-  get names () {
-    return this._names
-  },
-  set names (value) {
-    store.set("names", value)
-    this._names = value
   },
 }
 
@@ -69,7 +69,8 @@ const doc = {
   canvas: document.getElementById('canvas'),
   startScreen: document.getElementById("begin"),
   startButton: document.getElementById("start"),
-  sound: document.getElementById("soundtrack")
+  sound: document.getElementById("soundtrack"),
+  loading: document.getElementById("loading"),
 }
 
 // Related to the view and drawing
@@ -2942,7 +2943,7 @@ class NPC extends Creature {
 
 // Main drawing function
 view.refresh = window.setInterval(() => {
- if (settings.run) {
+ if (settings.run && settings.loaded) {
    // Draw the map (L)
    let wait = [] // Draw over animals
 
@@ -3006,6 +3007,13 @@ view.refresh = window.setInterval(() => {
 
    // Spawn new creatures when below the max
    map.spawn()
+ } else { // Check if fully loaded
+    let animalSprites = animals.every(animal => animal.sprites.loaded)
+    let plantSprites = plants.every(plants => plants.sprites.loaded)
+    if (animalSprites && plantSprites) {
+      settings.loaded = true
+      doc.loading.style.display = "none"
+    }
  }
 }, Math.ceil(1000 / view.fps)) // Executes a certain amount of times per second
 
@@ -3031,13 +3039,13 @@ window.onresize = () => {
 
 // Setup keyboard controls
 document.addEventListener('keydown', (event) => {
-  if (animals[0]) {
+  if (animals[0] && settings.loaded) {
     animals[0].control(event.keyCode, true)
   }
 })
 
 document.addEventListener('keyup', () => {
-  if (animals[0]) {
+  if (animals[0] && settings.loaded) {
     animals[0].control(event.keyCode, false) // Stop signal
   }
 })
@@ -3060,13 +3068,13 @@ document.onreadystatechange = function () {
       map.getCreatures()
     } else {
       doc.startButton.addEventListener("click", function () {
-        // Init settings if not a value
+        // Init settings
         settings.started = true
         settings.startTime = new Date()
         settings.music = settings.music === undefined ? true : settings.music
         settings.names = settings.names === undefined ? false : settings.names
+        // Initialise the game
         start()
-        // View.middle reference passed so when the player location is updated the player view is as well
         animals[0] = new Player(new Squirrel(view.middle))
         map.spawn()
         store.set("animals", animals)
@@ -3075,10 +3083,12 @@ document.onreadystatechange = function () {
     }
   }
 
-  document.addEventListener("keydown", () => {
+  const key = document.addEventListener("keydown", () => {
     settings.interacted = true
+    document.removeEventListener('keydown', key) // Remove self
   })
-  document.addEventListener("click", () => {
+  const click = document.addEventListener("click", () => {
     settings.interacted = true
+    document.removeEventListener('click', click)
   })
 }
