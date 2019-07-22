@@ -33,6 +33,42 @@ body {
 #menu {
   position: absolute;
   z-index: 1;
+  padding: 0.5rem;
+}
+
+#menu .items {
+  height: 0; /* invisible */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#menu button {
+  background-color: var(--light-green);
+  border-radius: 50%;
+  border-width: 0;
+  padding: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25)
+}
+#menu button .off {
+  display: none;
+}
+
+#menu button[name=menu] {
+  width: 3rem;
+  height: 3rem;
+}
+#menu button[name=menu] img {
+  width: 2rem;
+  height: 2rem;
 }
 
 #canvas {

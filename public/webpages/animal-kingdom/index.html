@@ -15,8 +15,30 @@
     <p id="title">Animal Kingdom</p>
     <button id="start">Start</button>
   </div>
+  <div id="loading"></div>
   <main>
-    <div id="menu"></div>
+    <div id="menu">
+      <button type="button" name="menu">
+        <img src="assets/icons/menu.svg" alt="Menu" title="Menu">
+      </button>
+      <div class="items">
+        <button type="button" name="music">
+          <img class="off" src="assets/icons/music-off.svg" alt="Turn the music off" title="Turn the music off">
+          <img class="on" src="assets/icons/music.svg" alt="Turn the music on" title="Turn the music on">
+        </button>
+        <button type="button" name="facts">
+          <img class="off" src="assets/icons/notify-off.svg" alt="Do not show facts about animals" title="Do not show facts about animals">
+          <img class="on" src="assets/icons/notify.svg" alt="Show facts about animals" title="Show facts about animals">
+        </button>
+        <button type="button" name="pause">
+          <img class="off" src="assets/icons/pause.svg" alt="Pause the game" title="Pause the game">
+          <img class="on" src="assets/icons/play.svg" alt="Unpause the game" title="Unpause the game">
+        </button>
+        <button type="button" name="delete">
+          <img src="assets/icons/delete.svg" alt="Restart the game" title="Restart the game">
+        </button>
+      </div>
+    </div>
     <div id="screen">
       <canvas id="canvas"></canvas>
     </div>

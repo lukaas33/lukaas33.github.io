@@ -29,21 +29,41 @@ const settings = {
   loaded: false,
   interacted: false,
   get startTime () {
-    return this._startTime
+    return store.get("startTime")
   },
   set startTime (value) {
-    store.set("startTime", value) // Save, but access via variable for speed
-    this._startTime = value
+    store.set("startTime", value)
   },
-  get names () {
-    return this._names
+  get facts () {
+    return store.get("facts")
   },
-  set names (value) {
-    store.set("names", value)
-    this._names = value
+  set facts (value) {
+    store.set("facts", value)
+    if (value) {
+      doc.facts.children[0].style.display = "none"
+      doc.facts.children[1].style.display = "block"
+    } else {
+      doc.facts.children[0].style.display = "block"
+      doc.facts.children[1].style.display = "none"
+    }
+  },
+  get paused () {
+    return store.get("paused")
+  },
+  set paused (value) {
+    store.set("paused", value)
+    if (value) {
+      settings.run = false
+      doc.pause.children[0].style.display = "none"
+      doc.pause.children[1].style.display = "block"
+    } else {
+      settings.run = true
+      doc.pause.children[0].style.display = "block"
+      doc.pause.children[1].style.display = "none"
+    }
   },
   get music () {
-    return store.get("musicTime")
+    return store.get("music")
   },
   set music (value) {
     // Sound control
@@ -51,14 +71,19 @@ const settings = {
       if (settings.interacted) {
         doc.sound.play()
         doc.sound.currentTime = store.get("musicTime")
+        doc.music.children[0].style.display = "block"
+        doc.music.children[1].style.display = "none"
       } else { // Try again
-        window.setTimeout((value) => {
+        settings._wait = window.setTimeout((value) => {
           settings.music = value
+          clearTimeout(settings._wait)
         }, 1000, value)
         return
       }
     } else {
       doc.sound.pause()
+      doc.music.children[0].style.display = "none"
+      doc.music.children[1].style.display = "block"
     }
     store.set("music", value)
   },
@@ -71,6 +96,12 @@ const doc = {
   startButton: document.getElementById("start"),
   sound: document.getElementById("soundtrack"),
   loading: document.getElementById("loading"),
+  menu: document.querySelector("button[name=menu]"),
+  music: document.querySelector("button[name=music]"),
+  delete: document.querySelector("button[name=delete]"),
+  pause: document.querySelector("button[name=pause]"),
+  facts: document.querySelector("button[name=facts]"),
+  menuItems: document.querySelector("#menu .items")
 }
 
 // Related to the view and drawing
@@ -424,17 +455,17 @@ window.godMode = function () {
   animals[0].traits.hunger = 0
 }
 
-// Get stored settings from progress (L)
-settings.getStorage = function () {
-  for (let property in settings) {
-    if (settings[property] === undefined) { // Not declared yet
-      let value = store.get(property)
-      if (value !== null) { // Exists
-        settings[property] = value
-      }
-    }
-  }
-}
+// Get stored settings from progress, needed for variables stored in local storage but often accessed (L)
+// settings.getStorage = function () {
+//   for (let property in settings) {
+//     if (settings[property] === undefined) { // Not declared yet
+//       let value = store.get(property)
+//       if (value !== null) { // Exists
+//         settings[property] = value
+//       }
+//     }
+//   }
+// }
 
 //   ____ _
 //  / ___| | __ _ ___ ___  ___  ___
@@ -1675,7 +1706,7 @@ class Hippo extends Animal {
       perception: 0.4,
       aggressiveness: 0.9,
       attack: 1.4,
-      hunger: 2,
+      hunger: 1,
       name: name
     }
   }
@@ -2502,16 +2533,24 @@ class Player extends Creature {
   // PC hit animal (L)
   hit (object) {
     super.hit(object)
-    if (object.health < 0 && !object.traits.nutrition) { // Just killed an animal
+    if (object.health < 0 && object.identity === "NPC") { // Just killed an animal
       let name = object.traits.name.toLowerCase()
       if (!this.spirits.includes(name)) { // Not killed before
         this.spirits.push(name)
       }
 
-      // TODO make option menu for this
+      this.transform(name)
+    }
+  }
+
+  // Transform into another animal
+  transform (name) {
+    if (this.spirits.indexOf(name) !== -1) {
+      let spirits = this.spirits
       let change = new map.animalConstructors[name]
       change = new change.constructor(this.loc) // Call the animal constructor with location
-      animals[animals.indexOf(this)] = new this.constructor(change) // Replace with new version of self
+      animals[0] = new this.constructor(change) // Replace with new version of self
+      animals[0].spirits = spirits
     }
   }
 
@@ -3039,14 +3078,39 @@ window.onresize = () => {
 
 // Setup keyboard controls
 document.addEventListener('keydown', (event) => {
-  if (animals[0] && settings.loaded) {
+  if (animals[0]) {
     animals[0].control(event.keyCode, true)
   }
 })
 
 document.addEventListener('keyup', () => {
-  if (animals[0] && settings.loaded) {
+  if (animals[0]) {
     animals[0].control(event.keyCode, false) // Stop signal
+  }
+})
+
+// Setup menu events (L)
+doc.menu.addEventListener('click', () => {
+  if (doc.menuItems.style.height === 'auto') {
+    doc.menuItems.style.height = 0
+  } else {
+    doc.menuItems.style.height = "auto"
+  }
+})
+doc.music.addEventListener('click', () => {
+  settings.music = !settings.music
+})
+doc.facts.addEventListener('click', () => {
+  settings.facts = !settings.facts
+})
+doc.pause.addEventListener('click', () => {
+  settings.paused = !settings.paused
+})
+doc.delete.addEventListener('click', () => {
+  if (animals[0]) {
+    if (window.confirm("Are you sure? You will lose all progress!")) {
+      animals[0].die()
+    }
   }
 })
 
@@ -3063,16 +3127,21 @@ document.onreadystatechange = function () {
   // Initialise or continue (L)
   if (document.readyState === 'complete') {
     if (settings.started) {
-      settings.getStorage()
+      // settings.getStorage()
       start()
       map.getCreatures()
+      // Execute settings actions
+      settings.music = settings.music
+      settings.facts = settings.facts
+      settings.paused = settings.paused
     } else {
       doc.startButton.addEventListener("click", function () {
         // Init settings
         settings.started = true
         settings.startTime = new Date()
+        settings.facts = settings.facts === undefined ? false : settings.facts
         settings.music = settings.music === undefined ? true : settings.music
-        settings.names = settings.names === undefined ? false : settings.names
+        settings.paused = false
         // Initialise the game
         start()
         animals[0] = new Player(new Squirrel(view.middle))
