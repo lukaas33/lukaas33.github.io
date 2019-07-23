@@ -69,6 +69,7 @@ const settings = {
     // Sound control
     if (value) {
       if (settings.interacted) {
+        clearTimeout(settings._wait)
         doc.sound.play()
         doc.sound.currentTime = store.get("musicTime")
         doc.music.children[0].style.display = "block"
@@ -76,8 +77,7 @@ const settings = {
       } else { // Try again
         settings._wait = window.setTimeout((value) => {
           settings.music = value
-          clearTimeout(settings._wait)
-        }, 1000, value)
+        }, 100, value)
         return
       }
     } else {
@@ -109,15 +109,18 @@ const view = {
   width: null,
   height: null,
   middle: null,
-  screen: doc.canvas.getContext('2d'),
+  now: Date.now(),
+  prev: Date.now(),
+  screen: doc.canvas.getContext('2d', {alpha: false}),
   fps: 25, // Frames per second
+  frameTime: null,
   scale: 32, // pixels in one meter
   sprites: {} // Store sprite references
 }
 
 // The entire map
 const map = {
-  size: 350, // Meters wide and heigh
+  size: 400, // Meters wide and heigh
   populationDensity: 750, // 1 animal per x square meters
   growthDensity: 100, // 1 plant per x square meters
   width: null,
@@ -625,7 +628,7 @@ class Entity {
   // Display a sprite on the screen (L)
   update () {
     if (this.sprites.loaded) { // Loaded
-      const switchRate = 12 // Switch sprite every x frames
+      const switchRate = 10 // Switch sprite every x frames
       let sprite = null
 
       if (this.sprites.moving) { // Moving object
@@ -647,7 +650,7 @@ class Entity {
       )
 
       let loc = view.relative(this.loc)
-      view.screen.drawImage(sprite, loc.x, loc.y)
+      view.screen.drawImage(sprite, Math.round(loc.x), Math.round(loc.y))
     }
   }
 }
@@ -710,16 +713,16 @@ class Living extends Entity {
       }
     }
 
-    if (settings.names) {
-      if (this.traits.name) {
-        view.screen.font = "10px sans"
-        view.screen.fillStyle = "#ffffff"
-        view.screen.textAlign = "center"
-        y += 2 * height // below hunger bar
-        // x += this.sprites.size.width / 2
-        view.screen.fillText(this.traits.name, x, y)
-      }
-    }
+    // if (settings.names) {
+    //   if (this.traits.name) {
+    //     view.screen.font = "10px sans"
+    //     view.screen.fillStyle = "#ffffff"
+    //     view.screen.textAlign = "center"
+    //     y += 2 * height // below hunger bar
+    //     // x += this.sprites.size.width / 2
+    //     view.screen.fillText(this.traits.name, x, y)
+    //   }
+    // }
   }
 }
 
@@ -2981,80 +2984,80 @@ class NPC extends Creature {
 // |_____| \_/ \___|_| |_|\__|___/
 
 // Main drawing function
-view.refresh = window.setInterval(() => {
+// TODO use offscreencanvas https://developers.google.com/web/updates/2018/08/offscreen-canvas
+view.refresh = function () {
  if (settings.run && settings.loaded) {
-   // Draw the map (L)
-   let wait = [] // Draw over animals
+   // Draw if new frame
+   view.now = Date.now()
+   if ((view.now - view.prev) > view.frameTime) {
+     view.prev = view.now
+     // Draw the map (L)
+     let wait = [] // Draw over animals
 
-   let loc = new Coord(0, 0)
-   for (let name in map.textures) {
-     map.textures[name].loc = loc // Reference
-   }
-   for (let y = 0; y < map.size; y++) {
-     for (let x = 0; x < map.size; x++) {
-       if (view.inside(loc, 96)) { // Only draw in view
-         let symbol = map.tiles[y][x]
-         if (symbol) {
-           if (symbol === 't') {
-             // trees have a background
-             map.textures['g'].update()
-             loc.x += view.scale
-             map.textures['g'].update()
-             loc.y += view.scale
-             map.textures['g'].update()
-             loc.x -= view.scale
-             map.textures['g'].update()
-             loc.y -= view.scale
-             wait.push({x: loc.x, y: loc.y})
-           } else {
-             map.textures[symbol].update()
+     let loc = new Coord(0, 0)
+     for (let name in map.textures) {
+       map.textures[name].loc = loc // Reference
+     }
+     for (let y = 0; y < map.size; y++) {
+       for (let x = 0; x < map.size; x++) {
+         if (view.inside(loc, 96)) { // Only draw in view
+           let symbol = map.tiles[y][x]
+           if (symbol) {
+             if (symbol === 't') {
+               // trees have a background
+               map.textures['g'].update()
+               loc.x += view.scale
+               map.textures['g'].update()
+               loc.y += view.scale
+               map.textures['g'].update()
+               loc.x -= view.scale
+               map.textures['g'].update()
+               loc.y -= view.scale
+               wait.push({x: loc.x, y: loc.y})
+             } else {
+               map.textures[symbol].update()
+             }
            }
          }
+         loc.x += view.scale
        }
-       loc.x += view.scale
+       loc.x = 0
+       loc.y += view.scale
      }
-     loc.x = 0
-     loc.y += view.scale
-   }
-   map.textures['w'].frame += 1
+     map.textures['w'].frame += 1
 
-   // Animals and plants only live close to the view to improve performance
-   const edge = 32 * 20
-   // Draw plants
-   for (let plant of plants) {
-     if (plant) {
-       if (view.inside(plant.loc, edge)) {
-         plant.live()
-       }
-     }
-   }
-   // Draw animals
-   for (let animal of animals) {
-     if (animal) {
-       if (view.inside(animal.loc, edge)) {
-         animal.live()
+     // Animals and plants only live close to the view to improve performance
+     const edge = 32 * 20
+     // Draw plants
+     for (let plant of plants) {
+       if (plant) {
+         if (view.inside(plant.loc, edge)) {
+           plant.live()
+         }
        }
      }
-   }
+     // Draw animals
+     for (let animal of animals) {
+       if (animal) {
+         if (view.inside(animal.loc, edge)) {
+           animal.live()
+         }
+       }
+     }
 
-   // Draw trees over other objects
-   for (let coord of wait) {
-     map.textures['t'].loc.x = coord.x
-     map.textures['t'].loc.y = coord.y
-     map.textures['t'].update()
-   }
+     // Draw trees over other objects
+     for (let coord of wait) {
+       map.textures['t'].loc.x = coord.x
+       map.textures['t'].loc.y = coord.y
+       map.textures['t'].update()
+     }
 
-   // Spawn new creatures when below the max
-   map.spawn()
- } else { // Check if fully loaded
-    let animalSprites = animals.every(animal => animal.sprites.loaded)
-    let plantSprites = plants.every(plants => plants.sprites.loaded)
-    if (animalSprites && plantSprites) {
-      settings.loaded = true
-      doc.loading.style.display = "none"
-    }
+     // Spawn new creatures when below the max
+     map.spawn()
+   }
  }
-}, Math.ceil(1000 / view.fps)) // Executes a certain amount of times per second
+ requestAnimationFrame(view.refresh) // Run again (when available, more efficient)
+}
 
 
 // // Store creatures (settings and map are saved differently) every x seconds (L)
@@ -3120,8 +3123,22 @@ document.onreadystatechange = function () {
   const start = function () {
     view.sizes()
     map.generate()
+    view.frameTime = Math.round(1000 / view.fps)
     settings.run = true
     doc.startScreen.style.display = "none" // Hide
+    // Wait until loaded
+    settings._load = setInterval(() => {
+      let animalSprites = animals.every(animal => animal.sprites.loaded)
+      let plantSprites = plants.every(plants => plants.sprites.loaded)
+      let textureSprites = map.textures['g'].sprites.loaded && map.textures['w'].sprites.loaded && map.textures['t'].sprites.loaded
+
+      if (animalSprites && plantSprites && textureSprites) {
+        settings.loaded = true
+        doc.loading.style.display = "none"
+        clearInterval(settings._load)
+        view.refresh()
+      }
+    }, 10)
   }
 
   // Initialise or continue (L)
@@ -3133,15 +3150,15 @@ document.onreadystatechange = function () {
       // Execute settings actions
       settings.music = settings.music
       settings.facts = settings.facts
-      settings.paused = settings.paused
+      settings.paused = false
     } else {
       doc.startButton.addEventListener("click", function () {
         // Init settings
         settings.started = true
         settings.startTime = new Date()
-        settings.facts = settings.facts === undefined ? false : settings.facts
-        settings.music = settings.music === undefined ? true : settings.music
         settings.paused = false
+        settings.facts = settings.facts === null ? false : settings.facts
+        settings.music = settings.music === null ? true : settings.music
         // Initialise the game
         start()
         animals[0] = new Player(new Squirrel(view.middle))
