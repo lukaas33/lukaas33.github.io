@@ -15,6 +15,8 @@ const base = 'https://' + window.location.host
 var target = null
 var images = []
 var files = []
+var user
+var pass
 var working = [] // Tracks files begin read async
 
 // TODO add collection upload
@@ -343,8 +345,8 @@ doc.skills.addEventListener('submit', (event) => {
 // << Actions >>
 setTimeout(() => {
   // Auth
-  var user = prompt('Username', '')
-  var pass = prompt('Password', '')
+  user = prompt('Username', '')
+  pass = prompt('Password', '')
 
   if (user === null || pass === null) { // Wrong
     window.history.back() // Return
