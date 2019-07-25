@@ -122,7 +122,7 @@ const view = {
 const map = {
   size: 400, // Meters wide and heigh
   populationDensity: 750, // 1 animal per x square meters
-  growthDensity: 100, // 1 plant per x square meters
+  growthDensity: 200, // 1 plant per x square meters
   width: null,
   height: null,
   textures: null,
@@ -381,8 +381,7 @@ map.create = function (species, constructors, inScreen) {
   // Check if position is legal
   const isLegal = function (loc, object) {
     // Must be outside view
-    let inView = (loc.x < view.middle.x - view.width / 2 || loc.x > view.middle.x + view.width / 2)
-    inView = inView || (loc.y < view.middle.y - view.height / 2 || loc.y > view.middle.y + view.height / 2)
+    let inView = !view.inside(loc, 0)
 
     // Legal terrain for the object
     const row = Math.floor(loc.y / view.scale)
@@ -2439,8 +2438,8 @@ class Creature extends Obj {
     x = x > 0 ? x : 0
     y = y < map.size ? y : map.size - 1
     y = y > 0 ? y : 0
-    let terrain = map.tiles[y][x]
     // Current area
+    let terrain = map.tiles[y][x]
     let area = (terrain === null || terrain === undefined) ? "sky" : map.textures[terrain].area // Null value is a tree
 
     // Terrain influences speed
@@ -2473,11 +2472,15 @@ class Creature extends Obj {
     object.health -= this.traits.attack
     object.hitted = true
 
-    // TODO implement eating mode to replace next lines
-    if (object.traits.nutrition) { // Plant
-      this.hunger += object.traits.nutrition * 20
-    } else { // Animal
-      this.hunger += object.traits.mass * this.traits.attack * 10
+    if (object.health < 0) { // Just killed it
+      this.target = null
+
+      // TODO implement eating mode to replace next lines
+      if (object.traits.nutrition) { // Plant
+        this.hunger += object.traits.nutrition * 20
+      } else { // Animal
+        this.hunger += object.traits.mass * this.traits.attack * 10
+      }
     }
   }
 
@@ -2504,9 +2507,7 @@ class Player extends Creature {
     super(animal)
     this.identity = "PC"
     this.moving = false // Move key being pressed
-    this.attacking = false // Attack key begin pressed
     this.speedFactor = 0.65 // Starts at slow walking pace
-    this.targeting = null // Currently targeting animal
     this.spirits = [animal.name.toLowerCase()] // Animals to change into
   }
 
@@ -2533,9 +2534,11 @@ class Player extends Creature {
   }
 
 
-  // PC hit animal (L)
+  // PC hit actions (L)
   hit (object) {
     super.hit(object)
+
+    // Collect animal spirits
     if (object.health < 0 && object.identity === "NPC") { // Just killed an animal
       let name = object.traits.name.toLowerCase()
       if (!this.spirits.includes(name)) { // Not killed before
@@ -2546,7 +2549,7 @@ class Player extends Creature {
     }
   }
 
-  // Transform into another animal
+  // Transform into another animal (L)
   transform (name) {
     if (this.spirits.indexOf(name) !== -1) {
       let spirits = this.spirits
@@ -2574,7 +2577,7 @@ class Player extends Creature {
         movement = new Coord(0, 1)
         break
       case 32: // Spacebar
-        this.attackButton(action)
+        this.attack()
         break
       case 16: // Shift
         if (action) {
@@ -2605,45 +2608,64 @@ class Player extends Creature {
     }
   }
 
-  // Player tries to attack NPC's will respond (L)
-  attackButton (action) {
-    if (action) { // Key pressed
-      if (!this.attacking) { // Have to release and press again
-        this.attacking = true
-        for (let animal of animals) {
-          if (this.attack(animal)) { // Hit
-            if (!this.targeting) { // Not hunting an animal
-              this.target = animal
-              // Remove as target after some time (NPC will forget being hunted)
-              this.targeting = window.setInterval(() => {
-                let distance = this.middle.distance(this.target.middle)
-                // Check if still in range
-                let range = animal.sightRadius * (1 - this.traits.camouflage)
-                if (distance.magnitude >= range) {
-                  clearInterval(this.targeting)
-                  this.targeting = null
-                  this.target = null
-                }
-              }, 500)
-            } else { // Is hunting animal
-              if (animal !== this.target) { // Attack different animal
-                this.target = animal
-                window.clearInterval(this.targeting)
-              }
-            }
-            return // Attack one at the time
-          }
-         }
-        for (let plant of plants) {
-          if (this.attack(plant)) { // Hit
-            return // Attack one at the time
+  // Different actions for attack method (L)
+  attack () {
+    // Select target
+    if (!this.target) {
+      let distances = []
+      let close = []
+
+      for (let animal of animals) {
+        if (animal.middle && this.middle) {
+          let range = animal.sightRadius * (1 - animal.traits.camouflage)
+          let distance = this.middle.distance(animal.middle)
+          if (distance.magnitude <= range) {
+            distances.push(distance.magnitude)
+            close.push(animal)
           }
         }
       }
-    } else { // already on
-      this.attacking = false
+
+      for (let plant of plants) {
+        if (plant.middle && this.middle) {
+          let distance = this.middle.distance(plant.middle)
+          distances.push(distance.magnitude)
+          close.push(plant)
+        }
+      }
+
+      if (close.length > 0) {
+        const min = Math.min(...distances)
+        this.target = close[distances.indexOf(min)] // Closest
+      }
+    }
+
+    // Attack and add the prey to target (will flee or fight back)
+    if (this.target) {
+      super.attack(this.target)
+
+      // Check if target still close enough
+      this._check = window.setInterval(() => {
+        if (this.target) {
+          if (this.target.identity === "NPC") {
+            if (!view.inside(this.target.loc, -32)) { // (almost) Outside the view
+              this.target = null
+              window.clearInterval(this._check)
+            }
+          } else {
+            let distance = this.middle.distance(this.target.middle)
+            if (distance.magnitude >= (4 * view.scale)) {
+              this.target = null
+              window.clearInterval(this._check)
+            }
+          }
+        } else {
+          window.clearInterval(this._check)
+        }
+      }, 1000)
     }
   }
+
 
   // View adapts when you get close to the edge, not in the center (L)
   move () {
@@ -2762,8 +2784,16 @@ class NPC extends Creature {
     }
   }
 
+
   // Hunts another creature (L)
   hunt () {
+    const cancel = () => {
+      this.behaviour = "wandering"
+      this.target = null
+      this.hitted = false
+      this.chooseDirection()
+    }
+
     // If exists
     if (this.target && (animals.includes(this.target) || plants.includes(this.target)) && this.target.health > 0) {
       let distance = this.middle.distance(this.target.middle)
@@ -2771,14 +2801,11 @@ class NPC extends Creature {
       // Check if still in range
       let range = this.sightRadius * (1 - this.target.traits.camouflage)
       if (distance.magnitude >= range) { // Lost target
-        this.behaviour = "wandering"
-        this.target = null
-        this.hitted = false
-        this.chooseDirection()
+        cancel()
       }
 
       // Follow prey
-      if (Math.abs(distance.angle - this.speed.angle) < Math.PI / 3) { // Roughly the same direction
+      if (Math.abs(distance.angle - this.speed.angle) < Math.PI / 2) { // Roughly the same direction
         if (this.target && distance.magnitude > 2 * view.scale) { // Prevents animal shaking on contact
           // Use component going in the direction of the animal
           let inproduct = this.speed.x * distance.x + this.speed.y * distance.y
@@ -2796,15 +2823,19 @@ class NPC extends Creature {
       // Try to attack
       this.attack(this.target)
     } else { // Lost target
-      this.behaviour = "wandering"
-      this.target = null
-      this.hitted = false
-      this.chooseDirection()
+      cancel()
     }
   }
 
   // Fight or flight response (L)
   fightFlight () {
+    const cancel = () => {
+      this.behaviour = "wandering"
+      this.hunter = null
+      this.hitted = false
+      this.chooseDirection()
+    }
+
     // If exists
     if (this.hunter.target === this && animals.includes(this.hunter) && this.hunter.health > 0) {
       let distance = this.middle.distance(this.hunter.middle)
@@ -2812,10 +2843,7 @@ class NPC extends Creature {
       // Check if still close
       let range = this.sightRadius * (1 - this.hunter.traits.camouflage)
       if (distance.magnitude >= range) { // Lost hunter
-        this.behaviour = "wandering"
-        this.hunter = null
-        this.hitted = false
-        this.chooseDirection()
+        cancel()
       }
 
       // Self defense based on agression
@@ -2846,10 +2874,7 @@ class NPC extends Creature {
         this.acceleration = distance
       }
     } else { // Lost hunter
-      this.behaviour = "wandering"
-      this.hunter = null
-      this.hitted = false
-      this.chooseDirection()
+      cancel()
     }
   }
 
