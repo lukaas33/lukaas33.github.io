@@ -87,7 +87,13 @@ self.addEventListener('fetch', event => {
 
     }).catch(error => {
       console.warn(error)
-      return fetch("assets/images/placeholder.svg") // Return the placeholder
+      let url = event.request.url
+      if (url.indexOf('.png') !== -1 || url.indexOf('.jpg') !== -1 || url.indexOf('.svg') !== -1 ) {
+        return fetch("assets/images/placeholder.svg") // Return the placeholder
+      } else {
+        let response = new Response(new Blob(), {"status": 404})
+        return response
+      }
     })
   )
 })
