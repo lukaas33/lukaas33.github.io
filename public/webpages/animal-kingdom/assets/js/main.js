@@ -449,7 +449,8 @@ map.getCreatures = function () {
 
 // Godmode function, called via console (A)
 window.godMode = function () {
-  animals[0].health = 1000
+  animals[0].health = 250
+  animals[0].traits.maxHealth = 250
   animals[0].hunger = 100
   animals[0].traits.maxSpeed = 30,
   animals[0].traits.acceleration = 1
@@ -498,6 +499,12 @@ class Coord {
   multiply (value) {
     this.x *= value
     this.y *= value
+  }
+
+  // Round to ints
+  round () {
+    this.x = Math.round(this.x)
+    this.y = Math.round(this.y)
   }
 
   // Rotate the vector
@@ -627,7 +634,7 @@ class Entity {
   // Display a sprite on the screen (L)
   update () {
     if (this.sprites.loaded) { // Loaded
-      const switchRate = 10 // Switch sprite every x frames
+      const switchRate = 8 // Switch sprite every x frames
       let sprite = null
 
       if (this.sprites.moving) { // Moving object
@@ -649,7 +656,17 @@ class Entity {
       )
 
       let loc = view.relative(this.loc)
-      view.screen.drawImage(sprite, Math.round(loc.x), Math.round(loc.y))
+      loc.round()
+      if (this.opacity < 1) { // Display as dead
+        view.screen.save()
+        view.screen.translate(loc.x, loc.y)
+        view.screen.rotate(Math.PI)
+        view.screen.globalAlpha = this.opacity
+        view.screen.drawImage(sprite, -this.sprites.size.width, -this.sprites.size.height)
+        view.screen.restore()
+      } else { // Normal
+        view.screen.drawImage(sprite, loc.x, loc.y)
+      }
     }
   }
 }
@@ -663,16 +680,9 @@ class Living extends Entity {
   // Living being's general actions (L)
   live () {
     if (this.health <= 0) { // RIP
-      this.health = 0
-      this.die()
-    }
-    this.hunger = this.hunger > 100 ? 100 : this.hunger // Can't be higher than 100
-
-    if (this.hunger > 75) { // Regenerate health
-      this.health += (this.traits.maxHealth / 100) / view.fps // 1% per second
-    } else if (this.hunger <= 0) {
-      this.hunger = 0
-      this.health -= (5 * this.traits.maxHealth / 100) / view.fps // 5% per second
+      this.health = this.traits.maxHealth // Can be eaten
+      this.hunger = 100
+      this.dead = true
     }
   }
 
@@ -888,11 +898,6 @@ class Animal extends Obj {
   constructor (loc, name) {
     super(loc, new Sprites(name, true, false))
     this.name = name
-  }
-
-  // Additional functionality for animal lives (L)
-  live () {
-    super.live()
   }
 }
 
@@ -2052,11 +2057,15 @@ class Plant extends Living {
 
   // Functionality for plant lives (L)
   live () {
-    this.update()
-    super.live()
+    if (this.dead) {
+      this.die()
+    } else {
+      this.update()
+      super.live()
+    }
   }
 
-  // Plant dies (L)
+  // Plant dies and disapears when completely eaten (L)
   die () {
     for (let i = 0; i < plants.length; i++) {
       if (plants[i] === this) {
@@ -2411,19 +2420,50 @@ class Creature extends Obj {
     this.traits = animal.traits
     this.health = this.traits.maxHealth
     this.hunger = 100 // Percentage, the same value for every animal
+    // Sight based on perception trait, from 1 to x meters
+    const x = 70
+    this.sightRadius = (1 + ((x - 1) * view.scale * (this.traits.perception)))
+    this.dead = false
+    this.opacity = 1
   }
 
-  // Animal gets hungry (L)
+  // Animals get hungry (L)
   live () {
-    this.hunger -= (this.traits.hunger / view.fps) // Remove per second
-    super.live()
+    if (this.dead) {
+      this.die()
+    } else {
+      this.hunger -= (this.traits.hunger / view.fps) // Remove per second
+      this.hunger = this.hunger > 100 ? 100 : this.hunger // Can't be higher than 100
+
+      if (this.hunger > 75) { // Regenerate health
+        let max = this.traits.maxHealth
+        this.health += (max / 100) / view.fps // 1% per second
+        this.health = this.health > max ? max : this.health
+      } else if (this.hunger <= 0) {
+        this.hunger = 0
+        this.health -= (5 * this.traits.maxHealth / 100) / view.fps // 5% per second
+      }
+
+      super.live()
+    }
   }
 
-  // Animal dies (L)
+  // Animal disappears slowly after dying (L)
   die () {
-    for (let i = 0; i < animals.length; i++) {
-      if (animals[i] === this) {
-        animals.splice(i, 1)
+    if (this.health > 0) {
+      // Animal will fade out in x seconds
+      this.opacity -= 1 / (30 * view.fps)
+      this.frame = 0
+      this.update()
+    } else {
+      this.opacity = 0
+    }
+    // Disappear
+    if (this.opacity <= 0.35) {
+      for (let i = 0; i < animals.length; i++) {
+        if (animals[i] === this) {
+          animals.splice(i, 1)
+        }
       }
     }
   }
@@ -2544,8 +2584,6 @@ class Player extends Creature {
       if (!this.spirits.includes(name)) { // Not killed before
         this.spirits.push(name)
       }
-
-      this.transform(name)
     }
   }
 
@@ -2555,7 +2593,10 @@ class Player extends Creature {
       let spirits = this.spirits
       let change = new map.animalConstructors[name]
       change = new change.constructor(this.loc) // Call the animal constructor with location
-      animals[0] = new this.constructor(change) // Replace with new version of self
+      change = new this.constructor(change)
+      change.hunger = this.hunger
+      change.health = this.health
+      animals[0] = change
       animals[0].spirits = spirits
     }
   }
@@ -2616,7 +2657,7 @@ class Player extends Creature {
       let close = []
 
       for (let animal of animals) {
-        if (animal.middle && this.middle) {
+        if (animal.middle && this.middle && animal !== this) {
           let range = animal.sightRadius * (1 - animal.traits.camouflage)
           let distance = this.middle.distance(animal.middle)
           if (distance.magnitude <= range) {
@@ -2647,14 +2688,17 @@ class Player extends Creature {
       // Check if target still close enough
       this._check = window.setInterval(() => {
         if (this.target) {
-          if (this.target.identity === "NPC") {
+          if (this.target.dead) {
+            this.target = null
+            window.clearInterval(this._check)
+          } else if (this.target.identity === "NPC") { // Animals
             if (!view.inside(this.target.loc, -32)) { // (almost) Outside the view
               this.target = null
               window.clearInterval(this._check)
             }
-          } else {
+          } else { // Plants
             let distance = this.middle.distance(this.target.middle)
-            if (distance.magnitude >= (4 * view.scale)) {
+            if (distance.magnitude >= (4 * view.scale)) { // Out of range
               this.target = null
               window.clearInterval(this._check)
             }
@@ -2715,9 +2759,6 @@ class NPC extends Creature {
     this.previousBehaviour = null
     this.step = 0
     this.speedFactor = 0.65 // Not at max speed
-    // Sight based on perception trait, from 1 to x m
-    const x = 70
-    this.sightRadius = (1 + ((x - 1) * view.scale * (this.traits.perception)) )
 
     // Movement matrix (L)
     this.movement = {
@@ -2755,22 +2796,23 @@ class NPC extends Creature {
 
   // Additional functionality for live, determines NPC behaviour (L)
   live () {
-    if (this.behaviour === "wandering") {
-      this.look() // Look around, can change behaviour
-      this.wander()
-    } else if (this.behaviour === "hunting") {
-      this.hunt()
-    } else if (this.behaviour === "fleeing" || this.behaviour === "defending") {
-      this.look() // Look around, can change behaviour
-      this.fightFlight()
-    } else if (this.behaviour === "eating") {
-      // TODO implement eat
-    } else if (this.behaviour === "hiding") {
-      // TODO implement hide
+    if (!this.dead) {
+      if (this.behaviour === "wandering") {
+        this.look() // Look around, can change behaviour
+        this.wander()
+      } else if (this.behaviour === "hunting") {
+        this.hunt()
+      } else if (this.behaviour === "fleeing" || this.behaviour === "defending") {
+        this.look() // Look around, can change behaviour
+        this.fightFlight()
+      } else if (this.behaviour === "eating") {
+        // TODO implement eat
+      } else if (this.behaviour === "hiding") {
+        // TODO implement hide
+      }
+
+      // TODO implement obstacle avoidance
     }
-
-    // TODO implement obstacle avoidance
-
     super.live()
   }
 
