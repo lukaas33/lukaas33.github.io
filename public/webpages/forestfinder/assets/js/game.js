@@ -239,13 +239,14 @@ navigation.track(() => { // When location is retrieved, this runs:
 })
 
 // Get the data, online if needed
-if (database.locations === null || database.locations.length > 0) { // Available offline
+if (database.locations === null || database.locations.length === 0) {
 // if (true) { // Always refresh for testing
   database.getOnline((data) => { // Get the data online
-    console.log(data)
-    game.start()
+    if (data) {
+      game.start()
+    }
   })
-} else {
+} else { // Available offline
   database.checkCachedImages(database.locations) // Cached images may have been overwritten
   game.start()
 }

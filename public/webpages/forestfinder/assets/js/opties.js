@@ -13,18 +13,21 @@ document.querySelector("button[name=end]").addEventListener('click', (event) => 
 
 document.querySelector("button[name=reset]").addEventListener('click', (event) => {
   this.disabled = true // No clicking twice
+  let prompt = "Weet je het zeker?\nJe verliest al je voortgang in de app.\nZorg dat je je data hierboven downloadt."
 
-  database.setStorage("ended", false)
-  database.startTime = null
+  if (window.confirm(prompt)) {
+    database.setStorage("ended", false)
+    database.startTime = null
 
-  database.setStorage("visited", [])
-  database.setStorage("route", [])
+    database.setStorage("visited", [])
+    database.setStorage("route", [])
 
-  database.setStorage("gameProgress", null)
-  database.setStorage("points", 0)
+    database.setStorage("gameProgress", null)
+    database.setStorage("points", 0)
 
 
-  location.href = '' // Redirect home
+    location.href = '' // Redirect home
+  }
 })
 
 // Not used anymore
@@ -52,6 +55,7 @@ if (database.getStorage("userData")) {
   doc.appendChild(names)
 }
 
-if (database.getStorage("ended") === true) { // Doesn't work if game already ended
+if (database.getStorage("ended") === true) { // Activated based on game ended
   document.querySelector("button[name=end]").disabled = true
+  document.querySelector("button[name=save]").disabled = false
 }

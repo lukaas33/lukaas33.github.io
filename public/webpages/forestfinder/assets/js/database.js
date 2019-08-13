@@ -42,13 +42,17 @@ const database = {
   },
   // Get the data online and save it
   getOnline (callback) {
-    getCsv(this.link, (data) => { // Get via xhttp
-      // Cache images for offline use
-      this.checkCachedImages(data)
+    if (navigator.onLine) {
+      getCsv(this.link, (data) => { // Get via xhttp
+        // Cache images for offline use
+        this.checkCachedImages(data)
 
-      this.locations = data // Store data
-      callback(data) // Return the data
-    })
+        this.locations = data // Store data
+        callback(data) // Return the data
+      })
+    } else {
+      window.confirm("Je hebt geen internet.\nData kan niet worden gedownload.")
+    }
   },
   // Local storage functions
   getStorage (name) {
