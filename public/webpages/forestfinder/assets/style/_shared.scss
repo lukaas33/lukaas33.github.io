@@ -10,20 +10,20 @@
 
 :root {
   font-size: 18px; // Rem is based on this
-  height: 100%;
+  height: auto;
   width: 100%;
 }
 
 html {
   font-size: 100%;
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 
 // Common elements
 body {
   width: 100%;
-  height: 100%;
+  height: -webkit-fill-available;
   font-size: 1rem;
   font-family: 'roboto', sans-serif;
   background-color: $grey-200;
