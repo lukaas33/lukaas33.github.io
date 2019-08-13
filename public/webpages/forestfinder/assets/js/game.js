@@ -184,6 +184,7 @@ const game = {
     doc.nav.innerHTML = `<h4>Punten</h4><div class="tag">${quiz.points}</div>`
     doc.image.setAttribute('data-img', "assets/images/game-over.jpg")
     doc.image.src = "assets/images/game-over.jpg"
+    doc.image.setAttribute("alt", "Game over image")
   }
 }
 
@@ -205,6 +206,8 @@ const display = function () { // Displays info of the tree to visit
     const replace = new Image()
     replace.onload = () => {
       this.src = this.getAttribute('data-img') // Load regular image
+      this.setAttribute('data-img', '')
+      this.setAttribute('alt', "Afbeelding van een " + game.destinationInfo.name)
     }
     replace.src = this.getAttribute('data-img')
   }

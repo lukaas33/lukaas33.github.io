@@ -112,6 +112,8 @@ const herbarium = {
       const replace = new Image()
       replace.onload = () => {
         this.src = this.getAttribute('data-img') // Load regular image
+        this.setAttribute('data-img', '')
+        this.setAttribute('alt', "Afbeelding van een " + data.name)
       }
       replace.src = this.getAttribute('data-img')
     }
@@ -242,6 +244,8 @@ const herbarium = {
       const replace = new Image()
       replace.onload = () => {
         this.src = this.getAttribute('data-img') // Load regular image
+        this.setAttribute('data-img', '')
+        this.setAttribute('alt', "Afbeelding van een " + data.name)
       }
       replace.src = this.getAttribute('data-img')
     }
