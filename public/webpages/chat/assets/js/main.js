@@ -210,13 +210,14 @@ const getData = function (callback) {
     if (this.readyState === 4 && this.status === 200) {
       console.log('got', this.responseText)
       if (this.responseText !== 'error') { // Ajax succesfull
-        callback(JSON.parse(this.responseText, function (key, value) {
+        var data = JSON.parse(decodeURIComponent(this.responseText), function (key, value) {
           if (key === 'time') {
             return new Date(value)
           } else {
             return value
           }
-        }))
+        })
+        callback(data)
       } else {
         callback(null)
       }
@@ -367,7 +368,6 @@ const displayUser = function (user, item) {
 
 // Display the user data
 const displayData = function () {
-
   var list = doc('#users ul')
   var items = doc('#users .other')
   if (NodeList.prototype.isPrototypeOf(items)) {
