@@ -23,7 +23,8 @@ html {
 // Common elements
 body {
   width: 100%;
-  height: -webkit-fill-available;
+  height: auto;
+  min-height: -webkit-fill-available;
   font-size: 1rem;
   font-family: 'roboto', sans-serif;
   background-color: $grey-200;
@@ -38,6 +39,10 @@ br {
 hr {
   border-top: 1px solid $grey-400;
   margin: 1rem 5%; // Two lines heigh, x% of screen wide
+}
+
+main.page {
+  opacity: 0;
 }
 
 

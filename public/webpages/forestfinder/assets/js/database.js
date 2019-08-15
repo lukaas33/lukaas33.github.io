@@ -51,7 +51,7 @@ const database = {
         callback(data) // Return the data
       })
     } else {
-      window.confirm("Je hebt geen internet.\nData kan niet worden gedownload.")
+      alert("Je hebt geen internet.\nData kan niet worden gedownload.")
     }
   },
   // Local storage functions
@@ -122,19 +122,32 @@ const database = {
 // Asks the user for data
 const promptUserData = function (callback) {
   // Sequence of unskippable questions
-  let group = prompt("Wie zitten er allemaal in je groepje?\nVul alle namen gescheiden door komma's in.")
+  const ask = function (question) {
+    const pattern =/^[\u0080-\uFFFFa-z0-9, ]+$/i // Alphabet, number and extended latin (ü etc.)
+    while (true) {
+      let answer = prompt(question)
+
+      if (answer.match(pattern)) {
+        return answer
+      } else {
+        alert("Incorrecte invoer.\nGebruik alleen letters en getallen.")
+      }
+    }
+  }
+
+  let group = ask("Wie zitten er allemaal in je groepje?\nVul alle namen gescheiden door komma's in.")
   let names = group.split(',')
   names = names.map(x => x.trim()) // Remove whitespace
-  let grade = prompt("In welke klas zit je?")
-  let teacher = prompt("Welke docent heb je?")
+  let grade = ask("In welke klas zit je?")
+  let teacher = ask("Welke docent heb je?")
 
   database.setStorage("userData", {
     names: names,
-    "class": grade,
-    teacher: teacher
+    "class": grade.trim(),
+    teacher: teacher.trim()
   })
 
-  while (!confirm("Klik op 'ok' als je klaar bent om te beginnen.")) {} // Display until true
+  while (!confirm("Druk op de knop als je klaar bent om te beginnen.")) {} // Display until true
   callback() // Continue executing code
 }
 
@@ -142,7 +155,6 @@ const promptUserData = function (callback) {
 const fileToDataUrl = function (file, callback) {
   const reader = new FileReader()
   reader.addEventListener("load", function () {
-    console.log(this)
     callback(this.result)
   }, false)
   reader.readAsDataURL(file)

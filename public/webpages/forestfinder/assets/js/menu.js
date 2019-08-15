@@ -85,5 +85,6 @@ const loading = window.setInterval(() => {
   if (document.readyState === "interactive" || document.readyState === "complete") {
     document.getElementById("loading").style.display = 'none'
     window.clearInterval(loading)
+    document.querySelector("main").style.opacity = 1
   }
 }, 5)

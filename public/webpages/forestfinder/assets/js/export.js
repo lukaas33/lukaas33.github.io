@@ -35,7 +35,6 @@ const removeDep = function (callback) {
   // Move css inline
   const css = document.getElementsByTagName("link")
   for (let i = 0; i < css.length; i++) {
-    console.log(css[i])
     let style = document.createElement("style")
     style.media = "print,screen"
     // Get the css code

@@ -31,8 +31,10 @@ header {
   $nav-height: 35vh; // x% of screen height
   height: $nav-height;
   display: flex; // Center content
-  justify-content: center;
+  justify-content: space-around;
   flex-wrap: wrap;
+  align-items: center;
+  flex-direction: column;
 
   h4 {
     width: 100%;
@@ -48,6 +50,15 @@ header {
     width: 8rem;
     font-size: 2.5rem;
     margin-left: 0;
+  }
+
+  p {
+    font-style: italic;
+
+    a {
+      color: $secondary-A700;
+      text-decoration: none;
+    }
   }
 
   svg {

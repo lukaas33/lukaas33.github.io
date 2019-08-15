@@ -150,14 +150,18 @@ const quiz = {
     quiz.progress.photos = []
 
     for (let i = 0; i < files.length; i ++) {
-      fileToDataUrl(files[i], (data) => {
-        quiz.progress.photos.push(data) // Save in dataurlformat
+      if (files[i]["type"].indexOf("image") !== -1) { // Type like image/jpeg
+        fileToDataUrl(files[i], (data) => {
+          quiz.progress.photos.push(data) // Save in dataurlformat
 
-        if (quiz.progress.photos) { // Not empty
-          quiz.at += 1
-          quiz.end()
-        }
-      })
+          if (quiz.progress.photos) { // Not empty
+            quiz.at += 1
+            quiz.end()
+          }
+        })
+      } else {
+        alert("Geen afbeelding gedetecteerd. Probeert het opnieuw.")
+      }
     }
   }
 }

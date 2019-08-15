@@ -75,7 +75,7 @@ const trackLocation = function (options, callback) {
     // Continualy track the user location
     navigation.trackId = navigator.geolocation.watchPosition((position) => {
       let loc = new Coord(position.coords) // Pass coords object directly
-      
+
       // // TEST
       // let end = document.querySelector("main")
       // let t = document.createElement('p')
@@ -83,18 +83,33 @@ const trackLocation = function (options, callback) {
       // end.appendChild(t)
 
       callback(loc) // Return value somewhere else and continue
-    }, () => {
+    }, (error) => {
       // Error
-      alert("Location error")
+      game.end()
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          alert("Je hebt geen toestemming gegeven voor je locatie.\nDe app werkt niet zonder GPS.")
+          break
+        case error.POSITION_UNAVAILABLE:
+          alert("De locatie kan niet worden opgehaald.\nHerlaad de app.")
+          break
+        case error.TIMEOUT:
+          alert("Het ophalen van de locatie duurde te lang.\nHerlaad de app.")
+          break
+        case error.UNKNOWN_ERROR:
+          alert("Er heeft een onbekende fout opgetreden.\nHerlaad de app.")
+          break
+      }
     }, options)
   } else {
-    // geolocation IS NOT available
-    alert("No GPS available")
+    game.end()
+    alert("Er is geen GPS beschikbaar.")
   }
 }
 
 
 if (window.DeviceOrientationEvent) { // Available
+  // Get absolute direction (angle with north 0)
   window.addEventListener("deviceorientationabsolute", (event) => {
     navigation.orientation = event.alpha
   }, true)

@@ -62,6 +62,9 @@ hr {
   border-top: 1px solid #BDBDBD;
   margin: 1rem 5%; }
 
+main.page {
+  opacity: 0; }
+
 header {
   display: flex;
   align-items: center;

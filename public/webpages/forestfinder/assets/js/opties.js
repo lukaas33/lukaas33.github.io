@@ -1,14 +1,15 @@
 // Events
 document.querySelector("button[name=refresh]").addEventListener('click', (event) => {
   database.getOnline((data) => {
-    console.log(data)
     document.querySelector("button[name=refresh]").disabled = true // Can't press twice
   })
 })
 
 document.querySelector("button[name=end]").addEventListener('click', (event) => {
-  database.startTime = (new Date()).getTime() - (database.duration * 1000) // Clock will be 0
-  // Automatic redirect via menu.js
+  let prompt = "Weet je het zeker?\nJe kan geen bomen meer zoeken.\nJe voorgang blijft wel bewaard."
+  if (window.confirm(prompt)) {
+    database.startTime = (new Date()).getTime() - (database.duration * 1000) // Clock will be 0 (Automatic redirect via menu.js)
+  }
 })
 
 document.querySelector("button[name=reset]").addEventListener('click', (event) => {
@@ -25,6 +26,9 @@ document.querySelector("button[name=reset]").addEventListener('click', (event) =
     database.setStorage("gameProgress", null)
     database.setStorage("points", 0)
 
+    if (confirm("Wil je ook je gebruikerdata verwijderen?")) {
+      database.setStorage("userData", null)
+    }
 
     location.href = '' // Redirect home
   }

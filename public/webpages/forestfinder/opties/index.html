@@ -31,9 +31,9 @@
     <style media="screen">
       /* Loading bar css should be instantly loaded */
       #loading {
-        border: 2rem solid #eeeeee;
+        border: 2rem solid #e0e0e0;
         border-top: 2rem solid #4caf50;
-        background-color: #e0e0e0;
+        background-color: #eeeeee;
         border-radius: 50%;
         width: 10rem;
         height: 10rem;
@@ -62,7 +62,7 @@
 
     </nav>
     <!-- Page content -->
-    <main>
+    <main class="page">
       <header>
         <button type="button" name="menu">
           <img src="assets/images/menu.svg" alt="Menu icon">
@@ -85,7 +85,7 @@
         <br>
         <div class="card">
           <h3>Voortgang exporteren</h3>
-          <p>Je kunt het lokaal opslaan.</p>
+          <p>Je kunt je voortgang na de speurtocht downloaden.</p>
           <!-- <button type="button" name="mail">
             <img src="assets/images/mail.svg">
             <span>Mail</span>
@@ -109,7 +109,7 @@
         </div>
         <br>
         <div class="card">
-          <h3>Reset voortgang</h3>
+          <h3 id="reset">Reset voortgang</h3>
           <p>
             Begin opnieuw.<br>
             Pas op, je kunt je voortgang niet terugkrijgen.
@@ -129,7 +129,6 @@
       if ('serviceWorker' in window.navigator) { // If support
         window.navigator.serviceWorker.register('serviceworker.js')
         .then((registration) => {
-          console.log(registration)
         })
         .catch((error) => {
           alert(error)

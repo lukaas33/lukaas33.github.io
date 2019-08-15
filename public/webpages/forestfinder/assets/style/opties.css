@@ -38,7 +38,8 @@ html {
 
 body {
   width: 100%;
-  height: -webkit-fill-available;
+  height: auto;
+  min-height: -webkit-fill-available;
   font-size: 1rem;
   font-family: 'roboto', sans-serif;
   background-color: #EEEEEE;
@@ -51,6 +52,9 @@ br {
 hr {
   border-top: 1px solid #BDBDBD;
   margin: 1rem 5%; }
+
+main.page {
+  opacity: 0; }
 
 header {
   display: flex;

@@ -31,9 +31,9 @@
     <style media="screen">
       /* Loading bar css should be instantly loaded */
       #loading {
-        border: 2rem solid #eeeeee;
+        border: 2rem solid #e0e0e0;
         border-top: 2rem solid #4caf50;
-        background-color: #e0e0e0;
+        background-color: #eeeeee;
         border-radius: 50%;
         width: 10rem;
         height: 10rem;
@@ -62,7 +62,7 @@
 
     </nav>
     <!-- Page content -->
-    <main>
+    <main class="page">
       <header>
         <button type="button" name="menu">
           <img src="assets/images/menu.svg" alt="Menu button">
@@ -81,7 +81,6 @@
       if ('serviceWorker' in window.navigator) { // If support
         window.navigator.serviceWorker.register('serviceworker.js')
         .then((registration) => {
-          console.log(registration)
         })
         .catch((error) => {
           alert(error)

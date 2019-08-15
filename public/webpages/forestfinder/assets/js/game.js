@@ -68,7 +68,6 @@ const game = {
         navigation.destination = new Coord(option) // Store only the coordinate here
       }
     }
-    console.log(id, options)
     this.destinationInfo = this.getInfo(id, options)
     // Display
     if (navigation.loc !== null) {
@@ -110,7 +109,7 @@ const game = {
     return destinationInfo
   },
   // Check if arrived
-  check (directions) {
+  check () {
     // Within x meters of an object will be considered the same location
     if (navigation.arrived()) {
       if (game.waiting !== null) {
@@ -131,7 +130,7 @@ const game = {
       loc: navigation.loc
     }
 
-    confirm(`Gefeliciteerd, je hebt de ${this.destinationInfo.name} gevonden!`)
+    alert(`Gefeliciteerd, je hebt de ${this.destinationInfo.name} gevonden!`)
 
     if (this.destinationInfo.required) { // Has a quiz
       quiz.start(this.destinationInfo, progress)
@@ -181,7 +180,9 @@ const game = {
     document.querySelector('#history h4').textContent = "overzicht"
     herbarium.recents()
     doc.name.textContent = 'Game over'
-    doc.nav.innerHTML = `<h4>Punten</h4><div class="tag">${quiz.points}</div>`
+    doc.nav.innerHTML = `<h4>Punten</h4>
+      <div class="tag">${quiz.points}</div>
+      <p>Begin opnieuw op de <a href="opties#reset">optiepagina</a>.</p>`
     doc.image.setAttribute('data-img', "assets/images/game-over.jpg")
     doc.image.src = "assets/images/game-over.jpg"
     doc.image.setAttribute("alt", "Game over image")
@@ -202,6 +203,7 @@ const doc = {
 const display = function () { // Displays info of the tree to visit
   doc.image.src = "assets/images/placeholder.svg" // Load placeholder first
   doc.image.setAttribute('data-img', game.destinationInfo.image)
+
   doc.image.onload = function () {
     const replace = new Image()
     replace.onload = () => {
@@ -233,11 +235,6 @@ navigation.track(() => { // When location is retrieved, this runs:
     const directions = navigation.directions()
     refresh(directions) // Run the sceen refresh
     game.check(directions) // Check if arrived
-    console.log("At:")
-    console.log(navigation.loc)
-    console.log("To:")
-    console.log(navigation.destination)
-    console.log(directions)
   }
 })
 
