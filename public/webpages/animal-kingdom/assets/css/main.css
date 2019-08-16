@@ -13,9 +13,10 @@
 
   /* Variables */
   --grey-200: #eeeeee;
-  --green: #006400;
-  --light-green: #9ACD32;
-  --light-brown: #DEE0C0;
+  --grey-300: #e0e0e0;
+  --green: #4caf50;
+  --light-green: #8bc34a;
+  --brown: #795548;
 }
 
 body {
@@ -28,6 +29,25 @@ body {
 :root, main, body, #screen, #begin {
   width: 100%;
   height: 100%;
+}
+
+button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-width: 0;
+}
+
+button[type=button] {
+  background-color: var(--light-green);
+  border-radius: 50%;
+  padding: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+button:focus {
+  outline: none;
 }
 
 #menu {
@@ -46,17 +66,9 @@ body {
 }
 
 #menu button {
-  background-color: var(--light-green);
-  border-radius: 50%;
-  border-width: 0;
-  padding: 0.5rem;
-  width: 2.5rem;
-  height: 2.5rem;
   margin-bottom: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
+
 #menu button .off {
   display: none;
 }
@@ -102,12 +114,13 @@ body {
   margin-top: 2rem;
   border-radius: 1rem;
   background-color: var(--green);
-  color: var(--light-brown);
+  color: var(--light-green);
   border: none;
   font-family: inherit;
 }
 #start:hover {
   background: var(--light-green);
+  color: var(--green);
 }
 
 @keyframes spin {
@@ -116,6 +129,7 @@ body {
 }
 
 #loading {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -132,4 +146,48 @@ body {
   height: 9rem;
   border-radius: 50%;
   animation: spin 2.5s linear infinite;
+}
+
+#overview {
+
+}
+
+#overview button[name=overview] {
+  display: none;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin: 2rem;
+  background-color: var(--brown);
+  z-index: 1;
+}
+
+#overview .animals {
+  position: absolute;
+  z-index: 4;
+  width: calc(100vw - 10rem);
+  height: calc(100vh - 10rem);
+  margin: 5rem;
+  display: none;
+  background-color: var(--grey-200);
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30);
+}
+
+#overview .animals div {
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+#overview .animals button {
+  background-color: var(--grey-300);
+}
+#overview .animals img {
+  width: 64px; 
+  height: 64px;
 }

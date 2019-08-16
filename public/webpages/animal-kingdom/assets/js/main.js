@@ -28,6 +28,21 @@ const settings = {
   run: false, // Sequence of true in control flow: started/interacted, run, loaded
   loaded: false,
   interacted: false,
+  _intervals: {},
+  _overview: false,
+  get overview () {
+    return this._overview
+  },
+  set overview (value) {
+    this._overview = value
+    if (value) {
+      doc.overview.style.display = 'initial'
+      settings.paused = true
+    } else {
+      doc.overview.style.display = 'none'
+      settings.paused = false
+    }
+  },
   get startTime () {
     return store.get("startTime")
   },
@@ -101,7 +116,10 @@ const doc = {
   delete: document.querySelector("button[name=delete]"),
   pause: document.querySelector("button[name=pause]"),
   facts: document.querySelector("button[name=facts]"),
-  menuItems: document.querySelector("#menu .items")
+  menuItems: document.querySelector("#menu .items"),
+  overview: document.querySelector("#overview .animals"),
+  gridOverview: document.querySelector("#overview .animals div"),
+  showOverview: document.querySelector("button[name=overview]"),
 }
 
 // Related to the view and drawing
@@ -456,6 +474,28 @@ window.godMode = function () {
   animals[0].traits.acceleration = 1
   animals[0].traits.attack = 1
   animals[0].traits.hunger = 0
+}
+
+settings.displayAnimals = function () {
+  doc.gridOverview.innerHTML = ''
+  for (let animal of animals[0].spirits) {
+    let button = document.createElement('button')
+    button.name = animal
+    button.onclick = () => {
+      animals[0].transform(button.name)
+      settings.overview = false
+    }
+    let spr = new Sprites(animal.toLowerCase(), true, false)
+    // Wait until loaded
+    settings._intervals[animal] = setInterval((spr, name) => {
+      if (spr.loaded) {
+        button.appendChild(spr["down"][0])
+        doc.gridOverview.appendChild(button)
+        clearInterval(settings._intervals[name])
+        delete settings._intervals[name]
+      }
+    }, 100, spr, animal)
+  }
 }
 
 // Get stored settings from progress, needed for variables stored in local storage but often accessed (L)
@@ -2550,7 +2590,7 @@ class Player extends Creature {
     this.identity = "PC"
     this.moving = false // Move key being pressed
     this.speedFactor = 0.65 // Starts at slow walking pace
-    this.spirits = [animal.name.toLowerCase()] // Animals to change into
+    this.spirits = [animal.name] // Animals to change into
   }
 
   // Game over
@@ -2582,18 +2622,19 @@ class Player extends Creature {
 
     // Collect animal spirits
     if (object.health < 0 && object.identity === "NPC") { // Just killed an animal
-      let name = object.traits.name.toLowerCase()
+      let name = object.traits.name
       if (!this.spirits.includes(name)) { // Not killed before
         this.spirits.push(name)
+        settings.displayAnimals() // Display
       }
     }
   }
 
   // Transform into another animal (L)
   transform (name) {
-    if (this.spirits.indexOf(name) !== -1) {
+    if (this.spirits.indexOf(name) !== -1 && name !== this.traits.name) {
       let spirits = this.spirits
-      let change = new map.animalConstructors[name]
+      let change = new map.animalConstructors[name.toLowerCase()]
       change = new change.constructor(this.loc) // Call the animal constructor with location
       change = new this.constructor(change)
       change.hunger = this.hunger
@@ -3197,6 +3238,9 @@ doc.delete.addEventListener('click', () => {
     }
   }
 })
+doc.showOverview.addEventListener('click', () => {
+  settings.overview = !settings.overview
+})
 
 // Everything loaded
 document.onreadystatechange = function () {
@@ -3215,9 +3259,11 @@ document.onreadystatechange = function () {
 
       if (animalSprites && plantSprites && textureSprites) {
         settings.loaded = true
+        settings.displayAnimals()
         doc.loading.style.display = "none"
+        doc.showOverview.style.display = 'initial'
+        view.refresh() // First draw
         clearInterval(settings._load)
-        view.refresh()
       }
     }, 10)
   }
