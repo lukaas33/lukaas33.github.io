@@ -680,9 +680,9 @@ class Living extends Entity {
   // Living being's general actions (L)
   live () {
     if (this.health <= 0) { // RIP
-      this.health = this.traits.maxHealth // Can be eaten
-      this.hunger = 100
       this.dead = true
+      this.health = this.traits.maxHealth // To be eaten
+      this.hunger = 100
     }
   }
 
@@ -2512,14 +2512,16 @@ class Creature extends Obj {
     object.health -= this.traits.attack
     object.hitted = true
 
-    if (object.health < 0) { // Just killed it
-      this.target = null
-
-      // TODO implement eating mode to replace next lines
-      if (object.traits.nutrition) { // Plant
-        this.hunger += object.traits.nutrition * 20
-      } else { // Animal
-        this.hunger += object.traits.mass * this.traits.attack * 10
+    if (object.traits.nutrition) { // Plant can be eaten alive
+      this.hunger += object.traits.nutrition * 10
+    } else if (object.dead) { // Animal can be eaten when dead
+      this.hunger += 100 * ((object.traits.mass * 10) / this.traits.mass)
+    } else { // Animal alive
+      if (object.health < 0) { // Just killed it
+        // target will change into dead-mode, can be eaten now
+        if (this.identity === "NPC") {
+          this.behaviour = "eating" // Eat the animal
+        }
       }
     }
   }
@@ -2755,8 +2757,8 @@ class NPC extends Creature {
     super(animal)
     this.identity = "NPC"
     this.state = "stop" // Start state
-    this.currentBehaviour = "wandering" // Startbevaviour
-    this.previousBehaviour = null
+    this._currentBehaviour = "wandering" // Startbevaviour
+    this._previousBehaviour = null
     this.step = 0
     this.speedFactor = 0.65 // Not at max speed
 
@@ -2784,14 +2786,14 @@ class NPC extends Creature {
   // Store previous when setting the behaviour (L)
   set behaviour (value) {
     if (value) {
-      if (this.currentBehaviour !== value) {
-        this.previousBehaviour = this.currentBehaviour
-        this.currentBehaviour = value
+      if (this._currentBehaviour !== value) {
+        this._previousBehaviour = this._currentBehaviour
+        this._currentBehaviour = value
       }
     }
   }
   get behaviour () {
-    return this.currentBehaviour
+    return this._currentBehaviour
   }
 
   // Additional functionality for live, determines NPC behaviour (L)
@@ -2806,7 +2808,8 @@ class NPC extends Creature {
         this.look() // Look around, can change behaviour
         this.fightFlight()
       } else if (this.behaviour === "eating") {
-        // TODO implement eat
+        this.look() // Look around, can change behaviour
+        this.hunt() // 'Attack' the dead animal to eat it
       } else if (this.behaviour === "hiding") {
         // TODO implement hide
       }
@@ -2936,27 +2939,38 @@ class NPC extends Creature {
         this.behaviour = "defending"
         this.hunter = animal
       }
-      return true// No other actions
+      return true // No other actions
     }
+
 
     if (this.traits.name !== animal.traits.name) { // No canibalism
       if (this.traits.diet === "carnivore") { // Can attack first
-        if (this.hunger < 75) { // Is hungry enough
+        if (this.behaviour !== "eating" && this.hunger < 75) { // Already eating and hungry
           // Will attack odd based on agression
           if (random.choose(odds) === "true") {
             // Hunt the animal
             this.behaviour = "hunting"
             this.speedFactor = 1
             this.target = animal
+            return false
           }
         }
       }
 
       if (animal.traits.diet === "carnivore") { // spots a meat eater
-        // Will run odd based on agression
-        if (random.choose(odds) === "true") {
-          this.behaviour = "fleeing"
-          this.hunter = animal
+        if (this.behaviour === "eating") { // Defend prey
+          if (animal.target === this.target && animal.traits.name !== this.traits.name) {
+            if (random.choose(odds) === "true") {
+              this.behaviour = "hunting"
+              this.target = animal
+            }
+          }
+        } else {
+          // Will run odd based on agression
+          if (random.choose(odds) === "true") {
+            this.behaviour = "fleeing"
+            this.hunter = animal
+          }
         }
       }
     }
