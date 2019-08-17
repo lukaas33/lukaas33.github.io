@@ -101,6 +101,25 @@ $grey-900: #212121;
   background-color: #ffffff;
   border-radius: 0.25rem;
   overflow: hidden; // Maintain rounded corners
+  animation: from-bottom 500ms ease-out;
+}
+
+@keyframes from-bottom {
+  from {
+    top: 100vh;
+  }
+  to {
+    top: 0;
+  }
+}
+
+@keyframes from-top {
+  from {
+    top: -100vh;
+  }
+  to {
+    top: 0;
+  }
 }
 
 %tag {

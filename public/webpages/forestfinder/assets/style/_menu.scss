@@ -1,9 +1,16 @@
+nav.closed {
+  width: 0; // start hidden
+}
+
 nav {
-  display: none; // Start state
   position: absolute;
   background-color: $grey-100;
+  white-space: nowrap;
   height: 100%;
+  width: 60%;
+  overflow: hidden;
   z-index: 110; // Over everything
+  transition: 400ms ease-in-out;
   @include shadow(0, 8, 6);
 
   $padding: 1rem;

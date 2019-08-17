@@ -18,7 +18,20 @@ header button[name="menu"], nav button[name="close"], #history div button[name='
   position: relative;
   background-color: #ffffff;
   border-radius: 0.25rem;
-  overflow: hidden; }
+  overflow: hidden;
+  animation: from-bottom 500ms ease-out; }
+
+@keyframes from-bottom {
+  from {
+    top: 100vh; }
+  to {
+    top: 0; } }
+
+@keyframes from-top {
+  from {
+    top: -100vh; }
+  to {
+    top: 0; } }
 
 header .tag, #navigator .tag {
   display: flex;
@@ -86,12 +99,18 @@ header {
     font-size: 1.35rem;
     font-weight: normal; }
 
+nav.closed {
+  width: 0; }
+
 nav {
-  display: none;
   position: absolute;
   background-color: #F5F5F5;
+  white-space: nowrap;
   height: 100%;
+  width: 60%;
+  overflow: hidden;
   z-index: 110;
+  transition: 400ms ease-in-out;
   box-shadow: 6px 0px 8px rgba(0, 0, 0, 0.1), 4px 0px 6px rgba(0, 0, 0, 0.2); }
   nav button[name="close"] {
     padding: 1rem;
@@ -126,7 +145,8 @@ header .tag {
   z-index: 90;
   position: relative;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
-  height: 35vh; }
+  height: 35vh;
+  animation: from-top 500ms ease-out; }
   #image img {
     object-fit: cover;
     height: 100%;

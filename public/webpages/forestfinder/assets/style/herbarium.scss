@@ -49,6 +49,7 @@ header {
     position: relative; // Apply z-index
     @include shadow(4, 8);
     height: 30vh; // x% of screen height
+    animation: from-top 500ms ease-out;
 
     img {
       object-fit: cover; // Will keep aspect ratio

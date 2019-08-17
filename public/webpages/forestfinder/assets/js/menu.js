@@ -2,13 +2,14 @@ const menu = {
   nav: document.querySelector('nav'),
   timeLeftWarning: false,
 
-  insert () {
+  insert (callback) {
     // Insert menu in page
     let xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function() {
       if (this.readyState == 4) {
         if (this.status == 200) {
           menu.nav.innerHTML = this.responseText // Include in html
+          callback()
         }
       }
     }
@@ -56,21 +57,20 @@ const menu = {
 
 
 // Run
-menu.insert()
-
 if (database.startTime === null && database.getStorage("ended") !== true) { // Game not started
   window.setTimeout(() => {
     location.href = '' // Home
   }, 1000)
 }
 
-// Events
-document.querySelector('button[name=menu]').addEventListener('click', (event) => {
-  menu.nav.style.display = 'inline-block'
+menu.insert(() => {
+  // Events
+  document.querySelector('button[name=menu]').addEventListener('click', (event) => {
+    menu.nav.classList.toggle("closed")
 
-  // Set the reverse
+  })
   document.querySelector('button[name=close]').addEventListener('click', (event) => {
-    menu.nav.style.display = 'none'
+    menu.nav.classList.toggle("closed")
   })
 })
 
