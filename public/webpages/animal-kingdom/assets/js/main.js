@@ -66,6 +66,7 @@ const settings = {
     return store.get("paused")
   },
   set paused (value) {
+    this.backup()
     store.set("paused", value)
     if (value) {
       settings.run = false
@@ -467,13 +468,13 @@ map.getCreatures = function () {
 
 // Godmode function, called via console (A)
 window.godMode = function () {
-  animals[0].health = 250
-  animals[0].traits.maxHealth = 250
+  animals[0].health = 100
+  animals[0].traits.maxHealth = 100
   animals[0].hunger = 100
-  animals[0].traits.maxSpeed = 30,
+  animals[0].traits.hunger = 0
+  animals[0].traits.maxSpeed = 30
   animals[0].traits.acceleration = 1
   animals[0].traits.attack = 1
-  animals[0].traits.hunger = 0
 }
 
 settings.displayAnimals = function () {
@@ -490,12 +491,21 @@ settings.displayAnimals = function () {
     settings._intervals[animal] = setInterval((spr, name) => {
       if (spr.loaded) {
         button.appendChild(spr["down"][0])
+        let text = document.createElement("span")
+        text.textContent = name
+        button.appendChild(text)
         doc.gridOverview.appendChild(button)
         clearInterval(settings._intervals[name])
         delete settings._intervals[name]
       }
     }, 100, spr, animal)
   }
+}
+
+settings.backup = function () {
+  store.set("animals", animals)
+  store.set("plants", plants)
+  store.set("musicTime", doc.sound.currentTime)
 }
 
 // Get stored settings from progress, needed for variables stored in local storage but often accessed (L)
@@ -1030,7 +1040,7 @@ class Bass extends Animal {
     let name = "Bass"
     super(loc, name)
     this.traits = {
-      maxSpeed: 10,
+      maxSpeed: 18,
       acceleration: 0.6,
       area: "water",
       maxHealth: 2,
@@ -1449,7 +1459,7 @@ class Crab extends Animal {
     super(loc, name)
     // The animal's traits, in SI units (L)
     this.traits = {
-      maxSpeed: 5,
+      maxSpeed: 7,
       acceleration: 0.4,
       area: "water",
       maxHealth: 3,
@@ -1680,7 +1690,7 @@ class Salmon extends Animal {
     super(loc, name)
     // The animal's traits, in SI units (L)
     this.traits = {
-      maxSpeed: 8,
+      maxSpeed: 14,
       acceleration: 0.3,
       area: "water",
       maxHealth: 3,
@@ -1911,7 +1921,7 @@ class Carp extends Animal {
     super(loc, name)
     // The animal's traits, in SI units (L)
     this.traits = {
-      maxSpeed: 8,
+      maxSpeed: 16,
       acceleration: 0.4,
       area: "water",
       maxHealth: 4,
@@ -2499,7 +2509,7 @@ class Creature extends Obj {
       this.opacity = 0
     }
     // Disappear
-    if (this.opacity <= 0.35) {
+    if (this.opacity <= 0.25) {
       for (let i = 0; i < animals.length; i++) {
         if (animals[i] === this) {
           animals.splice(i, 1)
@@ -2552,10 +2562,10 @@ class Creature extends Obj {
     object.health -= this.traits.attack
     object.hitted = true
 
-    if (object.traits.nutrition) { // Plant can be eaten alive
+    if (object.traits.nutrition && this.traits.diet !== "carnivore") { // Plant can be eaten alive
       this.hunger += object.traits.nutrition * 10
     } else if (object.dead) { // Animal can be eaten when dead
-      this.hunger += 100 * ((object.traits.mass * 10) / this.traits.mass)
+      this.hunger += 100 * ((object.traits.mass) / this.traits.mass)
     } else { // Animal alive
       if (object.health < 0) { // Just killed it
         // target will change into dead-mode, can be eaten now
@@ -2633,14 +2643,14 @@ class Player extends Creature {
   // Transform into another animal (L)
   transform (name) {
     if (this.spirits.indexOf(name) !== -1 && name !== this.traits.name) {
-      let spirits = this.spirits
       let change = new map.animalConstructors[name.toLowerCase()]
       change = new change.constructor(this.loc) // Call the animal constructor with location
       change = new this.constructor(change)
-      change.hunger = this.hunger
+      for (let prop of ["hunger", "spirits", "hunter", "target"]) {
+        change[prop] = this[prop]
+      }
       change.health = (this.health / this.traits.maxHealth) * change.traits.maxHealth
       animals[0] = change
-      animals[0].spirits = spirits
     }
   }
 
@@ -2710,11 +2720,13 @@ class Player extends Creature {
         }
       }
 
-      for (let plant of plants) {
-        if (plant.middle && this.middle) {
-          let distance = this.middle.distance(plant.middle)
-          distances.push(distance.magnitude)
-          close.push(plant)
+      if (this.traits.diet !== "carnivore") {
+        for (let plant of plants) {
+          if (plant.middle && this.middle) {
+            let distance = this.middle.distance(plant.middle)
+            distances.push(distance.magnitude)
+            close.push(plant)
+          }
         }
       }
 
@@ -2735,9 +2747,16 @@ class Player extends Creature {
             this.target = null
             window.clearInterval(this._check)
           } else if (this.target.identity === "NPC") { // Animals
-            if (!view.inside(this.target.loc, -32)) { // (almost) Outside the view
+            if (!view.inside(this.target.loc, -view.scale * 4)) { // Not in the center
               this.target = null
               window.clearInterval(this._check)
+            } else if (this.speed.magnitude === 0 && !this.target.hitted) { // Not moving and haven't hit within x seconds
+              window.setTimeout(() => {
+                if (this.target && this.speed.magnitude === 0 && !this.target.hitted) {
+                  this.target = null
+                  window.clearInterval(this._check)
+                }
+              }, 2500)
             }
           } else { // Plants
             let distance = this.middle.distance(this.target.middle)
@@ -3190,9 +3209,7 @@ view.refresh = function () {
 
 // Save before exiting (L)
 window.onbeforeunload = () => {
-  store.set("animals", animals)
-  store.set("plants", plants)
-  store.set("musicTime", doc.sound.currentTime)
+  settings.backup()
   return
 }
 
