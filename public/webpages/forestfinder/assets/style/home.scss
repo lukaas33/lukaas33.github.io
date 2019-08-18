@@ -102,6 +102,8 @@ header {
 }
 
 #history {
+  display: none; // Visible via js when points reached
+
   h4 {
     text-align: center;
     text-transform: uppercase;

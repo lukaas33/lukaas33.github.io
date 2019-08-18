@@ -138,8 +138,9 @@ nav {
       align-items: center;
       margin-bottom: 1rem; }
       nav div li img {
-        margin-right: 0.5rem; }
+        margin: 0 0.5rem; }
       nav div li a {
+        display: flex;
         font-size: 1rem;
         color: #424242;
         text-decoration: none; }
@@ -211,52 +212,54 @@ header .tag {
       fill: #81c784;
       font-weight: bold; }
 
-#history h4 {
-  text-align: center;
-  text-transform: uppercase; }
-
-#history div {
-  display: flex;
-  justify-content: left;
-  align-content: center; }
-  #history div #overview-page {
+#history {
+  display: none; }
+  #history h4 {
+    text-align: center;
+    text-transform: uppercase; }
+  #history div {
     display: flex;
-    flex-wrap: wrap;
-    width: 75vw;
-    margin: 0 5vw 5vw 5vw; }
-    #history div #overview-page .card {
-      width: 20vw;
-      height: 25vw;
-      margin: 2.5vw; }
-      #history div #overview-page .card a {
-        width: 100%;
-        height: 100%;
-        text-decoration: none; }
-        #history div #overview-page .card a img {
-          display: block;
+    justify-content: left;
+    align-content: center; }
+    #history div #overview-page {
+      display: flex;
+      flex-wrap: wrap;
+      width: 75vw;
+      margin: 0 5vw 5vw 5vw; }
+      #history div #overview-page .card {
+        width: 20vw;
+        height: 25vw;
+        margin: 2.5vw; }
+        #history div #overview-page .card a {
           width: 100%;
-          height: calc(100% - 2.31rem);
-          object-fit: cover; }
-        #history div #overview-page .card a div {
-          margin: 0.385rem;
-          height: 1.54rem;
-          overflow: hidden;
-          display: flex;
-          align-items: center; }
-          #history div #overview-page .card a div h3 {
-            line-height: 0.77rem;
-            font-size: 0.77rem;
-            color: #616161; }
-  #history div button[name='more'] {
-    width: 10vw;
-    height: 10vw;
-    margin: 10vw 5vw 10vw 0;
-    background-color: #00b8d4;
-    border-radius: 50%;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2); }
-    #history div button[name='more'] a {
-      width: 100%;
-      width: 100%; }
+          height: 100%;
+          text-decoration: none; }
+          #history div #overview-page .card a img {
+            display: block;
+            width: 100%;
+            height: calc(100% - 2.31rem);
+            object-fit: cover; }
+          #history div #overview-page .card a div {
+            margin: 0.385rem;
+            height: 1.54rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center; }
+            #history div #overview-page .card a div h3 {
+              line-height: 0.77rem;
+              font-size: 0.77rem;
+              color: #616161;
+              font-weight: normal; }
+    #history div button[name='more'] {
+      width: 10vw;
+      height: 10vw;
+      margin: 10vw 5vw 10vw 0;
+      background-color: #00b8d4;
+      border-radius: 50%;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2); }
+      #history div button[name='more'] a {
+        width: 100%;
+        width: 100%; }
 
 #overlay {
   display: none;

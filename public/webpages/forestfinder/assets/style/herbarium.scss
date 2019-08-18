@@ -39,7 +39,6 @@ header {
     width: 45vw;
     height: 45vw; // 1:1
     margin: $space / 2;
-
     @include image-card(1rem);
   }
 }
@@ -77,6 +76,7 @@ header {
 
   .score, .date {
     display: flex;
+    align-items: center;
 
     img {
       min-height: 1.6rem;
@@ -133,7 +133,7 @@ header {
 
 
   table {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     table-layout: fixed;
     border-collapse: collapse;
     width: 100%;

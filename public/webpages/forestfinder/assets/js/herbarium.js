@@ -83,7 +83,7 @@ const herbarium = {
     }
   },
   recents () { // Display some plants
-    const overview = document.querySelector('#overview-page')
+    const overview = document.getElementById('overview-page')
     const ended = database.getStorage("ended") === true
     if (overview) {
       overview.innerHTML = '' // First reset
@@ -94,6 +94,8 @@ const herbarium = {
       for (let tree of recent) {
         this.diplayCard(tree)
       }
+      const history = document.getElementById("history")
+      history.style.display = 'initial'
     }
   },
   displayPage (data, answers) { // Display full details of a plant
@@ -275,7 +277,8 @@ const herbarium = {
     dateBox.appendChild(dateIcon)
 
     const date = document.createElement('p')
-    date.textContent = (new Date(point.time)).toString()
+    const dateObj = new Date(point.time)
+    date.textContent = `${dateObj.getHours()}:${dateObj.getMinutes()} / ${dateObj.getFullYear()}-${dateObj.getMonth() + 1}-${dateObj.getDate()}`
     dateBox.appendChild(date)
     info.appendChild(dateBox)
 
@@ -344,6 +347,6 @@ if (location.href.indexOf('herbarium') !== -1) { // At herbarium page
   herbarium.plants()
 } else if (location.href.indexOf('export') !== -1) { // At export page
   herbarium.overview()
-} else { // Home for example
+} else { // Home
   herbarium.recents()
 }

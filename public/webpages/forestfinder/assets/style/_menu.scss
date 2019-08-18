@@ -41,10 +41,11 @@ nav {
       margin-bottom: 1rem;
 
       img {
-        margin-right: 0.5rem;
+        margin: 0 0.5rem;
       }
 
       a {
+        display: flex;
         font-size: 1rem;
         color: $grey-800;
         text-decoration: none;

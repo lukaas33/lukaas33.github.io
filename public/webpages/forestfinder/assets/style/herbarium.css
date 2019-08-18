@@ -95,7 +95,8 @@ header {
   position: relative;
   box-shadow: 0px 12px 8px rgba(0, 0, 0, 0.1), 0px 8px 6px rgba(0, 0, 0, 0.2); }
   header button[name="menu"] {
-    width: 2.35rem; }
+    width: 2.35rem;
+    min-width: 2rem; }
     header button[name="menu"] img {
       height: 100%;
       width: 100%; }
@@ -137,8 +138,9 @@ nav {
       align-items: center;
       margin-bottom: 1rem; }
       nav div li img {
-        margin-right: 0.5rem; }
+        margin: 0 0.5rem; }
       nav div li a {
+        display: flex;
         font-size: 1rem;
         color: #424242;
         text-decoration: none; }
@@ -186,7 +188,8 @@ header .tag {
         #overview-page .card a div h3 {
           line-height: 1rem;
           font-size: 1rem;
-          color: #616161; }
+          color: #616161;
+          font-weight: normal; }
 
 .detail-page #img {
   z-index: 90;
@@ -211,7 +214,8 @@ header .tag {
   margin-bottom: 1rem; }
 
 .detail-page .score, .detail-page .date {
-  display: flex; }
+  display: flex;
+  align-items: center; }
   .detail-page .score img, .detail-page .date img {
     min-height: 1.6rem;
     margin-right: 0.4rem; }
@@ -249,7 +253,7 @@ header .tag {
     height: 100%; }
 
 .detail-page table {
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   table-layout: fixed;
   border-collapse: collapse;
   width: 100%;
