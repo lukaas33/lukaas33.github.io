@@ -81,7 +81,7 @@ header {
       stroke: $grey-800;
       stroke-width: 2;
       transform-origin: 50% 50%;
-      transition: 50ms;
+      transition: 100ms;
     }
 
     #arrowhead {
@@ -91,6 +91,12 @@ header {
     .marking {
       stroke-width: 2;
       stroke: $primary-600;
+    }
+
+    .heading {
+      display: none;
+      fill: $primary-300;
+      font-weight: bold;
     }
   }
 }

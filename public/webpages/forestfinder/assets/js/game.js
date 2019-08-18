@@ -196,7 +196,8 @@ const doc = {
   name: document.querySelector("header h2"),
   cards: document.querySelector("#overview-page"),
   nav: document.querySelector("#navigator"),
-  skip: document.querySelector("button[name=skip]")
+  skip: document.querySelector("button[name=skip]"),
+  headings: document.getElementsByClassName("heading")
 }
 
 // === Functions ===
@@ -219,9 +220,14 @@ const display = function () { // Displays info of the tree to visit
 const refresh = function (directions) { // The screen refresh
   doc.distance.innerHTML = directions.distance
   if (directions.angle !== null) { // Relative to orientation
+    for (let heading of doc.headings) {
+      heading.style.display = 'none'
+    }
     doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
   } else { // Relative to north
-    // TODO display north on screen
+    for (let heading of doc.headings) {
+      heading.style.display = 'initial'
+    }
     doc.arrow.style.transform = `rotate(${Math.floor(directions.bearing)}deg)`
   }
 }
