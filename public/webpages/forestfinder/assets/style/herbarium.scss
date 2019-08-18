@@ -19,6 +19,7 @@ header {
     margin: 15%;
     border-radius: 50%;
     border: 2rem solid $primary-200;
+    animation: rotate 800ms ease-out;
   }
 
   p {

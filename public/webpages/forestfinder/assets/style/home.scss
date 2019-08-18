@@ -50,6 +50,8 @@ header {
     width: 8rem;
     font-size: 2.5rem;
     margin-left: 0;
+    overflow: hidden;
+    animation: rotate 800ms ease-out;
   }
 
   p {
@@ -66,19 +68,20 @@ header {
     width: $nav-height;
     border-radius: 50%; // Make shadow round
     @include shadow(8, 8);
+    animation: from-bottom 500ms ease-out;
 
     #compass {
       // r: ($nav-height / 2) * 0.9; // x% of container
-      fill: $primary-600 !important;
-      stroke: $primary-800 !important;
-      stroke-width: ($nav-height * 0.1); // x% of container
+      fill: $primary-500 !important;
+      stroke: $primary-600 !important;
+      stroke-width: ($nav-height * 0.05); // x% of container
     }
 
     #arrow {
       stroke: $grey-800;
       stroke-width: 2;
       transform-origin: 50% 50%;
-      // transition: 500ms;
+      transition: 50ms;
     }
 
     #arrowhead {
@@ -87,7 +90,7 @@ header {
 
     .marking {
       stroke-width: 2;
-      stroke: $primary-700;
+      stroke: $primary-600;
     }
   }
 }

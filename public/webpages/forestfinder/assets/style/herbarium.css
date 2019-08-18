@@ -23,15 +23,21 @@ header button[name="menu"], nav button[name="close"] {
 
 @keyframes from-bottom {
   from {
-    top: 100vh; }
+    transform: translateY(100vh); }
   to {
-    top: 0; } }
+    transform: translateY(0); } }
 
 @keyframes from-top {
   from {
-    top: -100vh; }
+    transform: translateY(-100vh); }
   to {
-    top: 0; } }
+    transform: translateY(0); } }
+
+@keyframes rotate {
+  from {
+    transform: rotate(360deg) scale(0); }
+  to {
+    transform: rotate(0deg) scale(1); } }
 
 header .tag {
   display: flex;
@@ -147,7 +153,8 @@ header .tag {
   width: 70%;
   margin: 15%;
   border-radius: 50%;
-  border: 2rem solid #a5d6a7; }
+  border: 2rem solid #a5d6a7;
+  animation: rotate 800ms ease-out; }
 
 #empty p {
   text-align: center; }
