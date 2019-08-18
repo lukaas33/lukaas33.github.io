@@ -21,7 +21,7 @@ const menu = {
     const elapsed = Math.floor(((new Date()).getTime() - database.startTime) / 1000) // Time elapsed since start
     const timeLeft = database.duration - elapsed
     let min = Math.floor(timeLeft / 60)
-    let sec = min != 0 ? timeLeft % (min * 60) : elapsed // If min == 0 the mod operator will return NaN
+    let sec = min != 0 ? timeLeft % (min * 60) : timeLeft // If min == 0 the mod operator will return NaN
 
     if (min <= 0 && sec <= 0) { // End of game
       clearInterval(wait)

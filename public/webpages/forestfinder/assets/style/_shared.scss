@@ -60,6 +60,7 @@ header {
   button[name="menu"] {
     @extend %form;
     width: 2.35rem;
+    min-width: 2rem;
 
     img {
       height: 100%;
