@@ -28,6 +28,7 @@ const settings = {
   run: false, // Sequence of true in control flow: started/interacted, run, loaded
   loaded: false,
   interacted: false,
+  _menu: false,
   _intervals: {},
   _overview: false,
   get overview () {
@@ -38,9 +39,27 @@ const settings = {
     if (value) {
       doc.overview.style.display = 'initial'
       settings.paused = true
+      this._click = document.addEventListener('mousedown', (event) => {
+        let elements = event.target !== doc.gridOverview && event.target !== doc.showOverview && event.target !== doc.showOverview.children[0]
+        if (elements && settings.overview) {
+          settings.overview = false
+          document.removeEventListener('click', settings._click)
+        }
+      })
     } else {
       doc.overview.style.display = 'none'
       settings.paused = false
+    }
+  },
+  get menu () {
+    return this._menu
+  },
+  set menu (value) {
+    this._menu = value
+    if (value) {
+      doc.menuItems.style.height = "auto"
+    } else {
+      doc.menuItems.style.height = 0
     }
   },
   get startTime () {
@@ -57,9 +76,11 @@ const settings = {
     if (value) {
       doc.facts.children[0].style.display = "none"
       doc.facts.children[1].style.display = "block"
+      doc.info.style.display = 'none'
     } else {
       doc.facts.children[0].style.display = "block"
       doc.facts.children[1].style.display = "none"
+      doc.info.style.display = 'initial'
     }
   },
   get paused () {
@@ -121,6 +142,8 @@ const doc = {
   overview: document.querySelector("#overview .animals"),
   gridOverview: document.querySelector("#overview .animals div"),
   showOverview: document.querySelector("button[name=overview]"),
+  infoCard: document.querySelector("#info .card"),
+  info: document.querySelector("#info"),
 }
 
 // Related to the view and drawing
@@ -170,8 +193,12 @@ const store = {
     }
   },
   set: function (name, value) {
-    const string = JSON.stringify(value)
-    localStorage.setItem(name, string)
+    try {
+      const string = JSON.stringify(value)
+      localStorage.setItem(name, string)
+    } catch (e) {
+
+    }
   }
 }
 
@@ -435,7 +462,7 @@ map.getCreatures = function () {
       } else if (property === "sprites") { // Sprites object
         let spr = object[property]
         instance[property] = new Sprites(name, spr.moving, spr.changing)
-      } else {
+      } else if (property !== "cooldown") {
         instance[property] = object[property]
       }
     }
@@ -502,23 +529,25 @@ settings.displayAnimals = function () {
   }
 }
 
+settings.closeCard = function () {
+  let cards = document.querySelectorAll("#info .card")
+  let card = cards[cards.length - 1]
+  card.remove()
+}
+
+settings.addCard = function (text) {
+  let card = doc.infoCard.cloneNode(true)
+  card.children[1].innerHTML = text
+  card.style.display = 'inital'
+  doc.info.appendChild(card)
+}
+
 settings.backup = function () {
   store.set("animals", animals)
   store.set("plants", plants)
   store.set("musicTime", doc.sound.currentTime)
 }
 
-// Get stored settings from progress, needed for variables stored in local storage but often accessed (L)
-// settings.getStorage = function () {
-//   for (let property in settings) {
-//     if (settings[property] === undefined) { // Not declared yet
-//       let value = store.get(property)
-//       if (value !== null) { // Exists
-//         settings[property] = value
-//       }
-//     }
-//   }
-// }
 
 //   ____ _
 //  / ___| | __ _ ___ ___  ___  ___
@@ -684,7 +713,7 @@ class Entity {
   // Display a sprite on the screen (L)
   update () {
     if (this.sprites.loaded) { // Loaded
-      const switchRate = 8 // Switch sprite every x frames
+      const switchRate = 5 // Switch sprite every x frames
       let sprite = null
 
       if (this.sprites.moving) { // Moving object
@@ -707,7 +736,7 @@ class Entity {
 
       let loc = view.relative(this.loc)
       loc.round()
-      if (this.opacity < 1) { // Display as dead
+      if (this.opacity < 1) { // Display as dead (flip and fade)
         view.screen.save()
         view.screen.translate(loc.x, loc.y)
         view.screen.rotate(Math.PI)
@@ -2467,6 +2496,7 @@ class Creature extends Obj {
     this.hunter = null // Is hunting you
     this.hitted = false // Just hit you
     this.sheltered = false // Hidden by terrain
+    this.cooldown = false
     this.traits = animal.traits
     this.health = this.traits.maxHealth
     this.hunger = 100 // Percentage, the same value for every animal
@@ -2563,7 +2593,7 @@ class Creature extends Obj {
     object.hitted = true
 
     if (object.traits.nutrition && this.traits.diet !== "carnivore") { // Plant can be eaten alive
-      this.hunger += object.traits.nutrition * 10
+      this.hunger += object.traits.nutrition * 100
     } else if (object.dead) { // Animal can be eaten when dead
       this.hunger += 100 * ((object.traits.mass) / this.traits.mass)
     } else { // Animal alive
@@ -2624,7 +2654,6 @@ class Player extends Creature {
       location.reload()
     }
   }
-
 
   // PC hit actions (L)
   hit (object) {
@@ -2883,7 +2912,7 @@ class NPC extends Creature {
   wander () {
     this.speedFactor = 0.65 // Not at max speed
     this.step += 1
-    if (this.step >= 5 * view.fps) { // Reduces the number of decisions in direction (x per second)
+    if (this.step >= 10 * view.fps) { // Reduces the number of decisions in direction (x per second)
       this.chooseDirection()
       this.step = 0
     }
@@ -3201,13 +3230,12 @@ view.refresh = function () {
 }
 
 
-// // Store creatures (settings and map are saved differently) every x seconds (L)
-// window.setTimeout(() => {
-//   store.set("animals", animals)
-//   store.set("plants", plants)
-// }, 30 * 1000)
+// Store creatures every x seconds (also on pause or on quit) (L)
+window.setTimeout(() => {
+  settings.backup()
+}, 60 * 1000)
 
-// Save before exiting (L)
+// Save before exiting (doesn't always work) (L)
 window.onbeforeunload = () => {
   settings.backup()
   return
@@ -3218,26 +3246,62 @@ window.onresize = () => {
   view.sizes()
 }
 
+// Window not in focus
+window.onblur = () => {
+  if (!settings.paused) {
+    settings.paused = true
+    settings._unfocus = true
+  }
+}
+
+// Window back in focus, start again if paused by blur
+window.onfocus = () => {
+  if (settings._unfocus) {
+    settings.paused = false
+    settings._unfocus = false
+  }
+}
+
 // Setup keyboard controls
 document.addEventListener('keydown', (event) => {
-  if (animals[0]) {
+  switch (event.keyCode) {
+    case 70: // F
+      settings.menu = true
+      settings.facts = !settings.facts
+      break
+    case 77: // M
+      settings.menu = !settings.menu
+      break
+    case 83: // S
+      settings.menu = true
+      settings.music = !settings.music
+      break
+    case 80: // P
+      settings.menu = true
+      settings.paused = !settings.paused
+      break
+    case 79: // O
+      settings.overview = !settings.overview
+      break
+    case 88: // X
+      settings.closeCard()
+      break
+  }
+
+  if (animals[0] && settings.run ) {
     animals[0].control(event.keyCode, true)
   }
 })
 
 document.addEventListener('keyup', () => {
-  if (animals[0]) {
+  if (animals[0] && settings.run ) {
     animals[0].control(event.keyCode, false) // Stop signal
   }
 })
 
 // Setup menu events (L)
 doc.menu.addEventListener('click', () => {
-  if (doc.menuItems.style.height === 'auto') {
-    doc.menuItems.style.height = 0
-  } else {
-    doc.menuItems.style.height = "auto"
-  }
+  settings.menu = !settings.menu
 })
 doc.music.addEventListener('click', () => {
   settings.music = !settings.music
@@ -3268,6 +3332,7 @@ document.onreadystatechange = function () {
     view.frameTime = Math.round(1000 / view.fps)
     settings.run = true
     doc.startScreen.style.display = "none" // Hide
+
     // Wait until loaded
     settings._load = setInterval(() => {
       let animalSprites = animals.every(animal => animal.sprites.loaded)

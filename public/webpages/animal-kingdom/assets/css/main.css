@@ -17,6 +17,7 @@
   --green: #4caf50;
   --light-green: #8bc34a;
   --brown: #795548;
+  --margin: 1rem;
 }
 
 body {
@@ -31,6 +32,17 @@ body {
   height: 100%;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  background-color: var(--grey-200);
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30);
+  overflow-y: scroll;
+  border-radius: 0.5rem;
+}
+
 button {
   display: flex;
   justify-content: center;
@@ -38,8 +50,7 @@ button {
   border-width: 0;
 }
 
-button[type=button] {
-  background-color: var(--light-green);
+#menu button[type=button], #overview button[type=button] {
   border-radius: 50%;
   padding: 0.5rem;
   width: 2.5rem;
@@ -53,7 +64,7 @@ button:focus {
 #menu {
   position: absolute;
   z-index: 1;
-  padding: 0.5rem;
+  padding: var(--margin);
 }
 
 #menu .items {
@@ -66,7 +77,9 @@ button:focus {
 }
 
 #menu button {
+  background-color: var(--light-green);
   margin-bottom: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4)
 }
 
 #menu button .off {
@@ -88,12 +101,12 @@ button:focus {
 
 #begin {
   position: absolute;
+  left: 0;
+  top: 0;
+  flex-direction: column;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  left: 0;
-  top: 0;
   font-family: 'Caesar Dressing', arial;
   background-color: var(--grey-200);
   z-index: 3;
@@ -134,6 +147,7 @@ button:focus {
   justify-content: center;
   align-items: center;
   z-index: 2;
+  background-color: var(--grey-200);
   width: 100%;
   height: 100%;
 }
@@ -148,6 +162,47 @@ button:focus {
   animation: spin 2.5s linear infinite;
 }
 
+main {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#info {
+  position: absolute;
+  display: none;
+  right: 0;
+  top: 0;
+  margin: var(--margin);
+}
+
+#info .card {
+  padding: var(--margin);
+  width: 15vw;
+  height: 30vh;
+  transition: 400ms;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #424242;
+  display: none;
+}
+
+#info .card:last-child {
+  opacity: 0.75;
+}
+#info .card:not(:last-child ){
+  opacity: 0;
+}
+#info .card:hover {
+  opacity: 1;
+}
+
+#info .card button {
+  float: right;
+  background-color: transparent;
+}
+
 #overview {
 
 }
@@ -155,11 +210,12 @@ button:focus {
 #overview button[name=overview] {
   display: none;
   position: absolute;
-  right: 0;
-  bottom: 0;
-  margin: 2rem;
+  right: calc(2 * var(--margin));
+  bottom: calc(2 * var(--margin));
+  transform: scale(1.5);
   background-color: var(--brown);
   z-index: 1;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4)
 }
 
 #overview .animals {
@@ -169,8 +225,6 @@ button:focus {
   height: calc(100vh - 10rem);
   margin: 5rem;
   display: none;
-  background-color: var(--grey-200);
-  box-shadow: 0 19px 38px rgba(0,0,0,0.30);
 }
 
 #overview .animals div {
@@ -193,8 +247,9 @@ button:focus {
   align-items: center;
   width: 64px;
   height: 96px;
-  margin: 0.5rem;
+  margin: calc(var(--margin) / 2);
   padding: 0.5rem;
+  border-radius: 0.5rem;
 }
 
 #overview .animals button img {
