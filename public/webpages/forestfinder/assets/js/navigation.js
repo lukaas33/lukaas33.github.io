@@ -59,7 +59,7 @@ const navigation = {
     let angle = null
     if (navigation.orientation) { // Value available
       // Make direction to go relative to user orientation instead of relative to north
-      angle = this.orientation - bearing
+      angle = bearing + this.orientation
       angle = (360 + angle) % 360 // Remove <0 or >360
     }
 
@@ -107,12 +107,7 @@ const trackLocation = function (options, callback) {
   }
 }
 
-
-if (window.DeviceOrientationEvent) { // Available
-  // Get absolute direction (angle with north 0)
-  window.addEventListener("deviceorientationabsolute", (event) => {
-    navigation.orientation = event.alpha
-  }, true)
-} else {
-  navigation.orientation = null
-}
+// Get absolute direction (angle with north 0)
+window.addEventListener("deviceorientationabsolute", (event) => {
+  navigation.orientation = event.alpha
+}, true)
