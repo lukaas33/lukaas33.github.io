@@ -17,6 +17,7 @@ header {
   @include shadow(4, 8);
   height: 35vh; // x% of screen height
   animation: from-top 500ms ease-out;
+  will-change: transform;
 
   img {
     object-fit: cover; // Will keep aspect ratio

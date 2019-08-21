@@ -19,7 +19,8 @@ header button[name="menu"], nav button[name="close"], #cards .card button {
   background-color: #ffffff;
   border-radius: 0.25rem;
   overflow: hidden;
-  animation: from-bottom 500ms ease-out; }
+  animation: from-bottom 500ms ease-out;
+  will-change: transform; }
 
 @keyframes from-bottom {
   from {

@@ -19,7 +19,8 @@ header button[name="menu"], nav button[name="close"] {
   background-color: #ffffff;
   border-radius: 0.25rem;
   overflow: hidden;
-  animation: from-bottom 500ms ease-out; }
+  animation: from-bottom 500ms ease-out;
+  will-change: transform; }
 
 @keyframes from-bottom {
   from {
@@ -196,7 +197,8 @@ header .tag {
   position: relative;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
   height: 30vh;
-  animation: from-top 500ms ease-out; }
+  animation: from-top 500ms ease-out;
+  will-change: transform; }
   .detail-page #img img {
     object-fit: cover;
     height: 100%;

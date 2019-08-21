@@ -29,20 +29,23 @@ const navigation = {
     maximumAge: 0,
     timeout: 5000
   },
+  threshold: 5,
   humanSpeed: 1.508333, // Walking speed (m/s) for humans (number found at https://en.wikipedia.org/wiki/Walking)
 
   track (callback) {
     trackLocation(this.options, (loc) => { // Execute when called
-      if (this.loc !== null) {
-        const speed = geolib.getSpeed(this.loc, loc)
+      // Needed if GSP jumps around a lot
+      // if (this.loc !== null) {
+      //   const speed = geolib.getSpeed(this.loc, loc)
+      //
+      //   if (speed < this.humanSpeed * 1.25) { // Valid measurement
+      //     this.loc = loc // Update
+      //   }
+      // } else {
+      //   this.loc = loc // Init
+      // }
 
-        if (speed < this.humanSpeed * 1.25) { // Valid measurement
-          this.loc = loc // Update
-        }
-      } else {
-        this.loc = loc // Init
-      }
-
+      this.loc = loc
       callback() // Display
     })
   },
@@ -50,8 +53,7 @@ const navigation = {
     return geolib.getPreciseDistance(loc, this.destination)
   },
   arrived () {
-    const threshold = 10 // Within 10 m
-    return geolib.isPointWithinRadius(this.loc, this.destination, threshold)
+    return geolib.isPointWithinRadius(this.loc, this.destination, this.threshold)
   },
   directions () {
     const dist = this.dist(this.loc)
