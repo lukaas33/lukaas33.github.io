@@ -3,6 +3,7 @@ const cacheName = 'cached-files'
 const urlsToCache = [
   ".",
   "herbarium/",
+  "herbarium/?id=",
   "opties/",
   "manifest.json",
   "index.html",
