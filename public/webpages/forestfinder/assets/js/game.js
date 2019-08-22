@@ -131,7 +131,8 @@ const game = {
     const progress = { // Add data
       time: (new Date()).getTime(), // Datetime as milliseconds since epoch
       tree: this.destinationInfo.tree_id,
-      loc: navigation.loc
+      loc: navigation.loc,
+      duration: (new Date()).getTime() - this.started
     }
 
     alert(`Gefeliciteerd, je hebt de ${this.destinationInfo.name} gevonden!`)
@@ -218,7 +219,8 @@ const doc = {
   cards: document.querySelector("#overview-page"),
   nav: document.querySelector("#navigator"),
   skip: document.querySelector("button[name=skip]"),
-  headings: document.getElementsByClassName("heading")
+  headings: document.getElementsByClassName("heading"),
+  direction: document.querySelector(".direction"),
 }
 
 // === Functions ===
@@ -244,11 +246,13 @@ const refresh = function (directions) { // The screen refresh
     for (let heading of doc.headings) {
       heading.style.display = 'none'
     }
+    doc.direction.style.display = 'initial'
     doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
   } else { // Relative to north
     for (let heading of doc.headings) {
       heading.style.display = 'initial'
     }
+    doc.direction.style.display = 'none'
     doc.arrow.style.transform = `rotate(${Math.floor(directions.bearing)}deg)`
   }
 }

@@ -99,6 +99,11 @@ header {
       fill: $primary-300;
       font-weight: bold;
     }
+
+    .direction {
+      display: none;
+      fill: $primary-300;
+    }
   }
 }
 

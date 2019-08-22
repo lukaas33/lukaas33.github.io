@@ -20,6 +20,9 @@ const herbarium = {
           for (let tree of trees) {
             if (point) {
               if (!tree.double && tree.tree_id === point.tree) { // Found the correct one
+                for (let prop in point) {
+                  tree[prop] = point[prop]
+                }
                 sorted.push(tree)
               }
             }
@@ -278,7 +281,8 @@ const herbarium = {
 
     const date = document.createElement('p')
     const dateObj = new Date(point.time)
-    date.textContent = `${dateObj.getHours()}:${dateObj.getMinutes()} / ${dateObj.getFullYear()}-${dateObj.getMonth() + 1}-${dateObj.getDate()}`
+    const duration = Math.ceil(point.duration / 1000 / 60)
+    date.innerHTML = `${dateObj.getHours()}:${dateObj.getMinutes()} (${duration} min gezocht) <br/> ${dateObj.getFullYear()}-${dateObj.getMonth() + 1}-${dateObj.getDate()}`
     dateBox.appendChild(date)
     info.appendChild(dateBox)
 
