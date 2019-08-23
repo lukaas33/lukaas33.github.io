@@ -128,11 +128,12 @@ const game = {
     }
   },
   arrived () {
+    let dur = this.started ? (new Date()).getTime() - this.started : null
     const progress = { // Add data
       time: (new Date()).getTime(), // Datetime as milliseconds since epoch
       tree: this.destinationInfo.tree_id,
       loc: navigation.loc,
-      duration: (new Date()).getTime() - this.started
+      duration: dur,
     }
 
     alert(`Gefeliciteerd, je hebt de ${this.destinationInfo.name} gevonden!`)
@@ -157,6 +158,7 @@ const game = {
   skip () {
     this.visited = this.route[0] // Add current destination
     this.route = this.route.slice(1) // Remove first from route
+    this.started = null
     if (this.route.length > 0) {
       this.chooseDestination(this.route[0]) // Choose the destination
     } else {
@@ -185,7 +187,6 @@ const game = {
           } else {
             let diff = ((new Date()).getTime() - this.started) / (60 * 1000)
             if (diff >= 5) {
-              this.started = null
               doc.skip.style.display = 'inline-block'
             }
           }

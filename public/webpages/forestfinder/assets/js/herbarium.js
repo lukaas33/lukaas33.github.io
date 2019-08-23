@@ -281,8 +281,8 @@ const herbarium = {
 
     const date = document.createElement('p')
     const dateObj = new Date(point.time)
-    const duration = Math.ceil(point.duration / 1000 / 60)
-    date.innerHTML = `${dateObj.getHours()}:${dateObj.getMinutes()} (${duration} min gezocht) <br/> ${dateObj.getFullYear()}-${dateObj.getMonth() + 1}-${dateObj.getDate()}`
+    const duration = point.duration ? `(${Math.ceil(point.duration / 1000 / 60)} min gezocht)` : ''
+    date.innerHTML = `${dateObj.getHours()}:${dateObj.getMinutes()} ${duration} <br/> ${dateObj.getFullYear()}-${dateObj.getMonth() + 1}-${dateObj.getDate()}`
     dateBox.appendChild(date)
     info.appendChild(dateBox)
 
