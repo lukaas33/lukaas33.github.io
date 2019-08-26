@@ -6,19 +6,20 @@ nav {
   position: absolute;
   background-color: $grey-100;
   white-space: nowrap;
-  height: 100%;
-  width: 60%;
+  height: -webkit-fill-available;
+  min-height: 100vh;
+  width: 65%;
   overflow: hidden;
   z-index: 110; // Over everything
   transition: 400ms ease-in-out;
-  @include shadow(0, 8, 6);
+  @include shadow(0, 20, 20);
   $padding: 1rem;
 
   button[name="close"] {
     @extend %form;
     padding: $padding;
     width: 100%;
-
+    height: 10vh;
     display: flex;
     align-items: center;
     font-size: 1rem;
@@ -26,8 +27,13 @@ nav {
     background-color: $primary-500;
     text-transform: uppercase;
 
-    img {
+    .button {
       margin-right: 0.5rem;
+    }
+
+    .logo {
+      width: 1.5rem;
+      margin-left: 0.5rem;
     }
   }
 
@@ -50,6 +56,13 @@ nav {
         color: $grey-800;
         text-decoration: none;
       }
+    }
+
+    p {
+      font-size: 0.75rem;
+      color: $grey-700;
+      position: absolute;
+      bottom: $padding;
     }
   }
 }

@@ -19,7 +19,8 @@ header button[name="menu"], nav button[name="close"], #history div button[name='
   background-color: #ffffff;
   border-radius: 0.25rem;
   overflow: hidden;
-  animation: from-bottom 500ms ease-out; }
+  animation: from-bottom 500ms ease-out;
+  will-change: transform; }
 
 @keyframes from-bottom {
   from {
@@ -57,18 +58,13 @@ header .tag, #navigator .tag {
 
 :root {
   font-size: 18px;
-  height: auto;
-  width: 100%; }
+  min-height: -webkit-fill-available; }
 
 html {
-  font-size: 100%;
-  width: 100%;
-  height: auto; }
+  font-size: 100%; }
 
 body {
-  width: 100%;
-  height: auto;
-  min-height: -webkit-fill-available;
+  height: inherit;
   font-size: 1rem;
   font-family: 'roboto', sans-serif;
   background-color: #EEEEEE;
@@ -90,6 +86,7 @@ header {
   align-items: center;
   justify-content: flex-start;
   padding: 1rem;
+  height: 10vh;
   background-color: #F5F5F5;
   z-index: 100;
   position: relative;
@@ -113,23 +110,28 @@ nav {
   position: absolute;
   background-color: #F5F5F5;
   white-space: nowrap;
-  height: 100%;
-  width: 60%;
+  height: -webkit-fill-available;
+  min-height: 100vh;
+  width: 65%;
   overflow: hidden;
   z-index: 110;
   transition: 400ms ease-in-out;
-  box-shadow: 6px 0px 8px rgba(0, 0, 0, 0.1), 4px 0px 6px rgba(0, 0, 0, 0.2); }
+  box-shadow: 20px 0px 20px rgba(0, 0, 0, 0.1), 13.33333px 0px 14px rgba(0, 0, 0, 0.2); }
   nav button[name="close"] {
     padding: 1rem;
     width: 100%;
+    height: 10vh;
     display: flex;
     align-items: center;
     font-size: 1rem;
     color: white;
     background-color: #4caf50;
     text-transform: uppercase; }
-    nav button[name="close"] img {
+    nav button[name="close"] .button {
       margin-right: 0.5rem; }
+    nav button[name="close"] .logo {
+      width: 1.5rem;
+      margin-left: 0.5rem; }
   nav div {
     margin: 1rem; }
     nav div li {
@@ -144,6 +146,11 @@ nav {
         font-size: 1rem;
         color: #424242;
         text-decoration: none; }
+    nav div p {
+      font-size: 0.75rem;
+      color: #616161;
+      position: absolute;
+      bottom: 1rem; }
 
 header .tag {
   border-radius: 0.5rem;
@@ -154,7 +161,8 @@ header .tag {
   position: relative;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1), 0px 3px 6px rgba(0, 0, 0, 0.2);
   height: 35vh;
-  animation: from-top 500ms ease-out; }
+  animation: from-top 500ms ease-out;
+  will-change: transform; }
   #image img {
     object-fit: cover;
     height: 100%;
@@ -211,6 +219,9 @@ header .tag {
       display: none;
       fill: #81c784;
       font-weight: bold; }
+    #navigator svg .direction {
+      display: none;
+      fill: #81c784; }
 
 #history {
   display: none; }

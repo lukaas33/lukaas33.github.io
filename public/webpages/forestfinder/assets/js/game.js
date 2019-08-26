@@ -33,6 +33,12 @@ const game = {
   set ended (value) {
     database.setStorage("ended", value)
   },
+  get started () {
+    return database.getStorage("started")
+  },
+  set started (value) {
+    database.setStorage("started", value)
+  },
 
   waiting: null,
   destinationInfo: null, // Stores info about the destination
@@ -76,11 +82,9 @@ const game = {
     }
     display()
 
-    // Start the timer for a skipping of the current tree
-    window.clearTimeout(this.skipTimer)
-    this.skipTimer = window.setTimeout(() => {
-      doc.skip.style.display = 'inline-block'
-    }, 5 * 60 * 1000)
+    if (this.started === null) {
+      this.started = (new Date()).getTime()
+    }
   },
   // Look for the data if this tree is not unique
   getInfo (id, options) {
@@ -108,7 +112,7 @@ const game = {
     // Return elsewhere
     return destinationInfo
   },
-  // Check if arrived
+  // NOT USED Check if arrived with two checks
   check () {
     // Within x meters of an object will be considered the same location
     if (navigation.arrived()) {
@@ -124,10 +128,12 @@ const game = {
     }
   },
   arrived () {
+    let dur = this.started ? (new Date()).getTime() - this.started : null
     const progress = { // Add data
       time: (new Date()).getTime(), // Datetime as milliseconds since epoch
       tree: this.destinationInfo.tree_id,
-      loc: navigation.loc
+      loc: navigation.loc,
+      duration: dur,
     }
 
     alert(`Gefeliciteerd, je hebt de ${this.destinationInfo.name} gevonden!`)
@@ -142,6 +148,7 @@ const game = {
 
     this.visited = this.route[0] // Add
     this.route = this.route.slice(1) // Remove first from route
+    this.started = null
     if (this.route.length > 0) {
       this.chooseDestination(this.route[0]) // Choose the destination
     } else {
@@ -151,6 +158,7 @@ const game = {
   skip () {
     this.visited = this.route[0] // Add current destination
     this.route = this.route.slice(1) // Remove first from route
+    this.started = null
     if (this.route.length > 0) {
       this.chooseDestination(this.route[0]) // Choose the destination
     } else {
@@ -170,12 +178,27 @@ const game = {
       } else { // Continue
         this.chooseDestination(this.route[0]) // Call with chosen destination
       }
+      // Start the timer for a skipping of the current tree
+      this.skipTimer = window.setInterval(() => {
+        if (this.started) {
+          if (this.ended) {
+            window.clearInterval(this.skipTimer)
+            this.started = null
+          } else {
+            let diff = ((new Date()).getTime() - this.started) / (60 * 1000)
+            if (diff >= 5) {
+              doc.skip.style.display = 'inline-block'
+            }
+          }
+        }
+      }, 2500)
     }
   },
   end () {
     this.ended = true
     navigation.track = () => {} // No actions on new gps data
     database.startTime = (new Date()).getTime() - (database.duration * 1000) // Clock will be 0
+    doc.skip.style.display = 'none'
     document.querySelector(".tag").style.display = 'none'
     document.querySelector('#history h4').textContent = "overzicht"
     herbarium.recents()
@@ -197,7 +220,8 @@ const doc = {
   cards: document.querySelector("#overview-page"),
   nav: document.querySelector("#navigator"),
   skip: document.querySelector("button[name=skip]"),
-  headings: document.getElementsByClassName("heading")
+  headings: document.getElementsByClassName("heading"),
+  direction: document.querySelector(".direction"),
 }
 
 // === Functions ===
@@ -223,11 +247,13 @@ const refresh = function (directions) { // The screen refresh
     for (let heading of doc.headings) {
       heading.style.display = 'none'
     }
+    doc.direction.style.display = 'initial'
     doc.arrow.style.transform = `rotate(${Math.floor(directions.angle)}deg)`
   } else { // Relative to north
     for (let heading of doc.headings) {
       heading.style.display = 'initial'
     }
+    doc.direction.style.display = 'none'
     doc.arrow.style.transform = `rotate(${Math.floor(directions.bearing)}deg)`
   }
 }
@@ -240,7 +266,10 @@ navigation.track(() => { // When location is retrieved, this runs:
   if (navigation.loc !== null && navigation.destination !== null) { // Two points available
     const directions = navigation.directions()
     refresh(directions) // Run the sceen refresh
-    game.check(directions) // Check if arrived
+    // Check if arrived
+    if (navigation.arrived()) {
+      game.arrived()
+    }
   }
 })
 

@@ -37,7 +37,7 @@ const menu = {
           }, 1000)
         }
       }
-    } else if (min == 5 && sec <= 0 && !this.timeLeftWarning) {
+    } else if (min <= 4 && !this.timeLeftWarning) { // at 4.59 
       confirm("Pas op. Je hebt nog 5 minuten tot het einde van de speurtocht.")
       this.timeLeftWarning = true
     }

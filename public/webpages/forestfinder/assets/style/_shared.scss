@@ -10,21 +10,16 @@
 
 :root {
   font-size: 18px; // Rem is based on this
-  height: auto;
-  width: 100%;
+  min-height: -webkit-fill-available;
 }
 
 html {
   font-size: 100%;
-  width: 100%;
-  height: auto;
 }
 
 // Common elements
 body {
-  width: 100%;
-  height: auto;
-  min-height: -webkit-fill-available;
+  height: inherit;
   font-size: 1rem;
   font-family: 'roboto', sans-serif;
   background-color: $grey-200;
@@ -52,6 +47,7 @@ header {
   align-items: center;
   justify-content: flex-start;
   padding: 1rem;
+  height: 10vh;
   background-color: $grey-100;
   z-index: 100;
   position: relative; // Apply z-index

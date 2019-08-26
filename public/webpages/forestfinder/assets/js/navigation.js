@@ -29,20 +29,23 @@ const navigation = {
     maximumAge: 0,
     timeout: 5000
   },
+  threshold: 5,
   humanSpeed: 1.508333, // Walking speed (m/s) for humans (number found at https://en.wikipedia.org/wiki/Walking)
 
   track (callback) {
     trackLocation(this.options, (loc) => { // Execute when called
-      if (this.loc !== null) {
-        const speed = geolib.getSpeed(this.loc, loc)
+      // Needed if GSP jumps around a lot
+      // if (this.loc !== null) {
+      //   const speed = geolib.getSpeed(this.loc, loc)
+      //
+      //   if (speed < this.humanSpeed * 1.25) { // Valid measurement
+      //     this.loc = loc // Update
+      //   }
+      // } else {
+      //   this.loc = loc // Init
+      // }
 
-        if (speed < this.humanSpeed * 1.25) { // Valid measurement
-          this.loc = loc // Update
-        }
-      } else {
-        this.loc = loc // Init
-      }
-
+      this.loc = loc
       callback() // Display
     })
   },
@@ -50,8 +53,7 @@ const navigation = {
     return geolib.getPreciseDistance(loc, this.destination)
   },
   arrived () {
-    const threshold = 10 // Within 10 m
-    return geolib.isPointWithinRadius(this.loc, this.destination, threshold)
+    return geolib.isPointWithinRadius(this.loc, this.destination, this.threshold)
   },
   directions () {
     const dist = this.dist(this.loc)
@@ -59,7 +61,7 @@ const navigation = {
     let angle = null
     if (navigation.orientation) { // Value available
       // Make direction to go relative to user orientation instead of relative to north
-      angle = this.orientation - bearing
+      angle = bearing + this.orientation
       angle = (360 + angle) % 360 // Remove <0 or >360
     }
 
@@ -107,12 +109,7 @@ const trackLocation = function (options, callback) {
   }
 }
 
-
-if (window.DeviceOrientationEvent) { // Available
-  // Get absolute direction (angle with north 0)
-  window.addEventListener("deviceorientationabsolute", (event) => {
-    navigation.orientation = event.alpha
-  }, true)
-} else {
-  navigation.orientation = null
-}
+// Get absolute direction (angle with north 0)
+window.addEventListener("deviceorientationabsolute", (event) => {
+  navigation.orientation = event.alpha
+}, true)
