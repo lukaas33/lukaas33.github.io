@@ -40,8 +40,7 @@ const settings = {
       doc.overview.style.display = 'initial'
       settings.paused = true
       this._click = document.addEventListener('mousedown', (event) => {
-        let elements = event.target !== doc.gridOverview && event.target !== doc.showOverview && event.target !== doc.showOverview.children[0]
-        if (elements && settings.overview) {
+        if (event.target === doc.canvas && settings.overview) {
           settings.overview = false
           document.removeEventListener('click', settings._click)
         }
@@ -229,6 +228,79 @@ view.sizes = function () {
   } else {
 
   }
+}
+
+// Draw all objects on screen
+view.draw = function (live) {
+  // Draw the map (L)
+  let wait = [] // Draw over animals
+
+  let loc = new Coord(0, 0)
+  for (let name in map.textures) {
+    map.textures[name].loc = loc // Reference
+  }
+  for (let y = 0; y < map.size; y++) {
+    for (let x = 0; x < map.size; x++) {
+      if (view.inside(loc, 96)) { // Only draw in view
+        let symbol = map.tiles[y][x]
+        if (symbol) {
+          if (symbol === 't') {
+            // trees have a background
+            map.textures['g'].update()
+            loc.x += view.scale
+            map.textures['g'].update()
+            loc.y += view.scale
+            map.textures['g'].update()
+            loc.x -= view.scale
+            map.textures['g'].update()
+            loc.y -= view.scale
+            wait.push({x: loc.x, y: loc.y})
+          } else {
+            map.textures[symbol].update()
+          }
+        }
+      }
+      loc.x += view.scale
+    }
+    loc.x = 0
+    loc.y += view.scale
+  }
+  map.textures['w'].frame += 1
+
+  // Animals and plants only live close to the view to improve performance
+  const edge = 32 * 20
+  // Draw plants
+  for (let plant of plants) {
+    if (plant) {
+      if (view.inside(plant.loc, edge)) {
+        if (live) {
+          plant.live()
+        } else {
+          plant.update()
+        }
+      }
+    }
+  }
+  // Draw animals
+  for (let animal of animals) {
+    if (animal) {
+      if (view.inside(animal.loc, edge)) {
+        if (live) {
+          animal.live()
+        } else {
+          animal.update()
+        }
+      }
+    }
+  }
+
+  // Draw trees over other objects
+  for (let coord of wait) {
+    map.textures['t'].loc.x = coord.x
+    map.textures['t'].loc.y = coord.y
+    map.textures['t'].update()
+  }
+
 }
 
 // Location from absolute (map) to relative (view) (L)
@@ -509,8 +581,8 @@ settings.displayAnimals = function () {
   for (let animal of animals[0].spirits) {
     let button = document.createElement('button')
     button.name = animal
-    button.onclick = () => {
-      animals[0].transform(button.name)
+    button.onclick = function () {
+      animals[0].transform(this.name)
       settings.overview = false
     }
     let spr = new Sprites(animal.toLowerCase(), true, false)
@@ -2589,7 +2661,8 @@ class Creature extends Obj {
       self.cooldown = false
     }, 400, this)
 
-    object.health -= this.traits.attack
+    let crit = Math.random() < 0.1 ? 1.25 : 1
+    object.health -= this.traits.attack * crit
     object.hitted = true
 
     if (object.traits.nutrition && this.traits.diet !== "carnivore") { // Plant can be eaten alive
@@ -2628,7 +2701,7 @@ class Player extends Creature {
   constructor (animal) {
     super(animal)
     this.identity = "PC"
-    this.moving = false // Move key being pressed
+    this.moving = [] // Move keys being pressed
     this.speedFactor = 0.65 // Starts at slow walking pace
     this.spirits = [animal.name] // Animals to change into
   }
@@ -2714,17 +2787,20 @@ class Player extends Creature {
     if (movement) {
       movement.magnitude = this.traits.acceleration
       if (action) { // Press key
-        if (this.moving) {
+        if (this.moving.indexOf(key) !== -1) {
           this.acceleration.add(movement)
           this.acceleration.magnitude = this.traits.acceleration
         } else {
           this.acceleration = movement
-          this.moving = true
+          this.moving.push(key)
         }
       } else { // Release key
-        if (this.moving) {
+        let index = this.moving.indexOf(key)
+        if (index > -1) {
+          this.moving.splice(index, 1)
+        }
+        if (this.moving.length === 0) {
           this.stop()
-          this.moving = false
         }
       }
       this.acceleration.magnitude = this.traits.acceleration
@@ -3161,67 +3237,8 @@ view.refresh = function () {
    view.now = Date.now()
    if ((view.now - view.prev) > view.frameTime) {
      view.prev = view.now
-     // Draw the map (L)
-     let wait = [] // Draw over animals
-
-     let loc = new Coord(0, 0)
-     for (let name in map.textures) {
-       map.textures[name].loc = loc // Reference
-     }
-     for (let y = 0; y < map.size; y++) {
-       for (let x = 0; x < map.size; x++) {
-         if (view.inside(loc, 96)) { // Only draw in view
-           let symbol = map.tiles[y][x]
-           if (symbol) {
-             if (symbol === 't') {
-               // trees have a background
-               map.textures['g'].update()
-               loc.x += view.scale
-               map.textures['g'].update()
-               loc.y += view.scale
-               map.textures['g'].update()
-               loc.x -= view.scale
-               map.textures['g'].update()
-               loc.y -= view.scale
-               wait.push({x: loc.x, y: loc.y})
-             } else {
-               map.textures[symbol].update()
-             }
-           }
-         }
-         loc.x += view.scale
-       }
-       loc.x = 0
-       loc.y += view.scale
-     }
-     map.textures['w'].frame += 1
-
-     // Animals and plants only live close to the view to improve performance
-     const edge = 32 * 20
-     // Draw plants
-     for (let plant of plants) {
-       if (plant) {
-         if (view.inside(plant.loc, edge)) {
-           plant.live()
-         }
-       }
-     }
-     // Draw animals
-     for (let animal of animals) {
-       if (animal) {
-         if (view.inside(animal.loc, edge)) {
-           animal.live()
-         }
-       }
-     }
-
-     // Draw trees over other objects
-     for (let coord of wait) {
-       map.textures['t'].loc.x = coord.x
-       map.textures['t'].loc.y = coord.y
-       map.textures['t'].update()
-     }
-
+     // Draw screen
+     view.draw(true)
      // Spawn new creatures when below the max
      map.spawn()
    }
@@ -3244,6 +3261,9 @@ window.onbeforeunload = () => {
 // Resize window
 window.onresize = () => {
   view.sizes()
+  if (settings.paused) {
+    view.draw(false)
+  }
 }
 
 // Window not in focus
