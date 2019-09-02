@@ -10,7 +10,8 @@
 
 :root {
   font-size: 18px; // Rem is based on this
-  min-height: -webkit-fill-available;
+  min-height: 100%;
+  max-width: 100vw;
 }
 
 html {
@@ -20,6 +21,7 @@ html {
 // Common elements
 body {
   height: inherit;
+  width: inherit;
   font-size: 1rem;
   font-family: 'roboto', sans-serif;
   background-color: $grey-200;
