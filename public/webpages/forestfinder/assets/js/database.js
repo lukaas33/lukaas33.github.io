@@ -3,7 +3,7 @@
 
 // === Vars ===
 const database = {
-  link: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=csv",
+  link: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKWPQTIs8YZoVGNTRzE1iMiAmEWIsqs9xv0aBzTWIisn338KClhoAA0nuA4-8CS0b6CBjA433s2VIe/pub?gid=0&single=true&output=tsv",
   // Locations in the local database
   get locations () { // Accessed via database.locations
     return this.getStorage("treeLocationData")
@@ -167,12 +167,12 @@ const getCsv = function (link, callback) {
     if (this.readyState === 4 && this.status === 200) {
 
       // Convert csv to js object
-      const lines = this.responseText.split('\r')
-      const names = lines[0].split(',')
+      const lines = this.responseText.split('\r') // Linebreak
+      const names = lines[0].split('\t') // Tab
       const data = []
 
       for (let i = 1; i < lines.length; i++) {
-        let line = lines[i].split(',')
+        let line = lines[i].split('\t')
         let object = {}
         for (let j in line) {
           let val = line[j]
