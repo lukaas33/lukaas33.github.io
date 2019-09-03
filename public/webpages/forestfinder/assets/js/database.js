@@ -147,7 +147,7 @@ const promptUserData = function (callback) {
     teacher: teacher.trim()
   })
 
-  while (!confirm("Druk op de knop als je klaar bent om te beginnen.")) {} // Display until true
+  while (!confirm(`Welkom bij Forestfinder.\nJe gaat op zoek naar een boom. Je krijgt een naam, afbeelding en de afstand. Ook heb je een kompas die aangeeft welke richting je op moet lopen.\nBij elke boom krijg je een quiz en moet je een foto maken. Hier krijg je punten voor.\nVeel succes.`)) {} // Display until true
   callback() // Continue executing code
 }
 
