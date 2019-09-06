@@ -43,7 +43,7 @@ const database = {
   // Get the data online and save it
   getOnline (callback) {
     if (navigator.onLine) {
-      getCsv(this.link, (data) => { // Get via xhttp
+      getTsv(this.link, (data) => { // Get via xhttp
         // Cache images for offline use
         this.checkCachedImages(data)
 
@@ -161,7 +161,7 @@ const fileToDataUrl = function (file, callback) {
 }
 
 // Gets the target location from the spreadsheet
-const getCsv = function (link, callback) {
+const getTsv = function (link, callback) {
   const xhttp = new XMLHttpRequest()
   xhttp.onreadystatechange = function () { // When data returns
     if (this.readyState === 4 && this.status === 200) {
@@ -199,5 +199,6 @@ const getCsv = function (link, callback) {
     }
   }
   xhttp.open("GET", link, true) // Async get request
+  xhttp.setRequestHeader('Cache-Control', 'no-cache')
   xhttp.send()
 }

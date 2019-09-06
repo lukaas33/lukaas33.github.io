@@ -171,7 +171,7 @@ const herbarium = {
     if (!reached) { // Display the answers to the quiz
       if (answers && data.required === true) {
         elements.res = document.createElement('h4')
-        elements.res.textContent = "Anwoorden"
+        elements.res.textContent = "Antwoorden"
         const trees = database.locations
 
         const info = document.createElement('div')
