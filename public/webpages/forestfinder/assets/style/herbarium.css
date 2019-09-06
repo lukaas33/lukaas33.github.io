@@ -274,7 +274,7 @@ header .tag {
     background-color: #4caf50;
     color: white; }
   .detail-page table tr th, .detail-page table tr td {
-    word-break: break-all;
+    word-break: break-word;
     text-align: left;
     padding: 0.4rem;
     border: 1px solid #BDBDBD;

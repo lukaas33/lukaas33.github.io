@@ -93,11 +93,10 @@ const quiz = {
     // User take images
     const part = document.createElement('div')
     const text = document.createElement('p')
-    text.textContent = "Maak met je telefoon een foto van de boom."
+    text.textContent = "Maak met je telefoon een foto van de boom. (Het laden kan even duren.)"
     const image = document.createElement('input')
     image.type = 'file'
     image.accept = "image/*;capture=camera"
-    image.multiple = 'multiple'
     image.id = 'photo'
     image.addEventListener('change', this.getImage)
 
@@ -110,12 +109,20 @@ const quiz = {
   },
 
   end () {
-    if (quiz.at === 4) {
+    // Add to database
+    try {
+      database.progress = quiz.progress
+    } catch (e) {
+      console.error(e)
+      delete quiz.progress.photos // Remove photos
+      database.progress = quiz.progress // Append
+      alert("Sorry, de foto kon niet opgeslagen worden.")
+    } finally {
       quiz.at = 0
-      database.progress = quiz.progress // Add to database
+      quiz.progress = null
       document.querySelector("#overlay").style.display = 'none'
       document.querySelector("#overlay").innerHTML = ''
-
+      document.getElementById("loading").style.display = 'none'
       herbarium.recents() // Display recents
     }
   },
@@ -142,26 +149,41 @@ const quiz = {
 
     event.srcElement.parentElement.style.display = 'none'
     quiz.at += 1
-    quiz.end()
+    if (quiz.at === 4) {
+      quiz.end()
+    }
   },
 
   getImage (event) {
-    files = event.target.files
-    quiz.progress.photos = []
+    document.getElementById("loading").style.display = 'initial'
+    window.setTimeout(() => {
+      files = event.target.files
+      quiz.progress.photos = []
 
-    for (let i = 0; i < files.length; i ++) {
-      if (files[i]["type"].indexOf("image") !== -1) { // Type like image/jpeg
-        fileToDataUrl(files[i], (data) => {
-          quiz.progress.photos.push(data) // Save in dataurlformat
+      for (let i = 0; i < files.length; i ++) {
+        if (files[i]["type"].indexOf("image") !== -1) { // Type like image/jpeg
+          // Save in dataurlformat
+          fileToDataUrl(files[i], (data) => {
+            quiz.progress.photos.push(data)
 
-          if (quiz.progress.photos) { // Not empty
-            quiz.at += 1
-            quiz.end()
-          }
-        })
-      } else {
-        alert("Geen afbeelding gedetecteerd. Probeert het opnieuw.")
+            if (quiz.progress.photos) { // Not empty
+              quiz.at += 1
+              if (quiz.at === 4) {
+                quiz.end()
+              }
+            }
+          })
+        } else {
+          alert("Geen afbeelding gedetecteerd. Probeer het opnieuw.")
+        }
       }
-    }
+    }, 500) // Give time to return from input screen
+  }
+}
+
+// Actions when user leaves page
+window.onbeforeunload = () => {
+  if (quiz.progress) {
+    quiz.end()
   }
 }

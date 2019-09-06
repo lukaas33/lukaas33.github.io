@@ -155,7 +155,27 @@ const promptUserData = function (callback) {
 const fileToDataUrl = function (file, callback) {
   const reader = new FileReader()
   reader.addEventListener("load", function () {
-    callback(this.result)
+    // Decrease image size (reduce quality)
+    const img = new Image()
+
+    img.onload = function () {
+      const canvas = document.createElement("canvas")
+      const context = canvas.getContext('2d')
+
+      let targetHeight = 500
+      let targetWidth = Math.round(img.width * targetHeight / img.height)
+      canvas.height = targetHeight
+      canvas.width = targetWidth
+
+      context.drawImage(img, 0, 0, targetWidth, targetHeight)
+
+      // Compress base64 and return for storage
+      let dataUrl = canvas.toDataURL('image/jpeg', 1.0)
+      const res = LZString.compressToUTF16(dataUrl)
+      callback(res)
+    }
+
+    img.src = this.result
   }, false)
   reader.readAsDataURL(file)
 }

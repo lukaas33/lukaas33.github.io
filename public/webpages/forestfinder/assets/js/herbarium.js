@@ -56,7 +56,6 @@ const herbarium = {
         document.querySelector('main').appendChild(page)
 
         const trees = this.filter(database.locations, database.progress, ended)
-        console.log(trees)
 
         document.querySelector('#num').textContent = trees.length
         document.querySelector('.tag').style.opacity = 1 // Display
@@ -133,13 +132,13 @@ const herbarium = {
     elements.description.appendChild(title)
 
     // General info
-    const sub = document.createElement('h6')
-    sub.textContent = `Boom #${data.tree_id}`
-    elements.description.appendChild(sub)
-
     const sci = document.createElement('h5')
     sci.textContent = data.sci_name
     elements.description.appendChild(sci)
+
+    const sub = document.createElement('h6')
+    sub.textContent = `Boom #${data.tree_id}`
+    elements.description.appendChild(sub)
 
     elements.description.appendChild(document.createElement('br'))
     const des = document.createElement('p')
@@ -228,7 +227,6 @@ const herbarium = {
   },
   overview () {
     const trees = this.filter(database.locations, database.progress, true)
-    console.log(trees)
     for (let tree of trees) {
       document.querySelector('main').appendChild(this.displayPage(tree, true))
       document.querySelector('main').appendChild(document.createElement('hr'))
@@ -282,7 +280,8 @@ const herbarium = {
     const date = document.createElement('p')
     const dateObj = new Date(point.time)
     const duration = point.duration ? `(${Math.ceil(point.duration / 1000 / 60)} min gezocht)` : ''
-    date.innerHTML = `${dateObj.getHours()}:${dateObj.getMinutes()} ${duration} <br/> ${dateObj.getFullYear()}-${dateObj.getMonth() + 1}-${dateObj.getDate()}`
+    date.innerHTML = `${dateObj.getFullYear()}-${dateObj.getMonth() + 1}-${dateObj.getDate()} <br/>
+      ${dateObj.getHours()}:${dateObj.getMinutes()} ${duration}`
     dateBox.appendChild(date)
     info.appendChild(dateBox)
 
@@ -306,6 +305,9 @@ const herbarium = {
       for (let question in point.questions) { // Properties
         let text = quiz.questions[question]
         let user = point.questions[question].user
+        if (!user) {
+          user = ''
+        }
 
         let answer = point.questions[question].answer
         let correct = ''
@@ -334,7 +336,7 @@ const herbarium = {
       const container = document.createElement('div')
       for (let imgSrc of point.photos) {
         let img = document.createElement('img')
-        img.src = imgSrc
+        img.src = LZString.decompressFromUTF16(imgSrc) // Use compressed dataurl
         container.appendChild(img)
       }
       imgBox.appendChild(container)

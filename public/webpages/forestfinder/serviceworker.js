@@ -55,7 +55,8 @@ const urlsToCache = [
   "assets/images/favicon/favicon-32x32.png",
   "assets/images/favicon/safari-pinned-tab.svg",
 
-  "https://cdn.jsdelivr.net/npm/geolib@3.0.4/lib/index.min.js"
+  "https://cdn.jsdelivr.net/npm/geolib@3.0.4/lib/index.min.js",
+  "https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"
 ]
 
 

@@ -45,30 +45,21 @@ const game = {
 
   // Generates complete route
   generateRoute() {
-    const options = database.locations
+    const options = shuffle(database.locations)
     const points = []
     const doubles = []
     const trees = []
 
-    for (let i = 0; i < options.length; i++) {
-      // Random id
-      let id = i + 1 // Every entry has an id of 1 to n-1
-      let tree_id = options[id - 1].tree_id
-
-      if (trees.indexOf(tree_id) === -1) { // Not already one of these trees in the route and from required route
-        trees.push(tree_id)
-        if (points[id].required) {
-          points.push(id) // Add to the route
+    for (let tree of options) {
+      if (trees.indexOf(tree.tree_id) === -1) { // Not already one of these trees in the route
+        trees.push(tree.tree_id)
+        if (tree.required) { // From required trees
+          points.push(tree.location_id) // Add to the route
         } else {
-          doubles.push(id) // Add to the end
+          doubles.push(tree.location_id) // Add to the end
         }
-      } else {
-        doubles.push(id) // Add to the end
       }
     }
-
-    points = shuffle(points)
-    doubles = shuffle(points)
 
     this.route = points.concat(doubles) // All points in the route
   },
@@ -212,7 +203,9 @@ const game = {
     doc.name.textContent = 'Game over'
     doc.nav.innerHTML = `<h4>Punten</h4>
       <div class="tag">${quiz.points}</div>
-      <p>Begin opnieuw op de <a href="opties#reset">optiepagina</a>.</p>`
+      <br>
+      <p>Download je voortgang op de <a href="opties">optiepagina</a>.</p>
+      <p>Je kan hier ook opnieuw beginnen.</p>`
     doc.image.setAttribute('data-img', "assets/images/game-over.jpg")
     doc.image.src = "assets/images/game-over.jpg"
     doc.image.setAttribute("alt", "Game over image")
@@ -235,7 +228,9 @@ const doc = {
 const shuffle = function (a) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    [a[i], a[j]] = [a[j], a[i]]
+    x = a[i]
+    a[i] = a[j]
+    a[j] = x
   }
   return a
 }
