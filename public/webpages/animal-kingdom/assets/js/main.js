@@ -50,6 +50,13 @@ const settings = {
       settings.paused = false
     }
   },
+  get timePlayed () {
+    let value = store.get("timePlayed")
+    return value !== null ? value : 0 // Default
+  },
+  set timePlayed (value) {
+    store.set("timePlayed", value)
+  },
   get menu () {
     return this._menu
   },
@@ -88,11 +95,14 @@ const settings = {
   set paused (value) {
     this.backup()
     store.set("paused", value)
+
     if (value) {
+      settings.startTime = new Date()
       settings.run = false
       doc.pause.children[0].style.display = "none"
       doc.pause.children[1].style.display = "block"
     } else {
+      settings.timePlayed += Math.round(((new Date()) - new Date(settings.startTime)) / 1000)
       settings.run = true
       doc.pause.children[0].style.display = "block"
       doc.pause.children[1].style.display = "none"
@@ -143,6 +153,7 @@ const doc = {
   showOverview: document.querySelector("button[name=overview]"),
   infoCard: document.querySelector("#info .card"),
   info: document.querySelector("#info"),
+  saved: document.getElementById("saved")
 }
 
 // Related to the view and drawing
@@ -161,7 +172,7 @@ const view = {
 
 // The entire map
 const map = {
-  size: 400, // Meters wide and heigh
+  size: 250, // Meters wide and heigh
   populationDensity: 750, // 1 animal per x square meters
   growthDensity: 200, // 1 plant per x square meters
   width: null,
@@ -225,8 +236,6 @@ view.sizes = function () {
   if (view.middle === null) {
     view.middle = new Coord(map.width, map.height)
     view.middle.divide(2)
-  } else {
-
   }
 }
 
@@ -574,6 +583,9 @@ window.godMode = function () {
   animals[0].traits.maxSpeed = 30
   animals[0].traits.acceleration = 1
   animals[0].traits.attack = 1
+  animals[0].spirits = []
+  animals[0].spirits.push(...Object.keys(map.animalConstructors))
+  settings.displayAnimals()
 }
 
 settings.displayAnimals = function () {
@@ -610,7 +622,7 @@ settings.closeCard = function () {
 settings.addCard = function (text) {
   let card = doc.infoCard.cloneNode(true)
   card.children[1].innerHTML = text
-  card.style.display = 'inital'
+  card.style.display = 'block'
   doc.info.appendChild(card)
 }
 
@@ -618,6 +630,10 @@ settings.backup = function () {
   store.set("animals", animals)
   store.set("plants", plants)
   store.set("musicTime", doc.sound.currentTime)
+  doc.saved.style.display = 'block'
+  window.setTimeout(() => {
+    doc.saved.style.display = 'none'
+  }, 2500)
 }
 
 
@@ -2710,10 +2726,10 @@ class Player extends Creature {
   die () {
     // TODO add styled screen
     if (!this.notification) {
-      let alive = Math.round(((new Date()) - new Date(settings.startTime)) / 1000)
+      settings.paused = true
       alert(`
         You were killed as a(n) ${this.traits.name}.
-        You were alive for ${Math.floor(alive / 60)} minutes and ${alive % 60} seconds.
+        You were alive for ${Math.floor(settings.timePlayed / 60)} minutes and ${settings.timePlayed % 60} seconds.
         You obtained ${this.spirits.length - 1} animals.
         Game will automatically restart.
         `
@@ -3254,7 +3270,7 @@ window.setTimeout(() => {
 
 // Save before exiting (doesn't always work) (L)
 window.onbeforeunload = () => {
-  settings.backup()
+  settings.paused = true
   return
 }
 
@@ -3384,8 +3400,8 @@ document.onreadystatechange = function () {
       doc.startButton.addEventListener("click", function () {
         // Init settings
         settings.started = true
-        settings.startTime = new Date()
         settings.paused = false
+        settings.startTime = new Date()
         settings.facts = settings.facts === null ? false : settings.facts
         settings.music = settings.music === null ? true : settings.music
         // Initialise the game
@@ -3394,6 +3410,12 @@ document.onreadystatechange = function () {
         map.spawn()
         store.set("animals", animals)
         store.set("plants", plants)
+        settings.addCard(`
+          Welcome to Animal Kingdom.
+          Your goal is to survive this world.
+          You can change into the animals you defeat.
+          Move around with the arrow keys and attack with space.
+          You can disable the music or these tips and pause with the menu.`)
       })
     }
   }

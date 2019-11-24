@@ -95,6 +95,17 @@ button:focus {
   height: 2rem;
 }
 
+#saved {
+  display: none;
+  position: absolute;
+  left: var(--margin);
+  bottom: var(--margin);
+}
+
+#saved img {
+  width: 2rem;
+}
+
 #canvas {
   display: block;
 }
@@ -185,7 +196,6 @@ main {
   top: 0;
   right: 0;
   color: #424242;
-  display: none;
 }
 
 #info .card:last-child {

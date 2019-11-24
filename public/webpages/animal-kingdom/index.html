@@ -53,21 +53,20 @@
     </div>
     <div id="info">
       <!-- Cards will be duplicated -->
-      <div class="card">
+      <div class="card" style="display: none">
         <button type="button" name="close" onclick="settings.closeCard()">
           <img src="assets/icons/close.svg" alt="Close the card" title="Close the card (X)">
         </button>
         <div class="text">
-          <!-- <p>Welcome to Animal Kingdom.
-          Your goal is to survive this world.
-          You can change into the animals you defeat.</p>
-          <p>Move around with the arrow keys and attack with space.</p>
-          <p>You can disable the music or these tips and pause with the menu.</p> -->
+
         </div>
       </div>
     </div>
     <div id="screen">
       <canvas onblur="this.focus()" autofocus tabIndex="0" id="canvas"></canvas>
+    </div>
+    <div id="saved">
+      <img src="assets/icons/saved.svg" title="Progress has been saved.">
     </div>
   </main>
   <audio id="soundtrack" loop="true" preload="none" type="audio/mpeg" src="assets/soundtrack/planet-earth-II.mp3"></audio>
