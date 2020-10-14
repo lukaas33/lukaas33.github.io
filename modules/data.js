@@ -82,7 +82,7 @@ const set = function (entering, complete = () => {}) {
 
 // << Actions >>
 // Start connection
-mongoClient.connect(process.env.MONGODB_URI, function (error, db) { // Connects to database using env info
+mongoClient.connect(process.env.MONGO_DB, function (error, db) { // Connects to database using env info
   if (error) {
     throw error
   }
