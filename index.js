@@ -11,7 +11,7 @@ const marked = require('marked')
 const wildcard = require('wildcard-subdomains')
 
 const data = require('./modules/data')
-const mail = require('./modules/mail')
+// const mail = require('./modules/mail')
 const enter = require('./modules/enter')
 
 const app = express()
