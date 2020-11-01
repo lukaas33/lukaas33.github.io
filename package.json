@@ -20,22 +20,22 @@
   "author": "Lucas van Osenbruggen",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "compression": "^1.7.4",
-    "ejs": "^2.6.2",
-    "express": "^4.17.1",
-    "express-minify": "^1.0.0",
-    "express-session": "^1.16.2",
-    "formidable": "^1.2.1",
-    "helmet": "^3.20.0",
-    "mailgun-js": "^0.22.0",
-    "marked": "^0.7.0",
-    "mongodb": "^3.2.7",
-    "wildcard-subdomains": "^1.1.0"
+    "body-parser": "*",
+    "compression": "*",
+    "ejs": "^3.1.5",
+    "express": "*",
+    "express-minify": "*",
+    "express-session": "*",
+    "formidable": "*",
+    "helmet": "^4.1.1",
+    "mailgun-js": "*",
+    "marked": "^1.2.2",
+    "mongodb": "*",
+    "wildcard-subdomains": "*"
   },
   "engines": {
-    "node": "8.11.1",
-    "npm": "6.0.0"
+    "node": "6.11.2",
+    "npm": "6.14.8"
   },
   "bugs": {
     "url": "https://github.com/lukaas33/lukaas33.github.io/issues"
