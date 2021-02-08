@@ -29,7 +29,7 @@
     "formidable": "*",
     "helmet": "^4.1.1",
     "mailgun-js": "*",
-    "marked": "^1.2.2",
+    "marked": "^2.0.0",
     "mongodb": "*",
     "wildcard-subdomains": "*"
   },
